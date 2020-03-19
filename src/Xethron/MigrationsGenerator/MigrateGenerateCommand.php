@@ -1,6 +1,5 @@
 <?php namespace Xethron\MigrationsGenerator;
 
-use Illuminate\Config\Repository;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Str;
@@ -47,7 +46,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected $repository;
 
     /**
-     * @var Repository $config
+     * @var Config $config
      */
     protected $config;
 
@@ -131,6 +130,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Execute the console command. Added for Laravel 5.5
      *
      * @return void
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     public function handle()
     {
@@ -141,21 +141,23 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Execute the console command.
      *
      * @return void
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     public function fire()
     {
-        $this->info('Using connection: '.$this->option('connection')."\n");
-        if ($this->option('connection') !== $this->config->get('database.default')) {
-            $this->connection = $this->option('connection');
+        $connection = (string) $this->option('connection');
+        $this->info('Using connection: '.$connection."\n");
+        if ($connection !== $this->config->get('database.default')) {
+            $this->connection = $connection;
         }
         $this->schemaGenerator = new SchemaGenerator(
-            $this->option('connection'),
+            (string) $connection,
             $this->option('defaultIndexNames'),
             $this->option('defaultFKNames')
         );
 
         if ($this->argument('tables')) {
-            $tables = explode(',', $this->argument('tables'));
+            $tables = explode(',', (string) $this->argument('tables'));
         } elseif ($this->option('tables')) {
             $tables = explode(',', $this->option('tables'));
         } else {
@@ -170,9 +172,9 @@ class MigrateGenerateCommand extends GeneratorCommand
         }
 
         if ($this->log) {
-            $this->repository->setSource($this->option('connection'));
+            $this->repository->setSource($connection);
             if (!$this->repository->repositoryExists()) {
-                $options = array('--database' => $this->option('connection'));
+                $options = array('--database' => $connection);
                 $this->call('migrate:install', $options);
             }
             $batch = $this->repository->getNextBatchNumber();
@@ -236,6 +238,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @param  array  $tables  List of tables to create migrations for
      * @return void
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function generateTablesAndIndices(array $tables)
     {
@@ -255,6 +258,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @param  array  $tables  List of tables to create migrations for
      * @return void
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function generateForeignKeys(array $tables)
     {
@@ -273,10 +277,11 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Generate Migration for the current table.
      *
      * @return void
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function generate()
     {
-        if ($this->fields) {
+        if (!empty($this->fields)) {
             parent::fire();
 
             if ($this->log) {
@@ -314,6 +319,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Fetch the template data
      *
      * @return array
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function getTemplateData()
     {
@@ -325,9 +331,7 @@ class MigrateGenerateCommand extends GeneratorCommand
                 'create'
             );
             $down = (new DroppedTable)->drop($this->table, $this->connection);
-        }
-
-        if ($this->method == 'table') {
+        } else {
             $up = (new AddForeignKeysToTable($this->file, $this->compiler))->run(
                 $this->fields,
                 $this->table,
@@ -422,7 +426,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected function getExcludedTables()
     {
         $excludes = ['migrations'];
-        $ignore = $this->option('ignore');
+        $ignore = (string) $this->option('ignore');
         if (!empty($ignore)) {
             return array_merge($excludes, explode(',', $ignore));
         }

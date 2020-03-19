@@ -19,7 +19,7 @@ abstract class Table extends WayTable
      * @param  array  $fields
      * @param  string  $table
      * @param  string  $method
-     * @param  null  $connection
+     * @param  null|string  $connection
      *
      * @return string
      * @throws \Way\Generators\Filesystem\FileNotFound

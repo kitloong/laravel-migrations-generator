@@ -44,7 +44,7 @@ class ForeignKeyGenerator
      * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint  $foreignKey
      * @param  bool  $ignoreForeignKeyNames
      *
-     * @return null
+     * @return null|string
      */
     private function getName($foreignKey, $ignoreForeignKeyNames)
     {

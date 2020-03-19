@@ -241,7 +241,7 @@ class FieldGenerator
     /**
      * Get Decorator
      * @param  string  $function
-     * @param  string|array  $args
+     * @param  string|array|null  $args
      * @param  string  $quotes
      * @return string
      */

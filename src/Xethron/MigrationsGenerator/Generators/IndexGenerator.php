@@ -41,7 +41,6 @@ class IndexGenerator
         }
     }
 
-
     /**
      * @param  string  $table
      * @param  \Doctrine\DBAL\Schema\Index  $index
@@ -113,7 +112,7 @@ class IndexGenerator
     }
 
     /**
-     * @return null|object
+     * @return null|object|array
      */
     public function getMultiFieldIndexes()
     {

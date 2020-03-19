@@ -8,7 +8,7 @@ class DroppedTable
      * Get string for dropping a table
      *
      * @param  string  $tableName
-     * @param  null  $connection
+     * @param  null|string  $connection
      *
      * @return string
      */
