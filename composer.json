@@ -32,7 +32,6 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Way\\Generators\\GeneratorsServiceProvider",
 				"Xethron\\MigrationsGenerator\\MigrationsGeneratorServiceProvider"
 			]
 		}
