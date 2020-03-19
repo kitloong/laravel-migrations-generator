@@ -6,4 +6,6 @@
 
     <file>src</file>
     <file>tests</file>
+
+    <exclude-pattern>features/bootstrap/FeatureContext.php</exclude-pattern>
 </ruleset>
