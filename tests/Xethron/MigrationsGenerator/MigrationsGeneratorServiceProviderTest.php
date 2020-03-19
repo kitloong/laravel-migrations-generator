@@ -22,9 +22,10 @@ class MigrationsGeneratorServiceProviderTest extends TestCase
     {
         $app_mock = $this->getAppMock();
 
+        $reflector = new \ReflectionClass(MigrationsGeneratorServiceProvider::class);
         $fileMock = Mockery::mock('Illuminate\Filesystem\Filesystem');
         $fileMock->shouldReceive('getRequire')
-            ->with('/research/laravel-migrations-generator/src/Xethron/MigrationsGenerator/../../config/config.php')
+            ->with(dirname($reflector->getFileName()).'/../../config/config.php')
             ->andReturn(['file'])
             ->once();
 
