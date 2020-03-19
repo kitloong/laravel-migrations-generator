@@ -10,7 +10,7 @@
 		}
 	],
 	"require": {
-		"php": ">=7.2.0",
+		"php": ">=7.0.0",
 		"illuminate/support": "^7.0",
 		"doctrine/dbal": "~2.4"
 	},
