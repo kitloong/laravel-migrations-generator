@@ -159,7 +159,7 @@ class MigrateGenerateCommand extends GeneratorCommand
         if ($this->argument('tables')) {
             $tables = explode(',', (string) $this->argument('tables'));
         } elseif ($this->option('tables')) {
-            $tables = explode(',', $this->option('tables'));
+            $tables = explode(',', (string) $this->option('tables'));
         } else {
             $tables = $this->schemaGenerator->getTables();
         }
@@ -354,7 +354,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Get path to template for generator
      *
-     * @return string
+     * @return array|bool|mixed|string|null
      */
     protected function getTemplatePath()
     {
