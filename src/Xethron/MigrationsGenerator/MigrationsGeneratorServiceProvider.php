@@ -68,15 +68,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $userConfigFile = $this->app->configPath().'/generators.config.php';
         $packageConfigFile = __DIR__.'/../../config/config.php';
-        $config = $this->app['files']->getRequire($packageConfigFile);
-
-        if (file_exists($userConfigFile)) {
-            $userConfig = $this->app['files']->getRequire($userConfigFile);
-            $config = array_replace_recursive($config, $userConfig);
-        }
-
-        $this->app['config']->set('generators.config', $config);
+        $this->app['config']->set('generators.config', $this->app['files']->getRequire($packageConfigFile));
     }
 }
