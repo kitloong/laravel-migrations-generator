@@ -22,6 +22,27 @@ class MigrationsGeneratorServiceProviderTest extends TestCase
     {
         $app_mock = $this->getAppMock();
 
+        $fileMock = Mockery::mock('Illuminate\Filesystem\Filesystem');
+        $fileMock->shouldReceive('getRequire')
+            ->with('/research/laravel-migrations-generator/src/Xethron/MigrationsGenerator/../../config/config.php')
+            ->andReturn(['file'])
+            ->once();
+
+        $app_mock->shouldReceive('offsetGet')
+            ->with('files')
+            ->andReturn($fileMock)
+            ->once();
+
+        $configMock = Mockery::mock('Illuminate\Config\Repository');
+        $configMock->shouldReceive('set')
+            ->with('generators.config', ['file'])
+            ->once();
+
+        $app_mock->shouldReceive('offsetGet')
+            ->with('config')
+            ->andReturn($configMock)
+            ->once();
+
         $app_mock
             ->shouldReceive('bind')
             ->atLeast()->once()
