@@ -1,12 +1,13 @@
 <?php namespace Xethron\MigrationsGenerator\Syntax;
 
 use Illuminate\Support\Facades\DB;
+use Way\Generators\Syntax\Table as WayTable;
 
 /**
  * Class Table
  * @package Xethron\MigrationsGenerator\Syntax
  */
-abstract class Table extends \Way\Generators\Syntax\Table
+abstract class Table extends WayTable
 {
 
     /**
@@ -21,6 +22,7 @@ abstract class Table extends \Way\Generators\Syntax\Table
      * @param  null  $connection
      *
      * @return string
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     public function run(array $fields, $table, $connection = null, $method = 'table')
     {

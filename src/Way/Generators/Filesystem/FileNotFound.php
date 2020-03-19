@@ -1,3 +1,7 @@
 <?php namespace Way\Generators\Filesystem;
 
-class FileNotFound extends \Exception {}
+use Exception;
+
+class FileNotFound extends Exception
+{
+}

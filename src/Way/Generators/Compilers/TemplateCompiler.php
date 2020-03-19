@@ -1,7 +1,7 @@
 <?php namespace Way\Generators\Compilers;
 
-class TemplateCompiler implements Compiler {
-
+class TemplateCompiler implements Compiler
+{
     /**
      * Compile the template using
      * the given data
@@ -12,12 +12,10 @@ class TemplateCompiler implements Compiler {
      */
     public function compile($template, $data)
     {
-        foreach($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $template = preg_replace("/\\$$key\\$/i", $value, $template);
         }
 
         return $template;
     }
-
 }

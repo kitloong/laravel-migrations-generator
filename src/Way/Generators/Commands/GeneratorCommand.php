@@ -1,14 +1,13 @@
 <?php namespace Way\Generators\Commands;
 
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
+use Symfony\Component\Console\Input\InputOption;
 use Way\Generators\Filesystem\FileAlreadyExists;
 use Way\Generators\Generator;
-use Config;
 
-abstract class GeneratorCommand extends Command {
-
+abstract class GeneratorCommand extends Command
+{
     /**
      * The Generator instance.
      *
@@ -19,7 +18,7 @@ abstract class GeneratorCommand extends Command {
     /**
      * Create a new GeneratorCommand instance.
      *
-     * @param Generator $generator
+     * @param  Generator  $generator
      */
     public function __construct(Generator $generator)
     {
@@ -33,31 +32,31 @@ abstract class GeneratorCommand extends Command {
      *
      * @return array
      */
-    protected abstract function getTemplateData();
+    abstract protected function getTemplateData();
 
     /**
      * The path to where the file will be created.
      *
      * @return mixed
      */
-    protected abstract function getFileGenerationPath();
+    abstract protected function getFileGenerationPath();
 
     /**
      * Get the path to the generator template.
      *
      * @return mixed
      */
-    protected abstract function getTemplatePath();
+    abstract protected function getTemplatePath();
 
     /**
      * Compile and generate the file.
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     public function fire()
     {
         $filePathToGenerate = $this->getFileGenerationPath();
 
-        try
-        {
+        try {
             $this->generator->make(
                 $this->getTemplatePath(),
                 $this->getTemplateData(),
@@ -65,10 +64,7 @@ abstract class GeneratorCommand extends Command {
             );
 
             $this->info("Created: {$filePathToGenerate}");
-        }
-
-        catch (FileAlreadyExists $e)
-        {
+        } catch (FileAlreadyExists $e) {
             $this->error("The file, {$filePathToGenerate}, already exists! I don't want to overwrite it.");
         }
     }
@@ -82,7 +78,9 @@ abstract class GeneratorCommand extends Command {
      */
     protected function getPathByOptionOrConfig($option, $configName)
     {
-        if ($path = $this->option($option)) return $path;
+        if ($path = $this->option($option)) {
+            return $path;
+        }
 
         return Config::get("generators.config.{$configName}");
     }
@@ -99,5 +97,4 @@ abstract class GeneratorCommand extends Command {
             ['templatePath', null, InputOption::VALUE_REQUIRED, 'The location of the template for this generator']
         ];
     }
-
-} 
+}

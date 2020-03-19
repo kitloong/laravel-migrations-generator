@@ -3,8 +3,8 @@
 use Way\Generators\Compilers\TemplateCompiler;
 use Way\Generators\Filesystem\Filesystem;
 
-abstract class Table {
-
+abstract class Table
+{
     /**
      * @var \Way\Generators\Filesystem\Filesystem
      */
@@ -16,10 +16,10 @@ abstract class Table {
     protected $compiler;
 
     /**
-     * @param Filesystem $file
-     * @param TemplateCompiler $compiler
+     * @param  Filesystem  $file
+     * @param  TemplateCompiler  $compiler
      */
-    function __construct(Filesystem $file, TemplateCompiler $compiler)
+    public function __construct(Filesystem $file, TemplateCompiler $compiler)
     {
         $this->compiler = $compiler;
         $this->file = $file;
@@ -29,6 +29,7 @@ abstract class Table {
      * Fetch the template of the schema
      *
      * @return string
+     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function getTemplate()
     {
@@ -48,5 +49,4 @@ abstract class Table {
     {
         return str_replace('$FIELDS$', implode(PHP_EOL."\t\t\t", $schema), $template);
     }
-
 }

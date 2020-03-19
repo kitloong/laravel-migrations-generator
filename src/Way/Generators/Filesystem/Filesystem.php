@@ -1,19 +1,18 @@
 <?php namespace Way\Generators\Filesystem;
 
-class Filesystem {
-
+class Filesystem
+{
     /**
      * Make a file
      *
      * @param $file
      * @param $content
-     * @throws FileAlreadyExists
      * @return int
+     * @throws FileAlreadyExists
      */
     public function make($file, $content)
     {
-        if ( $this->exists($file))
-        {
+        if ($this->exists($file)) {
             throw new FileAlreadyExists;
         }
 
@@ -35,17 +34,15 @@ class Filesystem {
      * Fetch the contents of a file
      *
      * @param $file
-     * @throws FileNotFound
      * @return string
+     * @throws FileNotFound
      */
     public function get($file)
     {
-        if ( ! $this->exists($file))
-        {
+        if (!$this->exists($file)) {
             throw new FileNotFound($file);
         }
 
         return file_get_contents($file);
     }
-
-} 
+}

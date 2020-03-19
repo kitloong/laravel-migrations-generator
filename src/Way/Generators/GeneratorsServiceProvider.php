@@ -11,7 +11,6 @@ class GeneratorsServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
-
     /**
      * Booting
      */
