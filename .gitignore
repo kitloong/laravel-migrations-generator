@@ -1,3 +1,6 @@
 vendor
 report
 composer.lock
+build
+.idea
+.phpunit.result.cache
