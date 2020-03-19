@@ -1,20 +1,18 @@
 <?php namespace Xethron\MigrationsGenerator;
 
 use Mockery;
-use PHPUnit_Framework_TestCase;
+use Orchestra\Testbench\TestCase;
 
-class MigrationsGeneratorTest extends PHPUnit_Framework_TestCase {
+class MigrationsGeneratorTest extends TestCase
+{
 
-  public function tearDown()
-  {
-    Mockery::close();
-  }
+    public function tearDown(): void
+    {
+        Mockery::close();
+    }
 
-  /**
-  * @test
-  */
-  public function registers_migrations_generator()
-  {
-    
-  }
+    public function testRegistersMigrationsGenerator()
+    {
+        //
+    }
 }
