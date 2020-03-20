@@ -16,7 +16,7 @@
 		"doctrine/dbal": "~2.4"
 	},
     "require-dev": {
-        "orchestra/testbench": "^4.0|^5.0",
+        "orchestra/testbench": "^3.8|^4.0|^5.0",
         "squizlabs/php_codesniffer": "^3.5"
     },
 	"autoload": {
