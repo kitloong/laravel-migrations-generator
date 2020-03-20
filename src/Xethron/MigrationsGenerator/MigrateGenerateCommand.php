@@ -151,7 +151,7 @@ class MigrateGenerateCommand extends GeneratorCommand
             $this->connection = $connection;
         }
         $this->schemaGenerator = new SchemaGenerator(
-            (string) $connection,
+            $connection,
             $this->option('defaultIndexNames'),
             $this->option('defaultFKNames')
         );
