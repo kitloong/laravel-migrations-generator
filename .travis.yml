@@ -4,7 +4,6 @@ php:
   - 7.2
   - 7.3
   - 7.4
-  - hhvm
 
 before_script:
   - composer self-update
@@ -13,6 +12,4 @@ before_script:
 script: ./vendor/bin/phpunit
 
 matrix:
-  allow_failures:
-    - php: hhvm
   fast_finish: true
