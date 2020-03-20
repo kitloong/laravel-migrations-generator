@@ -210,8 +210,8 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Ask user for a Numeric Value, or blank for default
      * @param  string  $question  Question to ask
-     * @param  int|float  $default  Default Value (optional)
-     * @return int|float           Answer
+     * @param  int  $default  Default Value (optional)
+     * @return int           Answer
      */
     protected function askNumeric($question, $default = null)
     {
