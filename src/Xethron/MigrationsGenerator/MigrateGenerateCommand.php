@@ -151,7 +151,7 @@ class MigrateGenerateCommand extends GeneratorCommand
             $this->connection = $connection;
         }
         $this->schemaGenerator = new SchemaGenerator(
-            (string) $connection,
+            $connection,
             $this->option('defaultIndexNames'),
             $this->option('defaultFKNames')
         );
@@ -159,7 +159,7 @@ class MigrateGenerateCommand extends GeneratorCommand
         if ($this->argument('tables')) {
             $tables = explode(',', (string) $this->argument('tables'));
         } elseif ($this->option('tables')) {
-            $tables = explode(',', $this->option('tables'));
+            $tables = explode(',', (string) $this->option('tables'));
         } else {
             $tables = $this->schemaGenerator->getTables();
         }
@@ -210,8 +210,8 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Ask user for a Numeric Value, or blank for default
      * @param  string  $question  Question to ask
-     * @param  int|float  $default  Default Value (optional)
-     * @return int|float           Answer
+     * @param  int  $default  Default Value (optional)
+     * @return int           Answer
      */
     protected function askNumeric($question, $default = null)
     {
@@ -354,7 +354,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Get path to template for generator
      *
-     * @return string
+     * @return array|bool|mixed|string|null
      */
     protected function getTemplatePath()
     {

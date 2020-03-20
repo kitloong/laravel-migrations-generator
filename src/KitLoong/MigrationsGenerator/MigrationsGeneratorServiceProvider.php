@@ -1,11 +1,11 @@
-<?php namespace Xethron\MigrationsGenerator;
+<?php namespace KitLoong\MigrationsGenerator;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use Xethron\MigrationsGenerator\MigrateGenerateCommand;
 
 class MigrationsGeneratorServiceProvider extends ServiceProvider
 {
-
     /**
      * Indicates if loading of the provider is deferred.
      *

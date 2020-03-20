@@ -1,6 +1,7 @@
 {
 	"name": "kitloong/laravel-migrations-generator",
 	"description": "Generates Laravel Migrations from an existing database",
+    "version": "3.0",
 	"keywords": ["laravel", "migration", "generator", "migrations", "artisan"],
 	"license": "MIT",
 	"authors": [
@@ -10,16 +11,17 @@
 		}
 	],
 	"require": {
-		"php": ">=7.0.0",
-		"illuminate/support": "^7.0",
+		"php": ">=7.1.3",
+		"illuminate/support": "^5.8|^6.0|^7.0",
 		"doctrine/dbal": "~2.4"
 	},
     "require-dev": {
-        "orchestra/testbench": "^5.0",
+        "orchestra/testbench": "^3.8|^4.0|^5.0",
         "squizlabs/php_codesniffer": "^3.5"
     },
 	"autoload": {
 		"psr-4": {
+            "KitLoong\\MigrationsGenerator\\": "src/KitLoong/MigrationsGenerator",
 			"Xethron\\MigrationsGenerator\\": "src/Xethron/MigrationsGenerator",
 			"Way\\Generators\\": "src/Way/Generators"
 		}
@@ -32,7 +34,7 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Xethron\\MigrationsGenerator\\MigrationsGeneratorServiceProvider"
+				"KitLoong\\MigrationsGenerator\\MigrationsGeneratorServiceProvider"
 			]
 		}
 	}
