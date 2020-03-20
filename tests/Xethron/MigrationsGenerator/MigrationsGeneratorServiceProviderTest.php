@@ -1,9 +1,10 @@
-<?php namespace Xethron\MigrationsGenerator;
+<?php namespace Xethron\MigrationsGenerator\Tests;
 
 use Closure;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Foundation\Application;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use Way\Generators\Compilers\TemplateCompiler;
