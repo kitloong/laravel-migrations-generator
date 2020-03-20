@@ -31,14 +31,14 @@ class FieldGenerator
      * @param  string  $database
      * @param  bool  $ignoreIndexNames
      *
-     * @return array|bool
+     * @return array
      */
     public function generate($table, $schema, $database, $ignoreIndexNames)
     {
         $this->database = $database;
         $columns = $schema->listTableColumns($table);
         if (empty($columns)) {
-            return false;
+            return [];
         }
 
         $indexGenerator = new IndexGenerator($table, $schema, $ignoreIndexNames);
