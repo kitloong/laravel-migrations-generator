@@ -160,7 +160,7 @@ class FieldGenerator
             if ($index) {
                 $decorators[] = $this->decorate($index->type, $index->name);
             }
-            if ($comment) {
+            if ($comment !== null) {
                 $decorators[] = "comment('".addcslashes($comment, "\\'")."')";
             }
 
