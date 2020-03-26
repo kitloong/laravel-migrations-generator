@@ -55,12 +55,12 @@ class FieldGenerator
     protected function getEnum($table)
     {
         try {
-            $result = DB::table('information_schema.columns')
-                ->where('table_schema', $this->database)
-                ->where('table_name', $table)
-                ->where('data_type', 'enum')
-                ->get(['column_name', 'column_type']);
-            if ($result) {
+            $result = DB::table('information_schema.COLUMNS')
+                ->where('TABLE_SCHEMA', $this->database)
+                ->where('TABLE_NAME', $table)
+                ->where('DATA_TYPE', 'enum')
+                ->get(['COLUMN_NAME', 'COLUMN_TYPE']);
+            if (count($result)) {
                 return $result;
             } else {
                 return [];
@@ -78,8 +78,8 @@ class FieldGenerator
     protected function setEnum(array $fields, $table)
     {
         foreach ($this->getEnum($table) as $column) {
-            $fields[$column->column_name]['type'] = 'enum';
-            $fields[$column->column_name]['args'] = str_replace('enum(', 'array(', $column->column_type);
+            $fields[$column->COLUMN_NAME]['type'] = 'enum';
+            $fields[$column->COLUMN_NAME]['args'] = str_replace('enum(', 'array(', $column->COLUMN_TYPE);
         }
         return $fields;
     }
