@@ -1,7 +1,7 @@
 {
 	"name": "kitloong/laravel-migrations-generator",
 	"description": "Generates Laravel Migrations from an existing database",
-    "version": "3.0",
+    "version": "3.1.1",
 	"keywords": ["laravel", "migration", "generator", "migrations", "artisan"],
 	"license": "MIT",
 	"authors": [
