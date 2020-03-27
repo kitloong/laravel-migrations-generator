@@ -2,7 +2,6 @@
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
-use Symfony\Component\Console\Input\InputOption;
 use Way\Generators\Filesystem\FileAlreadyExists;
 use Way\Generators\Generator;
 
@@ -72,29 +71,16 @@ abstract class GeneratorCommand extends Command
     /**
      * Get a directory path through a command option, or from the configuration.
      *
-     * @param $option
-     * @param $configName
-     * @return array|bool|mixed|string|null
+     * @param  string  $option
+     * @param  string  $configName
+     * @return string
      */
-    protected function getPathByOptionOrConfig($option, $configName)
+    protected function getPathByOptionOrConfig(string $option, string $configName): string
     {
-        if ($path = $this->option($option)) {
+        if ($path = (string) $this->option($option)) {
             return $path;
         }
 
-        return Config::get("generators.config.{$configName}");
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            ['path', null, InputOption::VALUE_REQUIRED, 'Where should the file be created?'],
-            ['templatePath', null, InputOption::VALUE_REQUIRED, 'The location of the template for this generator']
-        ];
+        return (string) Config::get("generators.config.{$configName}");
     }
 }

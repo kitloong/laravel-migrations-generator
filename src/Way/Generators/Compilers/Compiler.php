@@ -6,8 +6,9 @@ interface Compiler
      * Compile the template using
      * the given data
      *
-     * @param $template
-     * @param $data
+     * @param  string  $template
+     * @param  array  $data
+     * @return string
      */
-    public function compile($template, $data);
+    public function compile(string $template, array $data): string;
 }

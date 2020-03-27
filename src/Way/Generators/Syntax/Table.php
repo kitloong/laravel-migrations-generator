@@ -6,12 +6,12 @@ use Way\Generators\Filesystem\Filesystem;
 abstract class Table
 {
     /**
-     * @var \Way\Generators\Filesystem\Filesystem
+     * @var Filesystem
      */
     protected $file;
 
     /**
-     * @var \Way\Generators\Compilers\TemplateCompiler
+     * @var TemplateCompiler
      */
     protected $compiler;
 
@@ -31,7 +31,7 @@ abstract class Table
      * @return string
      * @throws \Way\Generators\Filesystem\FileNotFound
      */
-    protected function getTemplate()
+    protected function getTemplate(): string
     {
         return $this->file->get(__DIR__.'/../templates/schema.txt');
     }
@@ -41,11 +41,11 @@ abstract class Table
      * Replace $FIELDS$ in the given template
      * with the provided schema
      *
-     * @param $schema
-     * @param $template
+     * @param  array  $schema
+     * @param  string  $template
      * @return mixed
      */
-    protected function replaceFieldsWith($schema, $template)
+    protected function replaceFieldsWith(array $schema, string $template): string
     {
         return str_replace('$FIELDS$', implode(PHP_EOL."\t\t\t", $schema), $template);
     }
