@@ -367,7 +367,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     protected function getExcludedTables()
     {
-        $excludes = ['migrations'];
+        $excludes = [Config::get('database.migrations')];
         $ignore = (string) $this->option('ignore');
         if (!empty($ignore)) {
             return array_merge($excludes, explode(',', $ignore));
