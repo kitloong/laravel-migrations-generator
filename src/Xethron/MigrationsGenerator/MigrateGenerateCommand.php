@@ -95,9 +95,10 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected $table;
 
     /**
-     * @var string|null
+     * Will append connection method if not default connection
+     * @var string
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * @param  Generator  $generator
@@ -134,13 +135,11 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     public function fire()
     {
-        $connection = $this->option('connection') ?: Config::get('database.default');
-        $this->info('Using connection: '.$connection."\n");
-        if ($connection !== Config::get('database.default')) {
-            $this->connection = $connection;
-        }
+        $this->connection = $this->option('connection') ?: Config::get('database.default');
+        $this->info('Using connection: '.$this->connection."\n");
+
         $this->schemaGenerator = new SchemaGenerator(
-            $connection,
+            $this->connection,
             $this->option('defaultIndexNames'),
             $this->option('defaultFKNames')
         );
@@ -161,9 +160,9 @@ class MigrateGenerateCommand extends GeneratorCommand
         }
 
         if ($this->log) {
-            $this->repository->setSource($connection);
+            $this->repository->setSource($this->connection);
             if (!$this->repository->repositoryExists()) {
-                $options = array('--database' => $connection);
+                $options = array('--database' => $this->connection);
                 $this->call('migrate:install', $options);
             }
             $batch = $this->repository->getNextBatchNumber();

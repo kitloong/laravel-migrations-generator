@@ -2,21 +2,24 @@
 
 namespace Xethron\MigrationsGenerator\Syntax;
 
+use Illuminate\Support\Facades\Config;
+
 class DroppedTable
 {
     /**
      * Get string for dropping a table
      *
      * @param  string  $tableName
-     * @param  null|string  $connection
+     * @param  string  $connection
      *
      * @return string
      */
-    public function drop($tableName, $connection = null)
+    public function drop($tableName, $connection)
     {
-        if (!is_null($connection)) {
-            $connection = 'connection(\''.$connection.'\')->';
+        if ($connection !== Config::get('database.default')) {
+            $connectionMethod = 'connection(\''.$connection.'\')->';
         }
-        return "Schema::{$connection}drop('$tableName');";
+
+        return "Schema::".($connectionMethod ?? '')."drop('$tableName');";
     }
 }

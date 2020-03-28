@@ -1,5 +1,6 @@
 <?php namespace Xethron\MigrationsGenerator\Syntax;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Way\Generators\Syntax\Table as WayTable;
 
@@ -19,15 +20,15 @@ abstract class Table extends WayTable
      * @param  array  $fields
      * @param  string  $table
      * @param  string  $method
-     * @param  null|string  $connection
+     * @param  string  $connection
      *
      * @return string
      */
-    public function run(array $fields, $table, $connection = null, $method = 'table')
+    public function run(array $fields, $table, $connection, $method = 'table')
     {
         $table = substr($table, strlen(DB::getTablePrefix()));
         $this->table = $table;
-        if (!is_null($connection)) {
+        if ($connection !== Config::get('database.default')) {
             $method = 'connection(\''.$connection.'\')->'.$method;
         }
         $compiled = $this->compiler->compile($this->getTemplate(), ['table' => $table, 'method' => $method]);
