@@ -36,9 +36,11 @@ class SchemaGenerator
      * @param  string  $database
      * @param  bool  $ignoreIndexNames
      * @param  bool  $ignoreForeignKeyNames
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function __construct($database, $ignoreIndexNames, $ignoreForeignKeyNames)
     {
+        /** @var \Doctrine\DBAL\Connection $connection */
         $connection = DB::connection($database)->getDoctrineConnection();
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'text');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('jsonb', 'text');
@@ -63,19 +65,19 @@ class SchemaGenerator
     }
 
     /**
-     * @return mixed
+     * @return string[]
      */
-    public function getTables()
+    public function getTables(): array
     {
         return $this->schema->listTableNames();
     }
 
-    public function getFields($table)
+    public function getFields($table): array
     {
         return $this->fieldGenerator->generate($table, $this->schema, $this->database, $this->ignoreIndexNames);
     }
 
-    public function getForeignKeyConstraints($table)
+    public function getForeignKeyConstraints($table): array
     {
         return $this->foreignKeyGenerator->generate($table, $this->schema, $this->ignoreForeignKeyNames);
     }
