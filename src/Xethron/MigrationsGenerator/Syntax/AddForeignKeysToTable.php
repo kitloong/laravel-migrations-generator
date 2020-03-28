@@ -12,7 +12,7 @@ class AddForeignKeysToTable extends Table
      * @param  array  $foreignKey
      * @return string
      */
-    protected function getItem(array $foreignKey)
+    protected function getItem(array $foreignKey): string
     {
         $value = $foreignKey['field'];
         if (!empty($foreignKey['name'])) {

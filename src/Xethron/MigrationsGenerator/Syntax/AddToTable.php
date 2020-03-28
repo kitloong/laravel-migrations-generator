@@ -12,7 +12,7 @@ class AddToTable extends Table
      * @param  array  $field
      * @return string
      */
-    protected function getItem(array $field)
+    protected function getItem(array $field): string
     {
         $property = $field['field'];
 

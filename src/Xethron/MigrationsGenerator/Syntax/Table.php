@@ -10,21 +10,12 @@ use Way\Generators\Syntax\Table as WayTable;
  */
 abstract class Table extends WayTable
 {
-
     /**
      * @var string
      */
     protected $table;
 
-    /**
-     * @param  array  $fields
-     * @param  string  $table
-     * @param  string  $method
-     * @param  string  $connection
-     *
-     * @return string
-     */
-    public function run(array $fields, $table, $connection, $method = 'table')
+    public function run(array $fields, string $table, string $connection, $method = 'table'): string
     {
         $table = substr($table, strlen(DB::connection($connection)->getTablePrefix()));
         $this->table = $table;
@@ -41,7 +32,7 @@ abstract class Table extends WayTable
      * @param  array  $items
      * @return array
      */
-    protected function getItems(array $items)
+    protected function getItems(array $items): array
     {
         $result = array();
         foreach ($items as $item) {
@@ -54,13 +45,13 @@ abstract class Table extends WayTable
      * @param  array  $item
      * @return string
      */
-    abstract protected function getItem(array $item);
+    abstract protected function getItem(array $item): string;
 
     /**
-     * @param $decorators
+     * @param  string[]  $decorators
      * @return string
      */
-    protected function addDecorators($decorators)
+    protected function addDecorators(array $decorators): string
     {
         $output = '';
         foreach ($decorators as $decorator) {

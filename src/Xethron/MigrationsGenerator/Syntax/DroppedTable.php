@@ -14,7 +14,7 @@ class DroppedTable
      *
      * @return string
      */
-    public function drop($tableName, $connection)
+    public function drop(string $tableName, string $connection): string
     {
         if ($connection !== Config::get('database.default')) {
             $connectionMethod = 'connection(\''.$connection.'\')->';

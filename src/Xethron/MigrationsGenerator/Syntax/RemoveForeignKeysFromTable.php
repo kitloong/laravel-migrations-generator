@@ -12,7 +12,7 @@ class RemoveForeignKeysFromTable extends Table
      * @param  array  $foreignKey
      * @return string
      */
-    protected function getItem(array $foreignKey)
+    protected function getItem(array $foreignKey): string
     {
         $name = empty($foreignKey['name']) ? $this->createIndexName($foreignKey['field']) : $foreignKey['name'];
         return sprintf("\$table->dropForeign('%s');", $name);
@@ -24,7 +24,7 @@ class RemoveForeignKeysFromTable extends Table
      * @param  string  $column
      * @return string
      */
-    protected function createIndexName($column)
+    protected function createIndexName(string $column): string
     {
         $index = strtolower($this->table.'_'.$column.'_foreign');
 
