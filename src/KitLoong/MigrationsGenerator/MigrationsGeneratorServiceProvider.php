@@ -13,6 +13,8 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
      */
     protected $defer = false;
 
+    private const COMMAND = 'command.migration.generate';
+
     /**
      * Register the service provider.
      *
@@ -23,7 +25,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         $this->registerConfig();
 
         $this->app->singleton(
-            'migration.generate',
+            self::COMMAND,
             function (Application $app) {
                 return new MigrateGenerateCommand(
                     $app->make('Way\Generators\Generator'),
@@ -33,7 +35,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
             }
         );
 
-        $this->commands('migration.generate');
+        $this->commands(self::COMMAND);
 
         // Bind the Repository Interface to $app['migrations.repository']
         $this->app->bind('Illuminate\Database\Migrations\MigrationRepositoryInterface', function ($app) {
@@ -52,21 +54,14 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
     }
 
     /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return array();
-    }
-
-    /**
      * Register the config paths
      */
     protected function registerConfig()
     {
         $packageConfigFile = __DIR__.'/../../config/config.php';
-        $this->app['config']->set('generators.config', $this->app['files']->getRequire($packageConfigFile));
+        $this->app->get('config')->set(
+            'generators.config',
+            $this->app->get('files')->getRequire($packageConfigFile)
+        );
     }
 }

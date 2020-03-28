@@ -29,7 +29,7 @@ class MigrationsGeneratorServiceProviderTest extends TestCase
             ->andReturn(['file'])
             ->once();
 
-        $app_mock->shouldReceive('offsetGet')
+        $app_mock->shouldReceive('get')
             ->with('files')
             ->andReturn($fileMock)
             ->once();
@@ -39,7 +39,7 @@ class MigrationsGeneratorServiceProviderTest extends TestCase
             ->with('generators.config', ['file'])
             ->once();
 
-        $app_mock->shouldReceive('offsetGet')
+        $app_mock->shouldReceive('get')
             ->with('config')
             ->andReturn($configMock)
             ->once();
@@ -56,7 +56,7 @@ class MigrationsGeneratorServiceProviderTest extends TestCase
             ->shouldReceive('singleton')
             ->atLeast()->once()
             ->with(
-                'migration.generate',
+                'command.migration.generate',
                 Mockery::on(function (Closure $callback) {
                     $mock = $this->getAppMock();
 
