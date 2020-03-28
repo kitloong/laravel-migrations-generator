@@ -186,9 +186,13 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @param  string  $question  Question to ask
      * @return boolean          Answer from user
      */
-    protected function askYn($question)
+    protected function askYn(string $question): bool
     {
         $answer = $this->ask($question.' [Y/n] ');
+        if (empty($answer)) {
+            $answer = 'y';
+        }
+
         while (!in_array(strtolower($answer), ['y', 'n', 'yes', 'no'])) {
             $answer = $this->ask('Please choose either yes or no. ');
         }
@@ -201,7 +205,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @param  int  $default  Default Value (optional)
      * @return int           Answer
      */
-    protected function askNumeric($question, $default = null)
+    protected function askNumeric(string $question, $default = null): int
     {
         $ask = 'Your answer needs to be a numeric value';
 
