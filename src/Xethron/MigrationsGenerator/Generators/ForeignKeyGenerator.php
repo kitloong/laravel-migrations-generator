@@ -24,7 +24,7 @@ class ForeignKeyGenerator
         $foreignKeys = $schema->listTableForeignKeys($table);
 
         if (empty($foreignKeys)) {
-            return array();
+            return [];
         }
 
         foreach ($foreignKeys as $foreignKey) {
@@ -74,6 +74,6 @@ class ForeignKeyGenerator
     {
         $index = strtolower($this->table.'_'.$column.'_foreign');
 
-        return str_replace(array('-', '.'), '_', $index);
+        return str_replace(['-', '.'], '_', $index);
     }
 }

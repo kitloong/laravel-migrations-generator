@@ -24,8 +24,8 @@ class IndexGenerator
      */
     public function __construct(string $table, $schema, bool $ignoreIndexNames)
     {
-        $this->indexes = array();
-        $this->multiFieldIndexes = array();
+        $this->indexes = [];
+        $this->multiFieldIndexes = [];
         $this->ignoreIndexNames = $ignoreIndexNames;
 
         $indexes = $schema->listTableIndexes($table);

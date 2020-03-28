@@ -91,7 +91,7 @@ class FieldGenerator
      */
     protected function getFields($columns, IndexGenerator $indexGenerator)
     {
-        $fields = array();
+        $fields = [];
         foreach ($columns as $column) {
             $name = $column->getName();
             $type = $column->getType()->getName();
@@ -261,7 +261,7 @@ class FieldGenerator
      */
     protected function getMultiFieldIndexes(IndexGenerator $indexGenerator): array
     {
-        $indexes = array();
+        $indexes = [];
         foreach ($indexGenerator->getMultiFieldIndexes() as $index) {
             $indexArray = [
                 'field' => $index->columns,
