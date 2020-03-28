@@ -33,7 +33,7 @@ class FieldGenerator
      *
      * @return array
      */
-    public function generate($table, $schema, $database, $ignoreIndexNames)
+    public function generate(string $table, $schema, string $database, bool $ignoreIndexNames): array
     {
         $this->database = $database;
         $columns = $schema->listTableColumns($table);
@@ -52,7 +52,7 @@ class FieldGenerator
      * @param  string  $table
      * @return array|Collection
      */
-    protected function getEnum($table)
+    protected function getEnum(string $table)
     {
         try {
             $result = DB::table('information_schema.COLUMNS')
@@ -75,7 +75,7 @@ class FieldGenerator
      * @param  string  $table
      * @return array
      */
-    protected function setEnum(array $fields, $table)
+    protected function setEnum(array $fields, string $table): array
     {
         foreach ($this->getEnum($table) as $column) {
             $fields[$column->COLUMN_NAME]['type'] = 'enum';
@@ -177,10 +177,10 @@ class FieldGenerator
     }
 
     /**
-     * @param  int  $length
+     * @param  int|null  $length
      * @return int|void
      */
-    protected function getLength($length)
+    protected function getLength(?int $length)
     {
         if ($length and $length !== 255) {
             return $length;
@@ -192,7 +192,7 @@ class FieldGenerator
      * @param  string  $type
      * @return string
      */
-    protected function getDefault($default, &$type)
+    protected function getDefault(string $default, string &$type): string
     {
         if (in_array($default, ['CURRENT_TIMESTAMP'], true)) {
             if ($type == 'dateTime') {
@@ -210,7 +210,7 @@ class FieldGenerator
      * @param  int  $scale
      * @return string|void
      */
-    protected function getPrecision($precision, $scale)
+    protected function getPrecision(int $precision, int $scale)
     {
         if ($precision != 8 or $scale != 2) {
             $result = $precision;
@@ -226,7 +226,7 @@ class FieldGenerator
      * @param  string  $quotes
      * @return string
      */
-    protected function argsToString($args, $quotes = '\'')
+    protected function argsToString($args, string $quotes = '\''): string
     {
         if (is_array($args)) {
             $separator = $quotes.', '.$quotes;
@@ -245,7 +245,7 @@ class FieldGenerator
      * @param  string  $quotes
      * @return string
      */
-    protected function decorate($function, $args, $quotes = '\'')
+    protected function decorate(string $function, $args, string $quotes = '\''): string
     {
         if (!is_null($args)) {
             $args = $this->argsToString($args, $quotes);
@@ -259,7 +259,7 @@ class FieldGenerator
      * @param  IndexGenerator  $indexGenerator
      * @return array
      */
-    protected function getMultiFieldIndexes(IndexGenerator $indexGenerator)
+    protected function getMultiFieldIndexes(IndexGenerator $indexGenerator): array
     {
         $indexes = array();
         foreach ($indexGenerator->getMultiFieldIndexes() as $index) {

@@ -38,7 +38,7 @@ class SchemaGenerator
      * @param  bool  $ignoreForeignKeyNames
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function __construct($database, $ignoreIndexNames, $ignoreForeignKeyNames)
+    public function __construct(string $database, bool $ignoreIndexNames, bool $ignoreForeignKeyNames)
     {
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = DB::connection($database)->getDoctrineConnection();
@@ -72,12 +72,12 @@ class SchemaGenerator
         return $this->schema->listTableNames();
     }
 
-    public function getFields($table): array
+    public function getFields(string $table): array
     {
         return $this->fieldGenerator->generate($table, $this->schema, $this->database, $this->ignoreIndexNames);
     }
 
-    public function getForeignKeyConstraints($table): array
+    public function getForeignKeyConstraints(string $table): array
     {
         return $this->foreignKeyGenerator->generate($table, $this->schema, $this->ignoreForeignKeyNames);
     }

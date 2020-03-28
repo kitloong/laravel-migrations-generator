@@ -22,7 +22,7 @@ class IndexGenerator
      * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
      * @param  bool  $ignoreIndexNames
      */
-    public function __construct($table, $schema, $ignoreIndexNames)
+    public function __construct(string $table, $schema, bool $ignoreIndexNames)
     {
         $this->indexes = array();
         $this->multiFieldIndexes = array();
@@ -46,7 +46,7 @@ class IndexGenerator
      * @param  \Doctrine\DBAL\Schema\Index  $index
      * @return array
      */
-    protected function indexToArray($table, $index)
+    protected function indexToArray(string $table, $index): array
     {
         if ($index->isPrimary()) {
             $type = 'primary';
@@ -57,12 +57,13 @@ class IndexGenerator
         }
         $array = ['type' => $type, 'name' => null, 'columns' => $index->getColumns()];
 
-        if (!$this->ignoreIndexNames and !$this->isDefaultIndexName(
-            $table,
-            $index->getName(),
-            $type,
-            $index->getColumns()
-        )) {
+        if (!$this->ignoreIndexNames &&
+            !$this->isDefaultIndexName(
+                $table,
+                $index->getName(),
+                $type,
+                $index->getColumns()
+            )) {
             // Sent Index name to exclude spaces
             $array['name'] = str_replace(' ', '', $index->getName());
         }
@@ -72,17 +73,17 @@ class IndexGenerator
     /**
      * @param  string  $table  Table Name
      * @param  string  $type  Index Type
-     * @param  string|array  $columns  Column Names
+     * @param  string[]  $columns  Column Names
      * @return string
      */
-    protected function getDefaultIndexName($table, $type, $columns)
+    protected function getDefaultIndexName(string $table, string $type, array $columns): string
     {
         if ($type == 'primary') {
             return 'PRIMARY';
         }
-        if (is_array($columns)) {
-            $columns = implode('_', $columns);
-        }
+
+        $columns = implode('_', $columns);
+
         return $table.'_'.$columns.'_'.$type;
     }
 
@@ -90,10 +91,10 @@ class IndexGenerator
      * @param  string  $table  Table Name
      * @param  string  $name  Current Name
      * @param  string  $type  Index Type
-     * @param  string|array  $columns  Column Names
+     * @param  string[]  $columns  Column Names
      * @return bool
      */
-    protected function isDefaultIndexName($table, $name, $type, $columns)
+    protected function isDefaultIndexName(string $table, string $name, string $type, array $columns): bool
     {
         return $name == $this->getDefaultIndexName($table, $type, $columns);
     }
@@ -103,7 +104,7 @@ class IndexGenerator
      * @param  string  $name
      * @return null|object
      */
-    public function getIndex($name)
+    public function getIndex(string $name)
     {
         if (isset($this->indexes[$name])) {
             return (object) $this->indexes[$name];
@@ -112,9 +113,9 @@ class IndexGenerator
     }
 
     /**
-     * @return null|object|array
+     * @return array
      */
-    public function getMultiFieldIndexes()
+    public function getMultiFieldIndexes(): array
     {
         return $this->multiFieldIndexes;
     }

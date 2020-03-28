@@ -10,13 +10,13 @@ class ForeignKeyGenerator
     /**
      * Get array of foreign keys
      *
-     * @param  string  $table  Table Name
+     * @param  string  $table  Table name
      * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
-     * @param                                             $ignoreForeignKeyNames
+     * @param  bool  $ignoreForeignKeyNames
      *
      * @return array
      */
-    public function generate($table, $schema, $ignoreForeignKeyNames)
+    public function generate(string $table, $schema, bool $ignoreForeignKeyNames): array
     {
         $this->table = $table;
         $fields = [];
@@ -46,7 +46,7 @@ class ForeignKeyGenerator
      *
      * @return null|string
      */
-    private function getName($foreignKey, $ignoreForeignKeyNames)
+    private function getName($foreignKey, bool $ignoreForeignKeyNames): ?string
     {
         if ($ignoreForeignKeyNames or $this->isDefaultName($foreignKey)) {
             return null;
@@ -59,7 +59,7 @@ class ForeignKeyGenerator
      *
      * @return bool
      */
-    private function isDefaultName($foreignKey)
+    private function isDefaultName($foreignKey): bool
     {
         return $foreignKey->getName() === $this->createIndexName($foreignKey->getLocalColumns()[0]);
     }
@@ -70,7 +70,7 @@ class ForeignKeyGenerator
      * @param  string  $column
      * @return string
      */
-    protected function createIndexName($column)
+    protected function createIndexName(string $column): string
     {
         $index = strtolower($this->table.'_'.$column.'_foreign');
 
