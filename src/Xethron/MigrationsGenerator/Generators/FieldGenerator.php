@@ -23,6 +23,13 @@ class FieldGenerator
      */
     protected $database;
 
+    private $indexGenerator;
+
+    public function __construct(IndexGenerator $indexGenerator)
+    {
+        $this->indexGenerator = $indexGenerator;
+    }
+
     /**
      * Create array of all the fields for a table
      *
@@ -41,7 +48,7 @@ class FieldGenerator
             return [];
         }
 
-        $indexGenerator = new IndexGenerator($table, $schema, $ignoreIndexNames);
+        $indexGenerator = $this->indexGenerator->generate($table, $schema, $ignoreIndexNames);
         $fields = $this->setEnum($this->getFields($columns, $indexGenerator), $table);
         $indexes = $this->getMultiFieldIndexes($indexGenerator);
         return array_merge($fields, $indexes);

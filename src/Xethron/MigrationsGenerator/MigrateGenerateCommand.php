@@ -4,7 +4,6 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Way\Generators\Commands\GeneratorCommand;
-use Way\Generators\Compilers\TemplateCompiler;
 use Way\Generators\Generator;
 use Xethron\MigrationsGenerator\Generators\SchemaGenerator;
 use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
@@ -34,11 +33,6 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @var string
      */
     protected $description = 'Generate a migration from an existing table structure.';
-
-    /**
-     * @var TemplateCompiler
-     */
-    protected $compiler;
 
     /**
      * @var MigrationRepositoryInterface $repository
@@ -100,17 +94,12 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     protected $connection;
 
-    /**
-     * @param  Generator  $generator
-     * @param  TemplateCompiler  $compiler
-     * @param  MigrationRepositoryInterface  $repository
-     */
     public function __construct(
         Generator $generator,
-        TemplateCompiler $compiler,
+        SchemaGenerator $schemaGenerator,
         MigrationRepositoryInterface $repository
     ) {
-        $this->compiler = $compiler;
+        $this->schemaGenerator = $schemaGenerator;
         $this->repository = $repository;
 
         parent::__construct($generator);
@@ -138,16 +127,16 @@ class MigrateGenerateCommand extends GeneratorCommand
         $this->connection = $this->option('connection') ?: Config::get('database.default');
         $this->info('Using connection: '.$this->connection."\n");
 
-        $this->schemaGenerator = new SchemaGenerator(
+        $this->schemaGenerator->initialize(
             $this->connection,
             $this->option('defaultIndexNames'),
             $this->option('defaultFKNames')
         );
 
-        if ($this->argument('tables')) {
-            $tables = explode(',', (string) $this->argument('tables'));
-        } elseif ($this->option('tables')) {
-            $tables = explode(',', (string) $this->option('tables'));
+        if ($tableArg = (string) $this->argument('tables')) {
+            $tables = explode(',', $tableArg);
+        } elseif ($tableOpt = (string) $this->option('tables')) {
+            $tables = explode(',', $tableOpt);
         } else {
             $tables = $this->schemaGenerator->getTables();
         }
@@ -202,7 +191,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @param  int  $default  Default Value (optional)
      * @return int           Answer
      */
-    protected function askNumeric(string $question, $default = null): int
+    protected function askNumeric(string $question, $default = 0): int
     {
         $ask = 'Your answer needs to be a numeric value';
 
@@ -225,10 +214,10 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Generate tables and index migrations.
      *
-     * @param  array  $tables  List of tables to create migrations for
+     * @param  string[]  $tables  List of tables to create migrations for
      * @return void
      */
-    protected function generateTablesAndIndices(array $tables)
+    protected function generateTablesAndIndices($tables)
     {
         $this->method = 'create';
 
@@ -296,7 +285,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getDatePrefix()
+    protected function getDatePrefix(): string
     {
         return $this->datePrefix;
     }
@@ -309,7 +298,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected function getTemplateData(): array
     {
         if ($this->method == 'create') {
-            $up = (new AddToTable($this->compiler))->run(
+            $up = resolve(AddToTable::class)->run(
                 $this->fields,
                 $this->table,
                 $this->connection,
@@ -317,12 +306,12 @@ class MigrateGenerateCommand extends GeneratorCommand
             );
             $down = (new DroppedTable)->drop($this->table, $this->connection);
         } else {
-            $up = (new AddForeignKeysToTable($this->compiler))->run(
+            $up = resolve(AddForeignKeysToTable::class)->run(
                 $this->fields,
                 $this->table,
                 $this->connection
             );
-            $down = (new RemoveForeignKeysFromTable($this->compiler))->run(
+            $down = resolve(RemoveForeignKeysFromTable::class)->run(
                 $this->fields,
                 $this->table,
                 $this->connection
@@ -349,11 +338,11 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Remove all the tables to exclude from the array of tables
      *
-     * @param  array  $tables
+     * @param  string[]  $tables
      *
-     * @return array
+     * @return string[]
      */
-    protected function removeExcludedTables(array $tables)
+    protected function removeExcludedTables($tables)
     {
         $excludes = $this->getExcludedTables();
         $tables = array_diff($tables, $excludes);
@@ -364,7 +353,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Get a list of tables to exclude
      *
-     * @return array
+     * @return string[]
      */
     protected function getExcludedTables()
     {

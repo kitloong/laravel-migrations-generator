@@ -21,8 +21,9 @@ class IndexGenerator
      * @param  string  $table  Table Name
      * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
      * @param  bool  $ignoreIndexNames
+     * @return IndexGenerator
      */
-    public function __construct(string $table, $schema, bool $ignoreIndexNames)
+    public function generate(string $table, $schema, bool $ignoreIndexNames)
     {
         $this->indexes = [];
         $this->multiFieldIndexes = [];
@@ -39,6 +40,8 @@ class IndexGenerator
                 $this->multiFieldIndexes[] = (object) $indexArray;
             }
         }
+
+        return $this;
     }
 
     /**
