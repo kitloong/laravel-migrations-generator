@@ -84,20 +84,6 @@ class MigrationsGeneratorServiceProviderTest extends TestCase
                             $this->getMigrationRepositoryMock()
                         );
 
-                    $repository_mock = $this->getRepositoryMock();
-
-                    $repository_mock
-                        ->shouldReceive('get')
-                        ->atLeast()->once();
-
-                    $mock
-                        ->shouldReceive('make')
-                        ->atLeast()->once()
-                        ->with('config')
-                        ->andReturn(
-                            $repository_mock
-                        );
-
                     $this->assertInstanceOf(
                         'Xethron\MigrationsGenerator\MigrateGenerateCommand',
                         $callback($mock)
