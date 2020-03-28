@@ -27,8 +27,7 @@ abstract class Table
     {
         return File::get(__DIR__.'/../templates/schema.txt');
     }
-
-
+    
     /**
      * Replace $FIELDS$ in the given template
      * with the provided schema
