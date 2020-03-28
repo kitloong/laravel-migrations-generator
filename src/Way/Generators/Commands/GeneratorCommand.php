@@ -31,21 +31,21 @@ abstract class GeneratorCommand extends Command
      *
      * @return array
      */
-    abstract protected function getTemplateData();
+    abstract protected function getTemplateData(): array;
 
     /**
      * The path to where the file will be created.
      *
-     * @return mixed
+     * @return string
      */
-    abstract protected function getFileGenerationPath();
+    abstract protected function getFileGenerationPath(): string;
 
     /**
      * Get the path to the generator template.
      *
-     * @return mixed
+     * @return string
      */
-    abstract protected function getTemplatePath();
+    abstract protected function getTemplatePath(): string;
 
     /**
      * Compile and generate the file.
