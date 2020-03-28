@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Way\Generators\Commands\GeneratorCommand;
 use Way\Generators\Compilers\TemplateCompiler;
-use Way\Generators\Filesystem\Filesystem;
 use Way\Generators\Generator;
 use Xethron\MigrationsGenerator\Generators\SchemaGenerator;
 use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
@@ -29,11 +28,6 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @var string
      */
     protected $description = 'Generate a migration from an existing table structure.';
-
-    /**
-     * @var Filesystem
-     */
-    protected $file;
 
     /**
      * @var TemplateCompiler
@@ -106,19 +100,16 @@ class MigrateGenerateCommand extends GeneratorCommand
 
     /**
      * @param  Generator  $generator
-     * @param  Filesystem  $file
      * @param  TemplateCompiler  $compiler
      * @param  MigrationRepositoryInterface  $repository
      * @param  Config  $config
      */
     public function __construct(
         Generator $generator,
-        Filesystem $file,
         TemplateCompiler $compiler,
         MigrationRepositoryInterface $repository,
         Config $config
     ) {
-        $this->file = $file;
         $this->compiler = $compiler;
         $this->repository = $repository;
         $this->config = $config;
@@ -130,7 +121,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Execute the console command. Added for Laravel 5.5
      *
      * @return void
-     * @throws \Way\Generators\Filesystem\FileNotFound
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function handle()
     {
@@ -141,7 +132,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Execute the console command.
      *
      * @return void
-     * @throws \Way\Generators\Filesystem\FileNotFound
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function fire()
     {
@@ -238,7 +229,6 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @param  array  $tables  List of tables to create migrations for
      * @return void
-     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function generateTablesAndIndices(array $tables)
     {
@@ -258,7 +248,6 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @param  array  $tables  List of tables to create migrations for
      * @return void
-     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function generateForeignKeys(array $tables)
     {
@@ -277,7 +266,6 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Generate Migration for the current table.
      *
      * @return void
-     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function generate()
     {
@@ -319,12 +307,11 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Fetch the template data
      *
      * @return array
-     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function getTemplateData()
     {
         if ($this->method == 'create') {
-            $up = (new AddToTable($this->file, $this->compiler))->run(
+            $up = (new AddToTable($this->compiler))->run(
                 $this->fields,
                 $this->table,
                 $this->connection,
@@ -332,12 +319,12 @@ class MigrateGenerateCommand extends GeneratorCommand
             );
             $down = (new DroppedTable)->drop($this->table, $this->connection);
         } else {
-            $up = (new AddForeignKeysToTable($this->file, $this->compiler))->run(
+            $up = (new AddForeignKeysToTable($this->compiler))->run(
                 $this->fields,
                 $this->table,
                 $this->connection
             );
-            $down = (new RemoveForeignKeysFromTable($this->file, $this->compiler))->run(
+            $down = (new RemoveForeignKeysFromTable($this->compiler))->run(
                 $this->fields,
                 $this->table,
                 $this->connection

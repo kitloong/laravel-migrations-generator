@@ -1,39 +1,31 @@
 <?php namespace Way\Generators\Syntax;
 
+use Illuminate\Support\Facades\File;
 use Way\Generators\Compilers\TemplateCompiler;
-use Way\Generators\Filesystem\Filesystem;
 
 abstract class Table
 {
-    /**
-     * @var Filesystem
-     */
-    protected $file;
-
     /**
      * @var TemplateCompiler
      */
     protected $compiler;
 
     /**
-     * @param  Filesystem  $file
      * @param  TemplateCompiler  $compiler
      */
-    public function __construct(Filesystem $file, TemplateCompiler $compiler)
+    public function __construct(TemplateCompiler $compiler)
     {
         $this->compiler = $compiler;
-        $this->file = $file;
     }
 
     /**
      * Fetch the template of the schema
      *
      * @return string
-     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     protected function getTemplate(): string
     {
-        return $this->file->get(__DIR__.'/../templates/schema.txt');
+        return File::get(__DIR__.'/../templates/schema.txt');
     }
 
 

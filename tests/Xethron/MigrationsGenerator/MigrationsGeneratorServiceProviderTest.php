@@ -8,7 +8,6 @@ use KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 use Way\Generators\Compilers\TemplateCompiler;
-use Way\Generators\Filesystem\Filesystem;
 use Way\Generators\Generator;
 
 class MigrationsGeneratorServiceProviderTest extends TestCase
@@ -67,14 +66,6 @@ class MigrationsGeneratorServiceProviderTest extends TestCase
                         ->with('Way\Generators\Generator')
                         ->andReturn(
                             $this->getGeneratorMock()
-                        );
-
-                    $mock
-                        ->shouldReceive('make')
-                        ->atLeast()->once()
-                        ->with('Way\Generators\Filesystem\Filesystem')
-                        ->andReturn(
-                            $this->getFilesystemMock()
                         );
 
                     $mock
@@ -156,13 +147,6 @@ class MigrationsGeneratorServiceProviderTest extends TestCase
     protected function getGeneratorMock()
     {
         return Mockery::mock(Generator::class)
-            ->shouldAllowMockingProtectedMethods()
-            ->makePartial();
-    }
-
-    protected function getFilesystemMock()
-    {
-        return Mockery::mock(Filesystem::class)
             ->shouldAllowMockingProtectedMethods()
             ->makePartial();
     }

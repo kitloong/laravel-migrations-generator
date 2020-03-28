@@ -1,8 +1,8 @@
 <?php namespace Way\Generators\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Support\Facades\Config;
-use Way\Generators\Filesystem\FileAlreadyExists;
 use Way\Generators\Generator;
 
 abstract class GeneratorCommand extends Command
@@ -49,7 +49,6 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Compile and generate the file.
-     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     public function fire()
     {
@@ -63,7 +62,7 @@ abstract class GeneratorCommand extends Command
             );
 
             $this->info("Created: {$filePathToGenerate}");
-        } catch (FileAlreadyExists $e) {
+        } catch (FileExistsException $e) {
             $this->error("The file, {$filePathToGenerate}, already exists! I don't want to overwrite it.");
         }
     }

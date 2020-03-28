@@ -27,7 +27,6 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
             function (Application $app) {
                 return new MigrateGenerateCommand(
                     $app->make('Way\Generators\Generator'),
-                    $app->make('Way\Generators\Filesystem\Filesystem'),
                     $app->make('Way\Generators\Compilers\TemplateCompiler'),
                     $app->make('migration.repository'),
                     $app->make('config')

@@ -22,7 +22,6 @@ abstract class Table extends WayTable
      * @param  null|string  $connection
      *
      * @return string
-     * @throws \Way\Generators\Filesystem\FileNotFound
      */
     public function run(array $fields, $table, $connection = null, $method = 'table')
     {
