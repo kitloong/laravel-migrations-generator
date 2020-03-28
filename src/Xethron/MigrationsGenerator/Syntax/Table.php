@@ -26,7 +26,7 @@ abstract class Table extends WayTable
      */
     public function run(array $fields, $table, $connection, $method = 'table')
     {
-        $table = substr($table, strlen(DB::getTablePrefix()));
+        $table = substr($table, strlen(DB::connection($connection)->getTablePrefix()));
         $this->table = $table;
         if ($connection !== Config::get('database.default')) {
             $method = 'connection(\''.$connection.'\')->'.$method;
