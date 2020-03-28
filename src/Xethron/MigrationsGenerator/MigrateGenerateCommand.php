@@ -191,7 +191,7 @@ class MigrateGenerateCommand extends GeneratorCommand
         $answer = $this->ask($question.' [Y/n] ') ?? 'y';
 
         while (!in_array(strtolower($answer), ['y', 'n', 'yes', 'no'])) {
-            $answer = $this->ask('Please choose either yes or no. ');
+            $answer = $this->ask('Please choose either yes or no. [Y/n]') ?? 'y';
         }
         return in_array(strtolower($answer), ['y', 'yes']);
     }
