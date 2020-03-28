@@ -34,7 +34,7 @@ abstract class Table extends WayTable
      */
     protected function getItems(array $items): array
     {
-        $result = array();
+        $result = [];
         foreach ($items as $item) {
             $result[] = $this->getItem($item);
         }
