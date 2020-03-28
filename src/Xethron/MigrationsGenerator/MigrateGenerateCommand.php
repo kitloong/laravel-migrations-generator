@@ -1,10 +1,8 @@
 <?php namespace Xethron\MigrationsGenerator;
 
-use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Way\Generators\Commands\GeneratorCommand;
 use Way\Generators\Compilers\TemplateCompiler;
 use Way\Generators\Generator;
@@ -18,10 +16,18 @@ class MigrateGenerateCommand extends GeneratorCommand
 {
 
     /**
-     * The console command name.
+     * The name and signature of the console command.
      * @var string
      */
-    protected $name = 'migrate:generate';
+    protected $signature = 'migrate:generate
+                {tables? : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
+                {--c|connection= : The database connection to use}
+                {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
+                {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
+                {--p|path= : Where should the file be created?}
+                {--tp|templatePath= : The location of the template for this generator}
+                {--defaultIndexNames : Don\'t use db index names for migrations}
+                {--defaultFKNames : Don\'t use db foreign key names for migrations}';
 
     /**
      * The console command description.
@@ -38,11 +44,6 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @var MigrationRepositoryInterface $repository
      */
     protected $repository;
-
-    /**
-     * @var Config $config
-     */
-    protected $config;
 
     /**
      * @var SchemaGenerator
@@ -102,17 +103,14 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @param  Generator  $generator
      * @param  TemplateCompiler  $compiler
      * @param  MigrationRepositoryInterface  $repository
-     * @param  Config  $config
      */
     public function __construct(
         Generator $generator,
         TemplateCompiler $compiler,
-        MigrationRepositoryInterface $repository,
-        Config $config
+        MigrationRepositoryInterface $repository
     ) {
         $this->compiler = $compiler;
         $this->repository = $repository;
-        $this->config = $config;
 
         parent::__construct($generator);
     }
@@ -136,9 +134,9 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     public function fire()
     {
-        $connection = (string) $this->option('connection');
+        $connection = $this->option('connection') ?: Config::get('database.default');
         $this->info('Using connection: '.$connection."\n");
-        if ($connection !== $this->config->get('database.default')) {
+        if ($connection !== Config::get('database.default')) {
             $this->connection = $connection;
         }
         $this->schemaGenerator = new SchemaGenerator(
@@ -284,7 +282,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @return string
      */
-    protected function getFileGenerationPath()
+    protected function getFileGenerationPath(): string
     {
         $path = $this->getPathByOptionOrConfig('path', 'migration_target_path');
         $migrationName = str_replace('/', '_', $this->migrationName);
@@ -308,7 +306,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @return array
      */
-    protected function getTemplateData()
+    protected function getTemplateData(): array
     {
         if ($this->method == 'create') {
             $up = (new AddToTable($this->compiler))->run(
@@ -341,53 +339,11 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Get path to template for generator
      *
-     * @return array|bool|mixed|string|null
+     * @return string
      */
-    protected function getTemplatePath()
+    protected function getTemplatePath(): string
     {
         return $this->getPathByOptionOrConfig('templatePath', 'migration_template_path');
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            [
-                'tables', InputArgument::OPTIONAL,
-                'A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments'
-            ],
-        ];
-    }
-
-    /**
-     * Get the console command options.
-     *
-     * @return array
-     */
-    protected function getOptions()
-    {
-        return [
-            [
-                'connection', 'c', InputOption::VALUE_OPTIONAL, 'The database connection to use.',
-                $this->config->get('database.default')
-            ],
-            [
-                'tables', 't', InputOption::VALUE_OPTIONAL,
-                'A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments'
-            ],
-            [
-                'ignore', 'i', InputOption::VALUE_OPTIONAL,
-                'A list of Tables you wish to ignore, separated by a comma: users,posts,comments'
-            ],
-            ['path', 'p', InputOption::VALUE_OPTIONAL, 'Where should the file be created?'],
-            ['templatePath', 'tp', InputOption::VALUE_OPTIONAL, 'The location of the template for this generator'],
-            ['defaultIndexNames', null, InputOption::VALUE_NONE, 'Don\'t use db index names for migrations'],
-            ['defaultFKNames', null, InputOption::VALUE_NONE, 'Don\'t use db foreign key names for migrations'],
-        ];
     }
 
     /**
