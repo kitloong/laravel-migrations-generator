@@ -61,6 +61,62 @@ class FieldGeneratorTest extends TestCase
         $this->assertEmpty($fields);
     }
 
+    public function testGenerateEmptyField()
+    {
+        $this->mock(DatetimeField::class, function (MockInterface $mock) {
+            $mock->shouldReceive('isUseTimestamps')
+                ->andReturnFalse();
+        });
+
+        $types = [
+            Types::INTEGER,
+        ];
+
+        foreach ($types as $type) {
+            $table = Mockery::mock(Table::class);
+            $index = ['index'];
+            $column = Mockery::mock(Column::class);
+            $indexes = collect([$index]);
+
+            $table->shouldReceive('getName')
+                ->andReturn('table');
+            $table->shouldReceive('getColumns')
+                ->andReturn([$column]);
+
+            $column->shouldReceive('getName')
+                ->andReturn('name');
+            $column->shouldReceive('getNotnull')
+                ->andReturnTrue();
+            $column->shouldReceive('getDefault')
+                ->andReturnNull();
+            $column->shouldReceive('getComment')
+                ->andReturnNull();
+            $column->shouldReceive('getType->getName')
+                ->andReturn($type);
+
+            $field = [
+                'field' => 'name',
+                'type' => $type,
+                'args' => [],
+                'decorators' => []
+            ];
+
+            $this->mock(IntegerField::class, function (MockInterface $mock) use ($field, $column, $indexes) {
+                $returnField = $field;
+                $returnField['field'] = 'returned';
+                $mock->shouldReceive('makeField')
+                    ->with($field, $column, $indexes)
+                    ->andReturn([]);
+            });
+
+            /** @var FieldGenerator $fieldGenerator */
+            $fieldGenerator = resolve(FieldGenerator::class);
+
+            $fields = $fieldGenerator->generate($table, $indexes);
+            $this->assertEmpty($fields);
+        }
+    }
+
     public function testGenerateInteger()
     {
         $this->mock(DatetimeField::class, function (MockInterface $mock) {
