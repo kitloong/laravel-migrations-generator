@@ -4,7 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Way\Generators\Compilers\Compiler;
 use Way\Generators\Compilers\TemplateCompiler;
-use Xethron\MigrationsGenerator\Generators\SchemaGenerator;
+use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
 use Xethron\MigrationsGenerator\MigrateGenerateCommand;
 use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
 use Xethron\MigrationsGenerator\Syntax\AddToTable;
@@ -53,6 +53,12 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         $this->app->bind(RemoveForeignKeysFromTable::class, RemoveForeignKeysFromTable::class);
 
         $this->app->singleton(Compiler::class, TemplateCompiler::class);
+
+        $this->app->singleton('connection', function () {
+            $connection = new Connection();
+            $connection->setConnection($this->app->get('config')->get('database.default'));
+            return $connection;
+        });
     }
 
     /**
