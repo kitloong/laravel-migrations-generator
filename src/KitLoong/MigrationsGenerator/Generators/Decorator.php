@@ -10,8 +10,6 @@ namespace KitLoong\MigrationsGenerator\Generators;
 
 final class Decorator
 {
-    //public function decorateDefault
-
     /**
      * Escape content with ' and wrap content with '
      *

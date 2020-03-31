@@ -76,7 +76,6 @@ class SchemaGenerator
      */
     public function initialize(string $database, bool $ignoreIndexNames, bool $ignoreForeignKeyNames)
     {
-        /** @var \Doctrine\DBAL\Connection $connection */
         Type::addType('double', DoubleType::class);
         Type::addType('enum', EnumType::class);
         Type::addType('geometry', GeometryType::class);
@@ -95,6 +94,7 @@ class SchemaGenerator
         Type::addType('uuid', UUIDType::class);
         Type::addType('year', YearType::class);
 
+        /** @var \Doctrine\DBAL\Connection $connection */
         $connection = DB::connection($database)->getDoctrineConnection();
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('double', 'double');

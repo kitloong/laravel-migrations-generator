@@ -9,12 +9,12 @@ class Generator
     /**
      * Run the generator
      *
-     * @param $templatePath
-     * @param $templateData
-     * @param $filePathToGenerate
+     * @param  string  $templatePath
+     * @param  array  $templateData
+     * @param  string  $filePathToGenerate
      * @throws FileExistsException
      */
-    public function make($templatePath, $templateData, $filePathToGenerate)
+    public function make(string $templatePath, array $templateData, string $filePathToGenerate)
     {
         // We first need to compile the template,
         // according to the data that we provide.
@@ -32,12 +32,12 @@ class Generator
     /**
      * Compile the file
      *
-     * @param $templatePath
+     * @param  string  $templatePath
      * @param  array  $data
      * @param  TemplateCompiler  $compiler
      * @return mixed
      */
-    public function compile($templatePath, array $data, TemplateCompiler $compiler)
+    public function compile(string $templatePath, array $data, TemplateCompiler $compiler)
     {
         return $compiler->compile(File::get($templatePath), $data);
     }

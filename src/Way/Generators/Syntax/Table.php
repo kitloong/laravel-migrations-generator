@@ -34,7 +34,7 @@ abstract class Table
      *
      * @param  array  $schema
      * @param  string  $template
-     * @return mixed
+     * @return string
      */
     protected function replaceFieldsWith(array $schema, string $template): string
     {
