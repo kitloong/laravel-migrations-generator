@@ -6,8 +6,9 @@
  * Time: 14:09
  */
 
-namespace KitLoong\MigrationsGenerator\Generators;
+namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
+use KitLoong\MigrationsGenerator\Generators\Decorator;
 use Orchestra\Testbench\TestCase;
 
 class DecoratorTest extends TestCase
