@@ -142,7 +142,7 @@ class SchemaGenerator
     public function getFields(string $tableName): array
     {
         $table = $this->schema->listTableDetails($tableName);
-        $indexes = $this->indexGenerator->generate($table);
+        $indexes = $this->indexGenerator->generate($table, $this->ignoreIndexNames);
         $singleColIndexes = $indexes['single'];
         $multiColIndexes = $indexes['multi'];
         $fields = $this->fieldGenerator->generate($table, $singleColIndexes);

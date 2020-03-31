@@ -24,9 +24,10 @@ class IndexGenerator
 
     /**
      * @param  Table  $table
+     * @param  bool  $ignoreIndexNames
      * @return Collection[]
      */
-    public function generate(Table $table): array
+    public function generate(Table $table, bool $ignoreIndexNames): array
     {
         $tableName = $table->getName();
 
@@ -48,7 +49,8 @@ class IndexGenerator
                 in_array('spatial', $index->getFlags())) {
                 $indexField['type'] = IndexType::SPATIAL_INDEX;
             }
-            if (!$this->useLaravelStyleDefaultName($tableName, $index, $indexField['type'])) {
+
+            if (!$ignoreIndexNames && !$this->useLaravelStyleDefaultName($tableName, $index, $indexField['type'])) {
                 $indexField['args'][] = $this->decorateName($index->getName());
             }
 
