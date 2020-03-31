@@ -1,7 +1,7 @@
 # Laravel Migrations Generator
 
 [![Build Status](https://travis-ci.org/kitloong/laravel-migrations-generator.svg)](https://travis-ci.org/kitloong/laravel-migrations-generator)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kitloong/laravel-migrations-generator/badges/quality-score.png)](https://scrutinizer-ci.com/g/kitloong/laravel-migrations-generator/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kitloong/laravel-migrations-generator/badges/quality-score.png?b=3.x)](https://scrutinizer-ci.com/g/kitloong/laravel-migrations-generator/?branch=3.x)
 
 Generate Laravel Migrations from an existing database, including indexes and foreign keys!
 
