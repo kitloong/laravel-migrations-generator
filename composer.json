@@ -28,8 +28,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Xethron\\MigrationsGenerator\\Tests\\": "tests/Xethron/MigrationsGenerator",
-            "KitLoong\\MigrationsGenerator\\Tests\\": "tests/KitLoong/MigrationsGenerator"
+			"Tests\\": "tests/"
 		}
 	},
 	"extra": {
