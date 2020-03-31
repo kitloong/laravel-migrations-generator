@@ -45,7 +45,7 @@ class DecimalField
     private function getDecimalPrecision(int $precision, int $scale): array
     {
         $return = [];
-        if ($precision != self::DEFAULT_PRECISION or $scale != self::DEFAULT_SCALE) {
+        if ($precision != self::DEFAULT_PRECISION || $scale != self::DEFAULT_SCALE) {
             $return[] = $precision;
             if ($scale != self::DEFAULT_SCALE) {
                 $return[] = $scale;
