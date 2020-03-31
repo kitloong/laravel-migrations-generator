@@ -13,6 +13,9 @@
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src</directory>
+            <exclude>
+                <directory>src/KitLoong/MigrationsGenerator/Types</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
