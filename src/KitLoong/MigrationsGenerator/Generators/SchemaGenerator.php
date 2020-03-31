@@ -16,6 +16,7 @@ use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryType;
 use KitLoong\MigrationsGenerator\Types\MediumIntegerType;
 use KitLoong\MigrationsGenerator\Types\SetType;
+use KitLoong\MigrationsGenerator\Types\TimestampType;
 use KitLoong\MigrationsGenerator\Types\UUIDType;
 use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
 
@@ -73,6 +74,7 @@ class SchemaGenerator
         Type::addType('geometrycollection', GeometryCollectionType::class);
         Type::addType('mediumint', MediumIntegerType::class);
         Type::addType('set', SetType::class);
+        Type::addType('timestamp', TimestampType::class);
         Type::addType('uuid', UUIDType::class);
 
         $connection = DB::connection($database)->getDoctrineConnection();
@@ -84,6 +86,7 @@ class SchemaGenerator
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'json');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('mediumint', 'mediumint');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('set', 'set');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('timestamp', 'timestamp');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('uuid', 'uuid');
 
         // Postgres types
