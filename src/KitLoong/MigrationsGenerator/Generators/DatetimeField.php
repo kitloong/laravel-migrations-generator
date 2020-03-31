@@ -44,10 +44,10 @@ class DatetimeField
         }
 
         if ($column->getLength() && $column->getLength() > 0) {
-            $field['args'] = $column->getLength();
             if ($field['type'] === ColumnType::SOFT_DELETES) {
-                $field['args'] = "'".ColumnName::DELETED_AT."', ".$column->getLength();
+                $field['args'][] = "'".ColumnName::DELETED_AT."'";
             }
+            $field['args'][] = $column->getLength();
         }
         return $field;
     }
@@ -58,7 +58,7 @@ class DatetimeField
             return ColumnModifier::USE_CURRENT;
         } else {
             $default = $this->decorator->columnDefaultToString($column->getDefault());
-            return $this->decorator->decorate(ColumnModifier::DEFAULT, $default);
+            return $this->decorator->decorate(ColumnModifier::DEFAULT, [$default]);
         }
     }
 

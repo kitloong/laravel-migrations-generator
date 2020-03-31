@@ -23,8 +23,11 @@ class EnumField
     {
         $column = DB::select("SHOW COLUMNS FROM ${tableName} where Field = '${field['field']}' AND Type LIKE 'enum(%'");
         if (count($column) > 0) {
-            $field['args'] = str_replace('enum(', '[', $column[0]->Type);
-            $field['args'] = substr($field['args'], 0, -1).']';
+            $field['args'][] = substr(
+                str_replace('enum(', '[', $column[0]->Type),
+                0,
+                -1
+            ).']';
         }
         return $field;
     }

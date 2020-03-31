@@ -22,13 +22,13 @@ class StringField
         } else {
             if ($column->getLength()) {
                 if ($column->getLength() !== Builder::$defaultStringLength) {
-                    $field['args'] = $column->getLength();
+                    $field['args'][] = $column->getLength();
                 }
 
                 if ($field['field'] === ColumnName::REMEMBER_TOKEN && $column->getLength() === 100) {
                     $field['type'] = ColumnType::REMEMBER_TOKEN;
                     $field['field'] = null;
-                    $field['args'] = null;
+                    $field['args'] = [];
                 }
             }
         }

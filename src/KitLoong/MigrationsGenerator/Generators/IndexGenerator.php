@@ -37,7 +37,7 @@ class IndexGenerator
             $indexField = [
                 'field' => array_map([$this->decorator, 'addSlash'], $index->getColumns()),
                 'type' => IndexType::INDEX,
-                'args' => null,
+                'args' => [],
             ];
 
             if ($index->isPrimary()) {
@@ -49,7 +49,7 @@ class IndexGenerator
                 $indexField['type'] = IndexType::SPATIAL_INDEX;
             }
             if (!$this->useLaravelStyleDefaultName($tableName, $index, $indexField['type'])) {
-                $indexField['args'] = $this->decorateName($index->getName());
+                $indexField['args'][] = $this->decorateName($index->getName());
             }
 
             if (count($index->getColumns()) === 1) {

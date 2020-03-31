@@ -34,19 +34,19 @@ class AddToTable extends Table
 
         // If we have args, then it needs
         // to be formatted a bit differently
-        if (isset($field['args'])) {
+        if (!empty($field['args'])) {
             if ($property !== null) {
                 $output = sprintf(
                     "\$table->%s(%s, %s)",
                     $type,
                     $property,
-                    $field['args']
+                    implode(', ', $field['args'])
                 );
             } else {
                 $output = sprintf(
                     "\$table->%s(%s)",
                     $type,
-                    $field['args']
+                    implode(', ', $field['args'])
                 );
             }
         }

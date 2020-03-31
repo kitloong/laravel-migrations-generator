@@ -33,7 +33,7 @@ class IntegerField
                 $field['decorators'][] = ColumnModifier::UNSIGNED;
             }
             if ($column->getAutoincrement()) {
-                $field['args'] = 'true';
+                $field['args'][] = 'true';
                 $indexes->forget($field['field']);
             }
         }

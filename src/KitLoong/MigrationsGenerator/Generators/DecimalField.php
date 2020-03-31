@@ -26,7 +26,11 @@ class DecimalField
 
     public function makeField(array $field, Column $column): array
     {
-        $field['args'] = $this->getDecimalPrecision($column->getPrecision(), $column->getScale());
+        $args = $this->getDecimalPrecision($column->getPrecision(), $column->getScale());
+        if (!empty($args)) {
+            $field['args'] = $args;
+        }
+
         if ($column->getUnsigned()) {
             $field['decorators'][] = ColumnModifier::UNSIGNED;
         }
@@ -36,17 +40,17 @@ class DecimalField
     /**
      * @param  int  $precision
      * @param  int  $scale
-     * @return string|null
+     * @return array
      */
-    private function getDecimalPrecision(int $precision, int $scale): ?string
+    private function getDecimalPrecision(int $precision, int $scale): array
     {
+        $return = [];
         if ($precision != self::DEFAULT_PRECISION or $scale != self::DEFAULT_SCALE) {
-            $result = $precision;
+            $return[] = $precision;
             if ($scale != self::DEFAULT_SCALE) {
-                $result .= ', '.$scale;
+                $return[] = $scale;
             }
-            return $result;
         }
-        return null;
+        return $return;
     }
 }

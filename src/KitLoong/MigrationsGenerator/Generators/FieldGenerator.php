@@ -81,7 +81,7 @@ class FieldGenerator
              *  field : Field name,
              *  type  : Migration type method, eg: increments, string
              *  args  : Migration type arguments,
-             *      eg: decimal('amount', 8, 2) => decimal('amount', args)
+             *      eg: decimal('amount', 8, 2) => decimal('amount', args[0], args[1])
              *  decorators
              * ]
              */
@@ -90,12 +90,12 @@ class FieldGenerator
             $field = [
                 'field' => $this->decorator->addSlash($column->getName()),
                 'type' => $dbalType,
-                'args' => null,
+                'args' => [],
                 'decorators' => []
             ];
 
             $field = $this->makeLaravelFieldTypeMethod($table->getName(), $field, $column, $indexes, $useTimestamps);
-            
+
             if (empty($field)) {
                 continue;
             }
@@ -184,14 +184,14 @@ class FieldGenerator
                 $default = $this->decorator->columnDefaultToString($column->getDefault());
         }
 
-        return $this->decorator->decorate(ColumnModifier::DEFAULT, $default);
+        return $this->decorator->decorate(ColumnModifier::DEFAULT, [$default]);
     }
 
     private function decorateComment(string $comment): string
     {
         return $this->decorator->decorate(
             ColumnModifier::COMMENT,
-            "'".$this->decorator->addSlash($comment)."'"
+            ["'".$this->decorator->addSlash($comment)."'"]
         );
     }
 
@@ -200,7 +200,7 @@ class FieldGenerator
         return $this->decorator->decorate(
             $index['type'],
             // $index['args'] is wrapped with '
-            ($index['args'] !== null ? $index['args'] : null)
+            (!empty($index['args'][0]) ? [$index['args'][0]] : [])
         );
     }
 

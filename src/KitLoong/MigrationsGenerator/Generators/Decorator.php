@@ -29,13 +29,13 @@ final class Decorator
     /**
      * Get Decorator
      * @param  string  $function
-     * @param  string|array|null  $args
+     * @param  array  $args
      * @return string
      */
-    public function decorate(string $function, $args): string
+    public function decorate(string $function, array $args): string
     {
-        if (!is_null($args)) {
-            return $function.'('.$args.')';
+        if (!empty($args)) {
+            return $function.'('.implode(', ', $args).')';
         } else {
             return $function;
         }
