@@ -8,7 +8,7 @@
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
-final class Decorator
+class Decorator
 {
     /**
      * Escape content with ' and wrap content with '
