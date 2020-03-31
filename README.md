@@ -7,6 +7,20 @@ Generate Laravel Migrations from an existing database, including indexes and for
 
 This package is cloned from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
 
+## Changes
+
+1. Major rewrote on `FieldGenerator` and `IndexGenerator`.
+1. Added `spatial` data type support such as `gemetry`, `point`, etc.
+1. Support more Laravel migration types.
+1. Added `spatialIndex` support.
+1. `timestamp` and `datetime` support precision.
+1. Able generate `softDeletes`, `rememberToken`, `timestamps` types.
+1. Support `set` for MySQL
+1. It is now possible to generate nullable `timestamp`
+1. Removed unused classes.
+1. Fixed miscellaneous bugs.
+1. Added UT!
+
 ## Version Compatibility
 
 |Laravel|Version|
@@ -44,6 +58,7 @@ Thanks to Jeffrey Way for his amazing Laravel-4-Generators package. This package
 
 ## Contributors
 
+Kit Loong
 Bernhard Breytenbach ([@BBreyten](https://twitter.com/BBreyten))
 
 ## License
