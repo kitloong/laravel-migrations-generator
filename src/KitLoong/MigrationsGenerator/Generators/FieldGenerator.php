@@ -12,6 +12,10 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
 use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\Generators\Modifier\CommentModifier;
+use KitLoong\MigrationsGenerator\Generators\Modifier\DefaultModifier;
+use KitLoong\MigrationsGenerator\Generators\Modifier\IndexModifier;
+use KitLoong\MigrationsGenerator\Generators\Modifier\NullableModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 
@@ -25,6 +29,10 @@ class FieldGenerator
     private $enumField;
     private $setField;
     private $otherField;
+    private $nullableModifier;
+    private $defaultModifier;
+    private $indexModifier;
+    private $commentModifier;
 
     public function __construct(
         Decorator $decorator,
@@ -34,7 +42,11 @@ class FieldGenerator
         StringField $stringField,
         EnumField $enumField,
         SetField $setField,
-        OtherField $otherField
+        OtherField $otherField,
+        NullableModifier $nullableModifier,
+        DefaultModifier $defaultModifier,
+        IndexModifier $indexModifier,
+        CommentModifier $commentModifier
     ) {
         $this->decorator = $decorator;
         $this->integerField = $integerField;
@@ -44,6 +56,10 @@ class FieldGenerator
         $this->enumField = $enumField;
         $this->setField = $setField;
         $this->otherField = $otherField;
+        $this->nullableModifier = $nullableModifier;
+        $this->defaultModifier = $defaultModifier;
+        $this->indexModifier = $indexModifier;
+        $this->commentModifier = $commentModifier;
     }
 
     /**
@@ -51,7 +67,6 @@ class FieldGenerator
      * @var array
      */
     public static $fieldTypeMap = [
-        'tinyint' => ColumnType::TINY_INTEGER,
         'smallint' => ColumnType::SMALL_INTEGER,
         'mediumint' => ColumnType::MEDIUM_INTEGER,
         'bigint' => ColumnType::BIG_INTEGER,
@@ -101,21 +116,21 @@ class FieldGenerator
             }
 
             if (!$column->getNotnull()) {
-                if ($this->shouldAddNullableModifier($field['type'])) {
+                if ($this->nullableModifier->shouldAddNullableModifier($field['type'])) {
                     $field['decorators'][] = ColumnModifier::NULLABLE;
                 }
             }
 
             if ($column->getDefault() !== null) {
-                $field['decorators'][] = $this->decorateDefault($dbalType, $column);
+                $field['decorators'][] = $this->defaultModifier->generate($dbalType, $column);
             }
 
             if ($indexes->has($field['field'])) {
-                $field['decorators'][] = $this->decorateIndex($indexes->get($field['field']));
+                $field['decorators'][] = $this->indexModifier->generate($indexes->get($field['field']));
             }
 
             if ($column->getComment() !== null) {
-                $field['decorators'][] = $this->decorateComment($column->getComment());
+                $field['decorators'][] = $this->commentModifier->generate($column->getComment());
             }
 
             $fields[] = $field;
@@ -160,54 +175,5 @@ class FieldGenerator
             default:
                 return $this->otherField->makeField($field);
         }
-    }
-
-    /**
-     * @param  string  $dbalType
-     * @param  Column  $column
-     * @return string
-     */
-    private function decorateDefault(string $dbalType, Column $column): string
-    {
-        switch ($dbalType) {
-            case Types::SMALLINT:
-            case Types::INTEGER:
-            case Types::BIGINT:
-            case 'mediumint':
-            case Types::DECIMAL:
-            case Types::FLOAT:
-            case 'double':
-                $default = $column->getDefault();
-                break;
-            case Types::DATETIME_MUTABLE:
-            case 'timestamp':
-                return $this->datetimeField->makeDefault($column);
-            default:
-                $default = $this->decorator->columnDefaultToString($column->getDefault());
-        }
-
-        return $this->decorator->decorate(ColumnModifier::DEFAULT, [$default]);
-    }
-
-    private function decorateComment(string $comment): string
-    {
-        return $this->decorator->decorate(
-            ColumnModifier::COMMENT,
-            ["'".$this->decorator->addSlash($comment)."'"]
-        );
-    }
-
-    private function decorateIndex(array $index): string
-    {
-        return $this->decorator->decorate(
-            $index['type'],
-            // $index['args'] is wrapped with '
-            (!empty($index['args'][0]) ? [$index['args'][0]] : [])
-        );
-    }
-
-    private function shouldAddNullableModifier(string $type): bool
-    {
-        return !in_array($type, [ColumnType::SOFT_DELETES, ColumnType::REMEMBER_TOKEN, ColumnType::TIMESTAMPS]);
     }
 }
