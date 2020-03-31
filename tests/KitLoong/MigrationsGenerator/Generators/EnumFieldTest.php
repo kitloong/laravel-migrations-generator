@@ -9,6 +9,7 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Connection;
 use KitLoong\MigrationsGenerator\Generators\EnumField;
 use Orchestra\Testbench\TestCase;
 
@@ -24,7 +25,11 @@ class EnumFieldTest extends TestCase
             'args' => []
         ];
 
-        DB::shouldReceive('select')
+        $this->app->singleton('connection', function () {
+            return new Connection('mysql');
+        });
+
+        DB::shouldReceive('connection->select')
             ->with("SHOW COLUMNS FROM `table` where Field = 'enum_field' AND Type LIKE 'enum(%'")
             ->andReturn([
                 (object) ['Type' => "enum('value1', 'value2' , 'value3')"]

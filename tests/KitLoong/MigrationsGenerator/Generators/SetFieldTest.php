@@ -9,6 +9,7 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Connection;
 use KitLoong\MigrationsGenerator\Generators\SetField;
 use Orchestra\Testbench\TestCase;
 
@@ -24,7 +25,11 @@ class SetFieldTest extends TestCase
             'args' => []
         ];
 
-        DB::shouldReceive('select')
+        $this->app->singleton('connection', function () {
+            return new Connection('mysql');
+        });
+
+        DB::shouldReceive('connection->select')
             ->with("SHOW COLUMNS FROM `table` where Field = 'set_field' AND Type LIKE 'set(%'")
             ->andReturn([
                 (object) ['Type' => "set('value1', 'value2' , 'value3')"]
