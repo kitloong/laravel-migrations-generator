@@ -21,6 +21,7 @@ final class ColumnType
     const GEOMETRY = 'geometry';
     const GEOMETRY_COLLECTION = 'geometryCollection';
     const INCREMENTS = 'increments';
+    const INTEGER = 'integer';
     const IP_ADDRESS = 'ipAddress';
     const JSON = 'json';
     const JSONB = 'jsonb';
