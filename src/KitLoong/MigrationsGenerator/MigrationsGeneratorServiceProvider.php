@@ -55,9 +55,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         $this->app->singleton(Compiler::class, TemplateCompiler::class);
 
         $this->app->singleton('connection', function () {
-            $connection = new Connection();
-            $connection->setConnection($this->app->get('config')->get('database.default'));
-            return $connection;
+            return new Connection($this->app->get('config')->get('database.default'));
         });
     }
 

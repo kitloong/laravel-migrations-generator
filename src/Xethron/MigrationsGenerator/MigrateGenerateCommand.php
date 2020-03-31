@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Way\Generators\Commands\GeneratorCommand;
 use Way\Generators\Generator;
-use Xethron\MigrationsGenerator\Generators\SchemaGenerator;
+use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
 use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
 use Xethron\MigrationsGenerator\Syntax\AddToTable;
 use Xethron\MigrationsGenerator\Syntax\DroppedTable;
@@ -30,7 +30,6 @@ class MigrateGenerateCommand extends GeneratorCommand
 
     /**
      * The console command description.
-     * @var string
      */
     protected $description = 'Generate a migration from an existing table structure.';
 
@@ -47,19 +46,14 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Array of Fields to create in a new Migration
      * Namely: Columns, Indexes and Foreign Keys
-     * @var array
      */
     protected $fields = array();
 
     /**
      * List of Migrations that has been done
-     * @var array
      */
     protected $migrations = array();
 
-    /**
-     * @var bool
-     */
     protected $log = false;
 
     /**
@@ -125,6 +119,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     public function fire()
     {
         $this->connection = $this->option('connection') ?: Config::get('database.default');
+        resolve('connection')->setConnection($this->connection);
         $this->info('Using connection: '.$this->connection."\n");
 
         $this->schemaGenerator->initialize(
@@ -188,10 +183,10 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Ask user for a Numeric Value, or blank for default
      * @param  string  $question  Question to ask
-     * @param  int  $default  Default Value (optional)
+     * @param  int|null  $default  Default Value (optional)
      * @return int           Answer
      */
-    protected function askNumeric(string $question, $default = 0): int
+    protected function askNumeric(string $question, $default = null): int
     {
         $ask = 'Your answer needs to be a numeric value';
 

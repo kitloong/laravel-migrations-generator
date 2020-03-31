@@ -15,6 +15,11 @@ class Connection
      */
     private $connection;
 
+    public function __construct(string $connection)
+    {
+        $this->connection = $connection;
+    }
+
     /**
      * @return string
      */
