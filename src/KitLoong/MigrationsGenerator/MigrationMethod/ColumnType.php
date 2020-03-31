@@ -30,6 +30,7 @@ final class ColumnType
     const SMALL_INTEGER = 'smallInteger';
     const SOFT_DELETES = 'softDeletes';
     const TIMESTAMP = 'timestamp';
+    const TIMESTAMPS = 'timestamps';
     const TINY_INTEGER = 'tinyInteger';
     const UUID = 'uuid';
 }

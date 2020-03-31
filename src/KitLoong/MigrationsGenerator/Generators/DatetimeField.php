@@ -22,8 +22,17 @@ class DatetimeField
         $this->decorator = $decorator;
     }
 
-    public function makeField(array $field, Column $column): array
+    public function makeField(array $field, Column $column, bool $useTimestamps): array
     {
+        if ($useTimestamps) {
+            if ($field['field'] === ColumnName::CREATED_AT) {
+                return [];
+            } elseif ($field['field'] === ColumnName::UPDATED_AT) {
+                $field['type'] = ColumnType::TIMESTAMPS;
+                $field['field'] = null;
+            }
+        }
+
         if ($column->getDefault() !== null) {
             if (in_array($column->getDefault(), ['CURRENT_TIMESTAMP'], true)) {
                 $field['type'] = ColumnType::TIMESTAMP;
@@ -33,6 +42,7 @@ class DatetimeField
             $field['type'] = ColumnType::SOFT_DELETES;
             $field['field'] = null;
         }
+
         if ($column->getLength() && $column->getLength() > 0) {
             $field['args'] = $column->getLength();
             if ($field['type'] === ColumnType::SOFT_DELETES) {
@@ -50,5 +60,28 @@ class DatetimeField
             $default = $this->decorator->columnDefaultToString($column->getDefault());
             return $this->decorator->decorate(ColumnModifier::DEFAULT, $default);
         }
+    }
+
+    /**
+     * @param  Column[]  $columns
+     * @return bool
+     */
+    public function isUseTimestamps($columns): bool
+    {
+        /** @var Column[] $timestampsColumns */
+        $timestampsColumns = [];
+        foreach ($columns as $column) {
+            if ($column->getName() === ColumnName::CREATED_AT || $column->getName() === ColumnName::UPDATED_AT) {
+                $timestampsColumns[] = $column;
+            }
+        }
+
+        $useTimestamps = true;
+        foreach ($timestampsColumns as $timestamp) {
+            if ($timestamp->getNotnull() || $timestamp->getDefault() !== null) {
+                $useTimestamps = false;
+            }
+        }
+        return $useTimestamps;
     }
 }

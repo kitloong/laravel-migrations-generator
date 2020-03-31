@@ -71,6 +71,8 @@ class FieldGenerator
             return [];
         }
 
+        $useTimestamps = $this->datetimeField->isUseTimestamps($columns);
+
         $fields = [];
 
         foreach ($columns as $column) {
@@ -92,7 +94,11 @@ class FieldGenerator
                 'decorators' => []
             ];
 
-            $field = $this->makeLaravelFieldTypeMethod($table->getName(), $field, $column, $indexes);
+            $field = $this->makeLaravelFieldTypeMethod($table->getName(), $field, $column, $indexes, $useTimestamps);
+            
+            if (empty($field)) {
+                continue;
+            }
 
             if (!$column->getNotnull()) {
                 if ($this->shouldAddNullableModifier($field['type'])) {
@@ -122,10 +128,16 @@ class FieldGenerator
      * @param  array  $field
      * @param  Column  $column
      * @param  Collection  $indexes
+     * @param  bool  $useTimestamps
      * @return array
      */
-    private function makeLaravelFieldTypeMethod(string $tableName, array $field, Column $column, Collection $indexes): array
-    {
+    private function makeLaravelFieldTypeMethod(
+        string $tableName,
+        array $field,
+        Column $column,
+        Collection $indexes,
+        bool $useTimestamps
+    ): array {
         switch ($field['type']) {
             case Types::SMALLINT:
             case Types::INTEGER:
@@ -133,7 +145,7 @@ class FieldGenerator
             case 'mediumint':
                 return $this->integerField->makeField($field, $column, $indexes);
             case Types::DATETIME_MUTABLE:
-                return $this->datetimeField->makeField($field, $column);
+                return $this->datetimeField->makeField($field, $column, $useTimestamps);
             case Types::DECIMAL:
             case Types::FLOAT:
             case 'double':
@@ -194,6 +206,6 @@ class FieldGenerator
 
     private function shouldAddNullableModifier(string $type): bool
     {
-        return !in_array($type, [ColumnType::SOFT_DELETES, ColumnType::REMEMBER_TOKEN]);
+        return !in_array($type, [ColumnType::SOFT_DELETES, ColumnType::REMEMBER_TOKEN, ColumnType::TIMESTAMPS]);
     }
 }
