@@ -13,6 +13,7 @@ use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 
 class DecimalField
 {
+    // (8, 2) are default value of decimal, float
     private const DEFAULT_PRECISION = 8;
     private const DEFAULT_SCALE = 2;
 
@@ -39,7 +40,6 @@ class DecimalField
      */
     private function getDecimalPrecision(int $precision, int $scale): ?string
     {
-        // (8, 2) are default value of decimal, float
         if ($precision != self::DEFAULT_PRECISION or $scale != self::DEFAULT_SCALE) {
             $result = $precision;
             if ($scale != self::DEFAULT_SCALE) {
