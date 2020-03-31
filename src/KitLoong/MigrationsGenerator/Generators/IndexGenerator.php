@@ -26,7 +26,7 @@ class IndexGenerator
      * @param  Table  $table
      * @return Collection[]
      */
-    public function generate(Table $table)
+    public function generate(Table $table): array
     {
         $tableName = $table->getName();
 
@@ -62,7 +62,7 @@ class IndexGenerator
         return ['single' => $singleColIndexes, 'multi' => $multiColIndexes];
     }
 
-    private function getLaravelStyleDefaultName(string $table, array $columns, string $type)
+    private function getLaravelStyleDefaultName(string $table, array $columns, string $type): string
     {
         if ($type === IndexType::PRIMARY) {
             return 'PRIMARY';
