@@ -23,8 +23,15 @@ final class ColumnType
     const IP_ADDRESS = 'ipAddress';
     const JSON = 'json';
     const JSONB = 'jsonb';
+    const LINE_STRING = 'lineString';
+    const LONG_TEXT = 'longText';
     const MEDIUM_INTEGER = 'mediumInteger';
+    const MEDIUM_TEXT = 'mediumText';
+    const MULTI_LINE_STRING = 'multiLineString';
+    const MULTI_POINT = 'multiPoint';
+    const MULTI_POLYGON = 'multiPolygon';
     const POINT = 'point';
+    const POLYGON = 'polygon';
     const REMEMBER_TOKEN = 'rememberToken';
     const SET = 'set';
     const SMALL_INTEGER = 'smallInteger';
@@ -33,4 +40,5 @@ final class ColumnType
     const TIMESTAMPS = 'timestamps';
     const TINY_INTEGER = 'tinyInteger';
     const UUID = 'uuid';
+    const YEAR = 'year';
 }

@@ -14,10 +14,19 @@ use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryType;
+use KitLoong\MigrationsGenerator\Types\LineStringType;
+use KitLoong\MigrationsGenerator\Types\LongTextType;
 use KitLoong\MigrationsGenerator\Types\MediumIntegerType;
+use KitLoong\MigrationsGenerator\Types\MediumTextType;
+use KitLoong\MigrationsGenerator\Types\MultiLineStringType;
+use KitLoong\MigrationsGenerator\Types\MultiPointType;
+use KitLoong\MigrationsGenerator\Types\MultiPolygonType;
+use KitLoong\MigrationsGenerator\Types\PointType;
+use KitLoong\MigrationsGenerator\Types\PolygonType;
 use KitLoong\MigrationsGenerator\Types\SetType;
 use KitLoong\MigrationsGenerator\Types\TimestampType;
 use KitLoong\MigrationsGenerator\Types\UUIDType;
+use KitLoong\MigrationsGenerator\Types\YearType;
 use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
 
 class SchemaGenerator
@@ -72,10 +81,19 @@ class SchemaGenerator
         Type::addType('enum', EnumType::class);
         Type::addType('geometry', GeometryType::class);
         Type::addType('geometrycollection', GeometryCollectionType::class);
+        Type::addType('linestring', LineStringType::class);
+        Type::addType('longtext', LongTextType::class);
         Type::addType('mediumint', MediumIntegerType::class);
+        Type::addType('mediumtext', MediumTextType::class);
+        Type::addType('multilinestring', MultiLineStringType::class);
+        Type::addType('multipoint', MultiPointType::class);
+        Type::addType('multipolygon', MultiPolygonType::class);
+        Type::addType('point', PointType::class);
+        Type::addType('polygon', PolygonType::class);
         Type::addType('set', SetType::class);
         Type::addType('timestamp', TimestampType::class);
         Type::addType('uuid', UUIDType::class);
+        Type::addType('year', YearType::class);
 
         $connection = DB::connection($database)->getDoctrineConnection();
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
@@ -84,10 +102,19 @@ class SchemaGenerator
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('geometry', 'geometry');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('geometrycollection', 'geometrycollection');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'json');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('linestring', 'linestring');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('longtext', 'longtext');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('mediumint', 'mediumint');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('mediumtext', 'mediumtext');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('multilinestring', 'multilinestring');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('multipoint', 'multipoint');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('multipolygon', 'multipolygon');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('point', 'point');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('polygon', 'polygon');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('set', 'set');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('timestamp', 'timestamp');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('uuid', 'uuid');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('year', 'year');
 
         // Postgres types
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_text', 'text');
