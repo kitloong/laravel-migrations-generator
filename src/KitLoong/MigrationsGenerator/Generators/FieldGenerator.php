@@ -179,6 +179,7 @@ class FieldGenerator
                 $default = $column->getDefault();
                 break;
             case Types::DATETIME_MUTABLE:
+            case 'timestamp':
                 return $this->datetimeField->makeDefault($column);
             default:
                 $default = $this->decorator->columnDefaultToString($column->getDefault());

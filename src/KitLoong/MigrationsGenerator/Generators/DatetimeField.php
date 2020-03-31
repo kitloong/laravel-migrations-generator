@@ -33,11 +33,6 @@ class DatetimeField
             }
         }
 
-        if ($column->getDefault() !== null) {
-            if (in_array($column->getDefault(), ['CURRENT_TIMESTAMP'], true)) {
-                $field['type'] = ColumnType::TIMESTAMP;
-            }
-        }
         if ($field['field'] === ColumnName::DELETED_AT && !$column->getNotnull()) {
             $field['type'] = ColumnType::SOFT_DELETES;
             $field['field'] = null;
