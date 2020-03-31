@@ -145,6 +145,7 @@ class FieldGenerator
             case 'mediumint':
                 return $this->integerField->makeField($field, $column, $indexes);
             case Types::DATETIME_MUTABLE:
+            case 'timestamp':
                 return $this->datetimeField->makeField($field, $column, $useTimestamps);
             case Types::DECIMAL:
             case Types::FLOAT:
