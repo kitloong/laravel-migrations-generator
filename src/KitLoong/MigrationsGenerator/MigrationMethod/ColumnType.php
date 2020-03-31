@@ -11,6 +11,7 @@ namespace KitLoong\MigrationsGenerator\MigrationMethod;
 final class ColumnType
 {
     const BIG_INTEGER = 'bigInteger';
+    const BIG_INCREMENTS = 'bigIncrements';
     const BINARY = 'binary';
     const BOOLEAN = 'boolean';
     const CHAR = 'char';
