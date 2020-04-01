@@ -55,7 +55,7 @@ class IndexGenerator
             }
 
             if (count($index->getColumns()) === 1) {
-                $singleColIndexes->put($index->getColumns()[0], $indexField);
+                $singleColIndexes->put($this->decorator->addSlash($index->getColumns()[0]), $indexField);
             } else {
                 $multiColIndexes->push($indexField);
             }
