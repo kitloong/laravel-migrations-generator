@@ -11,6 +11,8 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\Generators\DecimalField;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
+use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 
@@ -23,7 +25,7 @@ class DecimalFieldTest extends TestCase
 
         $field = [
             'field' => 'field',
-            'type' => 'decimal',
+            'type' => DBALTypes::DECIMAL,
             'args' => [],
             'decorators' => []
         ];
@@ -50,7 +52,7 @@ class DecimalFieldTest extends TestCase
 
         $field = [
             'field' => 'field',
-            'type' => 'decimal',
+            'type' => DBALTypes::FLOAT,
             'args' => [],
             'decorators' => []
         ];
@@ -65,7 +67,12 @@ class DecimalFieldTest extends TestCase
             ->andReturnFalse();
 
         $field = $decimalField->makeField($field, $column);
-        $this->assertSame([], $field['args']);
+        $this->assertSame([
+            'field' => 'field',
+            'type' => ColumnType::FLOAT,
+            'args' => [],
+            'decorators' => []
+        ], $field);
     }
 
     public function testMakeFieldScaleIsDefaultButPrecisionIsNot()
@@ -75,7 +82,7 @@ class DecimalFieldTest extends TestCase
 
         $field = [
             'field' => 'field',
-            'type' => 'decimal',
+            'type' => DBALTypes::DECIMAL,
             'args' => [],
             'decorators' => []
         ];
@@ -91,5 +98,34 @@ class DecimalFieldTest extends TestCase
 
         $field = $decimalField->makeField($field, $column);
         $this->assertSame([5], $field['args']);
+    }
+
+    public function testMakeFieldDoubleShouldReturnEmptyPrecision()
+    {
+        /** @var DecimalField $decimalField */
+        $decimalField = resolve(DecimalField::class);
+
+        $field = [
+            'field' => 'field',
+            'type' => DBALTypes::DOUBLE,
+            'args' => [],
+            'decorators' => []
+        ];
+
+        $column = Mockery::mock(Column::class);
+        $column->shouldReceive('getPrecision')
+            ->andReturn(10);
+        $column->shouldReceive('getScale')
+            ->andReturn(0);
+        $column->shouldReceive('getUnsigned')
+            ->andReturnTrue();
+
+        $field = $decimalField->makeField($field, $column);
+        $this->assertSame([
+            'field' => 'field',
+            'type' => ColumnType::DOUBLE,
+            'args' => [],
+            'decorators' => [ColumnModifier::UNSIGNED]
+        ], $field);
     }
 }
