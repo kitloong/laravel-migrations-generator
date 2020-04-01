@@ -17,21 +17,22 @@ class StringField
 {
     public function makeField(array $field, Column $column): array
     {
+        if ($field['field'] === ColumnName::REMEMBER_TOKEN && $column->getLength() === 100 && !$column->getFixed()) {
+            $field['type'] = ColumnType::REMEMBER_TOKEN;
+            $field['field'] = null;
+            $field['args'] = [];
+
+            return $field;
+        }
+
         if ($column->getFixed()) {
             $field['type'] = ColumnType::CHAR;
-        } else {
-            if ($column->getLength()) {
-                if ($column->getLength() !== Builder::$defaultStringLength) {
-                    $field['args'][] = $column->getLength();
-                }
-
-                if ($field['field'] === ColumnName::REMEMBER_TOKEN && $column->getLength() === 100) {
-                    $field['type'] = ColumnType::REMEMBER_TOKEN;
-                    $field['field'] = null;
-                    $field['args'] = [];
-                }
-            }
         }
+
+        if ($column->getLength() && $column->getLength() !== Builder::$defaultStringLength) {
+            $field['args'][] = $column->getLength();
+        }
+
         return $field;
     }
 }

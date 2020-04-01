@@ -22,15 +22,23 @@ class StringFieldTest extends TestCase
         $stringField = resolve(StringField::class);
 
         $field = [
-            'type' => 'string'
+            'field' => 'field',
+            'type' => 'string',
+            'args' => []
         ];
 
         $column = Mockery::mock(Column::class);
         $column->shouldReceive('getFixed')
             ->andReturnTrue();
+        $column->shouldReceive('getLength')
+            ->andReturn(50);
 
         $field = $stringField->makeField($field, $column);
-        $this->assertSame(ColumnType::CHAR, $field['type']);
+        $this->assertSame([
+            'field' => 'field',
+            'type' => ColumnType::CHAR,
+            'args' => [50]
+        ], $field);
     }
 
     public function testMakeFieldIsRememberToken()
