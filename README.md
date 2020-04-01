@@ -7,10 +7,10 @@ Generate Laravel Migrations from an existing database, including indexes and for
 
 This package is cloned from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
 
-## Changes
+## V4 Changes
 
-1. Major rewrote on `FieldGenerator` and `IndexGenerator`.
-1. Added `spatial` data type support such as `gemetry`, `point`, etc.
+1. Major rewrite on `FieldGenerator` and `IndexGenerator`.
+1. Added `spatial` data type support such as `geometry`, `point`, etc.
 1. Support more Laravel migration types such as `uuid`, `longtext`, `year`, etc
 1. Added `spatialIndex` support.
 1. `timestamp` and `datetime` support precision.
@@ -20,7 +20,7 @@ This package is cloned from https://github.com/Xethron/migrations-generator and 
 1. Removed unused classes.
 1. Fixed miscellaneous bugs.
 1. Added UT!
-1. More UT will be added to existing classes 
+1. More UT will be added increase coverage
 
 ## Version Compatibility
 
@@ -28,8 +28,10 @@ This package is cloned from https://github.com/Xethron/migrations-generator and 
 |---|---|
 |7.x|4.x|
 |6.x|4.x|
-|5.8.x|3.x|
-|5.7 and below|https://github.com/Xethron/migrations-generator|
+|5.8.x|4.x|
+|5.7.x|4.x|
+|5.6.x|4.x|
+|5.5 and below|https://github.com/Xethron/migrations-generator|
 
 ## Laravel Installation
 
