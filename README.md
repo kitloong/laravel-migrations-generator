@@ -62,6 +62,7 @@ Thanks to Jeffrey Way for his amazing Laravel-4-Generators package. This package
 ## Contributors
 
 Kit Loong
+
 Bernhard Breytenbach ([@BBreyten](https://twitter.com/BBreyten))
 
 ## License
