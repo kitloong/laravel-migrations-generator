@@ -18,6 +18,7 @@ final class ColumnType
     const DATETIME = 'dateTime';
     const DOUBLE = 'double';
     const ENUM = 'enum';
+    const FLOAT = 'float';
     const GEOMETRY = 'geometry';
     const GEOMETRY_COLLECTION = 'geometryCollection';
     const INCREMENTS = 'increments';
