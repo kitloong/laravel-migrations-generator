@@ -71,10 +71,14 @@ class DatetimeField
             }
         }
 
-        $useTimestamps = true;
-        foreach ($timestampsColumns as $timestamp) {
-            if ($timestamp->getNotnull() || $timestamp->getDefault() !== null) {
-                $useTimestamps = false;
+        $useTimestamps = false;
+
+        if (count($timestampsColumns) == 2) {
+            $useTimestamps = true;
+            foreach ($timestampsColumns as $timestamp) {
+                if ($timestamp->getNotnull() || $timestamp->getDefault() !== null) {
+                    $useTimestamps = false;
+                }
             }
         }
         return $useTimestamps;
