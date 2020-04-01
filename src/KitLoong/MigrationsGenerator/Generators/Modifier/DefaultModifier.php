@@ -9,10 +9,10 @@
 namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\Generators\DatetimeField;
 use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
+use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
 class DefaultModifier
 {
@@ -33,17 +33,17 @@ class DefaultModifier
     public function generate(string $dbalType, Column $column): string
     {
         switch ($dbalType) {
-            case Types::SMALLINT:
-            case Types::INTEGER:
-            case Types::BIGINT:
-            case 'mediumint':
-            case Types::DECIMAL:
-            case Types::FLOAT:
-            case 'double':
+            case DBALTypes::SMALLINT:
+            case DBALTypes::INTEGER:
+            case DBALTypes::BIGINT:
+            case DBALTypes::MEDIUMINT:
+            case DBALTypes::DECIMAL:
+            case DBALTypes::FLOAT:
+            case DBALTypes::DOUBLE:
                 $default = $column->getDefault();
                 break;
-            case Types::DATETIME_MUTABLE:
-            case 'timestamp':
+            case DBALTypes::DATETIME_MUTABLE:
+            case DBALTypes::TIMESTAMP:
                 return $this->datetimeField->makeDefault($column);
             default:
                 $default = $this->decorator->columnDefaultToString($column->getDefault());

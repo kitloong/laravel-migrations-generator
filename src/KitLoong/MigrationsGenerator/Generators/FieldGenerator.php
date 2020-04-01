@@ -10,7 +10,6 @@ namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Types;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CommentModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\DefaultModifier;
@@ -18,6 +17,7 @@ use KitLoong\MigrationsGenerator\Generators\Modifier\IndexModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\NullableModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
 class FieldGenerator
 {
@@ -154,23 +154,23 @@ class FieldGenerator
         bool $useTimestamps
     ): array {
         switch ($field['type']) {
-            case Types::SMALLINT:
-            case Types::INTEGER:
-            case Types::BIGINT:
-            case 'mediumint':
+            case DBALTypes::SMALLINT:
+            case DBALTypes::INTEGER:
+            case DBALTypes::BIGINT:
+            case DBALTypes::MEDIUMINT:
                 return $this->integerField->makeField($field, $column, $indexes);
-            case Types::DATETIME_MUTABLE:
-            case 'timestamp':
+            case DBALTypes::DATETIME_MUTABLE:
+            case DBALTypes::TIMESTAMP:
                 return $this->datetimeField->makeField($field, $column, $useTimestamps);
-            case Types::DECIMAL:
-            case Types::FLOAT:
-            case 'double':
+            case DBALTypes::DECIMAL:
+            case DBALTypes::FLOAT:
+            case DBALTypes::DOUBLE:
                 return $this->decimalField->makeField($field, $column);
-            case 'enum':
+            case DBALTypes::ENUM:
                 return $this->enumField->makeField($tableName, $field);
-            case 'set':
+            case DBALTypes::SET:
                 return $this->setField->makeField($tableName, $field);
-            case Types::STRING:
+            case DBALTypes::STRING:
                 return $this->stringField->makeField($field, $column);
             default:
                 return $this->otherField->makeField($field);

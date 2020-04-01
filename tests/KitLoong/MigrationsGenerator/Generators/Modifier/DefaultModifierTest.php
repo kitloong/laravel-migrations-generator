@@ -9,11 +9,11 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\Generators\DatetimeField;
 use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\Generators\Modifier\DefaultModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
+use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
@@ -30,13 +30,13 @@ class DefaultModifierTest extends TestCase
             ->andReturn(10);
 
         $types = [
-            Types::SMALLINT,
-            Types::INTEGER,
-            Types::BIGINT,
-            'mediumint',
-            Types::DECIMAL,
-            Types::FLOAT,
-            'double'
+            DBALTypes::SMALLINT,
+            DBALTypes::INTEGER,
+            DBALTypes::BIGINT,
+            DBALTypes::MEDIUMINT,
+            DBALTypes::DECIMAL,
+            DBALTypes::FLOAT,
+            DBALTypes::DOUBLE
         ];
 
         foreach ($types as $type) {
@@ -50,8 +50,8 @@ class DefaultModifierTest extends TestCase
         $column = Mockery::mock(Column::class);
 
         $types = [
-            Types::DATETIME_MUTABLE,
-            'timestamp'
+            DBALTypes::DATETIME_MUTABLE,
+            DBALTypes::TIMESTAMP
         ];
 
 

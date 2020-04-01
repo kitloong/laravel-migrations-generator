@@ -10,7 +10,6 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\Generators\DatetimeField;
 use KitLoong\MigrationsGenerator\Generators\DecimalField;
 use KitLoong\MigrationsGenerator\Generators\EnumField;
@@ -25,6 +24,7 @@ use KitLoong\MigrationsGenerator\Generators\SetField;
 use KitLoong\MigrationsGenerator\Generators\StringField;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
@@ -69,7 +69,7 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            Types::INTEGER,
+            DBALTypes::INTEGER,
         ];
 
         foreach ($types as $type) {
@@ -125,10 +125,10 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            Types::SMALLINT,
-            Types::INTEGER,
-            Types::BIGINT,
-            'mediumint'
+            DBALTypes::SMALLINT,
+            DBALTypes::INTEGER,
+            DBALTypes::BIGINT,
+            DBALTypes::MEDIUMINT
         ];
 
         foreach ($types as $type) {
@@ -179,8 +179,8 @@ class FieldGeneratorTest extends TestCase
     public function testGenerateDatetime()
     {
         $types = [
-            Types::DATETIME_MUTABLE,
-            'timestamp'
+            DBALTypes::DATETIME_MUTABLE,
+            DBALTypes::TIMESTAMP
         ];
 
         foreach ($types as $type) {
@@ -239,9 +239,9 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            Types::DECIMAL,
-            Types::FLOAT,
-            'double'
+            DBALTypes::DECIMAL,
+            DBALTypes::FLOAT,
+            DBALTypes::DOUBLE
         ];
 
         foreach ($types as $type) {
@@ -297,7 +297,7 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            'enum'
+            DBALTypes::ENUM
         ];
 
         foreach ($types as $type) {
@@ -353,7 +353,7 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            'set'
+            DBALTypes::SET
         ];
 
         foreach ($types as $type) {
@@ -409,7 +409,7 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            Types::STRING
+            DBALTypes::STRING
         ];
 
         foreach ($types as $type) {
@@ -521,7 +521,7 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            Types::INTEGER,
+            DBALTypes::INTEGER,
         ];
 
         foreach ($types as $type) {
@@ -569,7 +569,7 @@ class FieldGeneratorTest extends TestCase
 
             $this->mock(DefaultModifier::class, function (MockInterface $mock) use ($column) {
                 $mock->shouldReceive('generate')
-                    ->with(Types::INTEGER, $column)
+                    ->with(DBALTypes::INTEGER, $column)
                     ->andReturn('default(default)');
             });
 
