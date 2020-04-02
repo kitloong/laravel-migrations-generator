@@ -28,11 +28,6 @@ class MigrationGeneratorSetting
      */
     private $platform;
 
-    public function __construct(string $connection)
-    {
-        $this->connection = $connection;
-    }
-
     /**
      * @return string
      */
