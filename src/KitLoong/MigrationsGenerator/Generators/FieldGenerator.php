@@ -161,6 +161,7 @@ class FieldGenerator
                 return $this->integerField->makeField($field, $column, $indexes);
             case DBALTypes::DATETIME_MUTABLE:
             case DBALTypes::TIMESTAMP:
+            case DBALTypes::TIME_MUTABLE:
                 return $this->datetimeField->makeField($field, $column, $useTimestamps);
             case DBALTypes::DECIMAL:
             case DBALTypes::FLOAT:

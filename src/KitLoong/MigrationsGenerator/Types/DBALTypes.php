@@ -45,6 +45,11 @@ final class DBALTypes
      */
     const STRING = 'string';
 
+    /**
+     * @see \Doctrine\DBAL\Types\Types::TIME_MUTABLE
+     */
+    const TIME_MUTABLE = 'time';
+
     // Custom types
 
     const DOUBLE = 'double';
