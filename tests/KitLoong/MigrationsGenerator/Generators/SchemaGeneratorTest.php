@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\FieldGenerator;
 use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
+use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use Mockery;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
@@ -79,6 +80,11 @@ class SchemaGeneratorTest extends TestCase
         $this->mock(ForeignKeyGenerator::class, function (MockInterface $mock) use ($schema) {
             $mock->shouldReceive('generate')
                 ->with('table', $schema, false);
+        });
+
+        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getPlatform')
+                ->andReturn('mysql');
         });
 
         /** @var SchemaGenerator $schemaGenerator */

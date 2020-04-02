@@ -9,8 +9,9 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\Generators\SetField;
+use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
 
 class SetFieldTest extends TestCase
@@ -25,8 +26,8 @@ class SetFieldTest extends TestCase
             'args' => []
         ];
 
-        $this->app->singleton(MigrationGeneratorSetting::class, function () {
-            return new MigrationGeneratorSetting('mysql');
+        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getConnection');
         });
 
         DB::shouldReceive('connection->select')

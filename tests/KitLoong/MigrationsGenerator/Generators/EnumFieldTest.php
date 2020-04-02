@@ -11,6 +11,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\Generators\EnumField;
+use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
 
 class EnumFieldTest extends TestCase
@@ -25,8 +26,8 @@ class EnumFieldTest extends TestCase
             'args' => []
         ];
 
-        $this->app->singleton(MigrationGeneratorSetting::class, function () {
-            return new MigrationGeneratorSetting('mysql');
+        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getConnection');
         });
 
         DB::shouldReceive('connection->select')
