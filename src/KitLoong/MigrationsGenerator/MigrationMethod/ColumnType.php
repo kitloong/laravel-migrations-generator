@@ -14,6 +14,7 @@ final class ColumnType
     const BOOLEAN = 'boolean';
     const CHAR = 'char';
     const DATETIME = 'dateTime';
+    const DECIMAL = 'decimal';
     const DOUBLE = 'double';
     const ENUM = 'enum';
     const FLOAT = 'float';

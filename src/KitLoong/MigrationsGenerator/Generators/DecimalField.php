@@ -9,6 +9,7 @@
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
+use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
@@ -19,8 +20,8 @@ class DecimalField
     private const DEFAULT_DECIMAL_SCALE = 2;
 
     // DBAL return (10, 0) if double length is empty
-    private const EMPTY_DOUBLE_PRECISION = 10;
-    private const EMPTY_DOUBLE_SCALE = 0;
+    private const EMPTY_PRECISION = 10;
+    private const EMPTY_SCALE = 0;
 
     private $decorator;
 
@@ -31,12 +32,24 @@ class DecimalField
 
     public function makeField(array $field, Column $column): array
     {
-        if (in_array($field['type'], [DBALTypes::DECIMAL, DBALTypes::FLOAT])) {
-            $args = $this->getDecimalPrecision($column->getPrecision(), $column->getScale());
-        } else {
-            // double
-            $args = $this->getDoublePrecision($column->getPrecision(), $column->getScale());
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = resolve(MigrationGeneratorSetting::class);
+
+        switch ($setting->getPlatform()) {
+            case Platform::POSTGRESQL:
+                if ($field['type'] === DBALTypes::DECIMAL) {
+                    $args = $this->getDecimalPrecision($column->getPrecision(), $column->getScale());
+                }
+                break;
+            default:
+                if (in_array($field['type'], [DBALTypes::DECIMAL, DBALTypes::FLOAT])) {
+                    $args = $this->getDecimalPrecision($column->getPrecision(), $column->getScale());
+                } else {
+                    // double
+                    $args = $this->getDoublePrecision($column->getPrecision(), $column->getScale());
+                }
         }
+
         if (!empty($args)) {
             $field['args'] = $args;
         }
@@ -61,7 +74,7 @@ class DecimalField
 
     private function getDoublePrecision(int $precision, int $scale)
     {
-        if ($precision === self::EMPTY_DOUBLE_PRECISION && $scale === self::EMPTY_DOUBLE_SCALE) {
+        if ($precision === self::EMPTY_PRECISION && $scale === self::EMPTY_SCALE) {
             return [];
         } else {
             return [$precision, $scale];
