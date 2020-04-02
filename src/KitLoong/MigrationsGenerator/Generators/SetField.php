@@ -9,6 +9,7 @@
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 
 class SetField
 {
@@ -21,7 +22,10 @@ class SetField
 
     public function makeField(string $tableName, array $field): array
     {
-        $column = DB::connection(resolve('connection')->getConnection())->select("SHOW COLUMNS FROM `${tableName}` where Field = '${field['field']}' AND Type LIKE 'set(%'");
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = app(MigrationGeneratorSetting::class);
+
+        $column = DB::connection($setting->getConnection())->select("SHOW COLUMNS FROM `${tableName}` where Field = '${field['field']}' AND Type LIKE 'set(%'");
         if (count($column) > 0) {
             $field['args'][] = substr(
                 str_replace('set(', '[', $column[0]->Type),

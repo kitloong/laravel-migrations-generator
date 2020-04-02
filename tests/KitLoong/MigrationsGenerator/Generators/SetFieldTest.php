@@ -9,7 +9,7 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\Connection;
+use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\Generators\SetField;
 use Orchestra\Testbench\TestCase;
 
@@ -25,8 +25,8 @@ class SetFieldTest extends TestCase
             'args' => []
         ];
 
-        $this->app->singleton('connection', function () {
-            return new Connection('mysql');
+        $this->app->singleton(MigrationGeneratorSetting::class, function () {
+            return new MigrationGeneratorSetting('mysql');
         });
 
         DB::shouldReceive('connection->select')

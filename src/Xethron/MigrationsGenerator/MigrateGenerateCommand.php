@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use Way\Generators\Commands\GeneratorCommand;
 use Way\Generators\Generator;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
@@ -118,8 +119,11 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     public function fire()
     {
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = app(MigrationGeneratorSetting::class);
+
         $this->connection = $this->option('connection') ?: Config::get('database.default');
-        resolve('connection')->setConnection($this->connection);
+        $setting->setConnection($this->connection);
         $this->info('Using connection: '.$this->connection."\n");
 
         $this->schemaGenerator->initialize(

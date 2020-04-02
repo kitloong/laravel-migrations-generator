@@ -8,7 +8,7 @@
 
 namespace KitLoong\MigrationsGenerator;
 
-class Connection
+class MigrationGeneratorSetting
 {
     /**
      * @var string
