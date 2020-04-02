@@ -8,6 +8,7 @@ namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Types\Type;
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
@@ -61,8 +62,11 @@ class SchemaGenerator
      */
     private $ignoreForeignKeyNames;
 
-    public function __construct(FieldGenerator $fieldGenerator, IndexGenerator $indexGenerator, ForeignKeyGenerator $foreignKeyGenerator)
-    {
+    public function __construct(
+        FieldGenerator $fieldGenerator,
+        IndexGenerator $indexGenerator,
+        ForeignKeyGenerator $foreignKeyGenerator
+    ) {
         $this->fieldGenerator = $fieldGenerator;
         $this->indexGenerator = $indexGenerator;
         $this->foreignKeyGenerator = $foreignKeyGenerator;
@@ -76,6 +80,9 @@ class SchemaGenerator
      */
     public function initialize(string $database, bool $ignoreIndexNames, bool $ignoreForeignKeyNames)
     {
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = resolve(MigrationGeneratorSetting::class);
+
         Type::addType('double', DoubleType::class);
         Type::addType('enum', EnumType::class);
         Type::addType('geometry', GeometryType::class);
@@ -101,7 +108,6 @@ class SchemaGenerator
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = DB::connection($database)->getDoctrineConnection();
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('double', 'double');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'enum');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('geometry', 'geometry');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('geometrycollection', 'geometrycollection');
@@ -120,13 +126,20 @@ class SchemaGenerator
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('uuid', 'uuid');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('year', 'year');
 
-        // Postgres types
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_text', 'text');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_int4', 'integer');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_numeric', 'float');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('cidr', 'string');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('inet', 'ipaddress');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('macaddr', 'macaddress');
+        switch ($setting->getPlatform()) {
+            case Platform::MYSQL:
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('double', 'double');
+                break;
+            case Platform::POSTGRESQL:
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_text', 'text');
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_int4', 'integer');
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_numeric', 'float');
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('cidr', 'string');
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('inet', 'ipaddress');
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('macaddr', 'macaddress');
+                break;
+            default:
+        }
 
         $this->database = $connection->getDatabase();
 
