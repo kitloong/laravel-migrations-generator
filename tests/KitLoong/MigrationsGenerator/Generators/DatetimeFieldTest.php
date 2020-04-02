@@ -103,7 +103,7 @@ class DatetimeFieldTest extends TestCase
         $this->assertSame("default('Default')", $result);
     }
 
-    public function testIsUseTimestamps()
+    public function testIsUseTimestampsTrue()
     {
         /** @var DatetimeField $datetimeField */
         $datetimeField = resolve(DatetimeField::class);
@@ -112,17 +112,89 @@ class DatetimeFieldTest extends TestCase
         $columnCreatedAt->shouldReceive('getName')
             ->andReturn(ColumnName::CREATED_AT);
         $columnCreatedAt->shouldReceive('getNotnull')
-            ->andReturn(false);
+            ->andReturnFalse();
         $columnCreatedAt->shouldReceive('getDefault')
-            ->andReturn(false);
+            ->andReturnNull();
 
         $columnUpdatedAt = Mockery::mock(Column::class);
         $columnUpdatedAt->shouldReceive('getName')
             ->andReturn(ColumnName::UPDATED_AT);
         $columnUpdatedAt->shouldReceive('getNotnull')
-            ->andReturn(false);
+            ->andReturnFalse();
         $columnUpdatedAt->shouldReceive('getDefault')
-            ->andReturn(false);
+            ->andReturnNull();
+
+        $this->assertTrue($datetimeField->isUseTimestamps([$columnUpdatedAt, $columnCreatedAt]));
+    }
+
+    public function testIsUseTimestampsWhenDefaultIsNotNull()
+    {
+        /** @var DatetimeField $datetimeField */
+        $datetimeField = resolve(DatetimeField::class);
+
+        $columnCreatedAt = Mockery::mock(Column::class);
+        $columnCreatedAt->shouldReceive('getName')
+            ->andReturn(ColumnName::CREATED_AT);
+        $columnCreatedAt->shouldReceive('getNotnull')
+            ->andReturnFalse();
+        $columnCreatedAt->shouldReceive('getDefault')
+            ->andReturn('Default');
+
+        $columnUpdatedAt = Mockery::mock(Column::class);
+        $columnUpdatedAt->shouldReceive('getName')
+            ->andReturn(ColumnName::UPDATED_AT);
+        $columnUpdatedAt->shouldReceive('getNotnull')
+            ->andReturnFalse();
+        $columnUpdatedAt->shouldReceive('getDefault')
+            ->andReturnNull();
+
+        $this->assertFalse($datetimeField->isUseTimestamps([$columnUpdatedAt, $columnCreatedAt]));
+    }
+
+    public function testIsUseTimestampsOnlyHasCreatedAt()
+    {
+        /** @var DatetimeField $datetimeField */
+        $datetimeField = resolve(DatetimeField::class);
+
+        $columnCreatedAt = Mockery::mock(Column::class);
+        $columnCreatedAt->shouldReceive('getName')
+            ->andReturn(ColumnName::CREATED_AT);
+        $columnCreatedAt->shouldReceive('getNotnull')
+            ->andReturnFalse();
+        $columnCreatedAt->shouldReceive('getDefault')
+            ->andReturnNull();
+
+        $columnUpdatedAt = Mockery::mock(Column::class);
+        $columnUpdatedAt->shouldReceive('getName')
+            ->andReturn('other');
+        $columnUpdatedAt->shouldReceive('getNotnull')
+            ->andReturnFalse();
+        $columnUpdatedAt->shouldReceive('getDefault')
+            ->andReturnNull();
+
+        $this->assertFalse($datetimeField->isUseTimestamps([$columnUpdatedAt, $columnCreatedAt]));
+    }
+
+    public function testIsUseTimestampsOnlyHasUpdatedAt()
+    {
+        /** @var DatetimeField $datetimeField */
+        $datetimeField = resolve(DatetimeField::class);
+
+        $columnCreatedAt = Mockery::mock(Column::class);
+        $columnCreatedAt->shouldReceive('getName')
+            ->andReturn('other');
+        $columnCreatedAt->shouldReceive('getNotnull')
+            ->andReturnFalse();
+        $columnCreatedAt->shouldReceive('getDefault')
+            ->andReturnNull();
+
+        $columnUpdatedAt = Mockery::mock(Column::class);
+        $columnUpdatedAt->shouldReceive('getName')
+            ->andReturn(ColumnName::UPDATED_AT);
+        $columnUpdatedAt->shouldReceive('getNotnull')
+            ->andReturnFalse();
+        $columnUpdatedAt->shouldReceive('getDefault')
+            ->andReturnNull();
 
         $this->assertFalse($datetimeField->isUseTimestamps([$columnUpdatedAt, $columnCreatedAt]));
     }
