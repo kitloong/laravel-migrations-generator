@@ -27,6 +27,8 @@ use KitLoong\MigrationsGenerator\Types\PointType;
 use KitLoong\MigrationsGenerator\Types\PolygonType;
 use KitLoong\MigrationsGenerator\Types\SetType;
 use KitLoong\MigrationsGenerator\Types\TimestampType;
+use KitLoong\MigrationsGenerator\Types\TimestampTzType;
+use KitLoong\MigrationsGenerator\Types\TimeTzType;
 use KitLoong\MigrationsGenerator\Types\UUIDType;
 use KitLoong\MigrationsGenerator\Types\YearType;
 use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
@@ -106,6 +108,8 @@ class SchemaGenerator
         Type::addType('ipaddress', IpAddressType::class);
         Type::addType('jsonb', JsonbType::class);
         Type::addType('macaddress', MacAddressType::class);
+        Type::addType('timetz', TimeTzType::class);
+        Type::addType('timestamptz', TimestampTzType::class);
 
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = DB::connection($database)->getDoctrineConnection();
@@ -140,6 +144,8 @@ class SchemaGenerator
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('inet', 'ipaddress');
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('jsonb', 'jsonb');
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('macaddr', 'macaddress');
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('timetz', 'timetz');
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('timestamptz', 'timestamptz');
                 break;
             default:
         }

@@ -14,6 +14,7 @@ final class ColumnType
     const BOOLEAN = 'boolean';
     const CHAR = 'char';
     const DATETIME = 'dateTime';
+    const DATETIME_TZ = 'dateTimeTz';
     const DECIMAL = 'decimal';
     const DOUBLE = 'double';
     const ENUM = 'enum';
@@ -39,8 +40,10 @@ final class ColumnType
     const SET = 'set';
     const SMALL_INTEGER = 'smallInteger';
     const SOFT_DELETES = 'softDeletes';
+    const TIME_TZ = 'timeTz';
     const TIMESTAMP = 'timestamp';
     const TIMESTAMPS = 'timestamps';
+    const TIMESTAMP_TZ = 'timestampTz';
     const TINY_INTEGER = 'tinyInteger';
     const UUID = 'uuid';
     const YEAR = 'year';
