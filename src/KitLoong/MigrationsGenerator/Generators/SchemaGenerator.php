@@ -14,6 +14,7 @@ use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryType;
 use KitLoong\MigrationsGenerator\Types\IpAddressType;
+use KitLoong\MigrationsGenerator\Types\JsonbType;
 use KitLoong\MigrationsGenerator\Types\LineStringType;
 use KitLoong\MigrationsGenerator\Types\LongTextType;
 use KitLoong\MigrationsGenerator\Types\MacAddressType;
@@ -103,6 +104,7 @@ class SchemaGenerator
 
         // Postgres types
         Type::addType('ipaddress', IpAddressType::class);
+        Type::addType('jsonb', JsonbType::class);
         Type::addType('macaddress', MacAddressType::class);
 
         /** @var \Doctrine\DBAL\Connection $connection */
@@ -136,6 +138,7 @@ class SchemaGenerator
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_numeric', 'float');
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('cidr', 'string');
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('inet', 'ipaddress');
+                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('jsonb', 'jsonb');
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('macaddr', 'macaddress');
                 break;
             default:
