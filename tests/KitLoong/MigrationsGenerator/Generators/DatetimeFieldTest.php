@@ -63,6 +63,26 @@ class DatetimeFieldTest extends TestCase
         $this->assertSame([2], $field['args']);
     }
 
+    public function testMakeFieldIsDatetime()
+    {
+        /** @var DatetimeField $datetimeField */
+        $datetimeField = resolve(DatetimeField::class);
+
+        $field = [
+            'field' => 'date',
+            'type' => 'datetime',
+            'args' => []
+        ];
+
+        $column = Mockery::mock(Column::class);
+        $column->shouldReceive('getLength')
+            ->andReturn(2);
+
+        $field = $datetimeField->makeField($field, $column, false);
+        $this->assertSame(ColumnType::DATETIME, $field['type']);
+        $this->assertSame([2], $field['args']);
+    }
+
     public function testMakeFieldSkipCreatedAtWhenIsTimestamps()
     {
         /** @var DatetimeField $datetimeField */

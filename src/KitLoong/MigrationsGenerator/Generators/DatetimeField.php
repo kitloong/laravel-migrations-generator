@@ -38,6 +38,10 @@ class DatetimeField
             $field['field'] = null;
         }
 
+        if (isset(FieldGenerator::$fieldTypeMap[$field['type']])) {
+            $field['type'] = FieldGenerator::$fieldTypeMap[$field['type']];
+        }
+
         if ($column->getLength() && $column->getLength() > 0) {
             if ($field['type'] === ColumnType::SOFT_DELETES) {
                 $field['args'][] = "'".ColumnName::DELETED_AT."'";
