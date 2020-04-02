@@ -2,8 +2,6 @@
 /**
  * Created by PhpStorm.
  * User: liow.kitloong
- * Date: 2020/03/28
- * Time: 20:31
  */
 
 namespace KitLoong\MigrationsGenerator\Generators;
@@ -14,8 +12,10 @@ use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryType;
+use KitLoong\MigrationsGenerator\Types\IpAddressType;
 use KitLoong\MigrationsGenerator\Types\LineStringType;
 use KitLoong\MigrationsGenerator\Types\LongTextType;
+use KitLoong\MigrationsGenerator\Types\MacAddressType;
 use KitLoong\MigrationsGenerator\Types\MediumIntegerType;
 use KitLoong\MigrationsGenerator\Types\MediumTextType;
 use KitLoong\MigrationsGenerator\Types\MultiLineStringType;
@@ -94,6 +94,10 @@ class SchemaGenerator
         Type::addType('uuid', UUIDType::class);
         Type::addType('year', YearType::class);
 
+        // Postgres types
+        Type::addType('ipaddress', IpAddressType::class);
+        Type::addType('macaddress', MacAddressType::class);
+
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = DB::connection($database)->getDoctrineConnection();
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
@@ -121,7 +125,8 @@ class SchemaGenerator
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_int4', 'integer');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_numeric', 'float');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('cidr', 'string');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('inet', 'string');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('inet', 'ipaddress');
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('macaddr', 'macaddress');
 
         $this->database = $connection->getDatabase();
 

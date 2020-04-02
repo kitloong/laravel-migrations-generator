@@ -2,8 +2,6 @@
 /**
  * Created by PhpStorm.
  * User: liow.kitloong
- * Date: 2020/03/30
- * Time: 21:39
  */
 
 namespace KitLoong\MigrationsGenerator\MigrationMethod;
@@ -28,6 +26,7 @@ final class ColumnType
     const JSONB = 'jsonb';
     const LINE_STRING = 'lineString';
     const LONG_TEXT = 'longText';
+    const MAC_ADDRESS = 'macAddress';
     const MEDIUM_INTEGER = 'mediumInteger';
     const MEDIUM_TEXT = 'mediumText';
     const MULTI_LINE_STRING = 'multiLineString';
