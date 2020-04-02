@@ -23,7 +23,7 @@ class EnumField
     public function makeField(string $tableName, array $field): array
     {
         /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        $setting = resolve(MigrationGeneratorSetting::class);
 
         $column = DB::connection($setting->getConnection())->select("SHOW COLUMNS FROM `${tableName}` where Field = '${field['field']}' AND Type LIKE 'enum(%'");
         if (count($column) > 0) {

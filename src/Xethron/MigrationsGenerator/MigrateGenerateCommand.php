@@ -120,7 +120,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     public function fire()
     {
         /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        $setting = resolve(MigrationGeneratorSetting::class);
 
         $this->connection = $this->option('connection') ?: Config::get('database.default');
         $setting->setConnection($this->connection);
