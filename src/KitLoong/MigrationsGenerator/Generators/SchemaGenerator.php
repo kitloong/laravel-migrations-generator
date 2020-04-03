@@ -86,66 +86,43 @@ class SchemaGenerator
         /** @var MigrationGeneratorSetting $setting */
         $setting = resolve(MigrationGeneratorSetting::class);
 
-        Type::addType('double', DoubleType::class);
-        Type::addType('enum', EnumType::class);
-        Type::addType('geometry', GeometryType::class);
-        Type::addType('geometrycollection', GeometryCollectionType::class);
-        Type::addType('linestring', LineStringType::class);
-        Type::addType('longtext', LongTextType::class);
-        Type::addType('mediumint', MediumIntegerType::class);
-        Type::addType('mediumtext', MediumTextType::class);
-        Type::addType('multilinestring', MultiLineStringType::class);
-        Type::addType('multipoint', MultiPointType::class);
-        Type::addType('multipolygon', MultiPolygonType::class);
-        Type::addType('point', PointType::class);
-        Type::addType('polygon', PolygonType::class);
-        Type::addType('set', SetType::class);
-        Type::addType('timestamp', TimestampType::class);
-        Type::addType('uuid', UUIDType::class);
-        Type::addType('year', YearType::class);
+        $this->registerCustomDoctrineType(DoubleType::class, 'double', 'double');
+        $this->registerCustomDoctrineType(EnumType::class, 'enum', 'enum');
+        $this->registerCustomDoctrineType(GeometryType::class, 'geometry', 'geometry');
+        $this->registerCustomDoctrineType(GeometryCollectionType::class, 'geometrycollection', 'geometrycollection');
+        $this->registerCustomDoctrineType(LineStringType::class, 'linestring', 'linestring');
+        $this->registerCustomDoctrineType(LongTextType::class, 'longtext', 'longtext');
+        $this->registerCustomDoctrineType(MediumIntegerType::class, 'mediumint', 'mediumint');
+        $this->registerCustomDoctrineType(MediumTextType::class, 'mediumtext', 'mediumtext');
+        $this->registerCustomDoctrineType(MultiLineStringType::class, 'multilinestring', 'multilinestring');
+        $this->registerCustomDoctrineType(MultiPointType::class, 'multipoint', 'multipoint');
+        $this->registerCustomDoctrineType(MultiPolygonType::class, 'multipolygon', 'multipolygon');
+        $this->registerCustomDoctrineType(PointType::class, 'point', 'point');
+        $this->registerCustomDoctrineType(PolygonType::class, 'polygon', 'polygon');
+        $this->registerCustomDoctrineType(SetType::class, 'set', 'set');
+        $this->registerCustomDoctrineType(TimestampType::class, 'timestamp', 'timestamp');
+        $this->registerCustomDoctrineType(UUIDType::class, 'uuid', 'uuid');
+        $this->registerCustomDoctrineType(YearType::class, 'year', 'year');
 
         // Postgres types
-        Type::addType('ipaddress', IpAddressType::class);
-        Type::addType('jsonb', JsonbType::class);
-        Type::addType('macaddress', MacAddressType::class);
-        Type::addType('timetz', TimeTzType::class);
-        Type::addType('timestamptz', TimestampTzType::class);
+        $this->registerCustomDoctrineType(IpAddressType::class, 'ipaddress', 'inet');
+        $this->registerCustomDoctrineType(JsonbType::class, 'jsonb', 'jsonb');
+        $this->registerCustomDoctrineType(MacAddressType::class, 'macaddress', 'macaddr');
+        $this->registerCustomDoctrineType(TimeTzType::class, 'timetz', 'timetz');
+        $this->registerCustomDoctrineType(TimestampTzType::class, 'timestamptz', 'timestamptz');
 
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = DB::connection($database)->getDoctrineConnection();
+
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'enum');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('geometry', 'geometry');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('geometrycollection', 'geometrycollection');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'json');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('linestring', 'linestring');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('longtext', 'longtext');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('mediumint', 'mediumint');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('mediumtext', 'mediumtext');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('multilinestring', 'multilinestring');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('multipoint', 'multipoint');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('multipolygon', 'multipolygon');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('point', 'point');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('polygon', 'polygon');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('set', 'set');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('timestamp', 'timestamp');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('uuid', 'uuid');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('year', 'year');
 
         switch ($setting->getPlatform()) {
-            case Platform::MYSQL:
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('double', 'double');
-                break;
             case Platform::POSTGRESQL:
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_text', 'text');
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_int4', 'integer');
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_numeric', 'float');
                 $connection->getDatabasePlatform()->registerDoctrineTypeMapping('cidr', 'string');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('inet', 'ipaddress');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('jsonb', 'jsonb');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('macaddr', 'macaddress');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('timetz', 'timetz');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('timestamptz', 'timestamptz');
                 break;
             default:
         }
@@ -179,5 +156,29 @@ class SchemaGenerator
     public function getForeignKeyConstraints(string $table): array
     {
         return $this->foreignKeyGenerator->generate($table, $this->schema, $this->ignoreForeignKeyNames);
+    }
+
+    /**
+     * Register custom doctrineType
+     * Will override if exists
+     *
+     * @param $class
+     * @param $name
+     * @param $type
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function registerCustomDoctrineType($class, $name, $type)
+    {
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = resolve(MigrationGeneratorSetting::class);
+
+        if (!Type::hasType($name)) {
+            Type::addType($name, $class);
+        } else {
+            Type::overrideType($name, $class);
+        }
+
+        $setting->getDatabasePlatform()
+            ->registerDoctrineTypeMapping($type, $name);
     }
 }

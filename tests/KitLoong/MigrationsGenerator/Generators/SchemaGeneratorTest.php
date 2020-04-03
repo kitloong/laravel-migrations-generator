@@ -15,8 +15,31 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\FieldGenerator;
 use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
+use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\Types\DoubleType;
+use KitLoong\MigrationsGenerator\Types\EnumType;
+use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
+use KitLoong\MigrationsGenerator\Types\GeometryType;
+use KitLoong\MigrationsGenerator\Types\IpAddressType;
+use KitLoong\MigrationsGenerator\Types\JsonbType;
+use KitLoong\MigrationsGenerator\Types\LineStringType;
+use KitLoong\MigrationsGenerator\Types\LongTextType;
+use KitLoong\MigrationsGenerator\Types\MacAddressType;
+use KitLoong\MigrationsGenerator\Types\MediumIntegerType;
+use KitLoong\MigrationsGenerator\Types\MediumTextType;
+use KitLoong\MigrationsGenerator\Types\MultiLineStringType;
+use KitLoong\MigrationsGenerator\Types\MultiPointType;
+use KitLoong\MigrationsGenerator\Types\MultiPolygonType;
+use KitLoong\MigrationsGenerator\Types\PointType;
+use KitLoong\MigrationsGenerator\Types\PolygonType;
+use KitLoong\MigrationsGenerator\Types\SetType;
+use KitLoong\MigrationsGenerator\Types\TimestampType;
+use KitLoong\MigrationsGenerator\Types\TimestampTzType;
+use KitLoong\MigrationsGenerator\Types\TimeTzType;
+use KitLoong\MigrationsGenerator\Types\UUIDType;
+use KitLoong\MigrationsGenerator\Types\YearType;
 use Mockery;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
@@ -32,6 +55,13 @@ class SchemaGeneratorTest extends TestCase
         $dbalConnection = Mockery::mock(Connection::class);
         $connection = Mockery::mock(ConnectionInterface::class);
 
+        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+            $this->mockShouldReceivedCustomType($mock);
+
+            $mock->shouldReceive('getPlatform')
+                ->andReturn(Platform::POSTGRESQL);
+        });
+
         DB::shouldReceive('connection')
             ->with('database')
             ->andReturn($connection);
@@ -39,7 +69,8 @@ class SchemaGeneratorTest extends TestCase
         $connection->shouldReceive('getDoctrineConnection')
             ->andReturn($dbalConnection);
 
-        $dbalConnection->shouldReceive('getDatabasePlatform->registerDoctrineTypeMapping');
+        $this->mockShouldReceivedDoctrineType($dbalConnection);
+
         $dbalConnection->shouldReceive('getDatabase')
             ->andReturn('database');
 
@@ -82,11 +113,6 @@ class SchemaGeneratorTest extends TestCase
                 ->with('table', $schema, false);
         });
 
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
-            $mock->shouldReceive('getPlatform')
-                ->andReturn('mysql');
-        });
-
         /** @var SchemaGenerator $schemaGenerator */
         $schemaGenerator = resolve(SchemaGenerator::class);
 
@@ -99,5 +125,69 @@ class SchemaGeneratorTest extends TestCase
         $this->assertSame(['fields', 'multiColumnIndex'], $fields);
 
         $schemaGenerator->getForeignKeyConstraints('table');
+
+        Mockery::close();
+
+        // Should not error if register repeated
+        $schemaGenerator->registerCustomDoctrineType(EnumType::class, 'enum', 'enum');
+        $schemaGenerator->registerCustomDoctrineType(EnumType::class, 'enum', 'enum');
+    }
+
+    private function mockShouldReceivedCustomType(MockInterface $mock)
+    {
+        foreach ($this->getTypes() as $type) {
+            $mock->shouldReceive('getDatabasePlatform->registerDoctrineTypeMapping')
+                ->with($type[1], $type[0])
+                ->once();
+        }
+    }
+
+    private function mockShouldReceivedDoctrineType(MockInterface $mock)
+    {
+        $types = [
+            'bit' => 'boolean',
+            'json' => 'json',
+
+            '_text' => 'text',
+            '_int4' => 'integer',
+            '_numeric' => 'float',
+            'cidr' => 'string'
+        ];
+
+        foreach ($types as $dbType => $doctrineType) {
+            $mock->shouldReceive('getDatabasePlatform->registerDoctrineTypeMapping')
+                ->with($dbType, $doctrineType)
+                ->once();
+        }
+    }
+
+    private function getTypes()
+    {
+        return [
+            DoubleType::class => ['double', 'double'],
+            EnumType::class => ['enum', 'enum'],
+            GeometryType::class => ['geometry', 'geometry'],
+            GeometryCollectionType::class => ['geometrycollection', 'geometrycollection'],
+            LineStringType::class => ['linestring', 'linestring'],
+            LongTextType::class => ['longtext', 'longtext'],
+            MediumIntegerType::class => ['mediumint', 'mediumint'],
+            MediumTextType::class => ['mediumtext', 'mediumtext'],
+            MultiLineStringType::class => ['multilinestring', 'multilinestring'],
+            MultiPointType::class => ['multipoint', 'multipoint'],
+            MultiPolygonType::class => ['multipolygon', 'multipolygon'],
+            PointType::class => ['point', 'point'],
+            PolygonType::class => ['polygon', 'polygon'],
+            SetType::class => ['set', 'set'],
+            TimestampType::class => ['timestamp', 'timestamp'],
+            UUIDType::class => ['uuid', 'uuid'],
+            YearType::class => ['year', 'year'],
+
+            // Postgres types
+            IpAddressType::class => ['ipaddress', 'inet'],
+            JsonbType::class => ['jsonb', 'jsonb'],
+            MacAddressType::class => ['macaddress', 'macaddr'],
+            TimeTzType::class => ['timetz', 'timetz'],
+            TimestampTzType::class => ['timestamptz', 'timestamptz']
+        ];
     }
 }
