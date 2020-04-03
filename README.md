@@ -1,11 +1,11 @@
 # Laravel Migrations Generator
 
 [![Build Status](https://travis-ci.org/kitloong/laravel-migrations-generator.svg)](https://travis-ci.org/kitloong/laravel-migrations-generator)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kitloong/laravel-migrations-generator/badges/quality-score.png)](https://scrutinizer-ci.com/g/kitloong/laravel-migrations-generator/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kitloong/laravel-migrations-generator/badges/quality-score.png?b=4.x)](https://scrutinizer-ci.com/g/kitloong/laravel-migrations-generator/)
+[![Latest Stable Version](https://poser.pugx.org/kitloong/laravel-migrations-generator/v/stable.png)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
+[![License](https://poser.pugx.org/kitloong/laravel-migrations-generator/license.png)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 
 Generate Laravel Migrations from an existing database, including indexes and foreign keys!
-
-This package is cloned from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
 
 ## V4 Changes
 
@@ -21,6 +21,8 @@ This package is cloned from https://github.com/Xethron/migrations-generator and 
 1. Fixed miscellaneous bugs.
 1. Added UT!
 1. More UT will be added increase coverage
+
+This package is cloned from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
 
 ## Version Compatibility
 
@@ -55,7 +57,7 @@ Run `php artisan help migrate:generate` for a list of options.
 
 ## Thank You
 
-Thanks to Xethron for his great work. This package is cloned from https://github.com/Xethron/migrations-generator
+Thanks to Bernhard Breytenbach for his great work. This package is cloned from https://github.com/Xethron/migrations-generator
 
 Thanks to Jeffrey Way for his amazing Laravel-4-Generators package. This package depends greatly on his work.
 
