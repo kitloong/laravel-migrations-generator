@@ -67,11 +67,10 @@ class FieldGenerator
      * @var array
      */
     public static $fieldTypeMap = [
-        'smallint' => ColumnType::SMALL_INTEGER,
-        'mediumint' => ColumnType::MEDIUM_INTEGER,
-        'bigint' => ColumnType::BIG_INTEGER,
-        'datetime' => ColumnType::DATETIME,
-        'blob' => ColumnType::BINARY,
+        DBALTypes::SMALLINT => ColumnType::SMALL_INTEGER,
+        DBALTypes::BIGINT => ColumnType::BIG_INTEGER,
+        DBALTypes::DATETIME_MUTABLE => ColumnType::DATETIME,
+        DBALTypes::BLOB => ColumnType::BINARY,
     ];
 
     /**

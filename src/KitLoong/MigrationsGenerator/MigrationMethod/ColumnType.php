@@ -29,6 +29,7 @@ final class ColumnType
     const LINE_STRING = 'lineString';
     const LONG_TEXT = 'longText';
     const MAC_ADDRESS = 'macAddress';
+    const MEDIUM_INCREMENTS = 'mediumIncrements';
     const MEDIUM_INTEGER = 'mediumInteger';
     const MEDIUM_TEXT = 'mediumText';
     const MULTI_LINE_STRING = 'multiLineString';
@@ -38,13 +39,20 @@ final class ColumnType
     const POLYGON = 'polygon';
     const REMEMBER_TOKEN = 'rememberToken';
     const SET = 'set';
+    const SMALL_INCREMENTS = 'smallIncrements';
     const SMALL_INTEGER = 'smallInteger';
     const SOFT_DELETES = 'softDeletes';
     const TIME_TZ = 'timeTz';
     const TIMESTAMP = 'timestamp';
     const TIMESTAMPS = 'timestamps';
     const TIMESTAMP_TZ = 'timestampTz';
+    const TINY_INCREMENTS = 'tinyIncrements';
     const TINY_INTEGER = 'tinyInteger';
+    const UNSIGNED_BIG_INTEGER = 'unsignedBigInteger';
+    const UNSIGNED_INTEGER = 'unsignedInteger';
+    const UNSIGNED_MEDIUM_INTEGER = 'unsignedMediumInteger';
+    const UNSIGNED_SMALL_INTEGER = 'unsignedSmallInteger';
+    const UNSIGNED_TINY_INTEGER = 'unsignedTinyInteger';
     const UUID = 'uuid';
     const YEAR = 'year';
 }

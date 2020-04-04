@@ -10,27 +10,27 @@ namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Collection;
-use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 
 class IntegerField
 {
     public function makeField(array $field, Column $column, Collection $indexes): array
     {
+        if (isset(FieldGenerator::$fieldTypeMap[$field['type']])) {
+            $field['type'] = FieldGenerator::$fieldTypeMap[$field['type']];
+        }
+
         if ($column->getUnsigned() && $column->getAutoincrement()) {
             if ($field['type'] === 'integer') {
                 $field['type'] = ColumnType::INCREMENTS;
             } else {
-                $field['type'] = str_replace('int', 'Increments', $field['type']);
+                $field['type'] = str_replace('Integer', 'Increments', $field['type']);
             }
 
             $indexes->forget($field['field']);
         } else {
-            if (isset(FieldGenerator::$fieldTypeMap[$field['type']])) {
-                $field['type'] = FieldGenerator::$fieldTypeMap[$field['type']];
-            }
             if ($column->getUnsigned()) {
-                $field['decorators'][] = ColumnModifier::UNSIGNED;
+                $field['type'] = 'unsigned'.ucfirst($field['type']);
             }
             if ($column->getAutoincrement()) {
                 $field['args'][] = 'true';

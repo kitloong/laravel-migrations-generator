@@ -8,12 +8,19 @@
 
 namespace KitLoong\MigrationsGenerator\Types;
 
+use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+
 final class DBALTypes
 {
     /**
      * @see \Doctrine\DBAL\Types\Types::BIGINT
      */
     const BIGINT = 'bigint';
+
+    /**
+     * @see \Doctrine\DBAL\Types\Types::BLOB
+     */
+    const BLOB = 'blob';
 
     /**
      * @see \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE
@@ -50,15 +57,30 @@ final class DBALTypes
      */
     const TIME_MUTABLE = 'time';
 
-    // Custom types
+    // Custom types, should identical with CustomDoctrineType name
 
-    const DOUBLE = 'double';
+    /**
+     * @see DoubleType::getName()
+     */
+    const DOUBLE = ColumnType::DOUBLE;
 
-    const ENUM = 'enum';
+    /**
+     * @see EnumType::getName()
+     */
+    const ENUM = ColumnType::ENUM;
 
-    const MEDIUMINT = 'mediumint';
+    /**
+     * @see MediumIntegerType::getName()
+     */
+    const MEDIUMINT = ColumnType::MEDIUM_INTEGER;
 
-    const SET = 'set';
+    /**
+     * @see SetType::getName()
+     */
+    const SET = ColumnType::SET;
 
-    const TIMESTAMP = 'timestamp';
+    /**
+     * @see TimestampType::getName()
+     */
+    const TIMESTAMP = ColumnType::TIMESTAMP;
 }
