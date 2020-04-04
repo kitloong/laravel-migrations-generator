@@ -222,7 +222,7 @@ class MigrateGenerateCommand extends GeneratorCommand
 
         foreach ($tables as $table) {
             $this->table = $table;
-            $this->migrationName = 'create_'.$this->table.'_table';
+            $this->migrationName = 'create_'.preg_replace('/[^a-zA-Z0-9_]/', '_', $this->table).'_table';
             $this->fields = $this->schemaGenerator->getFields($this->table);
 
             $this->generate();
@@ -241,7 +241,7 @@ class MigrateGenerateCommand extends GeneratorCommand
 
         foreach ($tables as $table) {
             $this->table = $table;
-            $this->migrationName = 'add_foreign_keys_to_'.$this->table.'_table';
+            $this->migrationName = 'add_foreign_keys_to_'.preg_replace('/[^a-zA-Z0-9_]/', '_', $this->table).'_table';
             $this->fields = $this->schemaGenerator->getForeignKeyConstraints($this->table);
 
             $this->generate();
@@ -273,8 +273,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected function getFileGenerationPath(): string
     {
         $path = $this->getPathByOptionOrConfig('path', 'migration_target_path');
-        $migrationName = str_replace('/', '_', $this->migrationName);
-        $fileName = $this->getDatePrefix().'_'.$migrationName.'.php';
+        $fileName = $this->getDatePrefix().'_'.$this->migrationName.'.php';
 
         return "{$path}/{$fileName}";
     }
