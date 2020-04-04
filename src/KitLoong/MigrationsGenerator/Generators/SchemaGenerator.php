@@ -56,14 +56,50 @@ class SchemaGenerator
      * @var string
      */
     protected $database;
+
     /**
      * @var bool
      */
     private $ignoreIndexNames;
+
     /**
      * @var bool
      */
     private $ignoreForeignKeyNames;
+
+    /**
+     * Custom doctrine type
+     * ['class', 'name', 'type']
+     * @see registerCustomDoctrineType()
+     *
+     * @var array
+     */
+    private static $customDoctrineTypes = [
+        [DoubleType::class, 'double', 'double'],
+        [EnumType::class, 'enum', 'enum'],
+        [GeometryType::class, 'geometry', 'geometry'],
+        [GeometryCollectionType::class, 'geometrycollection', 'geometrycollection'],
+        [LineStringType::class, 'linestring', 'linestring'],
+        [LongTextType::class, 'longtext', 'longtext'],
+        [MediumIntegerType::class, 'mediumint', 'mediumint'],
+        [MediumTextType::class, 'mediumtext', 'mediumtext'],
+        [MultiLineStringType::class, 'multilinestring', 'multilinestring'],
+        [MultiPointType::class, 'multipoint', 'multipoint'],
+        [MultiPolygonType::class, 'multipolygon', 'multipolygon'],
+        [PointType::class, 'point', 'point'],
+        [PolygonType::class, 'polygon', 'polygon'],
+        [SetType::class, 'set', 'set'],
+        [TimestampType::class, 'timestamp', 'timestamp'],
+        [UUIDType::class, 'uuid', 'uuid'],
+        [YearType::class, 'year', 'year'],
+
+        // Postgres types
+        [IpAddressType::class, 'ipaddress', 'inet'],
+        [JsonbType::class, 'jsonb', 'jsonb'],
+        [MacAddressType::class, 'macaddress', 'macaddr'],
+        [TimeTzType::class, 'timetz', 'timetz'],
+        [TimestampTzType::class, 'timestamptz', 'timestamptz'],
+    ];
 
     public function __construct(
         FieldGenerator $fieldGenerator,
@@ -83,39 +119,18 @@ class SchemaGenerator
      */
     public function initialize(string $database, bool $ignoreIndexNames, bool $ignoreForeignKeyNames)
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = resolve(MigrationGeneratorSetting::class);
-
-        $this->registerCustomDoctrineType(DoubleType::class, 'double', 'double');
-        $this->registerCustomDoctrineType(EnumType::class, 'enum', 'enum');
-        $this->registerCustomDoctrineType(GeometryType::class, 'geometry', 'geometry');
-        $this->registerCustomDoctrineType(GeometryCollectionType::class, 'geometrycollection', 'geometrycollection');
-        $this->registerCustomDoctrineType(LineStringType::class, 'linestring', 'linestring');
-        $this->registerCustomDoctrineType(LongTextType::class, 'longtext', 'longtext');
-        $this->registerCustomDoctrineType(MediumIntegerType::class, 'mediumint', 'mediumint');
-        $this->registerCustomDoctrineType(MediumTextType::class, 'mediumtext', 'mediumtext');
-        $this->registerCustomDoctrineType(MultiLineStringType::class, 'multilinestring', 'multilinestring');
-        $this->registerCustomDoctrineType(MultiPointType::class, 'multipoint', 'multipoint');
-        $this->registerCustomDoctrineType(MultiPolygonType::class, 'multipolygon', 'multipolygon');
-        $this->registerCustomDoctrineType(PointType::class, 'point', 'point');
-        $this->registerCustomDoctrineType(PolygonType::class, 'polygon', 'polygon');
-        $this->registerCustomDoctrineType(SetType::class, 'set', 'set');
-        $this->registerCustomDoctrineType(TimestampType::class, 'timestamp', 'timestamp');
-        $this->registerCustomDoctrineType(UUIDType::class, 'uuid', 'uuid');
-        $this->registerCustomDoctrineType(YearType::class, 'year', 'year');
-
-        // Postgres types
-        $this->registerCustomDoctrineType(IpAddressType::class, 'ipaddress', 'inet');
-        $this->registerCustomDoctrineType(JsonbType::class, 'jsonb', 'jsonb');
-        $this->registerCustomDoctrineType(MacAddressType::class, 'macaddress', 'macaddr');
-        $this->registerCustomDoctrineType(TimeTzType::class, 'timetz', 'timetz');
-        $this->registerCustomDoctrineType(TimestampTzType::class, 'timestamptz', 'timestamptz');
+        foreach (self::$customDoctrineTypes as $doctrineType) {
+            $this->registerCustomDoctrineType(...$doctrineType);
+        }
 
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = DB::connection($database)->getDoctrineConnection();
 
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'json');
+
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = resolve(MigrationGeneratorSetting::class);
 
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:
@@ -126,8 +141,6 @@ class SchemaGenerator
                 break;
             default:
         }
-
-        $this->database = $connection->getDatabase();
 
         $this->schema = $connection->getSchemaManager();
 
