@@ -6,7 +6,9 @@
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
+use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
@@ -38,17 +40,17 @@ class SchemaGenerator
     /**
      * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
      */
-    protected $schema;
+    private $schema;
 
     /**
      * @var FieldGenerator
      */
-    protected $fieldGenerator;
+    private $fieldGenerator;
 
     /**
      * @var ForeignKeyGenerator
      */
-    protected $foreignKeyGenerator;
+    private $foreignKeyGenerator;
 
     private $indexGenerator;
 
@@ -156,14 +158,27 @@ class SchemaGenerator
         return $this->schema->listTableNames();
     }
 
-    public function getFields(string $tableName): array
+    public function getTable(string $tableName): Table
     {
-        $table = $this->schema->listTableDetails($tableName);
-        $indexes = $this->indexGenerator->generate($table, $this->ignoreIndexNames);
-        $singleColIndexes = $indexes['single'];
-        $multiColIndexes = $indexes['multi'];
-        $fields = $this->fieldGenerator->generate($table, $singleColIndexes);
-        return array_merge($fields, $multiColIndexes->toArray());
+        return $this->schema->listTableDetails($tableName);
+    }
+
+    /**
+     * @param  Table  $table
+     * @return array|\Illuminate\Support\Collection[]
+     * [
+     *  'single' => Collection of single column indexes, with column name as key
+     *  'multi' => Collection of multi columns indexes
+     * ]
+     */
+    public function getIndexes(Table $table): array
+    {
+        return $this->indexGenerator->generate($table, $this->ignoreIndexNames);
+    }
+
+    public function getFields(Table $table, Collection $singleColIndexes): array
+    {
+        return $this->fieldGenerator->generate($table, $singleColIndexes);
     }
 
     public function getForeignKeyConstraints(string $table): array

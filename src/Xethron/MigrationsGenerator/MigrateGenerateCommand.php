@@ -220,10 +220,15 @@ class MigrateGenerateCommand extends GeneratorCommand
     {
         $this->method = 'create';
 
-        foreach ($tables as $table) {
-            $this->table = $table;
+        foreach ($tables as $tableName) {
+            $this->table = $tableName;
             $this->migrationName = 'create_'.preg_replace('/[^a-zA-Z0-9_]/', '_', $this->table).'_table';
-            $this->fields = $this->schemaGenerator->getFields($this->table);
+            $table = $this->schemaGenerator->getTable($tableName);
+            $indexes = $this->schemaGenerator->getIndexes($table);
+            $singleColIndexes = $indexes['single'];
+            $multiColIndexes = $indexes['multi'];
+            $fields = $this->schemaGenerator->getFields($table, $singleColIndexes);
+            $this->fields = array_merge($fields, $multiColIndexes->toArray());
 
             $this->generate();
         }

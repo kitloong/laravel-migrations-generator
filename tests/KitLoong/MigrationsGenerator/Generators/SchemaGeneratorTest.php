@@ -59,34 +59,37 @@ class SchemaGeneratorTest extends TestCase
             $this->mockShouldReceivedCustomType($mock);
 
             $mock->shouldReceive('getPlatform')
-                ->andReturn(Platform::POSTGRESQL);
+                ->andReturn(Platform::POSTGRESQL)
+                ->once();
         });
 
         DB::shouldReceive('connection')
             ->with('database')
-            ->andReturn($connection);
+            ->andReturn($connection)
+            ->once();
 
         $connection->shouldReceive('getDoctrineConnection')
-            ->andReturn($dbalConnection);
+            ->andReturn($dbalConnection)
+            ->once();
 
         $this->mockShouldReceivedDoctrineType($dbalConnection);
-
-        $dbalConnection->shouldReceive('getDatabase')
-            ->andReturn('database');
 
         $schema = Mockery::mock(AbstractSchemaManager::class);
 
         $dbalConnection->shouldReceive('getSchemaManager')
-            ->andReturn($schema);
+            ->andReturn($schema)
+            ->once();
 
         $schema->shouldReceive('listTableNames')
-            ->andReturn(['table1', 'table2']);
+            ->andReturn(['table1', 'table2'])
+            ->once();
 
         $table = Mockery::mock(Table::class);
 
         $schema->shouldReceive('listTableDetails')
             ->with('table1')
-            ->andReturn($table);
+            ->andReturn($table)
+            ->once();
 
         $singleColumnIndex = collect(['singleColumnIndex']);
         $multiColumnIndex = collect(['multiColumnIndex']);
@@ -105,7 +108,8 @@ class SchemaGeneratorTest extends TestCase
         $this->mock(FieldGenerator::class, function (MockInterface $mock) use ($table, $singleColumnIndex) {
             $mock->shouldReceive('generate')
                 ->with($table, $singleColumnIndex)
-                ->andReturn(['fields']);
+                ->andReturn(['fields'])
+                ->once();
         });
 
         $this->mock(ForeignKeyGenerator::class, function (MockInterface $mock) use ($schema) {
@@ -121,16 +125,13 @@ class SchemaGeneratorTest extends TestCase
         $tables = $schemaGenerator->getTables();
         $this->assertSame(['table1', 'table2'], $tables);
 
-        $fields = $schemaGenerator->getFields('table1');
-        $this->assertSame(['fields', 'multiColumnIndex'], $fields);
+        $this->assertSame($table, $schemaGenerator->getTable('table1'));
+
+        $indexes = $schemaGenerator->getIndexes($table);
+
+        $this->assertSame(['fields'], $schemaGenerator->getFields($table, $indexes['single']));
 
         $schemaGenerator->getForeignKeyConstraints('table');
-
-        Mockery::close();
-
-        // Should not error if register repeated
-        $schemaGenerator->registerCustomDoctrineType(EnumType::class, 'enum', 'enum');
-        $schemaGenerator->registerCustomDoctrineType(EnumType::class, 'enum', 'enum');
     }
 
     private function mockShouldReceivedCustomType(MockInterface $mock)
