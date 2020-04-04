@@ -88,4 +88,9 @@ final class DBALTypes
      * @see TimestampType::getName()
      */
     const TIMESTAMP = ColumnType::TIMESTAMP;
+
+    /**
+     * @see TinyIntegerType::getName()
+     */
+    const TINYINT = ColumnType::TINY_INTEGER;
 }

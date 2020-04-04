@@ -31,6 +31,7 @@ use KitLoong\MigrationsGenerator\Types\SetType;
 use KitLoong\MigrationsGenerator\Types\TimestampType;
 use KitLoong\MigrationsGenerator\Types\TimestampTzType;
 use KitLoong\MigrationsGenerator\Types\TimeTzType;
+use KitLoong\MigrationsGenerator\Types\TinyIntegerType;
 use KitLoong\MigrationsGenerator\Types\UUIDType;
 use KitLoong\MigrationsGenerator\Types\YearType;
 use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
@@ -92,6 +93,7 @@ class SchemaGenerator
         [PolygonType::class, 'polygon', 'polygon'],
         [SetType::class, 'set', 'set'],
         [TimestampType::class, 'timestamp', 'timestamp'],
+        [TinyIntegerType::class, 'tinyint', 'tinyint'],
         [UUIDType::class, 'uuid', 'uuid'],
         [YearType::class, 'year', 'year'],
 

@@ -153,11 +153,12 @@ class FieldGenerator
         bool $useTimestamps
     ): array {
         switch ($field['type']) {
-            case DBALTypes::SMALLINT:
             case DBALTypes::INTEGER:
             case DBALTypes::BIGINT:
             case DBALTypes::MEDIUMINT:
-                return $this->integerField->makeField($field, $column, $indexes);
+            case DBALTypes::SMALLINT:
+            case DBALTypes::TINYINT:
+                return $this->integerField->makeField($tableName, $field, $column, $indexes);
             case DBALTypes::DATETIME_MUTABLE:
             case DBALTypes::TIMESTAMP:
             case DBALTypes::TIME_MUTABLE:
