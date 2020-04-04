@@ -40,6 +40,7 @@ class DefaultModifier
             case DBALTypes::DECIMAL:
             case DBALTypes::FLOAT:
             case DBALTypes::DOUBLE:
+            case DBALTypes::BOOLEAN:
                 $default = $column->getDefault();
                 break;
             case DBALTypes::DATETIME_MUTABLE:

@@ -23,6 +23,11 @@ final class DBALTypes
     const BLOB = 'blob';
 
     /**
+     * @see \Doctrine\DBAL\Types\Types::BOOLEAN
+     */
+    const BOOLEAN = 'boolean';
+
+    /**
      * @see \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE
      */
     const DATETIME_MUTABLE = 'datetime';
