@@ -36,7 +36,8 @@ class DefaultModifierTest extends TestCase
             DBALTypes::MEDIUMINT,
             DBALTypes::DECIMAL,
             DBALTypes::FLOAT,
-            DBALTypes::DOUBLE
+            DBALTypes::DOUBLE,
+            DBALTypes::BOOLEAN
         ];
 
         foreach ($types as $type) {

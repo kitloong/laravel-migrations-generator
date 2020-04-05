@@ -11,6 +11,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\FieldGenerator;
@@ -18,6 +19,7 @@ use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
@@ -38,6 +40,7 @@ use KitLoong\MigrationsGenerator\Types\SetType;
 use KitLoong\MigrationsGenerator\Types\TimestampType;
 use KitLoong\MigrationsGenerator\Types\TimestampTzType;
 use KitLoong\MigrationsGenerator\Types\TimeTzType;
+use KitLoong\MigrationsGenerator\Types\TinyIntegerType;
 use KitLoong\MigrationsGenerator\Types\UUIDType;
 use KitLoong\MigrationsGenerator\Types\YearType;
 use Mockery;
@@ -134,6 +137,25 @@ class SchemaGeneratorTest extends TestCase
         $schemaGenerator->getForeignKeyConstraints('table');
     }
 
+    public function testRegisterCustomDoctrineType()
+    {
+        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getDatabasePlatform->registerDoctrineTypeMapping')
+                ->with('inet', 'ipaddress')
+                ->twice();
+        });
+
+        /** @var SchemaGenerator $schemaGenerator */
+        $schemaGenerator = resolve(SchemaGenerator::class);
+
+        $schemaGenerator->registerCustomDoctrineType(IpAddressType::class, 'ipaddress', 'inet');
+
+        $this->assertSame(ColumnType::IP_ADDRESS, Type::getType('ipaddress')->getName());
+
+        // Register same type should not throw type exists exception
+        $schemaGenerator->registerCustomDoctrineType(IpAddressType::class, 'ipaddress', 'inet');
+    }
+
     private function mockShouldReceivedCustomType(MockInterface $mock)
     {
         foreach ($this->getTypes() as $type) {
@@ -180,6 +202,7 @@ class SchemaGeneratorTest extends TestCase
             PolygonType::class => ['polygon', 'polygon'],
             SetType::class => ['set', 'set'],
             TimestampType::class => ['timestamp', 'timestamp'],
+            TinyIntegerType::class => ['tinyint', 'tinyint'],
             UUIDType::class => ['uuid', 'uuid'],
             YearType::class => ['year', 'year'],
 

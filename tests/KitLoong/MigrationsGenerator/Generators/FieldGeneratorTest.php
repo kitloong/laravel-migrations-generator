@@ -104,7 +104,7 @@ class FieldGeneratorTest extends TestCase
                 $returnField = $field;
                 $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
-                    ->with($field, $column, $indexes)
+                    ->with('table', $field, $column, $indexes)
                     ->andReturn([]);
             });
 
@@ -124,10 +124,11 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            DBALTypes::SMALLINT,
             DBALTypes::INTEGER,
             DBALTypes::BIGINT,
-            DBALTypes::MEDIUMINT
+            DBALTypes::MEDIUMINT,
+            DBALTypes::SMALLINT,
+            DBALTypes::TINYINT
         ];
 
         foreach ($types as $type) {
@@ -163,7 +164,7 @@ class FieldGeneratorTest extends TestCase
                 $returnField = $field;
                 $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
-                    ->with($field, $column, $indexes)
+                    ->with('table', $field, $column, $indexes)
                     ->andReturn($returnField);
             });
 
@@ -179,7 +180,8 @@ class FieldGeneratorTest extends TestCase
     {
         $types = [
             DBALTypes::DATETIME_MUTABLE,
-            DBALTypes::TIMESTAMP
+            DBALTypes::TIMESTAMP,
+            DBALTypes::TIME_MUTABLE
         ];
 
         foreach ($types as $type) {
@@ -556,7 +558,7 @@ class FieldGeneratorTest extends TestCase
                 $returnField = $field;
                 $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
-                    ->with($field, $column, $indexes)
+                    ->with('table', $field, $column, $indexes)
                     ->andReturn($returnField);
             });
 
