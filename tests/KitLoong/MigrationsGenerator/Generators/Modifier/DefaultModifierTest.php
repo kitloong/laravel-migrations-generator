@@ -30,20 +30,40 @@ class DefaultModifierTest extends TestCase
             ->andReturn(10);
 
         $types = [
-            DBALTypes::SMALLINT,
             DBALTypes::INTEGER,
             DBALTypes::BIGINT,
             DBALTypes::MEDIUMINT,
+            DBALTypes::SMALLINT,
+            DBALTypes::TINYINT,
             DBALTypes::DECIMAL,
             DBALTypes::FLOAT,
-            DBALTypes::DOUBLE,
-            DBALTypes::BOOLEAN
+            DBALTypes::DOUBLE
         ];
 
         foreach ($types as $type) {
             $result = $defaultModifier->generate($type, $column);
             $this->assertSame('default(10)', $result);
         }
+    }
+
+    public function testGenerateFromBoolean()
+    {
+        /** @var DefaultModifier $defaultModifier */
+        $defaultModifier = resolve(DefaultModifier::class);
+
+        $column = Mockery::mock(Column::class);
+        $column->shouldReceive('getDefault')
+            ->andReturn(false);
+
+        $result = $defaultModifier->generate(DBALTypes::BOOLEAN, $column);
+        $this->assertSame('default(0)', $result);
+
+        $column = Mockery::mock(Column::class);
+        $column->shouldReceive('getDefault')
+            ->andReturn(true);
+
+        $result = $defaultModifier->generate(DBALTypes::BOOLEAN, $column);
+        $this->assertSame('default(1)', $result);
     }
 
     public function testGenerateFromDatetime()

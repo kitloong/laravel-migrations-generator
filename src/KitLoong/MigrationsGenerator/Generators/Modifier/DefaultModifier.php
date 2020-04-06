@@ -9,6 +9,7 @@
 namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
+use KitLoong\MigrationsGenerator\Generators\BooleanField;
 use KitLoong\MigrationsGenerator\Generators\DatetimeField;
 use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
@@ -16,11 +17,13 @@ use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
 class DefaultModifier
 {
+    private $booleanField;
     private $datetimeField;
     private $decorator;
 
-    public function __construct(DatetimeField $datetimeField, Decorator $decorator)
+    public function __construct(BooleanField $booleanField, DatetimeField $datetimeField, Decorator $decorator)
     {
+        $this->booleanField = $booleanField;
         $this->datetimeField = $datetimeField;
         $this->decorator = $decorator;
     }
@@ -37,11 +40,14 @@ class DefaultModifier
             case DBALTypes::INTEGER:
             case DBALTypes::BIGINT:
             case DBALTypes::MEDIUMINT:
+            case DBALTypes::TINYINT:
             case DBALTypes::DECIMAL:
             case DBALTypes::FLOAT:
             case DBALTypes::DOUBLE:
-            case DBALTypes::BOOLEAN:
                 $default = $column->getDefault();
+                break;
+            case DBALTypes::BOOLEAN:
+                $default = $this->booleanField->makeDefault($column);
                 break;
             case DBALTypes::DATETIME_MUTABLE:
             case DBALTypes::TIMESTAMP:
