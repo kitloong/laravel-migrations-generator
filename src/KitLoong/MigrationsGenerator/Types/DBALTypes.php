@@ -75,6 +75,12 @@ final class DBALTypes
     const ENUM = ColumnType::ENUM;
 
     /**
+     * @see GeometryType::getName()
+     * @see GeographyType::getName()
+     */
+    const GEOMETRY = ColumnType::GEOMETRY;
+
+    /**
      * @see MediumIntegerType::getName()
      */
     const MEDIUMINT = ColumnType::MEDIUM_INTEGER;

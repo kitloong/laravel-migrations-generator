@@ -25,6 +25,7 @@ class FieldGenerator
     private $integerField;
     private $datetimeField;
     private $decimalField;
+    private $geometryField;
     private $stringField;
     private $enumField;
     private $setField;
@@ -39,6 +40,7 @@ class FieldGenerator
         IntegerField $integerField,
         DatetimeField $datetimeField,
         DecimalField $decimalField,
+        GeometryField $geometryField,
         StringField $stringField,
         EnumField $enumField,
         SetField $setField,
@@ -52,6 +54,7 @@ class FieldGenerator
         $this->integerField = $integerField;
         $this->datetimeField = $datetimeField;
         $this->decimalField = $decimalField;
+        $this->geometryField = $geometryField;
         $this->stringField = $stringField;
         $this->enumField = $enumField;
         $this->setField = $setField;
@@ -169,6 +172,8 @@ class FieldGenerator
                 return $this->decimalField->makeField($field, $column);
             case DBALTypes::ENUM:
                 return $this->enumField->makeField($tableName, $field);
+            case DBALTypes::GEOMETRY:
+                return $this->geometryField->makeField($tableName, $field);
             case DBALTypes::SET:
                 return $this->setField->makeField($tableName, $field);
             case DBALTypes::STRING:

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
+use KitLoong\MigrationsGenerator\Types\GeographyType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryType;
 use KitLoong\MigrationsGenerator\Types\IpAddressType;
@@ -98,6 +99,7 @@ class SchemaGenerator
         [YearType::class, 'year', 'year'],
 
         // Postgres types
+        [GeographyType::class, 'geography', 'geography'],
         [IpAddressType::class, 'ipaddress', 'inet'],
         [JsonbType::class, 'jsonb', 'jsonb'],
         [MacAddressType::class, 'macaddress', 'macaddr'],

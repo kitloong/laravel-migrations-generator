@@ -14,6 +14,7 @@ use KitLoong\MigrationsGenerator\Generators\DatetimeField;
 use KitLoong\MigrationsGenerator\Generators\DecimalField;
 use KitLoong\MigrationsGenerator\Generators\EnumField;
 use KitLoong\MigrationsGenerator\Generators\FieldGenerator;
+use KitLoong\MigrationsGenerator\Generators\GeometryField;
 use KitLoong\MigrationsGenerator\Generators\IntegerField;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CommentModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\DefaultModifier;
@@ -346,6 +347,62 @@ class FieldGeneratorTest extends TestCase
         }
     }
 
+    public function testGenerateGeometry()
+    {
+        $this->mock(DatetimeField::class, function (MockInterface $mock) {
+            $mock->shouldReceive('isUseTimestamps')
+                ->andReturnFalse();
+        });
+
+        $types = [
+            DBALTypes::GEOMETRY
+        ];
+
+        foreach ($types as $type) {
+            $table = Mockery::mock(Table::class);
+            $index = ['index'];
+            $column = Mockery::mock(Column::class);
+            $indexes = collect([$index]);
+
+            $table->shouldReceive('getName')
+                ->andReturn('table');
+            $table->shouldReceive('getColumns')
+                ->andReturn([$column]);
+
+            $column->shouldReceive('getName')
+                ->andReturn('name');
+            $column->shouldReceive('getNotnull')
+                ->andReturnTrue();
+            $column->shouldReceive('getDefault')
+                ->andReturnNull();
+            $column->shouldReceive('getComment')
+                ->andReturnNull();
+            $column->shouldReceive('getType->getName')
+                ->andReturn($type);
+
+            $field = [
+                'field' => 'name',
+                'type' => $type,
+                'args' => [],
+                'decorators' => []
+            ];
+
+            $this->mock(GeometryField::class, function (MockInterface $mock) use ($field) {
+                $returnField = $field;
+                $returnField['field'] = 'returned';
+                $mock->shouldReceive('makeField')
+                    ->with('table', $field)
+                    ->andReturn($returnField);
+            });
+
+            /** @var FieldGenerator $fieldGenerator */
+            $fieldGenerator = resolve(FieldGenerator::class);
+
+            $fields = $fieldGenerator->generate($table, $indexes);
+            $this->assertSame('returned', $fields[0]['field']);
+        }
+    }
+
     public function testGenerateSet()
     {
         $this->mock(DatetimeField::class, function (MockInterface $mock) {
@@ -466,7 +523,7 @@ class FieldGeneratorTest extends TestCase
         });
 
         $types = [
-            'geometry'
+            'json'
         ];
 
         foreach ($types as $type) {
