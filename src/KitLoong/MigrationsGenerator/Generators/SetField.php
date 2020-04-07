@@ -8,31 +8,27 @@
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
-use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 
 class SetField
 {
     private $decorator;
 
-    public function __construct(Decorator $decorator)
+    private $mysqlRepository;
+
+    public function __construct(Decorator $decorator, MySQLRepository $mySQLRepository)
     {
         $this->decorator = $decorator;
+        $this->mysqlRepository = $mySQLRepository;
     }
 
     public function makeField(string $tableName, array $field): array
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = resolve(MigrationGeneratorSetting::class);
-
-        $column = DB::connection($setting->getConnection())->select("SHOW COLUMNS FROM `${tableName}` where Field = '${field['field']}' AND Type LIKE 'set(%'");
-        if (count($column) > 0) {
-            $field['args'][] = substr(
-                str_replace('set(', '[', $column[0]->Type),
-                0,
-                -1
-            ).']';
+        $value = $this->mysqlRepository->getSetPresetValues($tableName, $field['field']);
+        if ($value !== null) {
+            $field['args'][] = $value;
         }
+
         return $field;
     }
 }

@@ -8,9 +8,8 @@
 
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
-use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\SetField;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
 
@@ -18,6 +17,13 @@ class SetFieldTest extends TestCase
 {
     public function testMakeField()
     {
+        $this->mock(MySQLRepository::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getSetPresetValues')
+                ->with('table', 'set_field')
+                ->andReturn("['value1', 'value2' , 'value3']")
+                ->once();
+        });
+
         /** @var SetField $setField */
         $setField = resolve(SetField::class);
 
@@ -26,17 +32,28 @@ class SetFieldTest extends TestCase
             'args' => []
         ];
 
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
-            $mock->shouldReceive('getConnection');
-        });
-
-        DB::shouldReceive('connection->select')
-            ->with("SHOW COLUMNS FROM `table` where Field = 'set_field' AND Type LIKE 'set(%'")
-            ->andReturn([
-                (object) ['Type' => "set('value1', 'value2' , 'value3')"]
-            ]);
-
         $field = $setField->makeField('table', $field);
         $this->assertSame(["['value1', 'value2' , 'value3']"], $field['args']);
+    }
+
+    public function testMakeFieldValueIsEmpty()
+    {
+        $this->mock(MySQLRepository::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getSetPresetValues')
+                ->with('table', 'set_field')
+                ->andReturnNull()
+                ->once();
+        });
+
+        /** @var SetField $setField */
+        $setField = resolve(SetField::class);
+
+        $field = [
+            'field' => 'set_field',
+            'args' => []
+        ];
+
+        $field = $setField->makeField('table', $field);
+        $this->assertEmpty($field['args']);
     }
 }

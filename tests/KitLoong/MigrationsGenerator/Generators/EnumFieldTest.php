@@ -8,9 +8,8 @@
 
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
-use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\Generators\EnumField;
+use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
 
@@ -18,6 +17,13 @@ class EnumFieldTest extends TestCase
 {
     public function testMakeField()
     {
+        $this->mock(MySQLRepository::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getEnumPresetValues')
+                ->with('table', 'enum_field')
+                ->andReturn("['value1', 'value2' , 'value3']")
+                ->once();
+        });
+
         /** @var EnumField $enumField */
         $enumField = resolve(EnumField::class);
 
@@ -26,18 +32,28 @@ class EnumFieldTest extends TestCase
             'args' => []
         ];
 
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
-            $mock->shouldReceive('getConnection');
-        });
-
-        DB::shouldReceive('connection->select')
-            ->with("SHOW COLUMNS FROM `table` where Field = 'enum_field' AND Type LIKE 'enum(%'")
-            ->andReturn([
-                (object) ['Type' => "enum('value1', 'value2' , 'value3')"]
-            ])
-            ->once();
-
         $field = $enumField->makeField('table', $field);
         $this->assertSame(["['value1', 'value2' , 'value3']"], $field['args']);
+    }
+
+    public function testMakeFieldValueIsEmpty()
+    {
+        $this->mock(MySQLRepository::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getEnumPresetValues')
+                ->with('table', 'enum_field')
+                ->andReturnNull()
+                ->once();
+        });
+
+        /** @var EnumField $enumField */
+        $enumField = resolve(EnumField::class);
+
+        $field = [
+            'field' => 'enum_field',
+            'args' => []
+        ];
+
+        $field = $enumField->makeField('table', $field);
+        $this->assertEmpty($field['args']);
     }
 }
