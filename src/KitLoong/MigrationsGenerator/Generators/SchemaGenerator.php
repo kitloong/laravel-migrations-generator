@@ -136,7 +136,7 @@ class SchemaGenerator
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'json');
 
         /** @var MigrationGeneratorSetting $setting */
-        $setting = resolve(MigrationGeneratorSetting::class);
+        $setting = app(MigrationGeneratorSetting::class);
 
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:
@@ -202,7 +202,7 @@ class SchemaGenerator
     public function registerCustomDoctrineType($class, $name, $type)
     {
         /** @var MigrationGeneratorSetting $setting */
-        $setting = resolve(MigrationGeneratorSetting::class);
+        $setting = app(MigrationGeneratorSetting::class);
 
         if (!Type::hasType($name)) {
             Type::addType($name, $class);

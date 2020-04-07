@@ -11,16 +11,17 @@ Generate Laravel Migrations from an existing database, including indexes and for
 
 1. Major rewrite on `FieldGenerator` and `IndexGenerator`.
 1. Added `spatial` data type support such as `geometry`, `point`, etc.
-1. Support more Laravel migration types such as `uuid`, `longtext`, `year`, etc
+1. Support more Laravel migration types such as `json`, `uuid`, `longText`, `year`, etc
 1. Added `spatialIndex` support.
 1. `timestamp` and `datetime` support precision.
+1. Fixed MySQL `tinyInteger` and `boolean` issue.
 1. Able generate `softDeletes`, `rememberToken`, `timestamps` types.
-1. Support `set` for MySQL
+1. Support `set` for MySQL.
 1. It is now possible to generate nullable `timestamp`
 1. Removed unused classes.
 1. Fixed miscellaneous bugs.
 1. Added UT!
-1. More UT will be added increase coverage
+1. More UT will be added to increase coverage.
 
 This package is cloned from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
 
@@ -35,12 +36,34 @@ This package is cloned from https://github.com/Xethron/migrations-generator and 
 |5.6.x|4.x|
 |5.5 and below|https://github.com/Xethron/migrations-generator|
 
-## Laravel Installation
+## Install
 
 The recommended way to install this is through composer:
 
 ```bash
 composer require --dev "kitloong/laravel-migrations-generator"
+```
+
+Laravel will automatically register service provider for you.
+
+### Lumen Setup
+
+Auto discovery is not available in Lumen, you need some modification on `bootstrap/app.php`
+
+#### Enable facade
+
+Uncomment the following line
+
+```
+$app->withFacades();
+```
+
+#### Register provider
+
+Add following line
+
+```
+$app->register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
 ```
 
 ## Usage

@@ -120,7 +120,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     public function fire()
     {
         /** @var MigrationGeneratorSetting $setting */
-        $setting = resolve(MigrationGeneratorSetting::class);
+        $setting = app(MigrationGeneratorSetting::class);
 
         $this->connection = $this->option('connection') ?: Config::get('database.default');
         $setting->setConnection($this->connection);
@@ -301,25 +301,25 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected function getTemplateData(): array
     {
         if ($this->method == 'create') {
-            $up = resolve(AddToTable::class)->run(
+            $up = app(AddToTable::class)->run(
                 $this->fields,
                 $this->table,
                 $this->connection,
                 'create'
             );
-            $down = resolve(DroppedTable::class)->run(
+            $down = app(DroppedTable::class)->run(
                 $this->fields,
                 $this->table,
                 $this->connection,
                 'drop'
             );
         } else {
-            $up = resolve(AddForeignKeysToTable::class)->run(
+            $up = app(AddForeignKeysToTable::class)->run(
                 $this->fields,
                 $this->table,
                 $this->connection
             );
-            $down = resolve(RemoveForeignKeysFromTable::class)->run(
+            $down = app(RemoveForeignKeysFromTable::class)->run(
                 $this->fields,
                 $this->table,
                 $this->connection

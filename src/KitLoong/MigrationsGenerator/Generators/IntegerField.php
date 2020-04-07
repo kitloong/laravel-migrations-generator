@@ -66,7 +66,7 @@ class IntegerField
     private function checkIsMySQLBoolean(string $tableName, array $field, Column $column): bool
     {
         /** @var MigrationGeneratorSetting $setting */
-        $setting = resolve(MigrationGeneratorSetting::class);
+        $setting = app(MigrationGeneratorSetting::class);
 
         if ($setting->getPlatform() === Platform::MYSQL &&
             $field['type'] === ColumnType::TINY_INTEGER &&

@@ -1,6 +1,6 @@
 <?php namespace KitLoong\MigrationsGenerator;
 
-use Illuminate\Foundation\Application;
+use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Way\Generators\Compilers\Compiler;
 use Way\Generators\Compilers\TemplateCompiler;
@@ -32,7 +32,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         $this->app->singleton(
             self::COMMAND,
-            function (Application $app) {
+            function (Container $app) {
                 return new MigrateGenerateCommand(
                     $app->make('Way\Generators\Generator'),
                     $app->make(SchemaGenerator::class),
@@ -75,9 +75,9 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $packageConfigFile = __DIR__.'/../../config/config.php';
-        $this->app->get('config')->set(
+        $this->app->make('config')->set(
             'generators.config',
-            $this->app->get('files')->getRequire($packageConfigFile)
+            $this->app->make('files')->getRequire($packageConfigFile)
         );
     }
 }

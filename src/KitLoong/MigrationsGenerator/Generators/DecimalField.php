@@ -33,7 +33,7 @@ class DecimalField
     public function makeField(array $field, Column $column): array
     {
         /** @var MigrationGeneratorSetting $setting */
-        $setting = resolve(MigrationGeneratorSetting::class);
+        $setting = app(MigrationGeneratorSetting::class);
 
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:
