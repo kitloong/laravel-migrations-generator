@@ -22,7 +22,8 @@ abstract class Table extends WayTable
         if ($connection !== Config::get('database.default')) {
             $method = 'connection(\''.$connection.'\')->'.$method;
         }
-        $compiled = $this->compiler->compile($this->getTemplate(), ['table' => $table, 'method' => $method]);
+
+        $compiled = $this->compiler->compile($this->getTemplate($method), ['table' => $table, 'method' => $method]);
         return $this->replaceFieldsWith($this->getItems($fields), $compiled);
     }
 

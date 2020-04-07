@@ -307,7 +307,12 @@ class MigrateGenerateCommand extends GeneratorCommand
                 $this->connection,
                 'create'
             );
-            $down = (new DroppedTable)->drop($this->table, $this->connection);
+            $down = resolve(DroppedTable::class)->run(
+                $this->fields,
+                $this->table,
+                $this->connection,
+                'drop'
+            );
         } else {
             $up = resolve(AddForeignKeysToTable::class)->run(
                 $this->fields,

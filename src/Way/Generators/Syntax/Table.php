@@ -21,11 +21,16 @@ abstract class Table
     /**
      * Fetch the template of the schema
      *
+     * @param  string  $method
      * @return string
      */
-    protected function getTemplate(): string
+    protected function getTemplate(string $method): string
     {
-        return File::get(__DIR__.'/../templates/schema.txt');
+        if ($method === 'drop') {
+            return File::get(__DIR__.'/../templates/drop.txt');
+        } else {
+            return File::get(__DIR__.'/../templates/schema.txt');
+        }
     }
 
     /**
