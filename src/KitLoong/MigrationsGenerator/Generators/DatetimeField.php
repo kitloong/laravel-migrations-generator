@@ -42,9 +42,9 @@ class DatetimeField
             $field['type'] = FieldGenerator::$fieldTypeMap[$field['type']];
         }
 
-        if ($column->getLength() && $column->getLength() > 0) {
+        if ($column->getLength() !== null && $column->getLength() > 0) {
             if ($field['type'] === ColumnType::SOFT_DELETES) {
-                $field['args'][] = "'".ColumnName::DELETED_AT."'";
+                $field['field'] = ColumnName::DELETED_AT;
             }
             $field['args'][] = $column->getLength();
         }

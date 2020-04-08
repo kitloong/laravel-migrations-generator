@@ -8,6 +8,7 @@
 
 namespace KitLoong\MigrationsGenerator;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 
@@ -50,16 +51,16 @@ class MigrationGeneratorSetting
         $platform = end($classPath);
 
         switch (true) {
-            case preg_match('/mysql/i', $platform):
+            case preg_match('/mysql/i', $platform) > 0:
                 $this->platform = Platform::MYSQL;
                 break;
-            case preg_match('/postgresql/i', $platform):
+            case preg_match('/postgresql/i', $platform) > 0:
                 $this->platform = Platform::POSTGRESQL;
                 break;
-            case preg_match('/sqlserver/i', $platform):
+            case preg_match('/sqlserver/i', $platform) > 0:
                 $this->platform = Platform::SQLSERVER;
                 break;
-            case preg_match('/sqlite/i', $platform):
+            case preg_match('/sqlite/i', $platform) > 0:
                 $this->platform = Platform::SQLITE;
                 break;
             default:
@@ -69,9 +70,9 @@ class MigrationGeneratorSetting
     }
 
     /**
-     * @return \Doctrine\DBAL\Platforms\AbstractPlatform
+     * @return AbstractPlatform
      */
-    public function getDatabasePlatform(): \Doctrine\DBAL\Platforms\AbstractPlatform
+    public function getDatabasePlatform(): AbstractPlatform
     {
         return $this->databasePlatform;
     }

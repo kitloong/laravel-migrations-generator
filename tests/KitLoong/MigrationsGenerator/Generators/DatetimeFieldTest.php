@@ -38,8 +38,8 @@ class DatetimeFieldTest extends TestCase
 
         $field = $datetimeField->makeField($field, $column, false);
         $this->assertSame(ColumnType::SOFT_DELETES, $field['type']);
-        $this->assertNull($field['field']);
-        $this->assertSame(["'".ColumnName::DELETED_AT."'", 2], $field['args']);
+        $this->assertSame(ColumnName::DELETED_AT, $field['field']);
+        $this->assertSame([2], $field['args']);
     }
 
     public function testMakeFieldIsTimestamps()
