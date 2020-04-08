@@ -269,7 +269,7 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected function generate()
     {
         if (!empty($this->fields)) {
-            parent::fire();
+            $this->create();
 
             if ($this->log) {
                 $file = $this->datePrefix.'_'.$this->migrationName;
