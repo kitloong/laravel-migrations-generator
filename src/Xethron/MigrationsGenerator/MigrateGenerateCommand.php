@@ -148,9 +148,17 @@ class MigrateGenerateCommand extends GeneratorCommand
         }
 
         if ($this->log) {
-            $this->repository->setSource($this->connection);
+            $migrationSource = $this->connection;
+
+            if ($migrationSource !== Config::get('database.default')) {
+                if (!$this->askYn('Log into current connection: '.$this->connection.'? [Y = '.$this->connection.', n = '.Config::get('database.default').' (default connection)]')) {
+                    $migrationSource = Config::get('database.default');
+                }
+            }
+
+            $this->repository->setSource($migrationSource);
             if (!$this->repository->repositoryExists()) {
-                $options = array('--database' => $this->connection);
+                $options = array('--database' => $migrationSource);
                 $this->call('migrate:install', $options);
             }
             $batch = $this->repository->getNextBatchNumber();
