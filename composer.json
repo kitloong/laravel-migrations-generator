@@ -15,6 +15,12 @@
 		"doctrine/dbal": "~2.4"
         "dunhamperry/laravel-migrations-generator": "^1.0.0"
 	},
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:dunhamperry/laravel-migrations-generator.git"
+        }
+    ]
     "require-dev": {
         "orchestra/testbench": "^3.6|^4.0|^5.0",
         "squizlabs/php_codesniffer": "^3.5",
