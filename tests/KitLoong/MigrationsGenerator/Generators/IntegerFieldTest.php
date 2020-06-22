@@ -3,16 +3,15 @@
  * Created by PhpStorm.
  * User: liow.kitloong
  * Date: 2020/03/31
- * Time: 12:33
  */
 
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Connection;
 use KitLoong\MigrationsGenerator\Generators\IntegerField;
 use KitLoong\MigrationsGenerator\Generators\Platform;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
@@ -114,14 +113,17 @@ class IntegerFieldTest extends TestCase
 
     public function testMysqlBoolean()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $connectionMock = Mockery::mock(Connection::class);
+
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) use ($connectionMock) {
             $mock->shouldReceive('getPlatform')
                 ->andReturn(Platform::MYSQL);
 
-            $mock->shouldReceive('getConnection');
+            $mock->shouldReceive('getConnection')
+                ->andReturn($connectionMock);
         });
 
-        DB::shouldReceive('connection->select')
+        $connectionMock->shouldReceive('select')
             ->with("SHOW COLUMNS FROM `table` where Field = 'field' AND Type LIKE 'tinyint(1)%'")
             ->andReturn(['column'])
             ->once();
@@ -153,7 +155,7 @@ class IntegerFieldTest extends TestCase
 
     private function isPostgreSql()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getPlatform')
                 ->andReturn(Platform::POSTGRESQL);
         });

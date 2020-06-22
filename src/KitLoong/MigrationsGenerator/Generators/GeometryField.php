@@ -7,7 +7,7 @@
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\PgSQLGeography;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 
@@ -22,8 +22,8 @@ class GeometryField
 
     public function makeField(string $tableName, array $field)
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
 
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:

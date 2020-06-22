@@ -2,10 +2,11 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
+use KitLoong\MigrationsGenerator\Generators\Decorator;
 use Way\Generators\Compilers\Compiler;
 use Way\Generators\Compilers\TemplateCompiler;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
-use Xethron\MigrationsGenerator\MigrateGenerateCommand;
+use Way\Generators\Generator;
 use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
 use Xethron\MigrationsGenerator\Syntax\AddToTable;
 use Xethron\MigrationsGenerator\Syntax\RemoveForeignKeysFromTable;
@@ -34,9 +35,10 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
             self::COMMAND,
             function (Container $app) {
                 return new MigrateGenerateCommand(
-                    $app->make('Way\Generators\Generator'),
+                    $app->make(Generator::class),
                     $app->make(SchemaGenerator::class),
-                    $app->make('migration.repository')
+                    $app->make('migration.repository'),
+                    $app->make(Decorator::class)
                 );
             }
         );
@@ -54,8 +56,8 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         $this->app->singleton(Compiler::class, TemplateCompiler::class);
 
-        $this->app->singleton(MigrationGeneratorSetting::class, function () {
-            return new MigrationGeneratorSetting();
+        $this->app->singleton(MigrationsGeneratorSetting::class, function () {
+            return new MigrationsGeneratorSetting();
         });
     }
 

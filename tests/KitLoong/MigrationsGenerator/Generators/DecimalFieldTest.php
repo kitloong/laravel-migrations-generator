@@ -3,7 +3,6 @@
  * Created by PhpStorm.
  * User: liow.kitloong
  * Date: 2020/03/31
- * Time: 12:09
  */
 
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
@@ -11,7 +10,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\Generators\DecimalField;
 use KitLoong\MigrationsGenerator\Generators\Platform;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
@@ -25,7 +24,7 @@ class DecimalFieldTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getPlatform')->andReturn(Platform::MYSQL);
         });
     }

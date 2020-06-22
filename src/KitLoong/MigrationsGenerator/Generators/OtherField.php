@@ -3,7 +3,6 @@
  * Created by PhpStorm.
  * User: liow.kitloong
  * Date: 2020/03/29
- * Time: 14:58
  */
 
 namespace KitLoong\MigrationsGenerator\Generators;

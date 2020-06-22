@@ -3,15 +3,13 @@
  * Created by PhpStorm.
  * User: liow.kitloong
  * Date: 2020/03/29
- * Time: 12:50
  */
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 
@@ -65,13 +63,13 @@ class IntegerField
 
     private function checkIsMySQLBoolean(string $tableName, array $field, Column $column): bool
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
 
         if ($setting->getPlatform() === Platform::MYSQL &&
             $field['type'] === ColumnType::TINY_INTEGER &&
             !$column->getAutoincrement()) {
-            $column = DB::connection($setting->getConnection())->select("SHOW COLUMNS FROM `${tableName}` where Field = '${field['field']}' AND Type LIKE 'tinyint(1)%'");
+            $column = $setting->getConnection()->select("SHOW COLUMNS FROM `${tableName}` where Field = '${field['field']}' AND Type LIKE 'tinyint(1)%'");
             return !empty($column);
         }
         return false;

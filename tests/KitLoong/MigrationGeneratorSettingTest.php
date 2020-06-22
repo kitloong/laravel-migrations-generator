@@ -14,7 +14,7 @@ use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\Platform;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use Mockery;
 use Orchestra\Testbench\TestCase;
 
@@ -29,7 +29,7 @@ class MigrationGeneratorSettingTest extends TestCase
 
         DB::shouldReceive('connection')->with('mysql')->andReturn($dbconn);
 
-        $setting = new MigrationGeneratorSetting('mysql');
+        $setting = new MigrationsGeneratorSetting('mysql');
         $setting->setConnection('mysql');
 
         $this->assertSame(Platform::MYSQL, $setting->getPlatform());
@@ -44,7 +44,7 @@ class MigrationGeneratorSettingTest extends TestCase
 
         DB::shouldReceive('connection')->with('pgsql')->andReturn($dbconn);
 
-        $setting = new MigrationGeneratorSetting('mysql');
+        $setting = new MigrationsGeneratorSetting('mysql');
         $setting->setConnection('pgsql');
 
         $this->assertSame(Platform::POSTGRESQL, $setting->getPlatform());
@@ -59,7 +59,7 @@ class MigrationGeneratorSettingTest extends TestCase
 
         DB::shouldReceive('connection')->with('sqlsrv')->andReturn($dbconn);
 
-        $setting = new MigrationGeneratorSetting('mysql');
+        $setting = new MigrationsGeneratorSetting('mysql');
         $setting->setConnection('sqlsrv');
 
         $this->assertSame(Platform::SQLSERVER, $setting->getPlatform());
@@ -74,7 +74,7 @@ class MigrationGeneratorSettingTest extends TestCase
 
         DB::shouldReceive('connection')->with('sqlite')->andReturn($dbconn);
 
-        $setting = new MigrationGeneratorSetting('mysql');
+        $setting = new MigrationsGeneratorSetting('mysql');
         $setting->setConnection('sqlite');
 
         $this->assertSame(Platform::SQLITE, $setting->getPlatform());
@@ -89,7 +89,7 @@ class MigrationGeneratorSettingTest extends TestCase
 
         DB::shouldReceive('connection')->with('sql')->andReturn($dbconn);
 
-        $setting = new MigrationGeneratorSetting('mysql');
+        $setting = new MigrationsGeneratorSetting('mysql');
         $setting->setConnection('sql');
 
         $this->assertSame(Platform::OTHERS, $setting->getPlatform());

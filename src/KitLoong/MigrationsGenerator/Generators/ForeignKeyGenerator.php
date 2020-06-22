@@ -1,4 +1,4 @@
-<?php namespace Xethron\MigrationsGenerator\Generators;
+<?php namespace KitLoong\MigrationsGenerator\Generators;
 
 class ForeignKeyGenerator
 {
@@ -6,6 +6,13 @@ class ForeignKeyGenerator
      * @var string
      */
     protected $table;
+
+    private $decorator;
+
+    public function __construct(Decorator $decorator)
+    {
+        $this->decorator = $decorator;
+    }
 
     /**
      * Get array of foreign keys
@@ -32,7 +39,7 @@ class ForeignKeyGenerator
                 'name' => $this->getName($foreignKey, $ignoreForeignKeyNames),
                 'field' => $foreignKey->getLocalColumns()[0],
                 'references' => $foreignKey->getForeignColumns()[0],
-                'on' => $foreignKey->getForeignTableName(),
+                'on' => $this->decorator->tableWithoutPrefix($foreignKey->getForeignTableName()),
                 'onUpdate' => $foreignKey->hasOption('onUpdate') ? $foreignKey->getOption('onUpdate') : 'RESTRICT',
                 'onDelete' => $foreignKey->hasOption('onDelete') ? $foreignKey->getOption('onDelete') : 'RESTRICT',
             ];
@@ -46,7 +53,7 @@ class ForeignKeyGenerator
      *
      * @return null|string
      */
-    private function getName($foreignKey, bool $ignoreForeignKeyNames): ?string
+    protected function getName($foreignKey, bool $ignoreForeignKeyNames): ?string
     {
         if ($ignoreForeignKeyNames or $this->isDefaultName($foreignKey)) {
             return null;
@@ -59,7 +66,7 @@ class ForeignKeyGenerator
      *
      * @return bool
      */
-    private function isDefaultName($foreignKey): bool
+    protected function isDefaultName($foreignKey): bool
     {
         return $foreignKey->getName() === $this->createIndexName($foreignKey->getLocalColumns()[0]);
     }

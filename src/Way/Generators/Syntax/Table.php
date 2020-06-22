@@ -1,6 +1,7 @@
 <?php namespace Way\Generators\Syntax;
 
 use Illuminate\Support\Facades\File;
+use KitLoong\MigrationsGenerator\Generators\Decorator;
 use Way\Generators\Compilers\TemplateCompiler;
 
 abstract class Table
@@ -10,12 +11,12 @@ abstract class Table
      */
     protected $compiler;
 
-    /**
-     * @param  TemplateCompiler  $compiler
-     */
-    public function __construct(TemplateCompiler $compiler)
+    protected $decorator;
+
+    public function __construct(TemplateCompiler $compiler, Decorator $decorator)
     {
         $this->compiler = $compiler;
+        $this->decorator = $decorator;
     }
 
     /**

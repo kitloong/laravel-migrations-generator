@@ -3,26 +3,24 @@
  * Created by PhpStorm.
  * User: liow.kitloong
  * Date: 2020/03/31
- * Time: 21:56
  */
 
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\FieldGenerator;
+use KitLoong\MigrationsGenerator\Generators\ForeignKeyGenerator;
 use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeographyType;
+use KitLoong\MigrationsGenerator\Types\GeomCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryType;
 use KitLoong\MigrationsGenerator\Types\IpAddressType;
@@ -47,7 +45,6 @@ use KitLoong\MigrationsGenerator\Types\YearType;
 use Mockery;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
-use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
 
 class SchemaGeneratorTest extends TestCase
 {
@@ -56,98 +53,124 @@ class SchemaGeneratorTest extends TestCase
      */
     public function testInitialize()
     {
-        $dbalConnection = Mockery::mock(Connection::class);
-        $connection = Mockery::mock(ConnectionInterface::class);
-
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $this->mockShouldReceivedCustomType($mock);
 
             $mock->shouldReceive('getPlatform')
                 ->andReturn(Platform::POSTGRESQL)
                 ->once();
-        });
 
-        DB::shouldReceive('connection')
-            ->with('database')
-            ->andReturn($connection)
-            ->once();
+            $this->mockShouldReceivedDoctrineType($mock);
 
-        $connection->shouldReceive('getDoctrineConnection')
-            ->andReturn($dbalConnection)
-            ->once();
-
-        $this->mockShouldReceivedDoctrineType($dbalConnection);
-
-        $schema = Mockery::mock(AbstractSchemaManager::class);
-
-        $dbalConnection->shouldReceive('getSchemaManager')
-            ->andReturn($schema)
-            ->once();
-
-        $schema->shouldReceive('listTableNames')
-            ->andReturn(['table1', 'table2'])
-            ->once();
-
-        $table = Mockery::mock(Table::class);
-
-        $schema->shouldReceive('listTableDetails')
-            ->with('table1')
-            ->andReturn($table)
-            ->once();
-
-        $singleColumnIndex = collect(['singleColumnIndex']);
-        $multiColumnIndex = collect(['multiColumnIndex']);
-        $this->mock(
-            IndexGenerator::class,
-            function (MockInterface $mock) use ($table, $singleColumnIndex, $multiColumnIndex) {
-                $mock->shouldReceive('generate')
-                    ->with($table, false)
-                    ->andReturn([
-                        'single' => $singleColumnIndex,
-                        'multi' => $multiColumnIndex,
-                    ]);
-            }
-        );
-
-        $this->mock(FieldGenerator::class, function (MockInterface $mock) use ($table, $singleColumnIndex) {
-            $mock->shouldReceive('generate')
-                ->with($table, $singleColumnIndex)
-                ->andReturn(['fields'])
+            $mock->shouldReceive('getConnection->getDoctrineConnection->getSchemaManager')
+                ->andReturn(Mockery::mock(AbstractSchemaManager::class))
                 ->once();
         });
 
-        $this->mock(ForeignKeyGenerator::class, function (MockInterface $mock) use ($schema) {
-            $mock->shouldReceive('generate')
-                ->with('table', $schema, false);
-        });
-
-        /** @var SchemaGenerator $schemaGenerator */
         $schemaGenerator = resolve(SchemaGenerator::class);
 
-        $schemaGenerator->initialize('database', false, false);
-
-        $tables = $schemaGenerator->getTables();
-        $this->assertSame(['table1', 'table2'], $tables);
-
-        $this->assertSame($table, $schemaGenerator->getTable('table1'));
-
-        $indexes = $schemaGenerator->getIndexes($table);
-
-        $this->assertSame(['fields'], $schemaGenerator->getFields($table, $indexes['single']));
-
-        $schemaGenerator->getForeignKeyConstraints('table');
+        $schemaGenerator->initialize();
     }
 
+    public function testGetTables()
+    {
+        $schemaGenerator = resolve(SubSchemaGenerator::class);
+
+        $schemaGenerator->mockSchema()
+            ->shouldReceive('listTableNames')
+            ->andReturn(['result'])
+            ->once();
+
+        $this->assertSame(['result'], $schemaGenerator->getTables());
+    }
+
+    public function testGetTable()
+    {
+        $schemaGenerator = resolve(SubSchemaGenerator::class);
+
+        $mockTable = Mockery::mock(Table::class);
+        $schemaGenerator->mockSchema()
+            ->shouldReceive('listTableDetails')
+            ->with('table')
+            ->andReturn($mockTable)
+            ->once();
+
+        $this->assertSame($mockTable, $schemaGenerator->getTable('table'));
+    }
+
+    public function testGetIndexes()
+    {
+        $mockTable = Mockery::mock(Table::class);
+
+        $this->mock(IndexGenerator::class, function (MockInterface $mock) use ($mockTable) {
+            $mock->shouldReceive('generate')
+                ->with($mockTable, true)
+                ->andReturn(['result'])
+                ->once();
+        });
+
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('isIgnoreIndexNames')
+                ->andReturnTrue()
+                ->once();
+        });
+
+        $this->assertSame(
+            ['result'],
+            resolve(SchemaGenerator::class)->getIndexes($mockTable, true)
+        );
+    }
+
+    public function testGetFields()
+    {
+        $mockTable = Mockery::mock(Table::class);
+        $collection = collect();
+        $this->mock(FieldGenerator::class, function (MockInterface $mock) use ($mockTable, $collection) {
+            $mock->shouldReceive('generate')
+                ->with($mockTable, $collection)
+                ->andReturn(['result'])
+                ->once();
+        });
+
+        $this->assertSame(
+            ['result'],
+            resolve(SchemaGenerator::class)->getFields($mockTable, $collection)
+        );
+    }
+
+    public function testGetForeignKeyConstraints()
+    {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('isIgnoreForeignKeyNames')
+                ->andReturnTrue()
+                ->once();
+        });
+
+        $mockFKGenerator = Mockery::mock(ForeignKeyGenerator::class);
+        $this->app->instance(ForeignKeyGenerator::class, $mockFKGenerator);
+
+        $schemaGenerator = resolve(SubSchemaGenerator::class);
+
+        $mockFKGenerator->shouldReceive('generate')
+            ->with('table', $schemaGenerator->mockSchema(), true)
+            ->andReturn(['result'])
+            ->once();
+
+        $this->assertSame(['result'], $schemaGenerator->getForeignKeyConstraints('table'));
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function testRegisterCustomDoctrineType()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
-            $mock->shouldReceive('getDatabasePlatform->registerDoctrineTypeMapping')
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getConnection->getDoctrineConnection->getDatabasePlatform->registerDoctrineTypeMapping')
                 ->with('inet', 'ipaddress')
                 ->twice();
         });
 
-        /** @var SchemaGenerator $schemaGenerator */
-        $schemaGenerator = resolve(SchemaGenerator::class);
+        $schemaGenerator = resolve(SubSchemaGenerator::class);
 
         $schemaGenerator->registerCustomDoctrineType(IpAddressType::class, 'ipaddress', 'inet');
 
@@ -157,10 +180,24 @@ class SchemaGeneratorTest extends TestCase
         $schemaGenerator->registerCustomDoctrineType(IpAddressType::class, 'ipaddress', 'inet');
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function testAddNewDoctrineType()
+    {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getConnection->getDoctrineConnection->getDatabasePlatform->registerDoctrineTypeMapping')
+                ->with('inet', 'ipaddress')
+                ->once();
+        });
+
+        resolve(SubSchemaGenerator::class)->addNewDoctrineType('inet', 'ipaddress');
+    }
+
     private function mockShouldReceivedCustomType(MockInterface $mock)
     {
         foreach ($this->getTypes() as $type) {
-            $mock->shouldReceive('getDatabasePlatform->registerDoctrineTypeMapping')
+            $mock->shouldReceive('getConnection->getDoctrineConnection->getDatabasePlatform->registerDoctrineTypeMapping')
                 ->with($type[1], $type[0])
                 ->once();
         }
@@ -179,7 +216,7 @@ class SchemaGeneratorTest extends TestCase
         ];
 
         foreach ($types as $dbType => $doctrineType) {
-            $mock->shouldReceive('getDatabasePlatform->registerDoctrineTypeMapping')
+            $mock->shouldReceive('getConnection->getDoctrineConnection->getDatabasePlatform->registerDoctrineTypeMapping')
                 ->with($dbType, $doctrineType)
                 ->once();
         }
@@ -191,6 +228,7 @@ class SchemaGeneratorTest extends TestCase
             DoubleType::class => ['double', 'double'],
             EnumType::class => ['enum', 'enum'],
             GeometryType::class => ['geometry', 'geometry'],
+            GeomCollectionType::class => ['geomcollection', 'geomcollection'],
             GeometryCollectionType::class => ['geometrycollection', 'geometrycollection'],
             LineStringType::class => ['linestring', 'linestring'],
             LongTextType::class => ['longtext', 'longtext'],
@@ -215,5 +253,28 @@ class SchemaGeneratorTest extends TestCase
             TimeTzType::class => ['timetz', 'timetz'],
             TimestampTzType::class => ['timestamptz', 'timestamptz']
         ];
+    }
+}
+
+
+// phpcs:ignore
+class SubSchemaGenerator extends SchemaGenerator
+{
+    public function registerCustomDoctrineType(string $class, string $name, string $type): void
+    {
+        parent::registerCustomDoctrineType($class, $name, $type);
+    }
+
+    public function addNewDoctrineType(string $type, string $name): void
+    {
+        parent::addNewDoctrineType($type, $name);
+    }
+
+    /**
+     * @return AbstractSchemaManager|Mockery\LegacyMockInterface|MockInterface
+     */
+    public function mockSchema()
+    {
+        return $this->schema = Mockery::mock(AbstractSchemaManager::class);
     }
 }

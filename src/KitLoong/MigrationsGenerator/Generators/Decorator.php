@@ -3,10 +3,11 @@
  * Created by PhpStorm.
  * User: liow.kitloong
  * Date: 2020/03/29
- * Time: 11:59
  */
 
 namespace KitLoong\MigrationsGenerator\Generators;
+
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class Decorator
 {
@@ -44,5 +45,19 @@ class Decorator
     public function addSlash(string $string): string
     {
         return addcslashes($string, "\\'");
+    }
+
+    public function tableWithoutPrefix(string $table): string
+    {
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
+
+        return substr($table, strlen($setting->getConnection()->getTablePrefix()));
+    }
+
+    public function tableUsedInFilename(string $table): string
+    {
+        $tableNameEscaped = preg_replace('/[^a-zA-Z0-9_]/', '_', $table);
+        return $this->tableWithoutPrefix($tableNameEscaped);
     }
 }

@@ -3,26 +3,20 @@
  * Created by PhpStorm.
  * User: liow.kitloong
  * Date: 2020/03/31
- * Time: 22:55
  */
 
 namespace KitLoong\MigrationsGenerator;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 
-class MigrationGeneratorSetting
+class MigrationsGeneratorSetting
 {
     /**
-     * @var string
+     * @var Connection
      */
     private $connection;
-
-    /**
-     * @var \Doctrine\DBAL\Platforms\AbstractPlatform
-     */
-    private $databasePlatform;
 
     /**
      * @var string
@@ -30,9 +24,19 @@ class MigrationGeneratorSetting
     private $platform;
 
     /**
-     * @return string
+     * @var boolean
      */
-    public function getConnection(): string
+    private $ignoreIndexNames;
+
+    /**
+     * @var boolean
+     */
+    private $ignoreForeignKeyNames;
+
+    /**
+     * @return Connection
+     */
+    public function getConnection(): Connection
     {
         return $this->connection;
     }
@@ -42,12 +46,11 @@ class MigrationGeneratorSetting
      */
     public function setConnection(string $connection): void
     {
-        $this->connection = $connection;
+        $this->connection = DB::connection($connection);
 
         /** @var \Doctrine\DBAL\Connection $doctConn */
-        $doctConn = DB::connection($this->connection)->getDoctrineConnection();
-        $this->databasePlatform = $doctConn->getDatabasePlatform();
-        $classPath = explode('\\', get_class($this->databasePlatform));
+        $doctConn = $this->connection->getDoctrineConnection();
+        $classPath = explode('\\', get_class($doctConn->getDatabasePlatform()));
         $platform = end($classPath);
 
         switch (true) {
@@ -70,18 +73,42 @@ class MigrationGeneratorSetting
     }
 
     /**
-     * @return AbstractPlatform
-     */
-    public function getDatabasePlatform(): AbstractPlatform
-    {
-        return $this->databasePlatform;
-    }
-
-    /**
      * @return string
      */
     public function getPlatform(): string
     {
         return $this->platform;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIgnoreIndexNames(): bool
+    {
+        return $this->ignoreIndexNames;
+    }
+
+    /**
+     * @param  bool  $ignoreIndexNames
+     */
+    public function setIgnoreIndexNames(bool $ignoreIndexNames): void
+    {
+        $this->ignoreIndexNames = $ignoreIndexNames;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIgnoreForeignKeyNames(): bool
+    {
+        return $this->ignoreForeignKeyNames;
+    }
+
+    /**
+     * @param  bool  $ignoreForeignKeyNames
+     */
+    public function setIgnoreForeignKeyNames(bool $ignoreForeignKeyNames): void
+    {
+        $this->ignoreForeignKeyNames = $ignoreForeignKeyNames;
     }
 }

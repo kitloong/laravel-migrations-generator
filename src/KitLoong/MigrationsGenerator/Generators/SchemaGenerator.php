@@ -9,11 +9,11 @@ namespace KitLoong\MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeographyType;
+use KitLoong\MigrationsGenerator\Types\GeomCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryType;
 use KitLoong\MigrationsGenerator\Types\IpAddressType;
@@ -35,15 +35,9 @@ use KitLoong\MigrationsGenerator\Types\TimeTzType;
 use KitLoong\MigrationsGenerator\Types\TinyIntegerType;
 use KitLoong\MigrationsGenerator\Types\UUIDType;
 use KitLoong\MigrationsGenerator\Types\YearType;
-use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
 
 class SchemaGenerator
 {
-    /**
-     * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
-     */
-    private $schema;
-
     /**
      * @var FieldGenerator
      */
@@ -57,21 +51,6 @@ class SchemaGenerator
     private $indexGenerator;
 
     /**
-     * @var string
-     */
-    protected $database;
-
-    /**
-     * @var bool
-     */
-    private $ignoreIndexNames;
-
-    /**
-     * @var bool
-     */
-    private $ignoreForeignKeyNames;
-
-    /**
      * Custom doctrine type
      * ['class', 'name', 'type']
      * @see registerCustomDoctrineType()
@@ -82,6 +61,7 @@ class SchemaGenerator
         [DoubleType::class, 'double', 'double'],
         [EnumType::class, 'enum', 'enum'],
         [GeometryType::class, 'geometry', 'geometry'],
+        [GeomCollectionType::class, 'geomcollection', 'geomcollection'],
         [GeometryCollectionType::class, 'geometrycollection', 'geometrycollection'],
         [LineStringType::class, 'linestring', 'linestring'],
         [LongTextType::class, 'longtext', 'longtext'],
@@ -107,6 +87,11 @@ class SchemaGenerator
         [TimestampTzType::class, 'timestamptz', 'timestamptz'],
     ];
 
+    /**
+     * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
+     */
+    protected $schema;
+
     public function __construct(
         FieldGenerator $fieldGenerator,
         IndexGenerator $indexGenerator,
@@ -118,40 +103,30 @@ class SchemaGenerator
     }
 
     /**
-     * @param  string  $database
-     * @param  bool  $ignoreIndexNames
-     * @param  bool  $ignoreForeignKeyNames
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function initialize(string $database, bool $ignoreIndexNames, bool $ignoreForeignKeyNames)
+    public function initialize()
     {
+        $setting = app(MigrationsGeneratorSetting::class);
+
         foreach (self::$customDoctrineTypes as $doctrineType) {
             $this->registerCustomDoctrineType(...$doctrineType);
         }
 
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = DB::connection($database)->getDoctrineConnection();
-
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'json');
-
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        $this->addNewDoctrineType('bit', 'boolean');
+        $this->addNewDoctrineType('json', 'json');
 
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_text', 'text');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_int4', 'integer');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_numeric', 'float');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('cidr', 'string');
+                $this->addNewDoctrineType('_text', 'text');
+                $this->addNewDoctrineType('_int4', 'integer');
+                $this->addNewDoctrineType('_numeric', 'float');
+                $this->addNewDoctrineType('cidr', 'string');
                 break;
             default:
         }
 
-        $this->schema = $connection->getSchemaManager();
-
-        $this->ignoreIndexNames = $ignoreIndexNames;
-        $this->ignoreForeignKeyNames = $ignoreForeignKeyNames;
+        $this->schema = $setting->getConnection()->getDoctrineConnection()->getSchemaManager();
     }
 
     /**
@@ -177,7 +152,10 @@ class SchemaGenerator
      */
     public function getIndexes(Table $table): array
     {
-        return $this->indexGenerator->generate($table, $this->ignoreIndexNames);
+        return $this->indexGenerator->generate(
+            $table,
+            app(MigrationsGeneratorSetting::class)->isIgnoreIndexNames()
+        );
     }
 
     public function getFields(Table $table, Collection $singleColIndexes): array
@@ -187,30 +165,43 @@ class SchemaGenerator
 
     public function getForeignKeyConstraints(string $table): array
     {
-        return $this->foreignKeyGenerator->generate($table, $this->schema, $this->ignoreForeignKeyNames);
+        return $this->foreignKeyGenerator->generate(
+            $table,
+            $this->schema,
+            app(MigrationsGeneratorSetting::class)->isIgnoreForeignKeyNames()
+        );
     }
 
     /**
      * Register custom doctrineType
      * Will override if exists
      *
-     * @param $class
-     * @param $name
-     * @param $type
+     * @param  string  $class
+     * @param  string  $name
+     * @param  string  $type
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function registerCustomDoctrineType($class, $name, $type)
+    protected function registerCustomDoctrineType(string $class, string $name, string $type): void
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
-
         if (!Type::hasType($name)) {
             Type::addType($name, $class);
         } else {
             Type::overrideType($name, $class);
         }
 
-        $setting->getDatabasePlatform()
+        $this->addNewDoctrineType($type, $name);
+    }
+
+    /**
+     * @param  string  $type
+     * @param  string  $name
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function addNewDoctrineType(string $type, string $name): void
+    {
+        app(MigrationsGeneratorSetting::class)->getConnection()
+            ->getDoctrineConnection()
+            ->getDatabasePlatform()
             ->registerDoctrineTypeMapping($type, $name);
     }
 }

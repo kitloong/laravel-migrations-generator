@@ -17,7 +17,7 @@ abstract class Table extends WayTable
 
     public function run(array $fields, string $table, string $connection, $method = 'table'): string
     {
-        $table = substr($table, strlen(DB::connection($connection)->getTablePrefix()));
+        $table = $this->decorator->tableWithoutPrefix($table);
         $this->table = $table;
         if ($connection !== Config::get('database.default')) {
             $method = 'connection(\''.$connection.'\')->'.$method;
