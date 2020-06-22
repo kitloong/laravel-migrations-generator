@@ -9,7 +9,7 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Connection;
 use KitLoong\MigrationsGenerator\Generators\IntegerField;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
@@ -114,14 +114,17 @@ class IntegerFieldTest extends TestCase
 
     public function testMysqlBoolean()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $connectionMock = Mockery::mock(Connection::class);
+
+        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) use ($connectionMock) {
             $mock->shouldReceive('getPlatform')
                 ->andReturn(Platform::MYSQL);
 
-            $mock->shouldReceive('getConnection');
+            $mock->shouldReceive('getConnection')
+                ->andReturn($connectionMock);
         });
 
-        DB::shouldReceive('connection->select')
+        $connectionMock->shouldReceive('select')
             ->with("SHOW COLUMNS FROM `table` where Field = 'field' AND Type LIKE 'tinyint(1)%'")
             ->andReturn(['column'])
             ->once();
