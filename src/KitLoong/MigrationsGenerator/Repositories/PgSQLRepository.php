@@ -7,7 +7,6 @@
 
 namespace KitLoong\MigrationsGenerator\Repositories;
 
-use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 
 class PgSQLRepository
@@ -17,7 +16,7 @@ class PgSQLRepository
         /** @var MigrationGeneratorSetting $setting */
         $setting = app(MigrationGeneratorSetting::class);
 
-        $column = DB::connection($setting->getConnection())
+        $column = $setting->getConnection()
             ->select("SELECT
     pg_catalog.format_type(a.atttypid, a.atttypmod) as \"datatype\"
 FROM

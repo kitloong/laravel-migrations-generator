@@ -9,11 +9,11 @@ namespace KitLoong\MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeographyType;
+use KitLoong\MigrationsGenerator\Types\GeomCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
 use KitLoong\MigrationsGenerator\Types\GeometryType;
 use KitLoong\MigrationsGenerator\Types\IpAddressType;
@@ -57,21 +57,6 @@ class SchemaGenerator
     private $indexGenerator;
 
     /**
-     * @var string
-     */
-    protected $database;
-
-    /**
-     * @var bool
-     */
-    private $ignoreIndexNames;
-
-    /**
-     * @var bool
-     */
-    private $ignoreForeignKeyNames;
-
-    /**
      * Custom doctrine type
      * ['class', 'name', 'type']
      * @see registerCustomDoctrineType()
@@ -82,6 +67,7 @@ class SchemaGenerator
         [DoubleType::class, 'double', 'double'],
         [EnumType::class, 'enum', 'enum'],
         [GeometryType::class, 'geometry', 'geometry'],
+        [GeomCollectionType::class, 'geomcollection', 'geomcollection'],
         [GeometryCollectionType::class, 'geometrycollection', 'geometrycollection'],
         [LineStringType::class, 'linestring', 'linestring'],
         [LongTextType::class, 'longtext', 'longtext'],
@@ -118,25 +104,21 @@ class SchemaGenerator
     }
 
     /**
-     * @param  string  $database
-     * @param  bool  $ignoreIndexNames
-     * @param  bool  $ignoreForeignKeyNames
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function initialize(string $database, bool $ignoreIndexNames, bool $ignoreForeignKeyNames)
+    public function initialize()
     {
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = app(MigrationGeneratorSetting::class);
+
         foreach (self::$customDoctrineTypes as $doctrineType) {
             $this->registerCustomDoctrineType(...$doctrineType);
         }
 
-        /** @var \Doctrine\DBAL\Connection $connection */
-        $connection = DB::connection($database)->getDoctrineConnection();
+        $connection = $setting->getConnection()->getDoctrineConnection();
 
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'json');
-
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
 
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:
@@ -149,9 +131,6 @@ class SchemaGenerator
         }
 
         $this->schema = $connection->getSchemaManager();
-
-        $this->ignoreIndexNames = $ignoreIndexNames;
-        $this->ignoreForeignKeyNames = $ignoreForeignKeyNames;
     }
 
     /**
@@ -177,7 +156,10 @@ class SchemaGenerator
      */
     public function getIndexes(Table $table): array
     {
-        return $this->indexGenerator->generate($table, $this->ignoreIndexNames);
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = app(MigrationGeneratorSetting::class);
+
+        return $this->indexGenerator->generate($table, $setting->isIgnoreIndexNames());
     }
 
     public function getFields(Table $table, Collection $singleColIndexes): array
@@ -187,7 +169,10 @@ class SchemaGenerator
 
     public function getForeignKeyConstraints(string $table): array
     {
-        return $this->foreignKeyGenerator->generate($table, $this->schema, $this->ignoreForeignKeyNames);
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = app(MigrationGeneratorSetting::class);
+
+        return $this->foreignKeyGenerator->generate($table, $this->schema, $setting->isIgnoreForeignKeyNames());
     }
 
     /**
@@ -210,7 +195,9 @@ class SchemaGenerator
             Type::overrideType($name, $class);
         }
 
-        $setting->getDatabasePlatform()
+        $setting->getConnection()
+            ->getDoctrineConnection()
+            ->getDatabasePlatform()
             ->registerDoctrineTypeMapping($type, $name);
     }
 }
