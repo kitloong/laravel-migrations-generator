@@ -40,11 +40,6 @@ use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
 class SchemaGenerator
 {
     /**
-     * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
-     */
-    private $schema;
-
-    /**
      * @var FieldGenerator
      */
     private $fieldGenerator;
@@ -93,6 +88,11 @@ class SchemaGenerator
         [TimestampTzType::class, 'timestamptz', 'timestamptz'],
     ];
 
+    /**
+     * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
+     */
+    protected $schema;
+
     public function __construct(
         FieldGenerator $fieldGenerator,
         IndexGenerator $indexGenerator,
@@ -108,29 +108,26 @@ class SchemaGenerator
      */
     public function initialize()
     {
-        /** @var MigrationGeneratorSetting $setting */
         $setting = app(MigrationGeneratorSetting::class);
 
         foreach (self::$customDoctrineTypes as $doctrineType) {
             $this->registerCustomDoctrineType(...$doctrineType);
         }
 
-        $connection = $setting->getConnection()->getDoctrineConnection();
-
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('bit', 'boolean');
-        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'json');
+        $this->addNewDoctrineType('bit', 'boolean');
+        $this->addNewDoctrineType('json', 'json');
 
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_text', 'text');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_int4', 'integer');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('_numeric', 'float');
-                $connection->getDatabasePlatform()->registerDoctrineTypeMapping('cidr', 'string');
+                $this->addNewDoctrineType('_text', 'text');
+                $this->addNewDoctrineType('_int4', 'integer');
+                $this->addNewDoctrineType('_numeric', 'float');
+                $this->addNewDoctrineType('cidr', 'string');
                 break;
             default:
         }
 
-        $this->schema = $connection->getSchemaManager();
+        $this->schema = $setting->getConnection()->getDoctrineConnection()->getSchemaManager();
     }
 
     /**
@@ -156,10 +153,10 @@ class SchemaGenerator
      */
     public function getIndexes(Table $table): array
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
-
-        return $this->indexGenerator->generate($table, $setting->isIgnoreIndexNames());
+        return $this->indexGenerator->generate(
+            $table,
+            app(MigrationGeneratorSetting::class)->isIgnoreIndexNames()
+        );
     }
 
     public function getFields(Table $table, Collection $singleColIndexes): array
@@ -169,33 +166,41 @@ class SchemaGenerator
 
     public function getForeignKeyConstraints(string $table): array
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
-
-        return $this->foreignKeyGenerator->generate($table, $this->schema, $setting->isIgnoreForeignKeyNames());
+        return $this->foreignKeyGenerator->generate(
+            $table,
+            $this->schema,
+            app(MigrationGeneratorSetting::class)->isIgnoreForeignKeyNames()
+        );
     }
 
     /**
      * Register custom doctrineType
      * Will override if exists
      *
-     * @param $class
-     * @param $name
-     * @param $type
+     * @param  string  $class
+     * @param  string  $name
+     * @param  string  $type
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function registerCustomDoctrineType($class, $name, $type)
+    protected function registerCustomDoctrineType(string $class, string $name, string $type): void
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
-
         if (!Type::hasType($name)) {
             Type::addType($name, $class);
         } else {
             Type::overrideType($name, $class);
         }
 
-        $setting->getConnection()
+        $this->addNewDoctrineType($type, $name);
+    }
+
+    /**
+     * @param  string  $type
+     * @param  string  $name
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function addNewDoctrineType(string $type, string $name): void
+    {
+        app(MigrationGeneratorSetting::class)->getConnection()
             ->getDoctrineConnection()
             ->getDatabasePlatform()
             ->registerDoctrineTypeMapping($type, $name);

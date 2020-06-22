@@ -55,7 +55,7 @@ class ForeignKeyGenerator
      *
      * @return null|string
      */
-    private function getName($foreignKey, bool $ignoreForeignKeyNames): ?string
+    protected function getName($foreignKey, bool $ignoreForeignKeyNames): ?string
     {
         if ($ignoreForeignKeyNames or $this->isDefaultName($foreignKey)) {
             return null;
@@ -68,7 +68,7 @@ class ForeignKeyGenerator
      *
      * @return bool
      */
-    private function isDefaultName($foreignKey): bool
+    protected function isDefaultName($foreignKey): bool
     {
         return $foreignKey->getName() === $this->createIndexName($foreignKey->getLocalColumns()[0]);
     }
