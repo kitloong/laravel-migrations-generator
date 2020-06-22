@@ -7,7 +7,6 @@ use Way\Generators\Compilers\Compiler;
 use Way\Generators\Compilers\TemplateCompiler;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
 use Way\Generators\Generator;
-use Xethron\MigrationsGenerator\MigrateGenerateCommand;
 use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
 use Xethron\MigrationsGenerator\Syntax\AddToTable;
 use Xethron\MigrationsGenerator\Syntax\RemoveForeignKeysFromTable;

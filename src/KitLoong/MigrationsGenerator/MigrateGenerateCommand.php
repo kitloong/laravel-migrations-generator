@@ -1,11 +1,10 @@
-<?php namespace Xethron\MigrationsGenerator;
+<?php namespace KitLoong\MigrationsGenerator;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use Way\Generators\Commands\GeneratorCommand;
 use Way\Generators\Generator;
 use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
