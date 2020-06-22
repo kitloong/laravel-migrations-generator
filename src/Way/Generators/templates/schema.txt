@@ -1,4 +1,6 @@
-Schema::$METHOD$('$TABLE$', function(Blueprint $table)
-		{
-			$FIELDS$
-		});
+if (!Schema::hasTable('$TABLE$')) {
+    Schema::$METHOD$('$TABLE$', function(Blueprint $table)
+            {
+                $FIELDS$
+            });
+    }
