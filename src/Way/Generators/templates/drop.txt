@@ -1,1 +1,1 @@
-Schema::drop('$TABLE$');
+Schema::dropIfExists('$TABLE$');
