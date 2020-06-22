@@ -7,7 +7,7 @@
 
 namespace Tests\KitLoong\MigrationsGenerator\Repositories;
 
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
@@ -16,7 +16,7 @@ class MySQLRepositoryTest extends TestCase
 {
     public function testGetEnumPresetValues()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getConnection->select')
                 ->with("SHOW COLUMNS FROM `table` where Field = 'column' AND Type LIKE 'enum(%'")
                 ->andReturn([
@@ -34,7 +34,7 @@ class MySQLRepositoryTest extends TestCase
 
     public function testGetEnumPresetValuesIsNull()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getConnection->select')
                 ->with("SHOW COLUMNS FROM `table` where Field = 'column' AND Type LIKE 'enum(%'")
                 ->andReturn([])
@@ -50,7 +50,7 @@ class MySQLRepositoryTest extends TestCase
 
     public function testGetSetPresetValues()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getConnection->select')
                 ->with("SHOW COLUMNS FROM `table` where Field = 'column' AND Type LIKE 'set(%'")
                 ->andReturn([
@@ -68,7 +68,7 @@ class MySQLRepositoryTest extends TestCase
 
     public function testGetSetPresetValuesIsNull()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getConnection->select')
                 ->with("SHOW COLUMNS FROM `table` where Field = 'column' AND Type LIKE 'set(%'")
                 ->andReturn([])

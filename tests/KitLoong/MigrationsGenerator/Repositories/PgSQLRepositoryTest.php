@@ -7,7 +7,7 @@
 
 namespace Tests\KitLoong\MigrationsGenerator\Repositories;
 
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
@@ -16,7 +16,7 @@ class PgSQLRepositoryTest extends TestCase
 {
     public function testGetTypeByColumnName()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getConnection->select')
                 ->with($this->getTypeSql('table', 'column'))
                 ->andReturn([
@@ -34,7 +34,7 @@ class PgSQLRepositoryTest extends TestCase
 
     public function testGetTypeByColumnNameReturnNull()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getConnection->select')
                 ->with($this->getTypeSql('table', 'column'))
                 ->andReturn([])

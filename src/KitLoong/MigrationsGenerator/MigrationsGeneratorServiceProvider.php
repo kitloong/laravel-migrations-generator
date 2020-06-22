@@ -56,8 +56,8 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         $this->app->singleton(Compiler::class, TemplateCompiler::class);
 
-        $this->app->singleton(MigrationGeneratorSetting::class, function () {
-            return new MigrationGeneratorSetting();
+        $this->app->singleton(MigrationsGeneratorSetting::class, function () {
+            return new MigrationsGeneratorSetting();
         });
     }
 

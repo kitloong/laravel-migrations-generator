@@ -8,7 +8,7 @@
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class Decorator
 {
@@ -50,8 +50,8 @@ class Decorator
 
     public function tableWithoutPrefix(string $table): string
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
 
         return substr($table, strlen($setting->getConnection()->getTablePrefix()));
     }

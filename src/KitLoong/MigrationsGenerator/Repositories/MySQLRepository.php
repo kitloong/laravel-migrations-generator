@@ -7,14 +7,14 @@
 
 namespace KitLoong\MigrationsGenerator\Repositories;
 
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class MySQLRepository
 {
     public function getEnumPresetValues(string $table, string $columnName): ?string
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
 
         $column = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'enum(%'");
         if (count($column) > 0) {
@@ -29,8 +29,8 @@ class MySQLRepository
 
     public function getSetPresetValues(string $table, string $columnName): ?string
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
 
         $column = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'set(%'");
         if (count($column) > 0) {

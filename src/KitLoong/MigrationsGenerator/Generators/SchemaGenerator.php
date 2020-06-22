@@ -9,7 +9,7 @@ namespace KitLoong\MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Illuminate\Support\Collection;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeographyType;
@@ -107,7 +107,7 @@ class SchemaGenerator
      */
     public function initialize()
     {
-        $setting = app(MigrationGeneratorSetting::class);
+        $setting = app(MigrationsGeneratorSetting::class);
 
         foreach (self::$customDoctrineTypes as $doctrineType) {
             $this->registerCustomDoctrineType(...$doctrineType);
@@ -154,7 +154,7 @@ class SchemaGenerator
     {
         return $this->indexGenerator->generate(
             $table,
-            app(MigrationGeneratorSetting::class)->isIgnoreIndexNames()
+            app(MigrationsGeneratorSetting::class)->isIgnoreIndexNames()
         );
     }
 
@@ -168,7 +168,7 @@ class SchemaGenerator
         return $this->foreignKeyGenerator->generate(
             $table,
             $this->schema,
-            app(MigrationGeneratorSetting::class)->isIgnoreForeignKeyNames()
+            app(MigrationsGeneratorSetting::class)->isIgnoreForeignKeyNames()
         );
     }
 
@@ -199,7 +199,7 @@ class SchemaGenerator
      */
     protected function addNewDoctrineType(string $type, string $name): void
     {
-        app(MigrationGeneratorSetting::class)->getConnection()
+        app(MigrationsGeneratorSetting::class)->getConnection()
             ->getDoctrineConnection()
             ->getDatabasePlatform()
             ->registerDoctrineTypeMapping($type, $name);

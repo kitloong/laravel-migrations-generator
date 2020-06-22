@@ -16,7 +16,7 @@ use KitLoong\MigrationsGenerator\Generators\ForeignKeyGenerator;
 use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
@@ -54,7 +54,7 @@ class SchemaGeneratorTest extends TestCase
      */
     public function testInitialize()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $this->mockShouldReceivedCustomType($mock);
 
             $mock->shouldReceive('getPlatform')
@@ -110,7 +110,7 @@ class SchemaGeneratorTest extends TestCase
                 ->once();
         });
 
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('isIgnoreIndexNames')
                 ->andReturnTrue()
                 ->once();
@@ -141,7 +141,7 @@ class SchemaGeneratorTest extends TestCase
 
     public function testGetForeignKeyConstraints()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('isIgnoreForeignKeyNames')
                 ->andReturnTrue()
                 ->once();
@@ -165,7 +165,7 @@ class SchemaGeneratorTest extends TestCase
      */
     public function testRegisterCustomDoctrineType()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getConnection->getDoctrineConnection->getDatabasePlatform->registerDoctrineTypeMapping')
                 ->with('inet', 'ipaddress')
                 ->twice();
@@ -186,7 +186,7 @@ class SchemaGeneratorTest extends TestCase
      */
     public function testAddNewDoctrineType()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getConnection->getDoctrineConnection->getDatabasePlatform->registerDoctrineTypeMapping')
                 ->with('inet', 'ipaddress')
                 ->once();

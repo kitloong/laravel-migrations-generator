@@ -12,7 +12,7 @@ use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Connection;
 use KitLoong\MigrationsGenerator\Generators\IntegerField;
 use KitLoong\MigrationsGenerator\Generators\Platform;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
@@ -116,7 +116,7 @@ class IntegerFieldTest extends TestCase
     {
         $connectionMock = Mockery::mock(Connection::class);
 
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) use ($connectionMock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) use ($connectionMock) {
             $mock->shouldReceive('getPlatform')
                 ->andReturn(Platform::MYSQL);
 
@@ -156,7 +156,7 @@ class IntegerFieldTest extends TestCase
 
     private function isPostgreSql()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getPlatform')
                 ->andReturn(Platform::POSTGRESQL);
         });

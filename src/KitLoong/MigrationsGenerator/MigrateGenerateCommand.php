@@ -130,8 +130,8 @@ class MigrateGenerateCommand extends GeneratorCommand
 
     protected function setup(string $connection): void
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
         $setting->setConnection($connection);
         $setting->setIgnoreIndexNames($this->option('defaultIndexNames'));
         $setting->setIgnoreForeignKeyNames($this->option('defaultFKNames'));
@@ -381,8 +381,8 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     protected function getExcludedTables()
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
 
         $excludes = [$setting->getConnection()->getTablePrefix().Config::get('database.migrations')];
         $ignore = (string) $this->option('ignore');

@@ -10,7 +10,7 @@ namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Collection;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 
@@ -64,8 +64,8 @@ class IntegerField
 
     private function checkIsMySQLBoolean(string $tableName, array $field, Column $column): bool
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
 
         if ($setting->getPlatform() === Platform::MYSQL &&
             $field['type'] === ColumnType::TINY_INTEGER &&

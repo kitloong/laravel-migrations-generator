@@ -12,7 +12,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 
-class MigrationGeneratorSetting
+class MigrationsGeneratorSetting
 {
     /**
      * @var Connection

@@ -7,14 +7,14 @@
 
 namespace KitLoong\MigrationsGenerator\Repositories;
 
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class PgSQLRepository
 {
     public function getTypeByColumnName(string $table, string $columnName): ?string
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        /** @var MigrationsGeneratorSetting $setting */
+        $setting = app(MigrationsGeneratorSetting::class);
 
         $column = $setting->getConnection()
             ->select("SELECT

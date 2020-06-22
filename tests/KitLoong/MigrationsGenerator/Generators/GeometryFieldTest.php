@@ -9,7 +9,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use KitLoong\MigrationsGenerator\Generators\GeometryField;
 use KitLoong\MigrationsGenerator\Generators\Platform;
-use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\MigrationMethod\PgSQLGeography;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
@@ -21,7 +21,7 @@ class GeometryFieldTest extends TestCase
 {
     public function testMakeFieldFromPgSQL()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getPlatform')
                 ->andReturn(Platform::POSTGRESQL);
         });
@@ -58,7 +58,7 @@ class GeometryFieldTest extends TestCase
 
     public function testMakeFieldFromPgSQLFormat()
     {
-        $this->mock(MigrationGeneratorSetting::class, function (MockInterface $mock) {
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('getPlatform')
                 ->andReturn(Platform::POSTGRESQL);
         });
