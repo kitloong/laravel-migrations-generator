@@ -1,11 +1,20 @@
 <?php namespace Xethron\MigrationsGenerator\Generators;
 
+use KitLoong\MigrationsGenerator\Generators\Decorator;
+
 class ForeignKeyGenerator
 {
     /**
      * @var string
      */
     protected $table;
+
+    private $decorator;
+
+    public function __construct(Decorator $decorator)
+    {
+        $this->decorator = $decorator;
+    }
 
     /**
      * Get array of foreign keys
@@ -32,7 +41,7 @@ class ForeignKeyGenerator
                 'name' => $this->getName($foreignKey, $ignoreForeignKeyNames),
                 'field' => $foreignKey->getLocalColumns()[0],
                 'references' => $foreignKey->getForeignColumns()[0],
-                'on' => $foreignKey->getForeignTableName(),
+                'on' => $this->decorator->tableWithoutPrefix($foreignKey->getForeignTableName()),
                 'onUpdate' => $foreignKey->hasOption('onUpdate') ? $foreignKey->getOption('onUpdate') : 'RESTRICT',
                 'onDelete' => $foreignKey->hasOption('onDelete') ? $foreignKey->getOption('onDelete') : 'RESTRICT',
             ];

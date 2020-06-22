@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
 use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
 use Way\Generators\Commands\GeneratorCommand;
@@ -89,13 +90,17 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     protected $connection;
 
+    protected $decorator;
+
     public function __construct(
         Generator $generator,
         SchemaGenerator $schemaGenerator,
-        MigrationRepositoryInterface $repository
+        MigrationRepositoryInterface $repository,
+        Decorator $decorator
     ) {
         $this->schemaGenerator = $schemaGenerator;
         $this->repository = $repository;
+        $this->decorator = $decorator;
 
         parent::__construct($generator);
     }
@@ -108,33 +113,29 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     public function handle()
     {
-        /** @var MigrationGeneratorSetting $setting */
-        $setting = app(MigrationGeneratorSetting::class);
+        $this->setup($this->connection = $this->option('connection') ?: Config::get('database.default'));
 
-        $this->connection = $this->option('connection') ?: Config::get('database.default');
-        $setting->setConnection($this->connection);
         $this->info('Using connection: '.$this->connection."\n");
 
-        $this->schemaGenerator->initialize(
-            $this->connection,
-            $this->option('defaultIndexNames'),
-            $this->option('defaultFKNames')
-        );
+        $this->schemaGenerator->initialize();
 
-        $tables = $this->getTables();
+        $tables = $this->filterTables();
         $this->info('Generating migrations for: '.implode(', ', $tables));
 
-        $this->logMigrationTable();
+        $this->askIfLogMigrationTable();
 
-        $this->info("Setting up Tables and Index Migrations");
-        $this->datePrefix = date('Y_m_d_His');
-        $this->generateTablesAndIndices($tables);
-
-        $this->info("\nSetting up Foreign Key Migrations\n");
-        $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
-        $this->generateForeignKeys($tables);
+        $this->generateMigrationFiles($tables);
 
         $this->info("\nFinished!\n");
+    }
+
+    protected function setup(string $connection): void
+    {
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = app(MigrationGeneratorSetting::class);
+        $setting->setConnection($connection);
+        $setting->setIgnoreIndexNames($this->option('defaultIndexNames'));
+        $setting->setIgnoreForeignKeyNames($this->option('defaultFKNames'));
     }
 
     /**
@@ -144,7 +145,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @return string[]
      */
-    protected function getTables()
+    protected function filterTables()
     {
         if ($tableArg = (string) $this->argument('tables')) {
             $tables = explode(',', $tableArg);
@@ -157,7 +158,7 @@ class MigrateGenerateCommand extends GeneratorCommand
         return $this->filterAndExcludeTables($tables);
     }
 
-    protected function logMigrationTable()
+    protected function askIfLogMigrationTable(): void
     {
         if (!$this->option('no-interaction')) {
             $this->log = $this->askYn('Do you want to log these migrations in the migrations table?');
@@ -177,12 +178,22 @@ class MigrateGenerateCommand extends GeneratorCommand
                 $options = array('--database' => $migrationSource);
                 $this->call('migrate:install', $options);
             }
-            $batch = $this->repository->getNextBatchNumber();
             $this->batch = $this->askNumeric(
-                'Next Batch Number is: '.$batch.'. We recommend using Batch Number 0 so that it becomes the "first" migration',
+                'Next Batch Number is: '.$this->repository->getNextBatchNumber().'. We recommend using Batch Number 0 so that it becomes the "first" migration',
                 0
             );
         }
+    }
+
+    protected function generateMigrationFiles(array $tables): void
+    {
+        $this->info("Setting up Tables and Index Migrations");
+        $this->datePrefix = date('Y_m_d_His');
+        $this->generateTablesAndIndices($tables);
+
+        $this->info("\nSetting up Foreign Key Migrations\n");
+        $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
+        $this->generateForeignKeys($tables);
     }
 
     /**
@@ -240,13 +251,11 @@ class MigrateGenerateCommand extends GeneratorCommand
 
         foreach ($tables as $tableName) {
             $this->table = $tableName;
-            $this->migrationName = 'create_'.preg_replace('/[^a-zA-Z0-9_]/', '_', $this->table).'_table';
-            $table = $this->schemaGenerator->getTable($tableName);
-            $indexes = $this->schemaGenerator->getIndexes($table);
-            $singleColIndexes = $indexes['single'];
-            $multiColIndexes = $indexes['multi'];
-            $fields = $this->schemaGenerator->getFields($table, $singleColIndexes);
-            $this->fields = array_merge($fields, $multiColIndexes->toArray());
+            $this->migrationName = 'create_'.$this->decorator->tableUsedInFilename($tableName).'_table';
+            $indexes = $this->schemaGenerator->getIndexes($table = $this->schemaGenerator->getTable($tableName));
+
+            $fields = $this->schemaGenerator->getFields($table, $indexes['single']);
+            $this->fields = array_merge($fields, $indexes['multi']->toArray());
 
             $this->generate();
         }
@@ -262,10 +271,10 @@ class MigrateGenerateCommand extends GeneratorCommand
     {
         $this->method = 'table';
 
-        foreach ($tables as $table) {
-            $this->table = $table;
-            $this->migrationName = 'add_foreign_keys_to_'.preg_replace('/[^a-zA-Z0-9_]/', '_', $this->table).'_table';
-            $this->fields = $this->schemaGenerator->getForeignKeyConstraints($this->table);
+        foreach ($tables as $tableName) {
+            $this->table = $tableName;
+            $this->migrationName = 'add_foreign_keys_to_'.$this->decorator->tableUsedInFilename($tableName).'_table';
+            $this->fields = $this->schemaGenerator->getForeignKeyConstraints($tableName);
 
             $this->generate();
         }
@@ -296,19 +305,9 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected function getFileGenerationPath(): string
     {
         $path = $this->getPathByOptionOrConfig('path', 'migration_target_path');
-        $fileName = $this->getDatePrefix().'_'.$this->migrationName.'.php';
+        $fileName = $this->datePrefix.'_'.$this->migrationName.'.php';
 
         return "{$path}/{$fileName}";
-    }
-
-    /**
-     * Get the date prefix for the migration.
-     *
-     * @return string
-     */
-    protected function getDatePrefix(): string
-    {
-        return $this->datePrefix;
     }
 
     /**
@@ -383,7 +382,10 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     protected function getExcludedTables()
     {
-        $excludes = [Config::get('database.migrations')];
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = app(MigrationGeneratorSetting::class);
+
+        $excludes = [$setting->getConnection()->getTablePrefix().Config::get('database.migrations')];
         $ignore = (string) $this->option('ignore');
         if (!empty($ignore)) {
             return array_merge($excludes, explode(',', $ignore));

@@ -8,6 +8,8 @@
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
+use KitLoong\MigrationsGenerator\MigrationGeneratorSetting;
+
 class Decorator
 {
     /**
@@ -44,5 +46,19 @@ class Decorator
     public function addSlash(string $string): string
     {
         return addcslashes($string, "\\'");
+    }
+
+    public function tableWithoutPrefix(string $table): string
+    {
+        /** @var MigrationGeneratorSetting $setting */
+        $setting = app(MigrationGeneratorSetting::class);
+
+        return substr($table, strlen($setting->getConnection()->getTablePrefix()));
+    }
+
+    public function tableUsedInFilename(string $table): string
+    {
+        $tableNameEscaped = preg_replace('/[^a-zA-Z0-9_]/', '_', $table);
+        return $this->tableWithoutPrefix($tableNameEscaped);
     }
 }
