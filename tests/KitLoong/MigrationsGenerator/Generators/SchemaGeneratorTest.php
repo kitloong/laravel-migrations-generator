@@ -12,6 +12,7 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use KitLoong\MigrationsGenerator\Generators\FieldGenerator;
+use KitLoong\MigrationsGenerator\Generators\ForeignKeyGenerator;
 use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
@@ -45,7 +46,6 @@ use KitLoong\MigrationsGenerator\Types\YearType;
 use Mockery;
 use Mockery\MockInterface;
 use Orchestra\Testbench\TestCase;
-use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
 
 class SchemaGeneratorTest extends TestCase
 {

@@ -35,7 +35,6 @@ use KitLoong\MigrationsGenerator\Types\TimeTzType;
 use KitLoong\MigrationsGenerator\Types\TinyIntegerType;
 use KitLoong\MigrationsGenerator\Types\UUIDType;
 use KitLoong\MigrationsGenerator\Types\YearType;
-use Xethron\MigrationsGenerator\Generators\ForeignKeyGenerator;
 
 class SchemaGenerator
 {

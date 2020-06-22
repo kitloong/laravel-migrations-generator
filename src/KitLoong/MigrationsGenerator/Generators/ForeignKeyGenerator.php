@@ -1,6 +1,4 @@
-<?php namespace Xethron\MigrationsGenerator\Generators;
-
-use KitLoong\MigrationsGenerator\Generators\Decorator;
+<?php namespace KitLoong\MigrationsGenerator\Generators;
 
 class ForeignKeyGenerator
 {
