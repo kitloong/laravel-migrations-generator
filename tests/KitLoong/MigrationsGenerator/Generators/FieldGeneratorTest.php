@@ -8,7 +8,6 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
 use KitLoong\MigrationsGenerator\Generators\DatetimeField;
 use KitLoong\MigrationsGenerator\Generators\DecimalField;
 use KitLoong\MigrationsGenerator\Generators\EnumField;
@@ -49,14 +48,10 @@ class FieldGeneratorTest extends TestCase
         /** @var FieldGenerator $fieldGenerator */
         $fieldGenerator = resolve(FieldGenerator::class);
 
-        $table = Mockery::mock(Table::class);
         $index = ['index'];
         $indexes = collect([$index]);
 
-        $table->shouldReceive('getColumns')
-            ->andReturn([]);
-
-        $fields = $fieldGenerator->generate($table, $indexes);
+        $fields = $fieldGenerator->generate('table', [], $indexes);
         $this->assertEmpty($fields);
     }
 
@@ -72,15 +67,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -111,7 +100,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertEmpty($fields);
         }
     }
@@ -132,15 +121,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -171,7 +154,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame('returned', $fields[0]['field']);
         }
     }
@@ -185,15 +168,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -227,7 +204,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame('returned', $fields[0]['field']);
         }
     }
@@ -246,15 +223,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -285,7 +256,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame('returned', $fields[0]['field']);
         }
     }
@@ -302,15 +273,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -341,7 +306,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame('returned', $fields[0]['field']);
         }
     }
@@ -358,15 +323,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -397,7 +356,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame('returned', $fields[0]['field']);
         }
     }
@@ -414,15 +373,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -453,7 +406,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame('returned', $fields[0]['field']);
         }
     }
@@ -470,15 +423,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -509,7 +456,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame('returned', $fields[0]['field']);
         }
     }
@@ -526,15 +473,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect([$index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -565,7 +506,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame('returned', $fields[0]['field']);
         }
     }
@@ -582,15 +523,9 @@ class FieldGeneratorTest extends TestCase
         ];
 
         foreach ($types as $type) {
-            $table = Mockery::mock(Table::class);
             $index = ['index'];
             $column = Mockery::mock(Column::class);
             $indexes = collect(['returned' => $index]);
-
-            $table->shouldReceive('getName')
-                ->andReturn('table');
-            $table->shouldReceive('getColumns')
-                ->andReturn([$column]);
 
             $column->shouldReceive('getName')
                 ->andReturn('name');
@@ -645,7 +580,7 @@ class FieldGeneratorTest extends TestCase
             /** @var FieldGenerator $fieldGenerator */
             $fieldGenerator = resolve(FieldGenerator::class);
 
-            $fields = $fieldGenerator->generate($table, $indexes);
+            $fields = $fieldGenerator->generate('table', [$column], $indexes);
             $this->assertSame([
                 [
                     'field' => 'returned',

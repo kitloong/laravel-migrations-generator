@@ -253,9 +253,9 @@ class MigrateGenerateCommand extends GeneratorCommand
         foreach ($tables as $tableName) {
             $this->table = $tableName;
             $this->migrationName = 'create_'.$this->decorator->tableUsedInFilename($tableName).'_table';
-            $indexes = $this->schemaGenerator->getIndexes($table = $this->schemaGenerator->getTable($tableName));
+            $indexes = $this->schemaGenerator->getIndexes($tableName);
 
-            $fields = $this->schemaGenerator->getFields($table, $indexes['single']);
+            $fields = $this->schemaGenerator->getFields($tableName, $indexes['single']);
             $this->fields = array_merge($fields, $indexes['multi']->toArray());
 
             $this->generate();

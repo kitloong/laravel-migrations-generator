@@ -8,7 +8,6 @@
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CommentModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\DefaultModifier;
@@ -76,13 +75,13 @@ class FieldGenerator
     ];
 
     /**
-     * @param  Table  $table
+     * @param  string  $table
+     * @param  Column[]  $columns
      * @param  Collection  $indexes
      * @return array
      */
-    public function generate(Table $table, Collection $indexes): array
+    public function generate(string $table, $columns, Collection $indexes): array
     {
-        $columns = $table->getColumns();
         if (count($columns) === 0) {
             return [];
         }
@@ -110,7 +109,7 @@ class FieldGenerator
                 'decorators' => []
             ];
 
-            $field = $this->makeLaravelFieldTypeMethod($table->getName(), $field, $column, $indexes, $useTimestamps);
+            $field = $this->makeLaravelFieldTypeMethod($table, $field, $column, $indexes, $useTimestamps);
 
             if (empty($field)) {
                 continue;

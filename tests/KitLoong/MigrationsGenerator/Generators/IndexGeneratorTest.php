@@ -8,7 +8,6 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Index;
-use Doctrine\DBAL\Schema\Table;
 use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
 use KitLoong\MigrationsGenerator\MigrationMethod\IndexType;
 use Mockery;
@@ -29,13 +28,7 @@ class IndexGeneratorTest extends TestCase
         $index->shouldReceive('getName')
             ->andReturn('name');
 
-        $table = Mockery::mock(Table::class);
-        $table->shouldReceive('getName')
-            ->andReturn('table');
-        $table->shouldReceive('getIndexes')
-            ->andReturn([$index]);
-
-        $result = $indexGenerator->generate($table, false);
+        $result = $indexGenerator->generate('table', [$index], false);
         $this->assertSame([
             'col1' => [
                 'field' => ['col1'],
@@ -61,13 +54,7 @@ class IndexGeneratorTest extends TestCase
         $index->shouldReceive('getName')
             ->andReturn('name');
 
-        $table = Mockery::mock(Table::class);
-        $table->shouldReceive('getName')
-            ->andReturn('table');
-        $table->shouldReceive('getIndexes')
-            ->andReturn([$index]);
-
-        $result = $indexGenerator->generate($table, false);
+        $result = $indexGenerator->generate('table', [$index], false);
         $this->assertSame([
             'col1' => [
                 'field' => ['col1'],
@@ -94,13 +81,7 @@ class IndexGeneratorTest extends TestCase
         $index->shouldReceive('getName')
             ->andReturn('name');
 
-        $table = Mockery::mock(Table::class);
-        $table->shouldReceive('getName')
-            ->andReturn('table');
-        $table->shouldReceive('getIndexes')
-            ->andReturn([$index]);
-
-        $result = $indexGenerator->generate($table, false);
+        $result = $indexGenerator->generate('table', [$index], false);
         $this->assertSame([
             'col1' => [
                 'field' => ['col1'],
@@ -127,13 +108,7 @@ class IndexGeneratorTest extends TestCase
         $index->shouldReceive('getName')
             ->andReturn('name');
 
-        $table = Mockery::mock(Table::class);
-        $table->shouldReceive('getName')
-            ->andReturn('table');
-        $table->shouldReceive('getIndexes')
-            ->andReturn([$index]);
-
-        $result = $indexGenerator->generate($table, false);
+        $result = $indexGenerator->generate('table', [$index], false);
         $this->assertSame([
             'col1' => [
                 'field' => ['col1'],
@@ -160,13 +135,7 @@ class IndexGeneratorTest extends TestCase
         $index->shouldReceive('getName')
             ->andReturn('name');
 
-        $table = Mockery::mock(Table::class);
-        $table->shouldReceive('getName')
-            ->andReturn('table');
-        $table->shouldReceive('getIndexes')
-            ->andReturn([$index]);
-
-        $result = $indexGenerator->generate($table, false);
+        $result = $indexGenerator->generate('table', [$index], false);
         $this->assertSame([
             0 => [
                 'field' => ['col1', 'col2'],
@@ -194,13 +163,7 @@ class IndexGeneratorTest extends TestCase
         $index->shouldReceive('getName')
             ->andReturn('table_col1_col2_index');
 
-        $table = Mockery::mock(Table::class);
-        $table->shouldReceive('getName')
-            ->andReturn('table');
-        $table->shouldReceive('getIndexes')
-            ->andReturn([$index]);
-
-        $result = $indexGenerator->generate($table, false);
+        $result = $indexGenerator->generate('table', [$index], false);
         $this->assertSame([
             0 => [
                 'field' => ['col1', 'col2'],
@@ -228,13 +191,7 @@ class IndexGeneratorTest extends TestCase
         $index->shouldReceive('getName')
             ->andReturn('name');
 
-        $table = Mockery::mock(Table::class);
-        $table->shouldReceive('getName')
-            ->andReturn('table');
-        $table->shouldReceive('getIndexes')
-            ->andReturn([$index]);
-
-        $result = $indexGenerator->generate($table, true);
+        $result = $indexGenerator->generate('table', [$index], true);
         $this->assertSame([
             0 => [
                 'field' => ['col1', 'col2'],

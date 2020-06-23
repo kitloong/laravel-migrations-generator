@@ -8,15 +8,17 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
-use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\ForeignKeyConstraint;
+use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Types\Type;
 use KitLoong\MigrationsGenerator\Generators\FieldGenerator;
 use KitLoong\MigrationsGenerator\Generators\ForeignKeyGenerator;
 use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
-use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Types\DoubleType;
 use KitLoong\MigrationsGenerator\Types\EnumType;
 use KitLoong\MigrationsGenerator\Types\GeographyType;
@@ -84,30 +86,24 @@ class SchemaGeneratorTest extends TestCase
         $this->assertSame(['result'], $schemaGenerator->getTables());
     }
 
-    public function testGetTable()
-    {
-        $schemaGenerator = resolve(SubSchemaGenerator::class);
-
-        $mockTable = Mockery::mock(Table::class);
-        $schemaGenerator->mockSchema()
-            ->shouldReceive('listTableDetails')
-            ->with('table')
-            ->andReturn($mockTable)
-            ->once();
-
-        $this->assertSame($mockTable, $schemaGenerator->getTable('table'));
-    }
-
     public function testGetIndexes()
     {
-        $mockTable = Mockery::mock(Table::class);
+        $mockIndexes = [Mockery::mock(Index::class)];
 
-        $this->mock(IndexGenerator::class, function (MockInterface $mock) use ($mockTable) {
+        $this->mock(IndexGenerator::class, function (MockInterface $mock) use ($mockIndexes) {
             $mock->shouldReceive('generate')
-                ->with($mockTable, true)
+                ->with('table', $mockIndexes, true)
                 ->andReturn(['result'])
                 ->once();
         });
+
+        $schemaGenerator = resolve(SubSchemaGenerator::class);
+
+        $schemaGenerator->mockSchema()
+            ->shouldReceive('listTableIndexes')
+            ->with('table')
+            ->andReturn($mockIndexes)
+            ->once();
 
         $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('isIgnoreIndexNames')
@@ -117,46 +113,65 @@ class SchemaGeneratorTest extends TestCase
 
         $this->assertSame(
             ['result'],
-            resolve(SchemaGenerator::class)->getIndexes($mockTable, true)
+            $schemaGenerator->getIndexes('table')
         );
     }
 
     public function testGetFields()
     {
-        $mockTable = Mockery::mock(Table::class);
+        $mockColumns = [Mockery::mock(Column::class)];
+
         $collection = collect();
-        $this->mock(FieldGenerator::class, function (MockInterface $mock) use ($mockTable, $collection) {
+        $this->mock(FieldGenerator::class, function (MockInterface $mock) use ($mockColumns, $collection) {
             $mock->shouldReceive('generate')
-                ->with($mockTable, $collection)
+                ->with('table', $mockColumns, $collection)
                 ->andReturn(['result'])
                 ->once();
         });
 
+        $schemaGenerator = resolve(SubSchemaGenerator::class);
+
+        $schemaGenerator->mockSchema()
+            ->shouldReceive('listTableColumns')
+            ->with('table')
+            ->andReturn($mockColumns)
+            ->once();
+
         $this->assertSame(
             ['result'],
-            resolve(SchemaGenerator::class)->getFields($mockTable, $collection)
+            $schemaGenerator->getFields('table', $collection)
         );
     }
 
     public function testGetForeignKeyConstraints()
     {
+        $mockForeignKeys = [Mockery::mock(ForeignKeyConstraint::class)];
+
+        $this->mock(ForeignKeyGenerator::class, function (MockInterface $mock) use ($mockForeignKeys) {
+            $mock->shouldReceive('generate')
+                ->with('table', $mockForeignKeys, true)
+                ->andReturn(['result'])
+                ->once();
+        });
+
+        $schemaGenerator = resolve(SubSchemaGenerator::class);
+
+        $schemaGenerator->mockSchema()
+            ->shouldReceive('listTableForeignKeys')
+            ->with('table')
+            ->andReturn($mockForeignKeys)
+            ->once();
+
         $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
             $mock->shouldReceive('isIgnoreForeignKeyNames')
                 ->andReturnTrue()
                 ->once();
         });
 
-        $mockFKGenerator = Mockery::mock(ForeignKeyGenerator::class);
-        $this->app->instance(ForeignKeyGenerator::class, $mockFKGenerator);
-
-        $schemaGenerator = resolve(SubSchemaGenerator::class);
-
-        $mockFKGenerator->shouldReceive('generate')
-            ->with('table', $schemaGenerator->mockSchema(), true)
-            ->andReturn(['result'])
-            ->once();
-
-        $this->assertSame(['result'], $schemaGenerator->getForeignKeyConstraints('table'));
+        $this->assertSame(
+            ['result'],
+            $schemaGenerator->getForeignKeyConstraints('table')
+        );
     }
 
     /**
