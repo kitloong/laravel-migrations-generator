@@ -44,6 +44,6 @@ abstract class Table
      */
     protected function replaceFieldsWith(array $schema, string $template): string
     {
-        return str_replace('$FIELDS$', implode(PHP_EOL."\t\t\t", $schema), $template);
+        return str_replace('$FIELDS$', implode(PHP_EOL.str_repeat(' ', 12), $schema), $template);
     }
 }
