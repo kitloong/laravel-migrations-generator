@@ -191,6 +191,8 @@ class MigrateGenerateCommand extends GeneratorCommand
         $this->generateTablesAndIndices($tables);
 
         $this->info("\nSetting up Foreign Key Migrations\n");
+
+        // Plus 1 second to have foreign key migrations generate after table migrations generated
         $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
         $this->generateForeignKeys($tables);
     }
