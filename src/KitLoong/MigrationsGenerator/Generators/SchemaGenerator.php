@@ -6,7 +6,6 @@
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
-use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
@@ -137,37 +136,37 @@ class SchemaGenerator
         return $this->schema->listTableNames();
     }
 
-    public function getTable(string $tableName): Table
-    {
-        return $this->schema->listTableDetails($tableName);
-    }
-
     /**
-     * @param  Table  $table
+     * @param  string  $table
      * @return array|\Illuminate\Support\Collection[]
      * [
      *  'single' => Collection of single column indexes, with column name as key
      *  'multi' => Collection of multi columns indexes
      * ]
      */
-    public function getIndexes(Table $table): array
+    public function getIndexes(string $table): array
     {
         return $this->indexGenerator->generate(
             $table,
+            $this->schema->listTableIndexes($table),
             app(MigrationsGeneratorSetting::class)->isIgnoreIndexNames()
         );
     }
 
-    public function getFields(Table $table, Collection $singleColIndexes): array
+    public function getFields(string $table, Collection $singleColIndexes): array
     {
-        return $this->fieldGenerator->generate($table, $singleColIndexes);
+        return $this->fieldGenerator->generate(
+            $table,
+            $this->schema->listTableColumns($table),
+            $singleColIndexes
+        );
     }
 
     public function getForeignKeyConstraints(string $table): array
     {
         return $this->foreignKeyGenerator->generate(
             $table,
-            $this->schema,
+            $this->schema->listTableForeignKeys($table),
             app(MigrationsGeneratorSetting::class)->isIgnoreForeignKeyNames()
         );
     }

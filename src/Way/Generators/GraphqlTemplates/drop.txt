@@ -1,0 +1,9 @@
+enum $TABLE$SearchByColumns {
+    $ID$
+    $FIELDS$
+}
+
+enum $TABLE$OrderByColumns {
+    $ID$
+    $FIELDS$
+}

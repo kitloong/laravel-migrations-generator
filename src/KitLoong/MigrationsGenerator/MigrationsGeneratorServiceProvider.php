@@ -7,9 +7,15 @@ use Way\Generators\Compilers\Compiler;
 use Way\Generators\Compilers\TemplateCompiler;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
 use Way\Generators\Generator;
-use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
-use Xethron\MigrationsGenerator\Syntax\AddToTable;
-use Xethron\MigrationsGenerator\Syntax\RemoveForeignKeysFromTable;
+use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable as MigAddKeys;
+use Xethron\MigrationsGenerator\Syntax\AddToTable as MigAddToTable;
+use Xethron\MigrationsGenerator\Syntax\RemoveForeignKeysFromTable as MigRemoveKeys;
+use Xethron\MigrationsGenerator\GraphQLSyntax\MutationTable as GQLMutation;
+use Xethron\MigrationsGenerator\GraphQLSyntax\QueryTable as GQLQuery;
+use Xethron\MigrationsGenerator\GraphQLSyntax\DroppedTable as GQLDropped;
+use Xethron\MigrationsGenerator\GraphQLSyntax\AddToTable as GQLAddToTable;
+use Xethron\MigrationsGenerator\GraphQLSyntax\AddForeignKeysToTable as GQLAddKeys;
+use Xethron\MigrationsGenerator\GraphQLSyntax\RemoveForeignKeysFromTable as GQLRemoveKeys;
 
 class MigrationsGeneratorServiceProvider extends ServiceProvider
 {
@@ -50,9 +56,15 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
             return $app['migration.repository'];
         });
 
-        $this->app->bind(AddForeignKeysToTable::class, AddForeignKeysToTable::class);
-        $this->app->bind(AddToTable::class, AddToTable::class);
-        $this->app->bind(RemoveForeignKeysFromTable::class, RemoveForeignKeysFromTable::class);
+        $this->app->bind(MigAddKeys::class, MigAddKeys::class);
+        $this->app->bind(MigAddToTable::class, MigAddToTable::class);
+        $this->app->bind(MigRemoveKeys::class, MigRemoveKeys::class);
+        $this->app->bind(GQLAddKeys::class, GQLAddKeys::class);
+        $this->app->bind(GQLAddToTable::class, GQLAddToTable::class);
+        $this->app->bind(GQLRemoveKeys::class, GQLRemoveKeys::class);
+        $this->app->bind(GQLMutation::class, GQLMutation::class);
+        $this->app->bind(GQLQuery::class, GQLQuery::class);
+        $this->app->bind(GQLDropped::class, GQLDropped::class);
 
         $this->app->singleton(Compiler::class, TemplateCompiler::class);
 

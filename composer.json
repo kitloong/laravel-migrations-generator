@@ -1,12 +1,12 @@
 {
-	"name": "kitloong/laravel-migrations-generator",
-	"description": "Generates Laravel Migrations from an existing database",
-	"keywords": ["laravel", "lumen", "migration", "generator", "migrations", "artisan"],
+	"name": "net-results/laravel-migrations-generator",
+	"description": "Generates Migrations, GraphQL, Factory Files",
+	"keywords": ["laravel", "lumen", "migration", "generator", "migrations", "artisan", "graphql", "factory"],
 	"license": "MIT",
 	"authors": [
 		{
-			"name": "Kit Loong",
-			"email": "kitloong1008@gmail.com"
+			"name": "Dunham Perry",
+			"email": "dperry@net-results.com"
 		}
 	],
 	"require": {

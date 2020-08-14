@@ -7,10 +7,16 @@ use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
 use Way\Generators\Commands\GeneratorCommand;
 use Way\Generators\Generator;
-use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
-use Xethron\MigrationsGenerator\Syntax\AddToTable;
-use Xethron\MigrationsGenerator\Syntax\DroppedTable;
-use Xethron\MigrationsGenerator\Syntax\RemoveForeignKeysFromTable;
+use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable as MigAddKeys;
+use Xethron\MigrationsGenerator\Syntax\AddToTable as MigAddToTable;
+use Xethron\MigrationsGenerator\Syntax\DroppedTable as MigDropped;
+use Xethron\MigrationsGenerator\Syntax\RemoveForeignKeysFromTable as MigRemoveKeys;
+use Xethron\MigrationsGenerator\GraphQLSyntax\MutationTable as GQLMutation;
+use Xethron\MigrationsGenerator\GraphQLSyntax\QueryTable as GQLQuery;
+use Xethron\MigrationsGenerator\GraphQLSyntax\DroppedTable as GQLDropped;
+use Xethron\MigrationsGenerator\GraphQLSyntax\AddToTable as GQLAddToTable;
+use Xethron\MigrationsGenerator\GraphQLSyntax\AddForeignKeysToTable as GQLAddKeys;
+use Xethron\MigrationsGenerator\GraphQLSyntax\RemoveForeignKeysFromTable as GQLRemoveKeys;
 
 class MigrateGenerateCommand extends GeneratorCommand
 {
@@ -19,7 +25,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * The name and signature of the console command.
      * @var string
      */
-    protected $signature = 'migrate:generate
+    protected $signature = 'file:generate
                 {tables? : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
                 {--c|connection= : The database connection to use}
                 {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
@@ -27,7 +33,8 @@ class MigrateGenerateCommand extends GeneratorCommand
                 {--p|path= : Where should the file be created?}
                 {--tp|templatePath= : The location of the template for this generator}
                 {--defaultIndexNames : Don\'t use db index names for migrations}
-                {--defaultFKNames : Don\'t use db foreign key names for migrations}';
+                {--defaultFKNames : Don\'t use db foreign key names for migrations}
+                {--d|dir=app/models : Path to use to retrieve Models for Factories}';
 
     /**
      * The console command description.
@@ -112,20 +119,58 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     public function handle()
     {
-        $this->setup($this->connection = $this->option('connection') ?: Config::get('database.default'));
+        $type = $this->askTypeOfGeneration();
+        $type = (int)$type;
+        $factoryTablesArray = $this->formatFactoryModel($this->argument('tables'));
+        $directory = $this->option('dir');
 
-        $this->info('Using connection: '.$this->connection."\n");
+        //decides if it calls the factory function or continues on to graphql or migration
+        if ($type === 2) {
+            $this->call('generate:model-factory', [
+                'model' => $factoryTablesArray, '--dir' => $directory
+            ]);
+        } elseif ($type === 1) {
+            $type = "mi";
+        } else {
+            ($type = "gr");
+        }
 
-        $this->schemaGenerator->initialize();
+        if ($type != 2) {
+            $this->setup($this->connection = $this->option('connection') ?: Config::get('database.default'));
 
-        $tables = $this->filterTables();
-        $this->info('Generating migrations for: '.implode(', ', $tables));
+            $this->info('Using connection: '.$this->connection."\n");
 
-        $this->askIfLogMigrationTable();
+            $this->schemaGenerator->initialize();
 
-        $this->generateMigrationFiles($tables);
+            $tables = $this->filterTables();
+            $this->info('Generating files for: '.implode(', ', $tables));
 
-        $this->info("\nFinished!\n");
+            //if you want to log migrations in the migration table, uncomment below
+            //$this->askIfLogMigrationTable();
+
+            $this->generateMigrationFiles($tables, $type);
+
+            $this->info("\nFinished!\n");
+        }
+    }
+
+    //makes the table name given as acceptable for the Model type the Factory Generator takes
+    protected function formatFactoryModel(string $factoryTables)
+    {
+        $factoryTables = explode(",", $factoryTables);
+        $factoryTablesArray = array();
+
+        foreach ($factoryTables as $modelName) {
+            //$factoryTablesArray[] = ucfirst($modelName);
+            $wordArray = explode("_", $modelName);
+            $capitalizedWordArray = array();
+            foreach ($wordArray as $word) {
+                $capitalizedWordArray[] = ucfirst(strtolower($word));
+            }
+            $factoryTablesArray[] = implode("", $capitalizedWordArray);
+        }
+
+        return $factoryTablesArray;
     }
 
     protected function setup(string $connection): void
@@ -184,15 +229,43 @@ class MigrateGenerateCommand extends GeneratorCommand
         }
     }
 
-    protected function generateMigrationFiles(array $tables): void
+    protected function generateMigrationFiles(array $tables, string $type): void
     {
-        $this->info("Setting up Tables and Index Migrations");
+        $this->info("Setting up Tables and Indexes");
         $this->datePrefix = date('Y_m_d_His');
-        $this->generateTablesAndIndices($tables);
+        $this->generateTablesAndIndices($tables, $type);
 
-        $this->info("\nSetting up Foreign Key Migrations\n");
-        $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
-        $this->generateForeignKeys($tables);
+        if ($type != 'gr') {
+            $foreignKeyYN = $this->askYn('Do you want to generate Foreign Keys?');
+
+            if ($foreignKeyYN === true) {
+                $this->info("\nSetting up Foreign Key\n");
+
+                // Plus 1 second to have foreign key migrations generate after table migrations generated
+                $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
+                $this->generateForeignKeys($tables, $type);
+            }
+        }
+    }
+
+    protected function askTypeOfGeneration(): int
+    {
+        if (!$this->option('no-interaction')) {
+            $this->log = $this->askType('What type of file do you want to generate?');
+        }
+        while (true) {
+            if ($this->log === 1 | $this->log === 2 | $this->log === 3) {
+                return $this->log;
+            } else {
+                $this->log = $this->askType('What type of file do you want to generate?');
+            }
+        }
+    }
+
+    protected function askType(string $question): int
+    {
+        $answer = $this->ask($question."\n 1) Migration \n 2) Factory \n 3) GraphQL");
+        return strtolower($answer);
     }
 
     /**
@@ -244,29 +317,35 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @param  string[]  $tables  List of tables to create migrations for
      * @return void
      */
-    protected function generateTablesAndIndices($tables)
+    protected function generateTablesAndIndices($tables, $type)
     {
         $this->method = 'create';
-
         foreach ($tables as $tableName) {
-            $this->table = $tableName;
-            $this->migrationName = 'create_'.$this->decorator->tableUsedInFilename($tableName).'_table';
-            $indexes = $this->schemaGenerator->getIndexes($table = $this->schemaGenerator->getTable($tableName));
+            $this->table = (strtolower($tableName));
+            $tableName = strtolower($tableName);
+            if ($type === "mi") {
+                $this->migrationName = 'create_' . $this->decorator->tableUsedInFilename($tableName) . '_table';
+            } else {
+                $this->migrationName = $this->decorator->tableUsedInFilename($tableName);
+            }
+            $indexes = $this->schemaGenerator->getIndexes($tableName);
 
-            $fields = $this->schemaGenerator->getFields($table, $indexes['single']);
-            $this->fields = array_merge($fields, $indexes['multi']->toArray());
+            $fields = $this->schemaGenerator->getFields($tableName, $indexes['single']);
+//            $this->fields = array_merge($fields, $indexes['multi']->toArray());
+            $this->fields = $fields;
 
-            $this->generate();
+            $this->generate($type);
         }
     }
 
     /**
      * Generate foreign key migrations.
      *
-     * @param  array  $tables  List of tables to create migrations for
+     * @param array $tables List of tables to create migrations for
+     * @param string $type
      * @return void
      */
-    protected function generateForeignKeys(array $tables)
+    protected function generateForeignKeys(array $tables, string $type)
     {
         $this->method = 'table';
 
@@ -275,36 +354,47 @@ class MigrateGenerateCommand extends GeneratorCommand
             $this->migrationName = 'add_foreign_keys_to_'.$this->decorator->tableUsedInFilename($tableName).'_table';
             $this->fields = $this->schemaGenerator->getForeignKeyConstraints($tableName);
 
-            $this->generate();
+            $this->generate($type);
         }
     }
 
     /**
      * Generate Migration for the current table.
      *
+     * @param string $type
      * @return void
      */
-    protected function generate()
+    protected function generate(string $type)
     {
         if (!empty($this->fields)) {
-            $this->create();
+            $this->create($type);
 
-            if ($this->log) {
-                $file = $this->datePrefix.'_'.$this->migrationName;
-                $this->repository->log($file, $this->batch);
-            }
+//            if ($this->log) {
+//                if ($type === "mi") {
+//                    $file = $this->datePrefix . '_' . $this->migrationName;
+//                } else {
+//                    $file = $this->migrationName;
+//                }
+//                $this->repository->log($file, $this->batch);
+//            }
         }
     }
 
     /**
      * The path where the file will be created.
      *
+     * @param string $type
      * @return string
      */
-    protected function getFileGenerationPath(): string
+    protected function getFileGenerationPath(string $type): string
     {
-        $path = $this->getPathByOptionOrConfig('path', 'migration_target_path');
-        $fileName = $this->datePrefix.'_'.$this->migrationName.'.php';
+        if ($type === "mi") {
+            $path = $this->getPathByOptionOrConfig('path', 'migration_target_path');
+            $fileName = $this->datePrefix . '_' . $this->migrationName . '.php';
+        } else {
+            $path = $this->getPathByOptionOrConfig('path', 'graphql_target_path');
+            $fileName = $this->migrationName . '.graphql';
+        }
 
         return "{$path}/{$fileName}";
     }
@@ -312,51 +402,102 @@ class MigrateGenerateCommand extends GeneratorCommand
     /**
      * Fetch the template data.
      *
+     * @param string $type
      * @return array
      */
-    protected function getTemplateData(): array
+    protected function getTemplateData(string $type): array
     {
-        if ($this->method == 'create') {
-            $up = app(AddToTable::class)->run(
-                $this->fields,
-                $this->table,
-                $this->connection,
-                'create'
-            );
-            $down = app(DroppedTable::class)->run(
-                $this->fields,
-                $this->table,
-                $this->connection,
-                'drop'
-            );
-        } else {
-            $up = app(AddForeignKeysToTable::class)->run(
-                $this->fields,
-                $this->table,
-                $this->connection
-            );
-            $down = app(RemoveForeignKeysFromTable::class)->run(
-                $this->fields,
-                $this->table,
-                $this->connection
-            );
-        }
+        if ($type === "mi") {
+            if ($this->method == 'create') {
+                $miUp = app(MigAddToTable::class)->run(
+                    $this->fields,
+                    $this->table,
+                    $this->connection,
+                    'create',
+                    $type
+                );
+                $miDown = app(MigDropped::class)->run(
+                    $this->fields,
+                    $this->table,
+                    $this->connection,
+                    'midrop',
+                    $type
+                );
+            } else {
+                $miUp = app(MigAddKeys::class)->run(
+                    $this->fields,
+                    $this->table,
+                    $this->connection,
+                    'table',
+                    $type
+                );
+                $miDown = app(MigRemoveKeys::class)->run(
+                    $this->fields,
+                    $this->table,
+                    $this->connection,
+                    'midrop',
+                    $type
+                );
+            }
 
-        return [
-            'CLASS' => ucwords(Str::camel($this->migrationName)),
-            'UP' => $up,
-            'DOWN' => $down
-        ];
+            return [
+                'MICLASS' => ucwords(Str::camel($this->migrationName)),
+                'MIUP' => $miUp,
+                'MIDOWN' => $miDown
+            ];
+        } else {
+            $gqlUp = app(GQLAddToTable::class)->run(
+                $this->fields,
+                $this->table,
+                $this->connection,
+                'gqlcreate',
+                $type
+            );
+            $gqlDown = app(GQLDropped::class)->run(
+                $this->fields,
+                $this->table,
+                $this->connection,
+                'gqldrop',
+                $type
+            );
+            $gqlQuery = app(GQLQuery::class)->run(
+                $this->fields,
+                $this->table,
+                $this->connection,
+                'query',
+                $type
+            );
+            $gqlMutation = app(GQLMutation::class)->run(
+                $this->fields,
+                $this->table,
+                $this->connection,
+                'mutation',
+                $type
+            );
+
+            return [
+                'GQLCLASS' => ucwords(Str::camel($this->migrationName)),
+                'GQLUP' => $gqlUp,
+                'GQLDOWN' => $gqlDown,
+                'QUERY' => $gqlQuery,
+                'MUTATION' => $gqlMutation
+            ];
+        }
     }
 
     /**
      * Get path to template for generator.
      *
+     * @param string $type
      * @return string
      */
-    protected function getTemplatePath(): string
+    protected function getTemplatePath(string $type): string
     {
-        return $this->getPathByOptionOrConfig('templatePath', 'migration_template_path');
+        if ($type === "mi") {
+            return $this->getPathByOptionOrConfig('templatePath', 'migration_template_path');
+        } else {
+            return $this->getPathByOptionOrConfig('templatePath', 'graphql_template_path');
+        }
     }
 
     /**

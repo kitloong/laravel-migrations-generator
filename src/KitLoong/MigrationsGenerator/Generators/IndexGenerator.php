@@ -8,7 +8,6 @@
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Index;
-use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\MigrationMethod\IndexType;
 
@@ -22,18 +21,17 @@ class IndexGenerator
     }
 
     /**
-     * @param  Table  $table
+     * @param  string  $table
+     * @param  Index[]  $indexes
      * @param  bool  $ignoreIndexNames
      * @return Collection[]
      */
-    public function generate(Table $table, bool $ignoreIndexNames): array
+    public function generate(string $table, $indexes, bool $ignoreIndexNames): array
     {
-        $tableName = $table->getName();
-
         $singleColIndexes = collect([]);
         $multiColIndexes = collect([]);
 
-        foreach ($table->getIndexes() as $index) {
+        foreach ($indexes as $index) {
             $indexField = [
                 'field' => array_map([$this->decorator, 'addSlash'], $index->getColumns()),
                 'type' => IndexType::INDEX,
@@ -49,7 +47,7 @@ class IndexGenerator
                 $indexField['type'] = IndexType::SPATIAL_INDEX;
             }
 
-            if (!$ignoreIndexNames && !$this->useLaravelStyleDefaultName($tableName, $index, $indexField['type'])) {
+            if (!$ignoreIndexNames && !$this->useLaravelStyleDefaultName($table, $index, $indexField['type'])) {
                 $indexField['args'][] = $this->decorateName($index->getName());
             }
 

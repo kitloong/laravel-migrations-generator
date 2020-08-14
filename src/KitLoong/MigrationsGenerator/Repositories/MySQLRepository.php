@@ -19,7 +19,7 @@ class MySQLRepository
         $column = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'enum(%'");
         if (count($column) > 0) {
             return substr(
-                str_replace('enum(', '[', $column[0]->Type),
+                str_replace('enum(', '[', $this->spaceAfterComma($column[0]->Type)),
                 0,
                 -1
             ).']';
@@ -35,12 +35,17 @@ class MySQLRepository
         $column = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'set(%'");
         if (count($column) > 0) {
             return substr(
-                str_replace('set(', '[', $column[0]->Type),
+                str_replace('set(', '[', $this->spaceAfterComma($column[0]->Type)),
                 0,
                 -1
             ).']';
         }
 
         return null;
+    }
+
+    private function spaceAfterComma(string $value): string
+    {
+        return str_replace("','", "', '", $value);
     }
 }

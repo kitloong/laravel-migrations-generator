@@ -1,0 +1,17 @@
+type $TABLE$ @modelClass(class: "App\\\Models\\\$TABLE$") {
+    $ID$
+    $FIELDS$
+}
+
+input Create$TABLE$Input {
+    $FIELDS$
+}
+
+input Update$TABLE$Input {
+    $ID$
+    patch: Patchable$TABLE$Fields! @spread
+}
+
+input Patchable$TABLE$Fields {
+    $FIELDS$
+}

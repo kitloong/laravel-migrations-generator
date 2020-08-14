@@ -1,4 +1,4 @@
-<?php namespace Xethron\MigrationsGenerator\Syntax;
+<?php namespace Xethron\MigrationsGenerator\GraphQLSyntax;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +23,7 @@ abstract class Table extends WayTable
 //            $method = 'connection(\''.$connection.'\')->'.$method;
 //        }
 
-        $compiled = $this->compiler->compile($this->getTemplate($method), ['table' => $table, 'method' => $method]);
+        $compiled = $this->compiler->compile($this->getTemplate($method), ['table' => ucfirst($table), 'method' => $method]);
         return $this->replaceFieldsWith($this->getItems($fields), $compiled, $type);
     }
 
@@ -35,18 +35,28 @@ abstract class Table extends WayTable
      */
     protected function getItems(array $items): array
     {
+        $lastIndex = false;
         $result = [];
+        $count = 0;
+        $numInArray = count($items);
         foreach ($items as $item) {
-            $result[] = $this->getItem($item);
+            if (++$count == $numInArray) {
+                break;
+            }
+            if ($count+2 === $numInArray) {
+                $lastIndex = true;
+            }
+            $result[] = $this->getItem($item, $lastIndex);
         }
         return $result;
     }
 
     /**
-     * @param  array  $item
+     * @param array $item
+     * @param bool $lastIndex
      * @return string
      */
-    abstract protected function getItem(array $item): string;
+    abstract protected function getItem(array $item, bool $lastIndex);
 
     /**
      * @param  string[]  $decorators

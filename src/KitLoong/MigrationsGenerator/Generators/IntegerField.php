@@ -32,9 +32,9 @@ class IntegerField
     private function handleBoolean(array $field, Column $column): array
     {
         $field['type'] = ColumnType::BOOLEAN;
-        if ($column->getUnsigned()) {
-            $field['decorators'][] = ColumnModifier::UNSIGNED;
-        }
+//        if ($column->getUnsigned()) {
+//            $field['decorators'][] = ColumnModifier::UNSIGNED;
+//        }
 
         return $field;
     }

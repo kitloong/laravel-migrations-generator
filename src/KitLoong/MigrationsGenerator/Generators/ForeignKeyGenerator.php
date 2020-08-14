@@ -18,17 +18,15 @@ class ForeignKeyGenerator
      * Get array of foreign keys
      *
      * @param  string  $table  Table name
-     * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
+     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint[]  $foreignKeys
      * @param  bool  $ignoreForeignKeyNames
      *
      * @return array
      */
-    public function generate(string $table, $schema, bool $ignoreForeignKeyNames): array
+    public function generate(string $table, $foreignKeys, bool $ignoreForeignKeyNames): array
     {
         $this->table = $table;
         $fields = [];
-
-        $foreignKeys = $schema->listTableForeignKeys($table);
 
         if (empty($foreignKeys)) {
             return [];

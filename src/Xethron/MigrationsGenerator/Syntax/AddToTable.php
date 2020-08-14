@@ -19,7 +19,7 @@ class AddToTable extends Table
         // If the field is an array,
         // make it an array in the Migration
         if (is_array($property)) {
-            $property = "['".implode("','", $property)."']";
+            $property = "['".implode("', '", $property)."']";
         } else {
             $property = $property ? "'$property'" : null;
         }

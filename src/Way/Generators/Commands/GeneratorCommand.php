@@ -29,35 +29,39 @@ abstract class GeneratorCommand extends Command
     /**
      * Fetch the template data.
      *
+     * @param string $type
      * @return array
      */
-    abstract protected function getTemplateData(): array;
+    abstract protected function getTemplateData(string $type): array;
 
     /**
      * The path to where the file will be created.
      *
+     * @param string $type
      * @return string
      */
-    abstract protected function getFileGenerationPath(): string;
+    abstract protected function getFileGenerationPath(string $type): string;
 
     /**
      * Get the path to the generator template.
      *
+     * @param string $type
      * @return string
      */
-    abstract protected function getTemplatePath(): string;
+    abstract protected function getTemplatePath(string $type): string;
 
     /**
      * Compile and generate the file.
+     * @param string $type
      */
-    public function create()
+    public function create(string $type)
     {
-        $filePathToGenerate = $this->getFileGenerationPath();
+        $filePathToGenerate = $this->getFileGenerationPath($type);
 
         try {
             $this->generator->make(
-                $this->getTemplatePath(),
-                $this->getTemplateData(),
+                $this->getTemplatePath($type),
+                $this->getTemplateData($type),
                 $filePathToGenerate
             );
 
