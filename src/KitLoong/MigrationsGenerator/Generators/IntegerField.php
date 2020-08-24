@@ -6,7 +6,7 @@
  */
 
 namespace KitLoong\MigrationsGenerator\Generators;
-
+use Illuminate\Support\Facades\Config;
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
@@ -41,7 +41,7 @@ class IntegerField
 
     private function handleInteger(array $field, Column $column, Collection $indexes): array
     {
-        if ($column->getUnsigned() && $column->getAutoincrement()) {
+        if (($column->getUnsigned()||Config::get('database.default')=="sqlsrv") && $column->getAutoincrement()) {
             if ($field['type'] === 'integer') {
                 $field['type'] = ColumnType::INCREMENTS;
             } else {
