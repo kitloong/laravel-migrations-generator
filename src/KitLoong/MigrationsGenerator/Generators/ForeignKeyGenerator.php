@@ -26,17 +26,31 @@ class ForeignKeyGenerator
     public function generate(string $table, $foreignKeys, bool $ignoreForeignKeyNames): array
     {
         $this->table = $table;
+        if($table == "m_event_list"){
+            $d = 1;
+        }
         $fields = [];
 
         if (empty($foreignKeys)) {
             return [];
         }
-
         foreach ($foreignKeys as $foreignKey) {
+            $references = "";
+            $field="";
+            foreach($foreignKey->getLocalColumns() as $f){
+                $field .="'".$f."',";
+            }
+            $field = substr($field,0,-1);
+            $field.=")";
+            foreach($foreignKey->getForeignColumns() as $f){
+                $references .="'".$f."',";
+            }
+            $references = substr($references,0,-1);
+            $references.=")";
             $fields[] = [
                 'name' => $this->getName($foreignKey, $ignoreForeignKeyNames),
-                'field' => $foreignKey->getLocalColumns()[0],
-                'references' => $foreignKey->getForeignColumns()[0],
+                'field' => $field,
+                'references' => $references,
                 'on' => $this->decorator->tableWithoutPrefix($foreignKey->getForeignTableName()),
                 'onUpdate' => $foreignKey->hasOption('onUpdate') ? $foreignKey->getOption('onUpdate') : 'RESTRICT',
                 'onDelete' => $foreignKey->hasOption('onDelete') ? $foreignKey->getOption('onDelete') : 'RESTRICT',
