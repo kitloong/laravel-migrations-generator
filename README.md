@@ -23,12 +23,13 @@ Generate Laravel Migrations from an existing database, including indexes and for
 1. Added UT!
 1. More UT will be added to increase coverage.
 
-This package is cloned from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
+This package is clone from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
 
 ## Version Compatibility
 
 |Laravel|Version|
 |---|---|
+|8.x|4.x|
 |7.x|4.x|
 |6.x|4.x|
 |5.8.x|4.x|
