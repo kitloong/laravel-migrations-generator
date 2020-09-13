@@ -16,10 +16,10 @@ class AddForeignKeysToTable extends Table
     {
         $value = $foreignKey['field'];
         if (!empty($foreignKey['name'])) {
-            $value .= "', '".$foreignKey['name'];
+            $value .= ", '".$foreignKey['name']."'";
         }
         $output = sprintf(
-            "\$table->foreign('%s')->references('%s')->on('%s')",
+            "\$table->foreign(array(%s)->references(array(%s)->on('%s')",
             $value,
             $foreignKey['references'],
             $foreignKey['on']
