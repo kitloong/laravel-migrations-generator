@@ -35,7 +35,7 @@ class ForeignKeyGenerator
         foreach ($foreignKeys as $foreignKey) {
             $fields[] = [
                 'name' => $this->getName($foreignKey, $ignoreForeignKeyNames),
-                'field' => $foreignKey->getLocalColumns(),
+                'fields' => $foreignKey->getLocalColumns(),
                 'references' => $foreignKey->getForeignColumns(),
                 'on' => $this->decorator->tableWithoutPrefix($foreignKey->getForeignTableName()),
                 'onUpdate' => $foreignKey->hasOption('onUpdate') ? $foreignKey->getOption('onUpdate') : 'RESTRICT',
@@ -66,18 +66,18 @@ class ForeignKeyGenerator
      */
     protected function isDefaultName($foreignKey): bool
     {
-        return $foreignKey->getName() === $this->createIndexName($foreignKey->getLocalColumns()[0]);
+        return $foreignKey->getName() === $this->createIndexName($foreignKey->getLocalColumns());
     }
 
     /**
      * Create a default index name for the table.
      *
-     * @param  string  $column
+     * @param  array  $columns
      * @return string
      */
-    protected function createIndexName(string $column): string
+    protected function createIndexName(array $columns): string
     {
-        $index = strtolower($this->table.'_'.$column.'_foreign');
+        $index = strtolower($this->table.'_'.implode('_', $columns).'_foreign');
 
         return str_replace(['-', '.'], '_', $index);
     }

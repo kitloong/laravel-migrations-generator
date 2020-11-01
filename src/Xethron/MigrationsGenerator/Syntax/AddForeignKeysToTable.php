@@ -15,11 +15,11 @@ class AddForeignKeysToTable extends Table
     protected function getItem(array $foreignKey): string
     {
         // Check for multiple columns
-        if (count($foreignKey['field']) > 1) {
-            $value = "['" . implode("', '", $foreignKey['field']) . "']";
+        if (count($foreignKey['fields']) > 1) {
+            $value = "['" . implode("', '", $foreignKey['fields']) . "']";
             $references = "['" . implode("', '", $foreignKey['references']) . "']";
         } else {
-            $value = "'" . $foreignKey['field'][0] . "'";
+            $value = "'" . $foreignKey['fields'][0] . "'";
             $references = "'" . $foreignKey['references'][0] . "'";
         }
 
