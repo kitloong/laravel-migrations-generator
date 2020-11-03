@@ -31,7 +31,8 @@ class MigrateGenerateCommand extends GeneratorCommand
                 {--defaultIndexNames : Don\'t use db index names for migrations}
                 {--defaultFKNames : Don\'t use db foreign key names for migrations}
                 {--date= : Specify date for created migrations}
-                {--guessMorphs : Try to guess morph columns}';
+                {--guessMorphs : Try to guess morph columns}
+                {--filenamePrefix= : Prefix for migrations filenames}';
 
     /**
      * The console command description.
@@ -265,6 +266,7 @@ class MigrateGenerateCommand extends GeneratorCommand
         foreach ($tables as $tableName) {
             $this->table = $tableName;
             $this->migrationName = 'create_'.$this->decorator->tableUsedInFilename($tableName).'_table';
+            $this->migrationName = $this->option('filenamePrefix') . $this->migrationName;
             $indexes = $this->schemaGenerator->getIndexes($tableName);
 
             $fields = $this->schemaGenerator->getFields($tableName, $indexes['single']);
@@ -291,6 +293,7 @@ class MigrateGenerateCommand extends GeneratorCommand
         foreach ($tables as $tableName) {
             $this->table = $tableName;
             $this->migrationName = 'add_foreign_keys_to_'.$this->decorator->tableUsedInFilename($tableName).'_table';
+            $this->migrationName = $this->option('filenamePrefix') . $this->migrationName;
             $this->fields = $this->schemaGenerator->getForeignKeyConstraints($tableName);
 
             $this->generate();
