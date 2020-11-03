@@ -1,6 +1,7 @@
 <?php namespace KitLoong\MigrationsGenerator;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Generators\Decorator;
@@ -27,7 +28,8 @@ class MigrateGenerateCommand extends GeneratorCommand
                 {--p|path= : Where should the file be created?}
                 {--tp|templatePath= : The location of the template for this generator}
                 {--defaultIndexNames : Don\'t use db index names for migrations}
-                {--defaultFKNames : Don\'t use db foreign key names for migrations}';
+                {--defaultFKNames : Don\'t use db foreign key names for migrations}
+                {--date= : Specify date for created migrations}';
 
     /**
      * The console command description.
@@ -187,13 +189,21 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected function generateMigrationFiles(array $tables): void
     {
         $this->info("Setting up Tables and Index Migrations");
-        $this->datePrefix = date('Y_m_d_His');
+        if ($this->option('date')) {
+            $this->datePrefix = Carbon::parse($this->option('date'))->format('Y_m_d_His');
+        } else {
+            $this->datePrefix = date('Y_m_d_His');
+        }
         $this->generateTablesAndIndices($tables);
 
         $this->info("\nSetting up Foreign Key Migrations\n");
 
         // Plus 1 second to have foreign key migrations generate after table migrations generated
-        $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
+        if ($this->option('date')) {
+            $this->datePrefix = Carbon::parse($this->option('date'))->addSecond()->format('Y_m_d_His');
+        } else {
+            $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
+        }
         $this->generateForeignKeys($tables);
     }
 
