@@ -9,7 +9,7 @@ return [
     |
     */
 
-    'migration_template_path' => base_path('vendor/kitloong/laravel-migrations-generator/src/Way/Generators/templates/migration.txt'),
+    'migration_template_path' => __DIR__ . '/../Way/Generators/templates/migration.txt',
 
     /*
     |--------------------------------------------------------------------------
