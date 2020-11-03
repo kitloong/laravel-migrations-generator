@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
+use KitLoong\MigrationsGenerator\Transformers\MorphTransformer;
 use Way\Generators\Commands\GeneratorCommand;
 use Way\Generators\Generator;
 use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
@@ -29,7 +30,8 @@ class MigrateGenerateCommand extends GeneratorCommand
                 {--tp|templatePath= : The location of the template for this generator}
                 {--defaultIndexNames : Don\'t use db index names for migrations}
                 {--defaultFKNames : Don\'t use db foreign key names for migrations}
-                {--date= : Specify date for created migrations}';
+                {--date= : Specify date for created migrations}
+                {--guessMorphs : Try to guess morph columns}';
 
     /**
      * The console command description.
@@ -267,6 +269,10 @@ class MigrateGenerateCommand extends GeneratorCommand
 
             $fields = $this->schemaGenerator->getFields($tableName, $indexes['single']);
             $this->fields = array_merge($fields, $indexes['multi']->toArray());
+
+            if ($this->option('guessMorphs')) {
+                $this->fields = (new MorphTransformer())->transformFields($this->fields);
+            }
 
             $this->generate();
         }
