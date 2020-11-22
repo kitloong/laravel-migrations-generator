@@ -28,16 +28,14 @@ class StringField
             $field['type'] = ColumnType::REMEMBER_TOKEN;
             $field['field'] = null;
             $field['args'] = [];
+        } else {
+            if ($column->getFixed()) {
+                $field['type'] = ColumnType::CHAR;
+            }
 
-            return $field;
-        }
-
-        if ($column->getFixed()) {
-            $field['type'] = ColumnType::CHAR;
-        }
-
-        if ($column->getLength() && $column->getLength() !== Builder::$defaultStringLength) {
-            $field['args'][] = $column->getLength();
+            if ($column->getLength() && $column->getLength() !== Builder::$defaultStringLength) {
+                $field['args'][] = $column->getLength();
+            }
         }
 
         $collation = $this->collationModifier->generate($tableName, $column);
