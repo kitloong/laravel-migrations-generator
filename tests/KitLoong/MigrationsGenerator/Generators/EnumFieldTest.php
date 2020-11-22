@@ -7,8 +7,11 @@
 
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
+use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\Generators\EnumField;
+use KitLoong\MigrationsGenerator\Generators\Modifier\CollationModifier;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
+use Mockery;
 use Mockery\MockInterface;
 use Tests\KitLoong\TestCase;
 
@@ -23,16 +26,27 @@ class EnumFieldTest extends TestCase
                 ->once();
         });
 
-        /** @var EnumField $enumField */
-        $enumField = resolve(EnumField::class);
-
         $field = [
             'field' => 'enum_field',
             'args' => []
         ];
 
-        $field = $enumField->makeField('table', $field);
-        $this->assertSame(["['value1', 'value2' , 'value3']"], $field['args']);
+        $column = Mockery::mock(Column::class);
+        $this->mock(CollationModifier::class, function (MockInterface $mock) use ($column) {
+            $mock->shouldReceive('generate')
+                ->with('table', $column)
+                ->andReturn('collation')
+                ->once();
+        });
+
+        /** @var EnumField $enumField */
+        $enumField = resolve(EnumField::class);
+        $output = $enumField->makeField('table', $field, $column);
+        $this->assertSame([
+            'field' => 'enum_field',
+            'args' => ["['value1', 'value2' , 'value3']"],
+            'decorators' => ['collation']
+        ], $output);
     }
 
     public function testMakeFieldValueIsEmpty()
@@ -44,15 +58,23 @@ class EnumFieldTest extends TestCase
                 ->once();
         });
 
-        /** @var EnumField $enumField */
-        $enumField = resolve(EnumField::class);
-
         $field = [
             'field' => 'enum_field',
             'args' => []
         ];
 
-        $field = $enumField->makeField('table', $field);
+        $column = Mockery::mock(Column::class);
+        $this->mock(CollationModifier::class, function (MockInterface $mock) use ($column) {
+            $mock->shouldReceive('generate')
+                ->with('table', $column)
+                ->andReturn('collation')
+                ->once();
+        });
+
+        /** @var EnumField $enumField */
+        $enumField = resolve(EnumField::class);
+
+        $field = $enumField->makeField('table', $field, $column);
         $this->assertEmpty($field['args']);
     }
 }

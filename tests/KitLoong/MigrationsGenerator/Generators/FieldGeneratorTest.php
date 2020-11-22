@@ -297,7 +297,7 @@ class FieldGeneratorTest extends TestCase
                 $returnField = $field;
                 $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
-                    ->with('table', $field)
+                    ->with('table', $field, $column)
                     ->andReturn($returnField);
             });
 
@@ -397,7 +397,7 @@ class FieldGeneratorTest extends TestCase
                 $returnField = $field;
                 $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
-                    ->with('table', $field)
+                    ->with('table', $field, $column)
                     ->andReturn($returnField);
             });
 
@@ -447,7 +447,7 @@ class FieldGeneratorTest extends TestCase
                 $returnField = $field;
                 $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
-                    ->with($field, $column)
+                    ->with('table', $field, $column)
                     ->andReturn($returnField);
             });
 
@@ -493,11 +493,11 @@ class FieldGeneratorTest extends TestCase
                 'decorators' => []
             ];
 
-            $this->mock(OtherField::class, function (MockInterface $mock) use ($field) {
+            $this->mock(OtherField::class, function (MockInterface $mock) use ($field, $column) {
                 $returnField = $field;
                 $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
-                    ->with($field)
+                    ->with('table', $field, $column)
                     ->andReturn($returnField);
             });
 

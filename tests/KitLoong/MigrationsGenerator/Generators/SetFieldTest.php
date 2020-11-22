@@ -7,8 +7,11 @@
 
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
+use Doctrine\DBAL\Schema\Column;
+use KitLoong\MigrationsGenerator\Generators\Modifier\CollationModifier;
 use KitLoong\MigrationsGenerator\Generators\SetField;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
+use Mockery;
 use Mockery\MockInterface;
 use Tests\KitLoong\TestCase;
 
@@ -23,16 +26,28 @@ class SetFieldTest extends TestCase
                 ->once();
         });
 
+        $column = Mockery::mock(Column::class);
+        $this->mock(CollationModifier::class, function (MockInterface $mock) use ($column) {
+            $mock->shouldReceive('generate')
+                ->with('table', $column)
+                ->andReturn('collation')
+                ->once();
+        });
+
         /** @var SetField $setField */
-        $setField = resolve(SetField::class);
+        $setField = app(SetField::class);
 
         $field = [
             'field' => 'set_field',
             'args' => []
         ];
 
-        $field = $setField->makeField('table', $field);
-        $this->assertSame(["['value1', 'value2' , 'value3']"], $field['args']);
+        $output = $setField->makeField('table', $field, $column);
+        $this->assertSame([
+            'field' => 'set_field',
+            'args' => ["['value1', 'value2' , 'value3']"],
+            'decorators' => ['collation']
+        ], $output);
     }
 
     public function testMakeFieldValueIsEmpty()
@@ -44,15 +59,23 @@ class SetFieldTest extends TestCase
                 ->once();
         });
 
+        $column = Mockery::mock(Column::class);
+        $this->mock(CollationModifier::class, function (MockInterface $mock) use ($column) {
+            $mock->shouldReceive('generate')
+                ->with('table', $column)
+                ->andReturn('collation')
+                ->once();
+        });
+
         /** @var SetField $setField */
-        $setField = resolve(SetField::class);
+        $setField = app(SetField::class);
 
         $field = [
             'field' => 'set_field',
             'args' => []
         ];
 
-        $field = $setField->makeField('table', $field);
+        $field = $setField->makeField('table', $field, $column);
         $this->assertEmpty($field['args']);
     }
 }

@@ -12,6 +12,7 @@ use Doctrine\DBAL\Platforms\OraclePlatform;
 use Doctrine\DBAL\Platforms\PostgreSQL100Platform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Platforms\SQLServer2012Platform;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
@@ -21,9 +22,9 @@ class MigrationGeneratorSettingTest extends TestCase
 {
     public function testSetConnectionTryMysql()
     {
-        $dbconn = Mockery::mock(Connection::class);
+        $dbconn = $this->mockConnection();
         $dbPlatform = Mockery::mock(MySqlPlatform::class);
-        $dbconn->shouldReceive('getDoctrineConnection->getDatabasePlatform')
+        $dbconn->shouldReceive('getDoctrineConnection->getSchemaManager->getDatabasePlatform')
             ->andReturn($dbPlatform);
 
         DB::shouldReceive('connection')->with('mysql')->andReturn($dbconn);
@@ -36,8 +37,9 @@ class MigrationGeneratorSettingTest extends TestCase
 
     public function testSetConnectionTryPostreSql()
     {
-        $dbconn = Mockery::mock(Connection::class);
+        $dbconn = $this->mockConnection();
         $dbPlatform = Mockery::mock(PostgreSQL100Platform::class);
+
         $dbconn->shouldReceive('getDoctrineConnection->getDatabasePlatform')
             ->andReturn($dbPlatform);
 
@@ -51,8 +53,9 @@ class MigrationGeneratorSettingTest extends TestCase
 
     public function testSetConnectionTrySqlServer()
     {
-        $dbconn = Mockery::mock(Connection::class);
+        $dbconn = $this->mockConnection();
         $dbPlatform = Mockery::mock(SQLServer2012Platform::class);
+
         $dbconn->shouldReceive('getDoctrineConnection->getDatabasePlatform')
             ->andReturn($dbPlatform);
 
@@ -66,7 +69,7 @@ class MigrationGeneratorSettingTest extends TestCase
 
     public function testSetConnectionTrySqlite()
     {
-        $dbconn = Mockery::mock(Connection::class);
+        $dbconn = $this->mockConnection();
         $dbPlatform = Mockery::mock(SqlitePlatform::class);
         $dbconn->shouldReceive('getDoctrineConnection->getDatabasePlatform')
             ->andReturn($dbPlatform);
@@ -81,8 +84,9 @@ class MigrationGeneratorSettingTest extends TestCase
 
     public function testSetConnectionTryOthers()
     {
-        $dbconn = Mockery::mock(Connection::class);
+        $dbconn = $this->mockConnection();
         $dbPlatform = Mockery::mock(OraclePlatform::class);
+
         $dbconn->shouldReceive('getDoctrineConnection->getDatabasePlatform')
             ->andReturn($dbPlatform);
 
@@ -92,5 +96,23 @@ class MigrationGeneratorSettingTest extends TestCase
         $setting->setConnection('sql');
 
         $this->assertSame(Platform::OTHERS, $setting->getPlatform());
+    }
+
+    /**
+     * @return \Doctrine\DBAL\Connection|\Mockery\Mock
+     */
+    private function mockConnection(): Connection
+    {
+        $dbconn = Mockery::mock(Connection::class);
+
+        $schemaManager = Mockery::mock(AbstractSchemaManager::class);
+
+        $dbconn->shouldReceive('getDoctrineConnection')
+            ->andReturnSelf();
+
+        $dbconn->shouldReceive('getSchemaManager')
+            ->andReturn($schemaManager);
+
+        return $dbconn;
     }
 }
