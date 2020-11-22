@@ -4,3 +4,4 @@ composer.lock
 build
 .idea
 .phpunit.result.cache
+storage
