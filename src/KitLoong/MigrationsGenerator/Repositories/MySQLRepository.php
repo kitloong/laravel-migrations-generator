@@ -11,6 +11,19 @@ use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class MySQLRepository
 {
+    /**
+     * @return array [
+     *  'charset' => string,
+     *  'collation' => string
+     * ]
+     */
+    public function getDatabaseCollation(): array
+    {
+        $setting = app(MigrationsGeneratorSetting::class);
+        $columns = $setting->getConnection()->select("SELECT @@character_set_database, @@collation_database");
+        return ['charset' => $columns[0]->{'@@character_set_database'}, 'collation' => $columns[0]->{'@@collation_database'}];
+    }
+
     public function getEnumPresetValues(string $table, string $columnName): ?string
     {
         /** @var MigrationsGeneratorSetting $setting */

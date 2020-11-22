@@ -7,6 +7,7 @@
 
 namespace KitLoong\MigrationsGenerator;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\Platform;
@@ -22,6 +23,11 @@ class MigrationsGeneratorSetting
      * @var string
      */
     private $platform;
+
+    /**
+     * @var AbstractSchemaManager
+     */
+    private $schema;
 
     /**
      * @var boolean
@@ -50,6 +56,7 @@ class MigrationsGeneratorSetting
 
         /** @var \Doctrine\DBAL\Connection $doctConn */
         $doctConn = $this->connection->getDoctrineConnection();
+        $this->schema = $doctConn->getSchemaManager();
         $classPath = explode('\\', get_class($doctConn->getDatabasePlatform()));
         $platform = end($classPath);
 
@@ -110,5 +117,13 @@ class MigrationsGeneratorSetting
     public function setIgnoreForeignKeyNames(bool $ignoreForeignKeyNames): void
     {
         $this->ignoreForeignKeyNames = $ignoreForeignKeyNames;
+    }
+
+    /**
+     * @return AbstractSchemaManager
+     */
+    public function getSchema(): AbstractSchemaManager
+    {
+        return $this->schema;
     }
 }

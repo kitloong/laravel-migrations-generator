@@ -169,15 +169,15 @@ class FieldGenerator
             case DBALTypes::DOUBLE:
                 return $this->decimalField->makeField($field, $column);
             case DBALTypes::ENUM:
-                return $this->enumField->makeField($tableName, $field);
+                return $this->enumField->makeField($tableName, $field, $column);
             case DBALTypes::GEOMETRY:
                 return $this->geometryField->makeField($tableName, $field);
             case DBALTypes::SET:
-                return $this->setField->makeField($tableName, $field);
+                return $this->setField->makeField($tableName, $field, $column);
             case DBALTypes::STRING:
-                return $this->stringField->makeField($field, $column);
+                return $this->stringField->makeField($tableName, $field, $column);
             default:
-                return $this->otherField->makeField($field);
+                return $this->otherField->makeField($tableName, $field, $column);
         }
     }
 }

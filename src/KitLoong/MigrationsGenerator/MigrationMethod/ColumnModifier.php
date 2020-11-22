@@ -9,6 +9,7 @@ namespace KitLoong\MigrationsGenerator\MigrationMethod;
 
 final class ColumnModifier
 {
+    const COLLATION = 'collation';
     const COMMENT = 'comment';
     const DEFAULT = 'default';
     const NULLABLE = 'nullable';
