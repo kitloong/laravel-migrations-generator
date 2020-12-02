@@ -25,6 +25,7 @@ class MigrateGenerateCommand extends GeneratorCommand
                 {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
                 {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
                 {--p|path= : Where should the file be created?}
+                {--s|single : Generate all migrations into a single file}
                 {--tp|templatePath= : The location of the template for this generator}
                 {--defaultIndexNames : Don\'t use db index names for migrations}
                 {--defaultFKNames : Don\'t use db foreign key names for migrations}';
@@ -91,6 +92,17 @@ class MigrateGenerateCommand extends GeneratorCommand
 
     protected $decorator;
 
+
+    /**
+     * Single file functionality
+     * @var bool;
+     */
+    protected $single;
+    /* @var array */
+    protected $single_creates;
+    /* @var array */
+    protected $single_keys;
+
     public function __construct(
         Generator $generator,
         SchemaGenerator $schemaGenerator,
@@ -123,9 +135,96 @@ class MigrateGenerateCommand extends GeneratorCommand
 
         $this->askIfLogMigrationTable();
 
+        $this->single = $this->option('single');
+
         $this->generateMigrationFiles($tables);
 
+        if ($this->single) {
+            $this->mergeMigrationsIntoSingle();
+        }
+
         $this->info("\nFinished!\n");
+    }
+
+    protected function mergeMigrationsIntoSingle()
+    {
+        $creates = [];
+        $keys = [];
+
+        foreach ($this->single_creates as $table=>$file) {
+            $code = file_get_contents("database/migrations/${file}.php");
+            list($up, $down) = $this->getUpDown($code);
+            $creates[$table] = [ 'up' => $up, 'down' => $down, ];
+            unlink("database/migrations/${file}.php");
+        }
+
+        foreach ($this->single_keys as $table=>$file) {
+            $code = file_get_contents("database/migrations/${file}.php");
+            list($up, $down) = $this->getUpDown($code);
+            $keys[$table] = [ 'up' => $up, 'down' => $down, ];
+            unlink("database/migrations/${file}.php");
+        }
+
+        $pre = '
+<?php
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateInitialTablesAndKeys extends Migration
+{
+    /**
+    * Run the migrations.
+    *
+    * @return void
+    */
+    public function up()
+    {
+';
+
+        $mid = '
+   }
+
+    /**
+    * Reverse the migrations.
+    *
+    * @return void
+    */
+    public function down()
+    {
+        ';
+
+        $end = '
+    }
+}';
+        $tables = array_keys($creates);
+        sort($tables);
+
+        $ups = '';
+        $downs = '';
+
+        foreach ($tables as $table) {
+            if (isset($creates[$table])) {
+                $ups .= $creates[$table]['up'];
+                $downs .= $creates[$table]['down'];
+            }
+            if (isset($keys[$table])) {
+                $ups .= $keys[$table]['up'];
+                $downs .= $keys[$table]['down'];
+            }
+        }
+
+        $file = $pre . $ups . $mid . $downs . $end;
+        $filename = "database/migrations/{$this->datePrefix}_create_initial_tables_and_keys.php";
+        file_put_contents($filename, $file);
+
+        $this->info("\nSingle file specified, migrations deleted and merged into ${filename}\n");
+    }
+
+    protected function getUpDown($code) {
+        preg_match('/public function up\(\)\n\s+{((?:[^}]*(?:}[^}]+)*)}\);)\n\s+}\n\n/m', $code, $upMatches);
+        preg_match('/public function down\(\)\n\s+{((?:[^}]*(?:}[^}]+)*))}\n}/m', $code, $downMatches);
+        return [ $upMatches[1], $downMatches[1] ];
     }
 
     protected function setup(string $connection): void
@@ -254,11 +353,9 @@ class MigrateGenerateCommand extends GeneratorCommand
             $this->table = $tableName;
             $this->migrationName = 'create_'.$this->decorator->tableUsedInFilename($tableName).'_table';
             $indexes = $this->schemaGenerator->getIndexes($tableName);
-
             $fields = $this->schemaGenerator->getFields($tableName, $indexes['single']);
             $this->fields = array_merge($fields, $indexes['multi']->toArray());
-
-            $this->generate();
+            $this->generate('creates');
         }
     }
 
@@ -276,8 +373,7 @@ class MigrateGenerateCommand extends GeneratorCommand
             $this->table = $tableName;
             $this->migrationName = 'add_foreign_keys_to_'.$this->decorator->tableUsedInFilename($tableName).'_table';
             $this->fields = $this->schemaGenerator->getForeignKeyConstraints($tableName);
-
-            $this->generate();
+            $this->generate('keys');
         }
     }
 
@@ -286,14 +382,23 @@ class MigrateGenerateCommand extends GeneratorCommand
      *
      * @return void
      */
-    protected function generate()
+    protected function generate($type='creates')
     {
         if (!empty($this->fields)) {
             $this->create();
 
+            $file = $this->datePrefix.'_'.$this->migrationName;
+
             if ($this->log) {
-                $file = $this->datePrefix.'_'.$this->migrationName;
                 $this->repository->log($file, $this->batch);
+            }
+
+            if ($this->single && $type === 'creates') {
+                $this->single_creates[$this->table] = $file;
+            }
+
+            if ($this->single && $type === 'keys') {
+                $this->single_keys[$this->table] = $file;
             }
         }
     }
