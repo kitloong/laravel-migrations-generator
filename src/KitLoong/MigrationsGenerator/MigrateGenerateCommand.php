@@ -99,9 +99,9 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     protected $single;
     /* @var array */
-    protected $single_creates;
+    protected $singleCreates;
     /* @var array */
-    protected $single_keys;
+    protected $singleKeys;
 
     public function __construct(
         Generator $generator,
@@ -154,14 +154,14 @@ class MigrateGenerateCommand extends GeneratorCommand
         $creates = [];
         $keys = [];
 
-        foreach ($this->single_creates as $table => $file) {
+        foreach ($this->singleCreates as $table => $file) {
             $code = file_get_contents("database/migrations/${file}.php");
             list($up, $down) = $this->getUpDown($code);
             $creates[$table] = [ 'up' => $up, 'down' => $down, ];
             unlink("database/migrations/${file}.php");
         }
 
-        foreach ($this->single_keys as $table => $file) {
+        foreach ($this->singleKeys as $table => $file) {
             $code = file_get_contents("database/migrations/${file}.php");
             list($up, $down) = $this->getUpDown($code);
             $keys[$table] = [ 'up' => $up, 'down' => $down, ];
@@ -403,11 +403,11 @@ class CreateInitialTablesAndKeys extends Migration
             }
 
             if ($this->single && $type === 'creates') {
-                $this->single_creates[$this->table] = $file;
+                $this->singleCreates[$this->table] = $file;
             }
 
             if ($this->single && $type === 'keys') {
-                $this->single_keys[$this->table] = $file;
+                $this->singleKeys[$this->table] = $file;
             }
         }
     }
