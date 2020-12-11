@@ -25,6 +25,7 @@ use KitLoong\MigrationsGenerator\Types\MediumTextType;
 use KitLoong\MigrationsGenerator\Types\MultiLineStringType;
 use KitLoong\MigrationsGenerator\Types\MultiPointType;
 use KitLoong\MigrationsGenerator\Types\MultiPolygonType;
+use KitLoong\MigrationsGenerator\Types\OIDType;
 use KitLoong\MigrationsGenerator\Types\PointType;
 use KitLoong\MigrationsGenerator\Types\PolygonType;
 use KitLoong\MigrationsGenerator\Types\SetType;
@@ -84,6 +85,7 @@ class SchemaGenerator
         [MacAddressType::class, 'macaddress', 'macaddr'],
         [TimeTzType::class, 'timetz', 'timetz'],
         [TimestampTzType::class, 'timestamptz', 'timestamptz'],
+        [OIDType::class, 'oid', 'oid'],
     ];
 
     /**
@@ -121,6 +123,7 @@ class SchemaGenerator
                 $this->addNewDoctrineType('_int4', 'integer');
                 $this->addNewDoctrineType('_numeric', 'float');
                 $this->addNewDoctrineType('cidr', 'string');
+                $this->addNewDoctrineType('oid', 'string');
                 break;
             default:
         }
