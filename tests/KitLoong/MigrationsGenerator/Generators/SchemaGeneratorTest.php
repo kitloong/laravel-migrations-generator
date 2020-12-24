@@ -227,7 +227,8 @@ class SchemaGeneratorTest extends TestCase
             '_text' => 'text',
             '_int4' => 'integer',
             '_numeric' => 'float',
-            'cidr' => 'string'
+            'cidr' => 'string',
+            'oid' => 'string',
         ];
 
         foreach ($types as $dbType => $doctrineType) {

@@ -121,6 +121,7 @@ class SchemaGenerator
                 $this->addNewDoctrineType('_int4', 'integer');
                 $this->addNewDoctrineType('_numeric', 'float');
                 $this->addNewDoctrineType('cidr', 'string');
+                $this->addNewDoctrineType('oid', 'string');
                 break;
             default:
         }
