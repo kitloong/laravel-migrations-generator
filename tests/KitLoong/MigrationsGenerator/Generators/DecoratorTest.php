@@ -8,7 +8,7 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use KitLoong\MigrationsGenerator\Generators\Decorator;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class DecoratorTest extends TestCase
 {

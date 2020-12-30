@@ -26,7 +26,7 @@ use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery;
 use Mockery\MockInterface;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class FieldGeneratorTest extends TestCase
 {
@@ -90,8 +90,6 @@ class FieldGeneratorTest extends TestCase
             ];
 
             $this->mock(IntegerField::class, function (MockInterface $mock) use ($field, $column, $indexes) {
-                $returnField = $field;
-                $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
                     ->with('table', $field, $column, $indexes)
                     ->andReturn([]);

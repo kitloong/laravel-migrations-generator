@@ -13,7 +13,7 @@ use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use Mockery;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class DatetimeFieldTest extends TestCase
 {

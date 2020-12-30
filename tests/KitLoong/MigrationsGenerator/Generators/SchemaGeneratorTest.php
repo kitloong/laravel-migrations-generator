@@ -46,12 +46,12 @@ use KitLoong\MigrationsGenerator\Types\UUIDType;
 use KitLoong\MigrationsGenerator\Types\YearType;
 use Mockery;
 use Mockery\MockInterface;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class SchemaGeneratorTest extends TestCase
 {
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function testInitialize()
     {
@@ -74,6 +74,9 @@ class SchemaGeneratorTest extends TestCase
         $schemaGenerator->initialize();
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testGetTables()
     {
         $schemaGenerator = resolve(SubSchemaGenerator::class);
@@ -86,6 +89,9 @@ class SchemaGeneratorTest extends TestCase
         $this->assertSame(['result'], $schemaGenerator->getTables());
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testGetIndexes()
     {
         $mockIndexes = [Mockery::mock(Index::class)];
@@ -117,6 +123,9 @@ class SchemaGeneratorTest extends TestCase
         );
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testGetFields()
     {
         $mockColumns = [Mockery::mock(Column::class)];
@@ -143,6 +152,9 @@ class SchemaGeneratorTest extends TestCase
         );
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testGetForeignKeyConstraints()
     {
         $mockForeignKeys = [Mockery::mock(ForeignKeyConstraint::class)];
@@ -175,7 +187,7 @@ class SchemaGeneratorTest extends TestCase
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function testRegisterCustomDoctrineType()
     {
@@ -196,7 +208,7 @@ class SchemaGeneratorTest extends TestCase
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function testAddNewDoctrineType()
     {
@@ -238,7 +250,10 @@ class SchemaGeneratorTest extends TestCase
         }
     }
 
-    private function getTypes()
+    /**
+     * @return string[][]
+     */
+    private function getTypes(): array
     {
         return [
             DoubleType::class => ['double', 'double'],

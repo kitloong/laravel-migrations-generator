@@ -10,7 +10,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Repositories;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 use Mockery\MockInterface;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class PgSQLRepositoryTest extends TestCase
 {

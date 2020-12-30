@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use Mockery;
-use Orchestra\Testbench\TestCase;
 
 class MigrationGeneratorSettingTest extends TestCase
 {

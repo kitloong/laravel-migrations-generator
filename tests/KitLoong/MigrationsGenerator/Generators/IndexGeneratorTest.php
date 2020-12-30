@@ -11,7 +11,7 @@ use Doctrine\DBAL\Schema\Index;
 use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
 use KitLoong\MigrationsGenerator\MigrationMethod\IndexType;
 use Mockery;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class IndexGeneratorTest extends TestCase
 {

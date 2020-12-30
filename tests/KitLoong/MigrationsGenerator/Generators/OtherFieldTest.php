@@ -9,7 +9,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use KitLoong\MigrationsGenerator\Generators\OtherField;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class OtherFieldTest extends TestCase
 {
