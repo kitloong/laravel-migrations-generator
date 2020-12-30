@@ -10,7 +10,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\Generators\BooleanField;
 use Mockery;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class BooleanFieldTest extends TestCase
 {

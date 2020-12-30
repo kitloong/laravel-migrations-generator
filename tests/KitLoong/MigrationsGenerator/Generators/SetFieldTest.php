@@ -10,7 +10,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 use KitLoong\MigrationsGenerator\Generators\SetField;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use Mockery\MockInterface;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class SetFieldTest extends TestCase
 {

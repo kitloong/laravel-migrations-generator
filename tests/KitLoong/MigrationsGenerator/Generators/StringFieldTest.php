@@ -11,7 +11,7 @@ use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\Generators\StringField;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use Mockery;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class StringFieldTest extends TestCase
 {

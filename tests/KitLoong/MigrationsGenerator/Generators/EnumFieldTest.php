@@ -10,7 +10,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 use KitLoong\MigrationsGenerator\Generators\EnumField;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use Mockery\MockInterface;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class EnumFieldTest extends TestCase
 {
