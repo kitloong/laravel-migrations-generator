@@ -31,13 +31,10 @@ abstract class TestCase extends Testbench
         }
     }
 
-    protected function setUp(): void
+    protected function getEnvironmentSetUp($app)
     {
-        parent::setUp();
-    }
+        parent::getEnvironmentSetUp($app);
 
-    protected function basePath(string $path): string
-    {
-        return __DIR__.'/../../'.$path;
+        app()->setBasePath(__DIR__.'/../../');
     }
 }
