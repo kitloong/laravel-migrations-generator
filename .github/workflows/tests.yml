@@ -6,7 +6,6 @@ jobs:
   test:
 
     runs-on: ubuntu-latest
-    container: ubuntu
 
     services:
       mysql57:
@@ -16,7 +15,7 @@ jobs:
           MYSQL_DATABASE: migration
           MYSQL_USER: user
         ports:
-          - 33306:3306
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     strategy:
