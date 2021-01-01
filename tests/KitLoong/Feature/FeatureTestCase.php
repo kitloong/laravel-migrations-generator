@@ -48,7 +48,12 @@ abstract class FeatureTestCase extends TestCase
 
     protected function loadDotenv()
     {
-        $dotenv = Dotenv::createImmutable(base_path());
+        if (method_exists(Dotenv::class, 'createImmutable')) {
+            $dotenv = Dotenv::createImmutable(base_path());
+        } else {
+            /** @noinspection PhpParamsInspection */
+            $dotenv = Dotenv::create(base_path());
+        }
         $dotenv->load();
     }
 
