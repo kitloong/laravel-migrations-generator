@@ -50,9 +50,12 @@ abstract class FeatureTestCase extends TestCase
     {
         if (method_exists(Dotenv::class, 'createImmutable')) {
             $dotenv = Dotenv::createImmutable(base_path());
-        } else {
+        } elseif (method_exists(Dotenv::class, 'create')) {
             /** @noinspection PhpParamsInspection */
             $dotenv = Dotenv::create(base_path());
+        } else {
+            /** @noinspection PhpParamsInspection */
+            $dotenv = new Dotenv(base_path());
         }
         $dotenv->load();
     }
