@@ -6,6 +6,7 @@ jobs:
   test:
 
     runs-on: ubuntu-latest
+    container: ubuntu
 
     services:
       mysql57:
