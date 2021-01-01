@@ -3,9 +3,12 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Tests\KitLoong\Support\CheckLaravelVersion;
 
 class FromCreateAllColumnsTable extends Migration
 {
+    use CheckLaravelVersion;
+
     /**
      * Run the migrations.
      *
@@ -116,10 +119,14 @@ class FromCreateAllColumnsTable extends Migration
                 $table->mediumText('mediumText_collation')->collation('utf8_unicode_ci');
                 $table->text('text_charset')->charset('utf8');
                 $table->text('text_collation')->collation('utf8_unicode_ci');
-                $table->set('set', ['strawberry', 'vanilla']);
-                $table->set('set_default', ['strawberry', 'vanilla'])->default('strawberry');
-                $table->set('set_charset', ['strawberry', 'vanilla'])->charset('utf8');
-                $table->set('set_collation', ['strawberry', 'vanilla'])->collation('utf8_unicode_ci');
+
+                if ($this->atLeastLaravel5Dot8()) {
+                    $table->set('set', ['strawberry', 'vanilla']);
+                    $table->set('set_default', ['strawberry', 'vanilla'])->default('strawberry');
+                    $table->set('set_charset', ['strawberry', 'vanilla'])->charset('utf8');
+                    $table->set('set_collation', ['strawberry', 'vanilla'])->collation('utf8_unicode_ci');
+                }
+
                 $table->string('string_charset')->charset('utf8');
                 $table->string('string_collation')->collation('utf8_unicode_ci');
             }
