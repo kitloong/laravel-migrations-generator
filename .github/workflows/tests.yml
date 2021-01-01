@@ -30,9 +30,11 @@ jobs:
             stability: prefer-stable
           - laravel: 7.*
             php: 8.0
+            dbal: 2.*
             stability: prefer-stable
           - laravel: 6.*
             php: 8.0
+            dbal: 2.*
             stability: prefer-stable
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
