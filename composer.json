@@ -43,7 +43,7 @@
     "prefer-stable": true,
     "scripts": {
         "action-env-setup": [
-            "@php -r \"file_exists('.env1') || copy('.env.action', '.env1');\""
+            "@php -r \"file_exists('.env') || copy('.env.action', '.env');\""
         ]
     }
 }
