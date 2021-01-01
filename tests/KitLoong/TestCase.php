@@ -36,7 +36,7 @@ abstract class TestCase extends Testbench
         parent::setUp();
     }
 
-    protected function packageBasePath(string $path): string
+    protected function basePath(string $path): string
     {
         return __DIR__.'/../../'.$path;
     }
