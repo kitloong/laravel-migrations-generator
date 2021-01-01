@@ -15,4 +15,5 @@ final class ColumnModifier
     const NULLABLE = 'nullable';
     const UNSIGNED = 'unsigned';
     const USE_CURRENT = 'useCurrent';
+    const USE_CURRENT_ON_UPDATE = 'useCurrentOnUpdate';
 }

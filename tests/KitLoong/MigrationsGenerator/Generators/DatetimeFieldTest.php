@@ -12,13 +12,37 @@ use KitLoong\MigrationsGenerator\Generators\DatetimeField;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
+use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery;
+use Mockery\MockInterface;
 use Tests\KitLoong\TestCase;
 
 class DatetimeFieldTest extends TestCase
 {
     public function testMakeFieldIsSoftDeletes()
     {
+        $column = Mockery::mock(Column::class);
+        $column->shouldReceive('getNotnull')
+            ->andReturn(false)
+            ->once();
+        $column->shouldReceive('getLength')
+            ->andReturn(2);
+        $column->shouldReceive('getType->getName')
+            ->andReturn(DBALTypes::TIMESTAMP)
+            ->once();
+        $column->shouldReceive('getName')
+            ->withNoArgs()
+            ->andReturn(ColumnName::DELETED_AT)
+            ->once();
+
+        $this->mock(MySQLRepository::class, function (MockInterface $mock) {
+            $mock->shouldReceive('useOnUpdateCurrentTimestamp')
+                ->with('table', ColumnName::DELETED_AT)
+                ->andReturnFalse()
+                ->once();
+        });
+
         /** @var DatetimeField $datetimeField */
         $datetimeField = resolve(DatetimeField::class);
 
@@ -28,14 +52,7 @@ class DatetimeFieldTest extends TestCase
             'args' => []
         ];
 
-        $column = Mockery::mock(Column::class);
-        $column->shouldReceive('getNotnull')
-            ->andReturn(false)
-            ->once();
-        $column->shouldReceive('getLength')
-            ->andReturn(2);
-
-        $field = $datetimeField->makeField($field, $column, false);
+        $field = $datetimeField->makeField('table', $field, $column, false);
         $this->assertSame(ColumnType::SOFT_DELETES, $field['type']);
         $this->assertSame(ColumnName::DELETED_AT, $field['field']);
         $this->assertSame([2], $field['args']);
@@ -43,20 +60,33 @@ class DatetimeFieldTest extends TestCase
 
     public function testMakeFieldIsTimestamps()
     {
+        $column = Mockery::mock(Column::class);
+        $column->shouldReceive('getLength')
+            ->andReturn(2);
+        $column->shouldReceive('getType->getName')
+            ->andReturn(DBALTypes::TIMESTAMP)
+            ->once();
+        $column->shouldReceive('getName')
+            ->withNoArgs()
+            ->andReturn(ColumnName::UPDATED_AT)
+            ->once();
+
+        $this->mock(MySQLRepository::class, function (MockInterface $mock) {
+            $mock->shouldReceive('useOnUpdateCurrentTimestamp')
+                ->with('table', ColumnName::UPDATED_AT)
+                ->andReturnFalse()
+                ->once();
+        });
+
         /** @var DatetimeField $datetimeField */
         $datetimeField = resolve(DatetimeField::class);
-
         $field = [
             'field' => ColumnName::UPDATED_AT,
             'type' => 'timestamp',
             'args' => []
         ];
 
-        $column = Mockery::mock(Column::class);
-        $column->shouldReceive('getLength')
-            ->andReturn(2);
-
-        $field = $datetimeField->makeField($field, $column, true);
+        $field = $datetimeField->makeField('table', $field, $column, true);
         $this->assertSame(ColumnType::TIMESTAMPS, $field['type']);
         $this->assertNull($field['field']);
         $this->assertSame([2], $field['args']);
@@ -64,6 +94,13 @@ class DatetimeFieldTest extends TestCase
 
     public function testMakeFieldIsDatetime()
     {
+        $column = Mockery::mock(Column::class);
+        $column->shouldReceive('getLength')
+            ->andReturn(2);
+        $column->shouldReceive('getType->getName')
+            ->andReturn(DBALTypes::DATETIME_MUTABLE)
+            ->once();
+
         /** @var DatetimeField $datetimeField */
         $datetimeField = resolve(DatetimeField::class);
 
@@ -73,11 +110,7 @@ class DatetimeFieldTest extends TestCase
             'args' => []
         ];
 
-        $column = Mockery::mock(Column::class);
-        $column->shouldReceive('getLength')
-            ->andReturn(2);
-
-        $field = $datetimeField->makeField($field, $column, false);
+        $field = $datetimeField->makeField('table', $field, $column, false);
         $this->assertSame(ColumnType::DATETIME, $field['type']);
         $this->assertSame([2], $field['args']);
     }
@@ -93,7 +126,7 @@ class DatetimeFieldTest extends TestCase
             'args' => []
         ];
         $column = Mockery::mock(Column::class);
-        $field = $datetimeField->makeField($field, $column, true);
+        $field = $datetimeField->makeField('table', $field, $column, true);
         $this->assertEmpty($field);
     }
 

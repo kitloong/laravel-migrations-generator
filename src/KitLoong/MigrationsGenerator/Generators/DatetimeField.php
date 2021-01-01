@@ -11,17 +11,21 @@ use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
+use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
 class DatetimeField
 {
     private $decorator;
+    private $mySQLRepository;
 
-    public function __construct(Decorator $decorator)
+    public function __construct(Decorator $decorator, MySQLRepository $mySQLRepository)
     {
         $this->decorator = $decorator;
+        $this->mySQLRepository = $mySQLRepository;
     }
 
-    public function makeField(array $field, Column $column, bool $useTimestamps): array
+    public function makeField(string $table, array $field, Column $column, bool $useTimestamps): array
     {
         if ($useTimestamps) {
             if ($field['field'] === ColumnName::CREATED_AT) {
@@ -46,6 +50,12 @@ class DatetimeField
                 $field['field'] = ColumnName::DELETED_AT;
             }
             $field['args'][] = $column->getLength();
+        }
+
+        if ($column->getType()->getName() === DBALTypes::TIMESTAMP) {
+            if ($this->mySQLRepository->useOnUpdateCurrentTimestamp($table, $column->getName())) {
+                $field['decorators'][] = ColumnModifier::USE_CURRENT_ON_UPDATE;
+            }
         }
         return $field;
     }

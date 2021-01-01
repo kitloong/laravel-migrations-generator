@@ -57,6 +57,24 @@ class MySQLRepository
         return null;
     }
 
+    public function useOnUpdateCurrentTimestamp(string $table, string $columnName): bool
+    {
+        $setting = app(MigrationsGeneratorSetting::class);
+
+        $column = $setting->getConnection()
+            ->select(
+                "SHOW COLUMNS FROM `${table}`
+                WHERE Field = '${columnName}'
+                    AND Type = 'timestamp'
+                    AND EXTRA='on update CURRENT_TIMESTAMP'"
+            );
+        if (count($column) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     private function spaceAfterComma(string $value): string
     {
         return str_replace("','", "', '", $value);

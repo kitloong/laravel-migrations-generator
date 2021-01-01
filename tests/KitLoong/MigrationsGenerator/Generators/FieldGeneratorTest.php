@@ -195,7 +195,7 @@ class FieldGeneratorTest extends TestCase
                 $returnField = $field;
                 $returnField['field'] = 'returned';
                 $mock->shouldReceive('makeField')
-                    ->with($field, $column, false)
+                    ->with('table', $field, $column, false)
                     ->andReturn($returnField);
             });
 
