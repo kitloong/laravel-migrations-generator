@@ -82,7 +82,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan(
             'migrate:generate',
             ['--no-interaction' => true]
-        )->run();
+        );
     }
 
     abstract protected function dropAllTables(): void;
