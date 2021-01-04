@@ -11,6 +11,7 @@ use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
@@ -52,11 +53,14 @@ class DatetimeField
             $field['args'][] = $column->getLength();
         }
 
-        if ($column->getType()->getName() === DBALTypes::TIMESTAMP) {
-            if ($this->mySQLRepository->useOnUpdateCurrentTimestamp($table, $column->getName())) {
-                $field['decorators'][] = ColumnModifier::USE_CURRENT_ON_UPDATE;
+        if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::MYSQL) {
+            if ($column->getType()->getName() === DBALTypes::TIMESTAMP) {
+                if ($this->mySQLRepository->useOnUpdateCurrentTimestamp($table, $column->getName())) {
+                    $field['decorators'][] = ColumnModifier::USE_CURRENT_ON_UPDATE;
+                }
             }
         }
+
         return $field;
     }
 

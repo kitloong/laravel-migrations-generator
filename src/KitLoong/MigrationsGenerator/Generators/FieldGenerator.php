@@ -15,10 +15,13 @@ use KitLoong\MigrationsGenerator\Generators\Modifier\IndexModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\NullableModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
 class FieldGenerator
 {
+    use CheckLaravelVersion;
+
     private $decorator;
     private $integerField;
     private $datetimeField;
@@ -131,6 +134,16 @@ class FieldGenerator
 
             if ($column->getComment() !== null) {
                 $field['decorators'][] = $this->commentModifier->generate($column->getComment());
+            }
+
+            if (!$this->atLeastLaravel8()) {
+                if ($field['type'] === DBALTypes::TIMESTAMP) {
+                    if (($key1 = array_search(ColumnModifier::USE_CURRENT, $field['decorators'])) !== false &&
+                        ($key2 = array_search(ColumnModifier::USE_CURRENT_ON_UPDATE, $field['decorators'])) !== false) {
+                        unset($field['decorators'][$key1]);
+                        unset($field['decorators'][$key2]);
+                    }
+                }
             }
 
             $fields[] = $field;

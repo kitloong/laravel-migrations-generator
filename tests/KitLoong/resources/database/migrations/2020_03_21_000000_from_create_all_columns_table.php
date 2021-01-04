@@ -5,7 +5,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Tests\KitLoong\Support\CheckLaravelVersion;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
 class FromCreateAllColumnsTable extends Migration
 {
@@ -90,7 +90,9 @@ class FromCreateAllColumnsTable extends Migration
             $table->timeTz('timeTz_default')->default('10:20:30');
             $table->timestamp('timestamp');
             $table->timestamp('timestamp_useCurrent')->useCurrent();
-            $table->timestamp('timestamp_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
+            if ($this->atLeastLaravel8()) {
+                $table->timestamp('timestamp_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
+            }
             $table->timestamp('timestamp_0', 0)->nullable();
             $table->timestamp('timestamp_2', 2)->nullable();
             $table->timestamp('timestamp_default')->default('2020-10-08 10:20:30');
