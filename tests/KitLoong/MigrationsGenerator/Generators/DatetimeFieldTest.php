@@ -9,9 +9,11 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\Generators\DatetimeField;
+use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery;
@@ -40,6 +42,13 @@ class DatetimeFieldTest extends TestCase
             $mock->shouldReceive('useOnUpdateCurrentTimestamp')
                 ->with('table', ColumnName::DELETED_AT)
                 ->andReturnFalse()
+                ->once();
+        });
+
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getPlatform')
+                ->withNoArgs()
+                ->andReturn(Platform::MYSQL)
                 ->once();
         });
 
@@ -78,6 +87,13 @@ class DatetimeFieldTest extends TestCase
                 ->once();
         });
 
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getPlatform')
+                ->withNoArgs()
+                ->andReturn(Platform::MYSQL)
+                ->once();
+        });
+
         /** @var DatetimeField $datetimeField */
         $datetimeField = resolve(DatetimeField::class);
         $field = [
@@ -100,6 +116,13 @@ class DatetimeFieldTest extends TestCase
         $column->shouldReceive('getType->getName')
             ->andReturn(DBALTypes::DATETIME_MUTABLE)
             ->once();
+
+        $this->mock(MigrationsGeneratorSetting::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getPlatform')
+                ->withNoArgs()
+                ->andReturn(Platform::MYSQL)
+                ->once();
+        });
 
         /** @var DatetimeField $datetimeField */
         $datetimeField = resolve(DatetimeField::class);
