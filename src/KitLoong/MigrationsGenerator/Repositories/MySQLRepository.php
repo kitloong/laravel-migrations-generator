@@ -61,12 +61,14 @@ class MySQLRepository
     {
         $setting = app(MigrationsGeneratorSetting::class);
 
+        // MySQL5.7 shows on update CURRENT_TIMESTAMP
+        // MySQL8 shows DEFAULT_GENERATED on update CURRENT_TIMESTAMP
         $column = $setting->getConnection()
             ->select(
                 "SHOW COLUMNS FROM `${table}`
                 WHERE Field = '${columnName}'
                     AND Type = 'timestamp'
-                    AND EXTRA='on update CURRENT_TIMESTAMP'"
+                    AND EXTRA LIKE '%on update CURRENT_TIMESTAMP%'"
             );
         if (count($column) > 0) {
             return true;
