@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
-class FromCreateAllColumnsTable extends Migration
+class ExpectedCreateAllColumns_DB_Table extends Migration
 {
     use CheckLaravelVersion;
 
@@ -18,7 +18,7 @@ class FromCreateAllColumnsTable extends Migration
      */
     public function up()
     {
-        Schema::create('all_columns', function (Blueprint $table) {
+        Schema::create('all_columns_[db]', function (Blueprint $table) {
             $table->bigInteger('bigInteger');
             $table->bigInteger('bigInteger_default')->default(1080);
             $table->binary('binary');
@@ -153,6 +153,6 @@ class FromCreateAllColumnsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('all_columns');
+        Schema::dropIfExists('all_columns_[db]');
     }
 }

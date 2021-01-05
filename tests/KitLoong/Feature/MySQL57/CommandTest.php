@@ -11,8 +11,9 @@ class CommandTest extends MySQL57TestCase
 {
     public function testRun()
     {
-        $this->loadMigrationsFrom(base_path('tests/KitLoong/resources/database/migrations'));
+        $this->migrateExpected('mysql57');
 
+        $this->truncateMigration();
         $this->dumpSchemaAs($this->sqlOutputPath('expected.sql'));
 
         $this->generateMigrations();
@@ -21,9 +22,10 @@ class CommandTest extends MySQL57TestCase
 
         $this->loadMigrationsFrom($this->migrationOutputPath());
 
+        $this->truncateMigration();
         $this->dumpSchemaAs($this->sqlOutputPath('actual.sql'));
 
-        $this->assertFileEquals(
+        $this->assertFileEqualsIgnoringOrder(
             $this->sqlOutputPath('expected.sql'),
             $this->sqlOutputPath('actual.sql')
         );
