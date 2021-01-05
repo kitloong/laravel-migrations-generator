@@ -108,7 +108,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Execute the console command. Added for Laravel 5.5
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function handle()
     {
