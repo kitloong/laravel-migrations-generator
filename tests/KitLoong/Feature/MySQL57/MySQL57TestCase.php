@@ -42,13 +42,13 @@ abstract class MySQL57TestCase extends FeatureTestCase
 
     protected function dumpSchemaAs(string $destination): void
     {
+        $password = (!empty(config('database.connections.mysql.password')) ?
+            '-p\''.config('database.connections.mysql.password').'\'' :
+            '');
         $command = sprintf(
-            'mysqldump -h %s -u %s '
-            .(!empty(config('database.connections.mysql.password')) ? '-p\'%s\'' : '').
-            ' %s --compact --no-data > %s',
+            'mysqldump -h %s -u %s '.$password.' %s --compact --no-data > %s',
             config('database.connections.mysql.host'),
             config('database.connections.mysql.username'),
-            config('database.connections.mysql.password'),
             config('database.connections.mysql.database'),
             $destination
         );
