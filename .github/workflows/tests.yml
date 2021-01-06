@@ -52,6 +52,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Alter MySQL 8 root plugin
+        run: |
+          mysql --version
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql8.ports['3306'] }} -u root -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY ''"
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
