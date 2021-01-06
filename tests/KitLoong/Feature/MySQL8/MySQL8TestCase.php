@@ -43,7 +43,9 @@ abstract class MySQL8TestCase extends FeatureTestCase
     protected function dumpSchemaAs(string $destination): void
     {
         $command = sprintf(
-            'mysqldump -h %s -u %s -p\'%s\' %s --compact --no-data > %s',
+            'mysqldump -h %s -u %s '
+            .(!empty(config('database.connections.mysql.password')) ? '-p\'%s\'' : '').
+            ' %s --compact --no-data > %s',
             config('database.connections.mysql.host'),
             config('database.connections.mysql.username'),
             config('database.connections.mysql.password'),
