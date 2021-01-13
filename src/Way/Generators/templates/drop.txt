@@ -1,1 +1,1 @@
-Schema::dropIfExists('$TABLE$');
+Schema::$CONNECTION$dropIfExists('$TABLE$');
