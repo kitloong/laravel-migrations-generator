@@ -13,17 +13,23 @@ use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
+use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
+use KitLoong\MigrationsGenerator\Support\Regex;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
 class DatetimeField
 {
     private $decorator;
     private $mySQLRepository;
+    private $pgSQLRepository;
+    private $regex;
 
-    public function __construct(Decorator $decorator, MySQLRepository $mySQLRepository)
+    public function __construct(Decorator $decorator, MySQLRepository $mySQLRepository, PgSQLRepository $pgSQLRepository, Regex $regex)
     {
         $this->decorator = $decorator;
         $this->mySQLRepository = $mySQLRepository;
+        $this->pgSQLRepository = $pgSQLRepository;
+        $this->regex = $regex;
     }
 
     public function makeField(string $table, array $field, Column $column, bool $useTimestamps): array
@@ -51,6 +57,14 @@ class DatetimeField
                 $field['field'] = ColumnName::DELETED_AT;
             }
             $field['args'][] = $column->getLength();
+        } else {
+            if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::POSTGRESQL) {
+                $rawType = ($this->pgSQLRepository->getTypeByColumnName($table, $column->getName()));
+                $length = $this->regex->getTextBetween($rawType);
+                if ($length !== null) {
+                    $field['args'][] = $length;
+                }
+            }
         }
 
         if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::MYSQL) {
