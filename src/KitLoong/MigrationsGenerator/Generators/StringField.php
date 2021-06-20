@@ -12,29 +12,41 @@ use Illuminate\Database\Schema\Builder;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CollationModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
+use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
+use KitLoong\MigrationsGenerator\Support\Regex;
 
 class StringField
 {
     private $collationModifier;
+    private $pgSQLRepository;
+    private $regex;
 
-    public function __construct(CollationModifier $collationModifier)
+    public function __construct(CollationModifier $collationModifier, PgSQLRepository $pgSQLRepository, Regex $regex)
     {
         $this->collationModifier = $collationModifier;
+        $this->pgSQLRepository = $pgSQLRepository;
+        $this->regex = $regex;
     }
 
     public function makeField(string $tableName, array $field, Column $column): array
     {
-        if ($field['field'] === ColumnName::REMEMBER_TOKEN && $column->getLength() === 100 && !$column->getFixed()) {
-            $field['type'] = ColumnType::REMEMBER_TOKEN;
-            $field['field'] = null;
-            $field['args'] = [];
+        if (($pgSQLEnum = $this->getPgSQLEnumValue($tableName, $column->getName())) !== '') {
+            $field['type'] = ColumnType::ENUM;
+            $field['args'][] = $pgSQLEnum;
         } else {
-            if ($column->getFixed()) {
-                $field['type'] = ColumnType::CHAR;
-            }
+            if ($field['field'] === ColumnName::REMEMBER_TOKEN && $column->getLength() === 100 && !$column->getFixed()) {
+                $field['type'] = ColumnType::REMEMBER_TOKEN;
+                $field['field'] = null;
+                $field['args'] = [];
+            } else {
+                if ($column->getFixed()) {
+                    $field['type'] = ColumnType::CHAR;
+                }
 
-            if ($column->getLength() && $column->getLength() !== Builder::$defaultStringLength) {
-                $field['args'][] = $column->getLength();
+                if ($column->getLength() && $column->getLength() !== Builder::$defaultStringLength) {
+                    $field['args'][] = $column->getLength();
+                }
             }
         }
 
@@ -44,5 +56,19 @@ class StringField
         }
 
         return $field;
+    }
+
+    private function getPgSQLEnumValue(string $tableName, string $column): string
+    {
+        if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::POSTGRESQL) {
+            $definition = ($this->pgSQLRepository->getCheckConstraintDefinition($tableName, $column));
+            if (!empty($definition)) {
+                $enumValues = $this->regex->getTextBetweenAll($definition, "'", "'::");
+                if (!empty($enumValues)) {
+                    return "['".implode("', '", $enumValues)."']";
+                }
+            }
+        }
+        return '';
     }
 }
