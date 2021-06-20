@@ -24,8 +24,12 @@ class DatetimeField
     private $pgSQLRepository;
     private $regex;
 
-    public function __construct(Decorator $decorator, MySQLRepository $mySQLRepository, PgSQLRepository $pgSQLRepository, Regex $regex)
-    {
+    public function __construct(
+        Decorator $decorator,
+        MySQLRepository $mySQLRepository,
+        PgSQLRepository $pgSQLRepository,
+        Regex $regex
+    ) {
         $this->decorator = $decorator;
         $this->mySQLRepository = $mySQLRepository;
         $this->pgSQLRepository = $pgSQLRepository;
@@ -52,19 +56,12 @@ class DatetimeField
             $field['type'] = FieldGenerator::$fieldTypeMap[$field['type']];
         }
 
-        if ($column->getLength() !== null && $column->getLength() > 0) {
+        $length = $this->getLength($table, $column);
+        if ($length !== null && $length > 0) {
             if ($field['type'] === ColumnType::SOFT_DELETES) {
                 $field['field'] = ColumnName::DELETED_AT;
             }
-            $field['args'][] = $column->getLength();
-        } else {
-            if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::POSTGRESQL) {
-                $rawType = ($this->pgSQLRepository->getTypeByColumnName($table, $column->getName()));
-                $length = $this->regex->getTextBetween($rawType);
-                if ($length !== null) {
-                    $field['args'][] = $length;
-                }
-            }
+            $field['args'][] = $length;
         }
 
         if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::MYSQL) {
@@ -113,5 +110,20 @@ class DatetimeField
             }
         }
         return $useTimestamps;
+    }
+
+    private function getLength(string $table, Column $column): ?int
+    {
+        if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::POSTGRESQL) {
+            $rawType = ($this->pgSQLRepository->getTypeByColumnName($table, $column->getName()));
+            $length = $this->regex->getTextBetween($rawType);
+            if ($length !== null) {
+                return (int) $length;
+            } else {
+                return null;
+            }
+        } else {
+            return $column->getLength();
+        }
     }
 }
