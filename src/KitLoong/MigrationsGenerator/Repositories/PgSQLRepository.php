@@ -7,6 +7,7 @@
 
 namespace KitLoong\MigrationsGenerator\Repositories;
 
+use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class PgSQLRepository
@@ -63,5 +64,25 @@ class PgSQLRepository
             return $column[0]->definition;
         }
         return null;
+    }
+
+    public function getSpatialIndexNames(string $table): Collection
+    {
+        $setting = app(MigrationsGeneratorSetting::class);
+        $columns = $setting->getConnection()
+            ->select("
+                SELECT tablename,
+                       indexname,
+                       indexdef
+                FROM pg_indexes
+                WHERE tablename = '${table}'
+                    AND indexdef LIKE '% USING gist %'");
+        $definitions = collect([]);
+        if (count($columns) > 0) {
+            foreach ($columns as $column) {
+                $definitions->push($column->indexname);
+            }
+        }
+        return $definitions;
     }
 }
