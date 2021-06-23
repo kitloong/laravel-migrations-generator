@@ -36,7 +36,7 @@ abstract class FeatureTestCase extends TestCase
             base_path('src/Way/Generators/templates/migration.txt')
         );
 
-        $app['config']->set('generators.config.migration_target_path', $this->migrationOutputPath());
+//        $app['config']->set('generators.config.migration_target_path', $this->storageMigrations());
     }
 
     protected function setUp(): void
@@ -64,51 +64,68 @@ abstract class FeatureTestCase extends TestCase
     protected function prepareStorage()
     {
         File::deleteDirectory(storage_path());
-        File::makeDirectory(config('generators.config.migration_target_path'), 0775, true);
-        File::makeDirectory($this->migrateFromPath());
-        File::makeDirectory($this->sqlOutputPath());
+        File::makeDirectory($this->storageMigrations(), 0775, true);
+        File::makeDirectory($this->storageFrom());
+        File::makeDirectory($this->storageSql());
     }
 
-    protected function migrationOutputPath(string $path = ''): string
+    protected function storageMigrations(string $path = ''): string
     {
         return storage_path('migrations').($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 
-    protected function migrateFromPath(string $path = ''): string
+    protected function storageFrom(string $path = ''): string
     {
         return storage_path('from').($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 
-    protected function sqlOutputPath(string $path = ''): string
+    protected function storageSql(string $path = ''): string
     {
         return storage_path('sql').($path ? DIRECTORY_SEPARATOR.$path : $path);
     }
 
-    protected function migrateExpected(string $connection): void
+    protected function migrateGeneral(string $connection): void
     {
-        File::copyDirectory(base_path('tests/KitLoong/resources/database/migrations'), $this->migrateFromPath());
-        foreach (File::files($this->migrateFromPath()) as $file) {
+        $this->migrateFromTemplate($connection, base_path('tests/KitLoong/resources/database/migrations/general'));
+    }
+
+    protected function migrateCollation(string $connection): void
+    {
+        $this->migrateFromTemplate($connection, base_path('tests/KitLoong/resources/database/migrations/collation'));
+    }
+
+    private function migrateFromTemplate(string $connection, string $templatePath): void
+    {
+        File::copyDirectory($templatePath, $this->storageFrom());
+        foreach (File::files($this->storageFrom()) as $file) {
             $content = str_replace([
                 '[db]', '_DB_Table'
             ], [
                 $connection, ucfirst("${connection}Table")
             ], $file->getContents());
 
-            file_put_contents($this->migrateFromPath($file->getBasename()), $content);
+            file_put_contents($this->storageFrom($file->getBasename()), $content);
             File::move(
-                $this->migrateFromPath($file->getBasename()),
-                $this->migrateFromPath(str_replace('_db_', "_${connection}_", $file->getBasename()))
+                $this->storageFrom($file->getBasename()),
+                $this->storageFrom(str_replace('_db_', "_${connection}_", $file->getBasename()))
             );
         }
 
-        $this->loadMigrationsFrom($this->migrateFromPath());
+        $this->loadMigrationsFrom($this->storageFrom());
     }
 
-    protected function generateMigrations(): void
+    /**
+     * Generate migration files to $this->storageMigrations()
+     * @see \Tests\KitLoong\Feature\FeatureTestCase::getEnvironmentSetUp()
+     */
+    protected function generateMigrations(array $options = []): void
     {
         $this->artisan(
             'migrate:generate',
-            ['--no-interaction' => true]
+            array_merge($options, [
+                '--path' => $this->storageMigrations(),
+                '--no-interaction' => true,
+            ])
         );
     }
 

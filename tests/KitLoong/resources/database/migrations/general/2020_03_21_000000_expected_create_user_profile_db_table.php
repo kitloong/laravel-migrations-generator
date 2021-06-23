@@ -19,7 +19,7 @@ class ExpectedCreateUserProfile_DB_Table extends Migration
             $table->unsignedInteger('sub_id');
 
             $table->primary('id');
-            $table->foreign('user_id')->references('id')->on('users_[db]');
+//            $table->foreign('user_id')->references('id')->on('users_[db]');
             $table->foreign(['user_id', 'sub_id'])->references(['id', 'sub_id'])->on('users_[db]');
         });
     }

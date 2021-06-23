@@ -32,6 +32,11 @@ class MigrationsGeneratorSetting
     /**
      * @var boolean
      */
+    private $followCollation;
+
+    /**
+     * @var boolean
+     */
     private $ignoreIndexNames;
 
     /**
@@ -85,6 +90,22 @@ class MigrationsGeneratorSetting
     public function getPlatform(): string
     {
         return $this->platform;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFollowCollation(): bool
+    {
+        return $this->followCollation;
+    }
+
+    /**
+     * @param  bool  $followCollation
+     */
+    public function setFollowCollation(bool $followCollation): void
+    {
+        $this->followCollation = $followCollation;
     }
 
     /**

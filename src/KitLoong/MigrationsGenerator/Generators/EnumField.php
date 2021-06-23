@@ -8,6 +8,7 @@
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
+use KitLoong\MigrationsGenerator\Generators\Modifier\CharsetModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CollationModifier;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 
@@ -15,14 +16,17 @@ class EnumField
 {
     private $collationModifier;
 
-    private $decorator;
+    private $charsetModifier;
 
     private $mysqlRepository;
 
-    public function __construct(CollationModifier $collationModifier, Decorator $decorator, MySQLRepository $mySQLRepository)
-    {
+    public function __construct(
+        CollationModifier $collationModifier,
+        CharsetModifier $charsetModifier,
+        MySQLRepository $mySQLRepository
+    ) {
         $this->collationModifier = $collationModifier;
-        $this->decorator = $decorator;
+        $this->charsetModifier = $charsetModifier;
         $this->mysqlRepository = $mySQLRepository;
     }
 
@@ -31,6 +35,11 @@ class EnumField
         $value = $this->mysqlRepository->getEnumPresetValues($tableName, $field['field']);
         if ($value !== null) {
             $field['args'][] = $value;
+        }
+
+        $charset = $this->charsetModifier->generate($tableName, $column);
+        if ($charset !== '') {
+            $field['decorators'][] = $charset;
         }
 
         $collation = $this->collationModifier->generate($tableName, $column);

@@ -5,14 +5,17 @@
  * Date: 2020/11/14
  */
 
-namespace Tests\KitLoong\Feature\MySQL57;
+namespace Tests\KitLoong\Feature\PgSQL;
 
-class CommandTest extends MySQL57TestCase
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+
+class CommandTest extends PgSQLTestCase
 {
     public function testRun()
     {
         $migrateTemplates = function () {
-            $this->migrateGeneral('mysql57');
+            $this->migrateGeneral('pgsql');
         };
 
         $generateMigrations = function () {
@@ -25,7 +28,7 @@ class CommandTest extends MySQL57TestCase
     public function testCollation()
     {
         $migrateTemplates = function () {
-            $this->migrateCollation('mysql57');
+            $this->migrateCollation('pgsql');
         };
 
         $generateMigrations = function () {
@@ -35,7 +38,7 @@ class CommandTest extends MySQL57TestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations)
+    public function verify(callable $migrateTemplates, callable $generateMigrations)
     {
         $migrateTemplates();
 
@@ -43,6 +46,16 @@ class CommandTest extends MySQL57TestCase
         $this->dumpSchemaAs($this->storageSql('expected.sql'));
 
         $generateMigrations();
+
+        foreach (File::files($this->storageMigrations()) as $file) {
+            if (Str::contains($file->getBasename(), 'tiger')) {
+                File::delete($file);
+            }
+
+            if (Str::contains($file->getBasename(), 'topology')) {
+                File::delete($file);
+            }
+        }
 
         $this->dropAllTables();
 

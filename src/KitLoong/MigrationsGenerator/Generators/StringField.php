@@ -9,6 +9,7 @@ namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Schema\Builder;
+use KitLoong\MigrationsGenerator\Generators\Modifier\CharsetModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CollationModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
@@ -19,12 +20,18 @@ use KitLoong\MigrationsGenerator\Support\Regex;
 class StringField
 {
     private $collationModifier;
+    private $charsetModifier;
     private $pgSQLRepository;
     private $regex;
 
-    public function __construct(CollationModifier $collationModifier, PgSQLRepository $pgSQLRepository, Regex $regex)
-    {
+    public function __construct(
+        CollationModifier $collationModifier,
+        CharsetModifier $charsetModifier,
+        PgSQLRepository $pgSQLRepository,
+        Regex $regex
+    ) {
         $this->collationModifier = $collationModifier;
+        $this->charsetModifier = $charsetModifier;
         $this->pgSQLRepository = $pgSQLRepository;
         $this->regex = $regex;
     }
@@ -48,6 +55,11 @@ class StringField
                     $field['args'][] = $column->getLength();
                 }
             }
+        }
+
+        $charset = $this->charsetModifier->generate($tableName, $column);
+        if ($charset !== '') {
+            $field['decorators'][] = $charset;
         }
 
         $collation = $this->collationModifier->generate($tableName, $column);

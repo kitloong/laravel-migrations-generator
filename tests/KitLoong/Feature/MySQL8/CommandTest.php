@@ -11,23 +11,50 @@ class CommandTest extends MySQL8TestCase
 {
     public function testRun()
     {
-        $this->migrateExpected('mysql8');
+        $migrateTemplates = function () {
+            $this->migrateGeneral('mysql8');
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations();
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testCollation()
+    {
+        $this->markTestSkipped();
+        $migrateTemplates = function () {
+            $this->migrateCollation('mysql8');
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations(['--followCollation' => true]);
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    private function verify(callable $migrateTemplates, callable $generateMigrations)
+    {
+        $migrateTemplates();
 
         $this->truncateMigration();
-        $this->dumpSchemaAs($this->sqlOutputPath('expected.sql'));
+        $this->dumpSchemaAs($this->storageSql('expected.sql'));
 
-        $this->generateMigrations();
+        $generateMigrations();
 
         $this->dropAllTables();
 
-        $this->loadMigrationsFrom($this->migrationOutputPath());
+        $this->loadMigrationsFrom($this->storageMigrations());
 
         $this->truncateMigration();
-        $this->dumpSchemaAs($this->sqlOutputPath('actual.sql'));
+        $this->dumpSchemaAs($this->storageSql('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->sqlOutputPath('expected.sql'),
-            $this->sqlOutputPath('actual.sql')
+            $this->storageSql('expected.sql'),
+            $this->storageSql('actual.sql')
         );
     }
 }

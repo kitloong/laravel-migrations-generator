@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Config;
 use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
-use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use Way\Generators\Compilers\TemplateCompiler;
 use Way\Generators\Syntax\Table as WayTable;
 
@@ -19,13 +18,9 @@ abstract class Table extends WayTable
      */
     protected $table;
 
-    private $mySQLRepository;
-
-    public function __construct(MySQLRepository $mySQLRepository, TemplateCompiler $compiler, Decorator $decorator)
+    public function __construct(TemplateCompiler $compiler, Decorator $decorator)
     {
         parent::__construct($compiler, $decorator);
-
-        $this->mySQLRepository = $mySQLRepository;
     }
 
     public function run(array $fields, string $table, string $connection, $method = 'table'): string
@@ -43,7 +38,11 @@ abstract class Table extends WayTable
         if ($method === 'create') {
             $tableCollation = $this->getTableCollation($table);
             if (!empty($tableCollation)) {
-                $content = array_merge($tableCollation, $content);
+                $content = array_merge(
+                    $tableCollation,
+                    [''], // New line
+                    $content
+                );
             }
         }
 
@@ -75,14 +74,12 @@ abstract class Table extends WayTable
     {
         $setting = app(MigrationsGeneratorSetting::class);
         if ($setting->getPlatform() === Platform::MYSQL) {
-            $dbCollation = $this->mySQLRepository->getDatabaseCollation();
-            $tableCollation = $setting->getSchema()->listTableDetails($tableName)->getOptions()['collation'];
-
-            if ($tableCollation !== $dbCollation['collation']) {
+            if ($setting->isFollowCollation()) {
+                $tableCollation = $setting->getSchema()->listTableDetails($tableName)->getOptions()['collation'];
                 $tableCharset = explode('_', $tableCollation)[0];
                 return [
                     '$table->charset = \''.$tableCharset.'\';',
-                    '$table->collation = \''.$tableCollation.'\';'
+                    '$table->collation = \''.$tableCollation.'\';',
                 ];
             }
         }

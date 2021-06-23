@@ -19,12 +19,11 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
             $table->string('email')->unique();
             $table->enum('enum', ['PROGRESS', 'DONE']);
             $table->geometry('geometry');
-            $table->string('stri"\'helo')->index();
             $table->timestamps(2);
 
             $table->primary('id');
 
-            $table->index('enum', 'user_pro file"\'d');
+            $table->index('enum', 'user_pro file\'d');
             $table->index('code');
             $table->index(['code', 'enum']);
             $table->index(['enum', 'code']);

@@ -77,8 +77,13 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->string('string');
             $table->string('string_255', 255);
             $table->string('string_100', 100);
-            $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ \\\' quotes');
-            $table->string('comment_double_quote')->comment("string with \" ' quotes");
+            if (config('database.default') === 'pgsql') {
+                $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ quotes');
+                $table->string('comment_double_quote')->comment("string with ' quotes");
+            } else {
+                $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ \\\' quotes');
+                $table->string('comment_double_quote')->comment("string with \" ' quotes");
+            }
             $table->text('text');
             $table->time('time');
             $table->time('time_0', 0);
@@ -113,36 +118,14 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->year('year')->default(2020);
 
             if (config('database.default') === 'mysql') {
-                $table->char('char_charset')->charset('utf8');
-                $table->char('char_collation')->collation('utf8_unicode_ci');
-                $table->enum('enum_charset', ['easy', 'hard'])->charset('utf8');
-                $table->enum('enum_collation', ['easy', 'hard'])->collation('utf8_unicode_ci');
-                $table->longText('longText_charset')->charset('utf8');
-                $table->longText('longText_collation')->collation('utf8_unicode_ci');
-                $table->mediumText('mediumText_charset')->charset('utf8');
-                $table->mediumText('mediumText_collation')->collation('utf8_unicode_ci');
-                $table->text('text_charset')->charset('utf8');
-                $table->text('text_collation')->collation('utf8_unicode_ci');
-
                 if ($this->atLeastLaravel5Dot8()) {
                     $table->set('set', ['strawberry', 'vanilla']);
-                    $table->set('set_default', ['strawberry', 'vanilla'])->default('strawberry');
-                    $table->set('set_charset', ['strawberry', 'vanilla'])->charset('utf8');
-                    $table->set('set_collation', ['strawberry', 'vanilla'])->collation('utf8_unicode_ci');
                 }
-
-                $table->string('string_charset')->charset('utf8');
-                $table->string('string_collation')->collation('utf8_unicode_ci');
             }
-
-            if (config('database.default') !== 'pgsql') {
-                $table->macAddress('macAddress');
-                $table->macAddress('macAddress_default')->default('10.0.0.8');
-                $table->uuid('uuid')->default('uuid');
-            }
-
-            $table->charset = 'utf8mb4';
-            $table->collation = 'utf8mb4_general_ci';
+            $table->macAddress('macAddress');
+            $table->macAddress('macAddress_default')->default('00:0a:95:9d:68:16');
+            $table->uuid('uuid');
+            $table->uuid('uuid_default')->default('f6a16ff7-4a31-11eb-be7b-8344edc8f36b');
         });
     }
 

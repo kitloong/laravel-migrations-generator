@@ -1,9 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/11/22
- */
 
 namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
@@ -12,7 +7,7 @@ use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
-class CollationModifier
+class CharsetModifier
 {
     private $decorator;
 
@@ -23,22 +18,15 @@ class CollationModifier
 
     public function generate(string $tableName, Column $column): string
     {
-//        $setting = app(MigrationsGeneratorSetting::class);
-//        $tableCollation = $setting->getSchema()->listTableDetails($tableName)->getOptions()['collation'] ?? null;
-
         if (app(MigrationsGeneratorSetting::class)->isFollowCollation()) {
-            $collation = $column->getPlatformOptions()['collation'] ?? null;
-            //        if (!empty($column->getPlatformOptions()['collation'])) {
-            //            if ($columnCollation !== $tableCollation) {
-            if ($collation != null) {
+            $charset = $column->getPlatformOptions()['charset'] ?? null;
+            if ($charset != null) {
                 return $this->decorator->decorate(
-                    ColumnModifier::COLLATION,
-                    [$this->decorator->columnDefaultToString($collation)]
+                    ColumnModifier::CHARSET,
+                    [$this->decorator->columnDefaultToString($charset)]
                 );
             }
         }
-//            }
-//        }
 
         return '';
     }
