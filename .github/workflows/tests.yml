@@ -26,6 +26,20 @@ jobs:
           - 33062:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
+      postgres:
+        image: mdillon/postgis:11
+        env:
+          POSTGRES_DB: migration
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: "!QAZ2wsx"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     strategy:
       matrix:
         php: [ 7.3, 7.4 ]
