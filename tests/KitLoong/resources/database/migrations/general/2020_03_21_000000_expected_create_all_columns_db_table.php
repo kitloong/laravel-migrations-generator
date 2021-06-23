@@ -61,7 +61,7 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
                 $table->geometry('geometry');
                 $table->geometryCollection('geometryCollection');
             }
-            
+
             $table->integer('integer');
             $table->integer('integer_default')->default(1080);
             $table->ipAddress('ipAddress');

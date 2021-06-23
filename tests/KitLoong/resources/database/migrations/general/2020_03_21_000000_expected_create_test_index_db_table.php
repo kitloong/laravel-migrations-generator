@@ -18,7 +18,7 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
             $table->string('code', 50);
             $table->string('email')->unique();
             $table->enum('enum', ['PROGRESS', 'DONE']);
-            $table->geometry('geometry');
+            $table->lineString('lineString');
             $table->timestamps(2);
 
             $table->primary('id');
@@ -27,7 +27,7 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
             $table->index('code');
             $table->index(['code', 'enum']);
             $table->index(['enum', 'code']);
-            $table->spatialIndex('geometry');
+            $table->spatialIndex('lineString');
         });
     }
 
