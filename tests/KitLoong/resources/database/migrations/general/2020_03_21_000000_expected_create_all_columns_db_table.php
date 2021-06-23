@@ -1,5 +1,6 @@
 <?php
 /** @noinspection PhpIllegalPsrClassPathInspection */
+
 /** @noinspection PhpUnused */
 
 use Illuminate\Database\Migrations\Migration;
@@ -54,8 +55,13 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->float('float_82', 8, 2);
             $table->float('float_53', 5, 3);
             $table->float('float_default')->default(10.8);
-            $table->geometry('geometry');
-            $table->geometryCollection('geometryCollection');
+
+            if ((config('database.default') === 'pgsql' && $this->atLeastLaravel5Dot7())
+                || config('database.default') !== 'pgsql') {
+                $table->geometry('geometry');
+                $table->geometryCollection('geometryCollection');
+            }
+            
             $table->integer('integer');
             $table->integer('integer_default')->default(1080);
             $table->ipAddress('ipAddress');
