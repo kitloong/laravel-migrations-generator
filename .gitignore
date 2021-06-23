@@ -6,3 +6,4 @@ build
 .phpunit.result.cache
 storage
 .env
+.phpstorm.meta.php
