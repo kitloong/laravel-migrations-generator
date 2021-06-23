@@ -61,7 +61,7 @@ class CheckLaravelVersionTest extends TestCase
         $this->assertTrue($this->stubInstance()->atLeastLaravel7());
     }
 
-    public function testAtLeastLaravel9()
+    public function testAtLeastLaravel8()
     {
         App::shouldReceive('version')->andReturn('7.0.0')->once();
         $this->assertFalse($this->stubInstance()->atLeastLaravel8());
