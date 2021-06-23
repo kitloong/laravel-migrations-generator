@@ -8,4 +8,5 @@
     <file>tests</file>
 
     <exclude-pattern>features/bootstrap/FeatureContext.php</exclude-pattern>
+    <exclude-pattern>tests/KitLoong/resources/database/migrations/*.php</exclude-pattern>
 </ruleset>
