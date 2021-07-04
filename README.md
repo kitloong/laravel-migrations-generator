@@ -87,6 +87,7 @@ Run `php artisan help migrate:generate` for a list of options.
 |-t, --tables[=TABLES]|A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments|
 |-i, --ignore[=IGNORE]|A list of Tables you wish to ignore, separated by a comma: users,posts,comments|
 |-p, --path[=PATH]|Where should the file be created?|
+|  --useDBCollation|Follow db collations for migrations|
 |  --defaultIndexNames|Don't use db index names for migrations|
 |  --defaultFKNames|Don't use db foreign key names for migrations|
 |-tp, --templatePath[=TEMPLATEPATH]|The location of the template for this generator|
