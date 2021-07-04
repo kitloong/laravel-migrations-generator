@@ -41,7 +41,7 @@ jobs:
           --health-retries 5
 
       sqlsrv:
-        image: mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
+        image: mcr.microsoft.com/mssql/server:2019-latest
         env:
           SA_PASSWORD: "!QAZ2wsx"
           ACCEPT_EULA: "Y"
@@ -87,8 +87,10 @@ jobs:
 
       - name: Check SQL Server
         run: |
-          sleep 60s
+          sleep 20s
+          echo ${{ job.services.sqlsrv.env.SA_PASSWORD }}
           sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b
+          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'CREATE DATABASE migration' -b
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
