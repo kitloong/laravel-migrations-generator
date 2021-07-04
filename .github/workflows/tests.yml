@@ -51,22 +51,23 @@ jobs:
     strategy:
       matrix:
         php: [ 7.3, 7.4 ]
-        laravel: [ 8.*, 7.*, 6.*, 5.8.*, 5.7.*, 5.6.* ]
+#        laravel: [ 8.*, 7.*, 6.*, 5.8.*, 5.7.*, 5.6.* ]
+        laravel: [ 5.6.* ]
         dbal: [ 2.* ]
         stability: [ prefer-stable ]
-        include:
-          - laravel: 8.*
-            php: 8.0
-            dbal: 3.*
-            stability: prefer-stable
-          - laravel: 7.*
-            php: 8.0
-            dbal: 2.*
-            stability: prefer-stable
-          - laravel: 6.*
-            php: 8.0
-            dbal: 2.*
-            stability: prefer-stable
+#        include:
+#          - laravel: 8.*
+#            php: 8.0
+#            dbal: 3.*
+#            stability: prefer-stable
+#          - laravel: 7.*
+#            php: 8.0
+#            dbal: 2.*
+#            stability: prefer-stable
+#          - laravel: 6.*
+#            php: 8.0
+#            dbal: 2.*
+#            stability: prefer-stable
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
@@ -99,6 +100,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          php -m
           composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal:${{ matrix.dbal }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
