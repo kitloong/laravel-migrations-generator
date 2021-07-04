@@ -12,16 +12,19 @@ use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\MigrationMethod\IndexType;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
+use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 
 class IndexGenerator
 {
     private $decorator;
     private $pgSQLRepository;
+    private $sqlSrvRepository;
 
-    public function __construct(Decorator $decorator, PgSQLRepository $pgSQLRepository)
+    public function __construct(Decorator $decorator, PgSQLRepository $pgSQLRepository, SQLSrvRepository $sqlSrvRepository)
     {
         $this->decorator = $decorator;
         $this->pgSQLRepository = $pgSQLRepository;
+        $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
     /**
@@ -37,10 +40,7 @@ class IndexGenerator
 
         // Doctrine/Dbal doesn't return spatial information from PostgreSQL
         // Use raw SQL here to create $spatial index name list.
-        $spatials = collect([]);
-        if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::POSTGRESQL) {
-            $spatials = $this->pgSQLRepository->getSpatialIndexNames($table);
-        }
+        $spatials = $this->getSpatialList($table);
 
         foreach ($indexes as $index) {
             $indexField = [
@@ -54,7 +54,7 @@ class IndexGenerator
             } elseif ($index->isUnique()) {
                 $indexField['type'] = IndexType::UNIQUE;
             } elseif ((
-                    count($index->getFlags()) > 0 && in_array('spatial', $index->getFlags())
+                    count($index->getFlags()) > 0 && $index->hasFlag('spatial')
                 ) || $spatials->contains($index->getName())) {
                 $indexField['type'] = IndexType::SPATIAL_INDEX;
             }
@@ -93,5 +93,23 @@ class IndexGenerator
     private function decorateName(string $name): string
     {
         return "'".$this->decorator->addSlash($name)."'";
+    }
+
+    /**
+     * Doctrine/Dbal doesn't return spatial information from PostgreSQL
+     * Use raw SQL here to create $spatial index name list.
+     * @param  string  $table
+     * @return \Illuminate\Support\Collection Spatial index name list
+     */
+    private function getSpatialList(string $table): Collection
+    {
+        switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
+            case Platform::POSTGRESQL:
+                return $this->pgSQLRepository->getSpatialIndexNames($table);
+            case Platform::SQLSERVER:
+                return $this->sqlSrvRepository->getSpatialIndexNames($table);
+            default:
+                return collect([]);
+        }
     }
 }
