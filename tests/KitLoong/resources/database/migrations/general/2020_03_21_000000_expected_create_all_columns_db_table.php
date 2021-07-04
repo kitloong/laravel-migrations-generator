@@ -35,11 +35,18 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->date('date_default')->default('2020-10-08');
             $table->dateTime('dateTime');
             $table->dateTime('dateTime_0', 0);
+            $table->dateTime('dateTime_1', 1);
             $table->dateTime('dateTime_2', 2);
+            $table->dateTime('dateTime_3', 3);
+            $table->dateTime('dateTime_4', 4);
+            $table->dateTime('dateTime_5', 5);
             $table->dateTime('dateTime_default', 2)->default('2020-10-08 10:20:30');
             $table->dateTimeTz('dateTimeTz');
             $table->dateTimeTz('dateTimeTz_0', 0);
+            $table->dateTimeTz('dateTimeTz_1', 1);
             $table->dateTimeTz('dateTimeTz_2', 2);
+            $table->dateTimeTz('dateTimeTz_3', 3);
+            $table->dateTimeTz('dateTimeTz_4', 4);
             $table->dateTimeTz('dateTimeTz_default')->default('2020-10-08 10:20:30');
             $table->decimal('decimal');
             $table->decimal('decimal_82', 8, 2);

@@ -26,15 +26,23 @@ class ExpectedCreateCollations_DB_Table extends Migration
                 case 'pgsql':
                     $collation = 'en_US.utf8';
                     break;
+                case 'sqlsrv':
+                    $collation = 'Latin1_General_100_CI_AI_SC_UTF8';
+                    break;
                 default:
                     $collation = 'utf8_unicode_ci';
             }
 
             $table->char('char');
             $table->char('char_charset')->charset('utf8');
-            $table->enum('enum', ['easy', 'hard']);
-            $table->enum('enum_charset', ['easy', 'hard'])->charset('utf8');
-            $table->enum('enum_collation', ['easy', 'hard'])->collation($collation);
+
+            // sqlsrv does not support collation with enum
+            if (config('database.default') !== 'sqlsrv') {
+                $table->enum('enum', ['easy', 'hard']);
+                $table->enum('enum_charset', ['easy', 'hard'])->charset('utf8');
+                $table->enum('enum_collation', ['easy', 'hard'])->collation($collation);
+            }
+
             $table->longText('longText');
             $table->longText('longText_charset')->charset('utf8');
             $table->longText('longText_collation')->collation($collation);
