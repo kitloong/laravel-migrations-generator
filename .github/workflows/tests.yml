@@ -45,13 +45,13 @@ jobs:
         env:
           SA_PASSWORD: "!QAZ2wsx"
           ACCEPT_EULA: "Y"
-        volumes:
-          - ../docker/sqlsrv/entrypoint.sh:/entrypoint.sh
-          - ../docker/sqlsrv/db-init.sh:/db-init.sh
+#        volumes:
+#          - ../docker/sqlsrv/entrypoint.sh:/entrypoint.sh
+#          - ../docker/sqlsrv/db-init.sh:/db-init.sh
         ports:
           - 1433:1433
         options: >-
-          --entrypoint "chmod +x ./entrypoint.sh & ./entrypoint.sh"
+#          --entrypoint "chmod +x ./entrypoint.sh & ./entrypoint.sh"
           --health-cmd "sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q 'SELECT 1' || exit 1"
           --health-interval 10s
           --health-timeout 5s
