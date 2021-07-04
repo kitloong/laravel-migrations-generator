@@ -75,6 +75,7 @@ class FieldGenerator
         DBALTypes::BIGINT => ColumnType::BIG_INTEGER,
         DBALTypes::DATETIME_MUTABLE => ColumnType::DATETIME,
         DBALTypes::BLOB => ColumnType::BINARY,
+        DBALTypes::GUID => ColumnType::UUID,
     ];
 
     /**

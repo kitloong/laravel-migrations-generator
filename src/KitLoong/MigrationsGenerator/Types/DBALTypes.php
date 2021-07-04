@@ -42,6 +42,11 @@ final class DBALTypes
     const FLOAT = 'float';
 
     /**
+     * @see \Doctrine\DBAL\Types\Types::GUID
+     */
+    const GUID = 'guid';
+
+    /**
      * @see \Doctrine\DBAL\Types\Types::INTEGER
      */
     const INTEGER = 'integer';
