@@ -74,7 +74,7 @@ abstract class Table extends WayTable
     {
         $setting = app(MigrationsGeneratorSetting::class);
         if ($setting->getPlatform() === Platform::MYSQL) {
-            if ($setting->isFollowCollation()) {
+            if ($setting->isUseDBCollation()) {
                 $tableCollation = $setting->getSchema()->listTableDetails($tableName)->getOptions()['collation'];
                 $tableCharset = explode('_', $tableCollation)[0];
                 return [

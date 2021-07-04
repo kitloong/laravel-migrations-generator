@@ -18,7 +18,7 @@ class CharsetModifier
 
     public function generate(string $tableName, Column $column): string
     {
-        if (app(MigrationsGeneratorSetting::class)->isFollowCollation()) {
+        if (app(MigrationsGeneratorSetting::class)->isUseDBCollation()) {
             $charset = $column->getPlatformOptions()['charset'] ?? null;
             if ($charset != null) {
                 return $this->decorator->decorate(

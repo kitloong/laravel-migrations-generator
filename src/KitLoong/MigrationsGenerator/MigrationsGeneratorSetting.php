@@ -32,7 +32,7 @@ class MigrationsGeneratorSetting
     /**
      * @var boolean
      */
-    private $followCollation;
+    private $useDBCollation;
 
     /**
      * @var boolean
@@ -95,17 +95,17 @@ class MigrationsGeneratorSetting
     /**
      * @return bool
      */
-    public function isFollowCollation(): bool
+    public function isUseDBCollation(): bool
     {
-        return $this->followCollation;
+        return $this->useDBCollation;
     }
 
     /**
-     * @param  bool  $followCollation
+     * @param  bool  $useDBCollation
      */
-    public function setFollowCollation(bool $followCollation): void
+    public function setUseDBCollation(bool $useDBCollation): void
     {
-        $this->followCollation = $followCollation;
+        $this->useDBCollation = $useDBCollation;
     }
 
     /**

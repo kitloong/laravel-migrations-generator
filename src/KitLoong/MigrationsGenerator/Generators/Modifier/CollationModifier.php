@@ -26,7 +26,7 @@ class CollationModifier
 //        $setting = app(MigrationsGeneratorSetting::class);
 //        $tableCollation = $setting->getSchema()->listTableDetails($tableName)->getOptions()['collation'] ?? null;
 
-        if (app(MigrationsGeneratorSetting::class)->isFollowCollation()) {
+        if (app(MigrationsGeneratorSetting::class)->isUseDBCollation()) {
             $collation = $column->getPlatformOptions()['collation'] ?? null;
             //        if (!empty($column->getPlatformOptions()['collation'])) {
             //            if ($columnCollation !== $tableCollation) {

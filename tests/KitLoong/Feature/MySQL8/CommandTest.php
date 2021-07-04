@@ -30,7 +30,7 @@ class CommandTest extends MySQL8TestCase
         };
 
         $generateMigrations = function () {
-            $this->generateMigrations(['--followCollation' => true]);
+            $this->generateMigrations(['--useDBCollation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
