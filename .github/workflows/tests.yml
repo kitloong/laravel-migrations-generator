@@ -52,7 +52,7 @@ jobs:
           - 1433:1433
         options: >-
           --entrypoint "chmod +x ./entrypoint.sh & ./entrypoint.sh"
-          --health-cmd 'sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q "SELECT 1" || exit 1'
+          --health-cmd "sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q 'SELECT 1' || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
