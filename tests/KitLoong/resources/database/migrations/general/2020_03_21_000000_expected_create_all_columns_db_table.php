@@ -83,7 +83,7 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->string('string');
             $table->string('string_255', 255);
             $table->string('string_100', 100);
-            if (config('database.default') === 'pgsql') {
+            if (config('database.default') === 'pgsql' || config('database.default') === 'sqlsrv') {
                 $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ quotes');
                 $table->string('comment_double_quote')->comment("string with ' quotes");
             } else {
