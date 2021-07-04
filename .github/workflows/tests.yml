@@ -53,7 +53,7 @@ jobs:
         php: [ 7.3, 7.4 ]
 #        laravel: [ 8.*, 7.*, 6.*, 5.8.*, 5.7.*, 5.6.* ]
         laravel: [ 5.6.* ]
-        dbal: [ 2.* ]
+        dbal: [ 3.* ]
         stability: [ prefer-stable ]
 #        include:
 #          - laravel: 8.*
