@@ -87,6 +87,7 @@ jobs:
 
       - name: Check SQL Server
         run: |
+          sleep 60s
           sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b
 
       - name: Setup PHP
