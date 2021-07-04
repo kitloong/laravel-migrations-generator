@@ -47,12 +47,12 @@ jobs:
           ACCEPT_EULA: "Y"
         ports:
           - 1433:1433
-        options: >-
-          --health-cmd "sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b || exit 1"
-          --health-interval 10s
-          --health-timeout 3s
-          --health-retries 10
-          --health-start-period 10s
+#        options: >-
+#          --health-cmd "sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b || exit 1"
+#          --health-interval 10s
+#          --health-timeout 3s
+#          --health-retries 10
+#          --health-start-period 10s
 
     strategy:
       matrix:
@@ -84,6 +84,10 @@ jobs:
         run: |
           mysql --version
           mysql --host 127.0.0.1 --port ${{ job.services.mysql8.ports['3306'] }} -u root -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY ''"
+
+      - name: Check SQL Server
+        run: |
+          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
