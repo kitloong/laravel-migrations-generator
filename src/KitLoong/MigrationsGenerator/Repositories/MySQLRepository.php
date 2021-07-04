@@ -9,7 +9,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
-class MySQLRepository
+class MySQLRepository extends Repository
 {
     /**
      * @return array [

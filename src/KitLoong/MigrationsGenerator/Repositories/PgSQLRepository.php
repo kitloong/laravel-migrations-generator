@@ -10,7 +10,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
-class PgSQLRepository
+class PgSQLRepository extends Repository
 {
     public function getTypeByColumnName(string $table, string $columnName): ?string
     {
