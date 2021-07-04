@@ -40,6 +40,14 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      sqlsrv:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          SA_PASSWORD: "!QAZ2wsx"
+          ACCEPT_EULA: "Y"
+        ports:
+          - 1433:1433
+
     strategy:
       matrix:
         php: [ 7.3, 7.4 ]
@@ -71,16 +79,27 @@ jobs:
           mysql --version
           mysql --host 127.0.0.1 --port ${{ job.services.mysql8.ports['3306'] }} -u root -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY ''"
 
+      - name: SQL Server Create Database
+        run: |
+          sleep 10s
+
+          # Test connection
+          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b
+
+          # Create DB
+          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'CREATE DATABASE migration' -b
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached, pdo_sqlsrv
           tools: composer:v2
           coverage: none
 
       - name: Install dependencies
         run: |
+          php -m
           composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal:${{ matrix.dbal }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
