@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
+use KitLoong\MigrationsGenerator\Schema\SQLSrv\Column;
 
 class SQLSrvRepository extends Repository
 {
@@ -30,6 +31,62 @@ class SQLSrvRepository extends Repository
             }
         }
         return $definitions;
+    }
+
+    /**
+     * @param  string  $table
+     * @param  string  $column
+     * @return \KitLoong\MigrationsGenerator\Schema\SQLSrv\Column|null
+     */
+    public function getColumnDefinition(string $table, string $column): ?Column
+    {
+        $setting = app(MigrationsGeneratorSetting::class);
+        $columns = $setting->getConnection()
+            ->select("
+                SELECT col.name,
+                       type.name AS type,
+                       col.max_length AS length,
+                       ~col.is_nullable AS notnull,
+                       def.definition AS [default],
+                       col.scale,
+                       col.precision,
+                       col.is_identity AS autoincrement,
+                       col.collation_name AS collation,
+                       CAST(prop.value AS NVARCHAR(MAX)) AS comment -- CAST avoids driver error for sql_variant type
+                FROM sys.columns AS col
+                    JOIN sys.types AS type
+                        ON col.user_type_id = type.user_type_id
+                    JOIN sys.objects AS obj
+                        ON col.object_id = obj.object_id
+                    JOIN sys.schemas AS scm
+                        ON obj.schema_id = scm.schema_id
+                    LEFT JOIN sys.default_constraints def
+                        ON col.default_object_id = def.object_id
+                            AND col.object_id = def.parent_object_id
+                    LEFT JOIN sys.extended_properties AS prop
+                        ON obj.object_id = prop.major_id
+                            AND col.column_id = prop.minor_id
+                            AND prop.name = 'MS_Description'
+                WHERE obj.type = 'U'
+                    AND ".$this->getTableWhereClause($table, 'scm.name', 'obj.name')."
+                    AND col.name = ".$this->quoteStringLiteral($column)."
+            ");
+        if (count($columns) > 0) {
+            $column = $columns[0];
+            return new Column(
+                $column->name,
+                $column->type,
+                $column->length,
+                $column->notnull,
+                $column->scale,
+                $column->precision,
+                $column->autoincrement,
+                $column->default,
+                $column->collation,
+                $column->comment
+            );
+        }
+        return null;
     }
 
     /**

@@ -74,6 +74,9 @@ class FieldGenerator
         DBALTypes::SMALLINT => ColumnType::SMALL_INTEGER,
         DBALTypes::BIGINT => ColumnType::BIG_INTEGER,
         DBALTypes::DATETIME_MUTABLE => ColumnType::DATETIME,
+        DBALTypes::DATETIME_IMMUTABLE => ColumnType::DATETIME,
+        DBALTypes::DATETIMETZ_MUTABLE => ColumnType::DATETIME_TZ,
+        DBALTypes::DATETIMETZ_IMMUTABLE => ColumnType::DATETIME_TZ,
         DBALTypes::BLOB => ColumnType::BINARY,
         DBALTypes::GUID => ColumnType::UUID,
     ];
@@ -175,11 +178,14 @@ class FieldGenerator
             case DBALTypes::TINYINT:
                 return $this->integerField->makeField($tableName, $field, $column, $indexes);
             case DBALTypes::DATETIME_MUTABLE:
+            case DBALTypes::DATETIME_IMMUTABLE:
+            case DBALTypes::DATETIMETZ_MUTABLE:
+            case DBALTypes::DATETIMETZ_IMMUTABLE:
             case DBALTypes::TIMESTAMP:
-            case DBALTypes::TIME_MUTABLE:
-            case DBALTypes::DATETIME_TZ:
-            case DBALTypes::TIME_TZ:
             case DBALTypes::TIMESTAMP_TZ:
+            case DBALTypes::TIME_MUTABLE:
+            case DBALTypes::TIME_IMMUTABLE:
+            case DBALTypes::TIME_TZ:
                 return $this->datetimeField->makeField($tableName, $field, $column, $useTimestamps);
             case DBALTypes::DECIMAL:
             case DBALTypes::FLOAT:

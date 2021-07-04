@@ -1,38 +1,47 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/03/29
- */
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\DateTimeImmutableType;
+use Doctrine\DBAL\Types\DateTimeType;
+use Doctrine\DBAL\Types\DateTimeTzImmutableType;
+use Doctrine\DBAL\Types\DateTimeTzType;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
+use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 use KitLoong\MigrationsGenerator\Support\Regex;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
 class DatetimeField
 {
+    const SQLSRV_DATETIME_DEFAULT_SCALE = 3;
+    const SQLSRV_DATETIME_DEFAULT_LENGTH = 8;
+
+    const SQLSRV_DATETIME_TZ_DEFAULT_SCALE = 7;
+    const SQLSRV_DATETIME_TZ_DEFAULT_LENGTH = 10;
+
     private $decorator;
     private $mySQLRepository;
     private $pgSQLRepository;
+    private $sqlSrvRepository;
     private $regex;
 
     public function __construct(
         Decorator $decorator,
         MySQLRepository $mySQLRepository,
         PgSQLRepository $pgSQLRepository,
+        SQLSrvRepository $sqlSrvRepository,
         Regex $regex
     ) {
         $this->decorator = $decorator;
         $this->mySQLRepository = $mySQLRepository;
         $this->pgSQLRepository = $pgSQLRepository;
+        $this->sqlSrvRepository = $sqlSrvRepository;
         $this->regex = $regex;
     }
 
@@ -89,7 +98,7 @@ class DatetimeField
      * @param  Column[]  $columns
      * @return bool
      */
-    public function isUseTimestamps($columns): bool
+    public function isUseTimestamps(array $columns): bool
     {
         /** @var Column[] $timestampsColumns */
         $timestampsColumns = [];
@@ -114,16 +123,60 @@ class DatetimeField
 
     private function getLength(string $table, Column $column): ?int
     {
-        if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::POSTGRESQL) {
-            $rawType = ($this->pgSQLRepository->getTypeByColumnName($table, $column->getName()));
-            $length = $this->regex->getTextBetween($rawType);
-            if ($length !== null) {
-                return (int) $length;
-            } else {
-                return null;
-            }
+        switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
+            case Platform::POSTGRESQL:
+                return $this->getPgSQLLength($table, $column);
+            case Platform::SQLSERVER:
+                return $this->getSQLSrvLength($table, $column);
+            default:
+                return $column->getLength();
+        }
+    }
+
+    /**
+     * @param  string  $table
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return int|null
+     */
+    private function getPgSQLLength(string $table, Column $column): ?int
+    {
+        $rawType = ($this->pgSQLRepository->getTypeByColumnName($table, $column->getName()));
+        $length = $this->regex->getTextBetween($rawType);
+        if ($length !== null) {
+            return (int) $length;
         } else {
-            return $column->getLength();
+            return null;
+        }
+    }
+
+    /**
+     * @param  string  $table
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return int|null
+     */
+    private function getSQLSrvLength(string $table, Column $column): ?int
+    {
+        $colDef = $this->sqlSrvRepository->getColumnDefinition($table, $column->getName());
+
+        switch (get_class($column->getType())) {
+            case DateTimeType::class:
+            case DateTimeImmutableType::class:
+                if ($colDef->getScale() === self::SQLSRV_DATETIME_DEFAULT_SCALE &&
+                    $colDef->getLength() === self::SQLSRV_DATETIME_DEFAULT_LENGTH) {
+                    return null;
+                } else {
+                    return $column->getScale();
+                }
+            case DateTimeTzType::class:
+            case DateTimeTzImmutableType::class:
+                if ($colDef->getScale() === self::SQLSRV_DATETIME_TZ_DEFAULT_SCALE &&
+                    $colDef->getLength() === self::SQLSRV_DATETIME_TZ_DEFAULT_LENGTH) {
+                    return null;
+                } else {
+                    return $column->getScale();
+                }
+            default:
+                return $column->getScale();
         }
     }
 }
