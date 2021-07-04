@@ -3,10 +3,13 @@
 namespace Tests\KitLoong\Feature\SQLSrv;
 
 use Illuminate\Support\Facades\Schema;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use Tests\KitLoong\Feature\FeatureTestCase;
 
 abstract class SQLSrvTestCase extends FeatureTestCase
 {
+    use CheckLaravelVersion;
+
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
@@ -48,6 +51,10 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
     protected function dropAllTables(): void
     {
+        if (!$this->atLeastLaravel5Dot8()) {
+            $this->markTestSkipped();
+        }
+
         $tables = Schema::connection('sqlsrv')->getConnection()->getDoctrineSchemaManager()->listTableNames();
         foreach ($tables as $table) {
             Schema::drop($table);
