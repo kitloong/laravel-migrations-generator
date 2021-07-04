@@ -48,10 +48,11 @@ jobs:
         ports:
           - 1433:1433
         options: >-
-          --health-cmd "sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q 'SELECT 1' || exit 1"
+          --health-cmd "sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q 'SELECT 1'-b -o /dev/null"
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-timeout 3s
+          --health-retries 10
+          --health-start-period 10s
 
     strategy:
       matrix:
