@@ -118,7 +118,7 @@ class SchemaGenerator
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:
                 $this->addNewDoctrineType('_text', 'text');
-                $this->addNewDoctrineType('_int4', 'integer');
+                $this->addNewDoctrineType('_int4', 'text');
                 $this->addNewDoctrineType('_numeric', 'float');
                 $this->addNewDoctrineType('cidr', 'string');
                 $this->addNewDoctrineType('oid', 'string');
