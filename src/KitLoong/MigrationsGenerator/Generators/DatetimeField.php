@@ -88,6 +88,8 @@ class DatetimeField
     {
         if (in_array($column->getDefault(), ['CURRENT_TIMESTAMP'], true)) {
             return ColumnModifier::USE_CURRENT;
+        } elseif ($column->getDefault() === 'now()') { // For PgSQL
+            return ColumnModifier::USE_CURRENT;
         } else {
             $default = $this->decorator->columnDefaultToString($column->getDefault());
             return $this->decorator->decorate(ColumnModifier::DEFAULT, [$default]);
