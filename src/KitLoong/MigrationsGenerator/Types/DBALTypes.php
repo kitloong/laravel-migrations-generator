@@ -7,59 +7,27 @@
 
 namespace KitLoong\MigrationsGenerator\Types;
 
+use Doctrine\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 
 final class DBALTypes
 {
-    /**
-     * @see \Doctrine\DBAL\Types\Types::BIGINT
-     */
-    const BIGINT = 'bigint';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::BLOB
-     */
-    const BLOB = 'blob';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::BOOLEAN
-     */
-    const BOOLEAN = 'boolean';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE
-     */
-    const DATETIME_MUTABLE = 'datetime';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::DECIMAL
-     */
-    const DECIMAL = 'decimal';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::FLOAT
-     */
-    const FLOAT = 'float';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::INTEGER
-     */
-    const INTEGER = 'integer';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::SMALLINT
-     */
-    const SMALLINT = 'smallint';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::STRING
-     */
-    const STRING = 'string';
-
-    /**
-     * @see \Doctrine\DBAL\Types\Types::TIME_MUTABLE
-     */
-    const TIME_MUTABLE = 'time';
+    const BIGINT = Types::BIGINT;
+    const BLOB = Types::BLOB;
+    const BOOLEAN = Types::BOOLEAN;
+    const DATETIME_MUTABLE = Types::DATETIME_MUTABLE;
+    const DATETIME_IMMUTABLE = Types::DATETIME_IMMUTABLE;
+    const DATETIMETZ_MUTABLE = Types::DATETIMETZ_MUTABLE;
+    const DATETIMETZ_IMMUTABLE = Types::DATETIMETZ_IMMUTABLE;
+    const DATE = Types::DATETIMETZ_MUTABLE;
+    const DECIMAL = Types::DECIMAL;
+    const FLOAT = Types::FLOAT;
+    const GUID = Types::GUID;
+    const INTEGER = Types::INTEGER;
+    const SMALLINT = Types::SMALLINT;
+    const STRING = Types::STRING;
+    const TIME_MUTABLE = Types::TIME_MUTABLE;
+    const TIME_IMMUTABLE = Types::TIME_IMMUTABLE;
 
     // Custom types, should identical with CustomDoctrineType name
 
@@ -98,4 +66,14 @@ final class DBALTypes
      * @see TinyIntegerType::getName()
      */
     const TINYINT = ColumnType::TINY_INTEGER;
+
+    /**
+     * @see TimeTzType::getName()
+     */
+    const TIME_TZ = ColumnType::TIME_TZ;
+
+    /**
+     * @see TimestampTzType::getName()
+     */
+    const TIMESTAMP_TZ = ColumnType::TIMESTAMP_TZ;
 }

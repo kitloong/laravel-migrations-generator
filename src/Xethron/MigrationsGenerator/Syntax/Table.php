@@ -1,7 +1,10 @@
 <?php namespace Xethron\MigrationsGenerator\Syntax;
 
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Generators\Decorator;
+use KitLoong\MigrationsGenerator\Generators\Platform;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
+use Way\Generators\Compilers\TemplateCompiler;
 use Way\Generators\Syntax\Table as WayTable;
 
 /**
@@ -15,6 +18,11 @@ abstract class Table extends WayTable
      */
     protected $table;
 
+    public function __construct(TemplateCompiler $compiler, Decorator $decorator)
+    {
+        parent::__construct($compiler, $decorator);
+    }
+
     public function run(array $fields, string $table, string $connection, $method = 'table'): string
     {
         $table = $this->decorator->tableWithoutPrefix($table);
@@ -24,7 +32,21 @@ abstract class Table extends WayTable
         }
 
         $compiled = $this->compiler->compile($this->getTemplate($method), ['table' => $table, 'method' => $method]);
-        return $this->replaceFieldsWith($this->getItems($fields), $compiled);
+
+        $content = $this->getItems($fields);
+
+        if ($method === 'create') {
+            $tableCollation = $this->getTableCollation($table);
+            if (!empty($tableCollation)) {
+                $content = array_merge(
+                    $tableCollation,
+                    [''], // New line
+                    $content
+                );
+            }
+        }
+
+        return $this->replaceFieldsWith($content, $compiled);
     }
 
     /**
@@ -40,6 +62,28 @@ abstract class Table extends WayTable
             $result[] = $this->getItem($item);
         }
         return $result;
+    }
+
+    /**
+     * Get table collation migration lines if not equal to DB collation.
+     *
+     * @param  string  $tableName
+     * @return array|string[]
+     */
+    protected function getTableCollation(string $tableName): array
+    {
+        $setting = app(MigrationsGeneratorSetting::class);
+        if ($setting->getPlatform() === Platform::MYSQL) {
+            if ($setting->isUseDBCollation()) {
+                $tableCollation = $setting->getSchema()->listTableDetails($tableName)->getOptions()['collation'];
+                $tableCharset = explode('_', $tableCollation)[0];
+                return [
+                    '$table->charset = \''.$tableCharset.'\';',
+                    '$table->collation = \''.$tableCollation.'\';',
+                ];
+            }
+        }
+        return [];
     }
 
     /**
