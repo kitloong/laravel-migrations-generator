@@ -81,7 +81,7 @@ jobs:
 
       - name: SQL Server Create Database
         run: |
-          sleep 10s
+          sleep 5s
 
           # Test connection
           sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b
