@@ -8,6 +8,7 @@
 namespace KitLoong\MigrationsGenerator\Repositories;
 
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
+use KitLoong\MigrationsGenerator\Schema\MySQL\ShowColumn;
 
 class MySQLRepository extends Repository
 {
@@ -21,7 +22,9 @@ class MySQLRepository extends Repository
     {
         $setting = app(MigrationsGeneratorSetting::class);
         $columns = $setting->getConnection()->select("SELECT @@character_set_database, @@collation_database");
-        return ['charset' => $columns[0]->{'@@character_set_database'}, 'collation' => $columns[0]->{'@@collation_database'}];
+        return [
+            'charset' => $columns[0]->{'@@character_set_database'}, 'collation' => $columns[0]->{'@@collation_database'}
+        ];
     }
 
     public function getEnumPresetValues(string $table, string $columnName): ?string
@@ -29,10 +32,11 @@ class MySQLRepository extends Repository
         /** @var MigrationsGeneratorSetting $setting */
         $setting = app(MigrationsGeneratorSetting::class);
 
-        $column = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'enum(%'");
-        if (count($column) > 0) {
+        $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'enum(%'");
+        if (count($columns) > 0) {
+            $showColumn = new ShowColumn($columns[0]);
             return substr(
-                str_replace('enum(', '[', $this->spaceAfterComma($column[0]->Type)),
+                str_replace('enum(', '[', $this->spaceAfterComma($showColumn->getType())),
                 0,
                 -1
             ).']';
@@ -45,10 +49,11 @@ class MySQLRepository extends Repository
         /** @var MigrationsGeneratorSetting $setting */
         $setting = app(MigrationsGeneratorSetting::class);
 
-        $column = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'set(%'");
-        if (count($column) > 0) {
+        $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'set(%'");
+        if (count($columns) > 0) {
+            $showColumn = new ShowColumn($columns[0]);
             return substr(
-                str_replace('set(', '[', $this->spaceAfterComma($column[0]->Type)),
+                str_replace('set(', '[', $this->spaceAfterComma($showColumn->getType())),
                 0,
                 -1
             ).']';
