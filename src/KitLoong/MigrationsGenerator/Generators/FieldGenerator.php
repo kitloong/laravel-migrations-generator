@@ -15,10 +15,13 @@ use KitLoong\MigrationsGenerator\Generators\Modifier\IndexModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\NullableModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 
 class FieldGenerator
 {
+    use CheckLaravelVersion;
+
     private $decorator;
     private $integerField;
     private $datetimeField;
@@ -71,7 +74,11 @@ class FieldGenerator
         DBALTypes::SMALLINT => ColumnType::SMALL_INTEGER,
         DBALTypes::BIGINT => ColumnType::BIG_INTEGER,
         DBALTypes::DATETIME_MUTABLE => ColumnType::DATETIME,
+        DBALTypes::DATETIME_IMMUTABLE => ColumnType::DATETIME,
+        DBALTypes::DATETIMETZ_MUTABLE => ColumnType::DATETIME_TZ,
+        DBALTypes::DATETIMETZ_IMMUTABLE => ColumnType::DATETIME_TZ,
         DBALTypes::BLOB => ColumnType::BINARY,
+        DBALTypes::GUID => ColumnType::UUID,
     ];
 
     /**
@@ -133,6 +140,16 @@ class FieldGenerator
                 $field['decorators'][] = $this->commentModifier->generate($column->getComment());
             }
 
+            if (!$this->atLeastLaravel8()) {
+                if ($field['type'] === DBALTypes::TIMESTAMP) {
+                    if (($key1 = array_search(ColumnModifier::USE_CURRENT, $field['decorators'])) !== false &&
+                        ($key2 = array_search(ColumnModifier::USE_CURRENT_ON_UPDATE, $field['decorators'])) !== false) {
+                        unset($field['decorators'][$key1]);
+                        unset($field['decorators'][$key2]);
+                    }
+                }
+            }
+
             $fields[] = $field;
         }
         return $fields;
@@ -161,23 +178,29 @@ class FieldGenerator
             case DBALTypes::TINYINT:
                 return $this->integerField->makeField($tableName, $field, $column, $indexes);
             case DBALTypes::DATETIME_MUTABLE:
+            case DBALTypes::DATETIME_IMMUTABLE:
+            case DBALTypes::DATETIMETZ_MUTABLE:
+            case DBALTypes::DATETIMETZ_IMMUTABLE:
             case DBALTypes::TIMESTAMP:
+            case DBALTypes::TIMESTAMP_TZ:
             case DBALTypes::TIME_MUTABLE:
-                return $this->datetimeField->makeField($field, $column, $useTimestamps);
+            case DBALTypes::TIME_IMMUTABLE:
+            case DBALTypes::TIME_TZ:
+                return $this->datetimeField->makeField($tableName, $field, $column, $useTimestamps);
             case DBALTypes::DECIMAL:
             case DBALTypes::FLOAT:
             case DBALTypes::DOUBLE:
                 return $this->decimalField->makeField($field, $column);
             case DBALTypes::ENUM:
-                return $this->enumField->makeField($tableName, $field);
+                return $this->enumField->makeField($tableName, $field, $column);
             case DBALTypes::GEOMETRY:
                 return $this->geometryField->makeField($tableName, $field);
             case DBALTypes::SET:
-                return $this->setField->makeField($tableName, $field);
+                return $this->setField->makeField($tableName, $field, $column);
             case DBALTypes::STRING:
-                return $this->stringField->makeField($field, $column);
+                return $this->stringField->makeField($tableName, $field, $column);
             default:
-                return $this->otherField->makeField($field);
+                return $this->otherField->makeField($tableName, $field, $column);
         }
     }
 }

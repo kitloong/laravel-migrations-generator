@@ -9,7 +9,7 @@ namespace Tests\KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use KitLoong\MigrationsGenerator\Generators\Modifier\NullableModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class NullableModifierTest extends TestCase
 {

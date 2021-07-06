@@ -12,12 +12,13 @@
 	"require": {
 		"php": ">=7.1.3",
 		"illuminate/support": "^5.6|^6.0|^7.0|^8.0",
-		"doctrine/dbal": "~2.4"
+		"doctrine/dbal": "~2.4|^3.0"
 	},
     "require-dev": {
-        "orchestra/testbench": "^3.6|^4.0|^5.0",
+        "orchestra/testbench": "^3.6|^4.0|^5.0|^6.0",
         "squizlabs/php_codesniffer": "^3.5",
-		"mockery/mockery": "^1.0"
+		"mockery/mockery": "^1.0",
+        "ext-pdo": "*"
     },
 	"autoload": {
 		"psr-4": {
@@ -37,5 +38,12 @@
 				"KitLoong\\MigrationsGenerator\\MigrationsGeneratorServiceProvider"
 			]
 		}
-	}
+	},
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "action-env-setup": [
+            "@php -r \"file_exists('.env') || copy('.env.action', '.env');\""
+        ]
+    }
 }

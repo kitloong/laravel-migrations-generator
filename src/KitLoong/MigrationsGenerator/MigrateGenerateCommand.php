@@ -26,6 +26,7 @@ class MigrateGenerateCommand extends GeneratorCommand
                 {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
                 {--p|path= : Where should the file be created?}
                 {--tp|templatePath= : The location of the template for this generator}
+                {--useDBCollation : Follow db collations for migrations}
                 {--defaultIndexNames : Don\'t use db index names for migrations}
                 {--defaultFKNames : Don\'t use db foreign key names for migrations}';
 
@@ -108,7 +109,7 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Execute the console command. Added for Laravel 5.5
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function handle()
     {
@@ -133,6 +134,7 @@ class MigrateGenerateCommand extends GeneratorCommand
         /** @var MigrationsGeneratorSetting $setting */
         $setting = app(MigrationsGeneratorSetting::class);
         $setting->setConnection($connection);
+        $setting->setUseDBCollation($this->option('useDBCollation'));
         $setting->setIgnoreIndexNames($this->option('defaultIndexNames'));
         $setting->setIgnoreForeignKeyNames($this->option('defaultFKNames'));
     }
