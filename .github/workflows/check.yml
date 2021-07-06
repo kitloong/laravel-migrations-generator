@@ -24,7 +24,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction --no-update
+        run: composer install --prefer-dist --no-interaction
 
       - name: phpcs
         run: vendor/bin/phpcs
