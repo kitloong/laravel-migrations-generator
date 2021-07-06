@@ -28,6 +28,3 @@ jobs:
 
       - name: phpcs
         run: vendor/bin/phpcs
-
-      - name: Execute tests
-        run: vendor/bin/phpunit
