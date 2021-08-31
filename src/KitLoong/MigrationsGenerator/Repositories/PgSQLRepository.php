@@ -49,7 +49,7 @@ class PgSQLRepository extends Repository
                        ccu.table_schema AS table_schema,
                        ccu.table_name,
                        ccu.column_name,
-                       pgc.consrc AS definition
+                       pg_get_constraintdef(pgc.oid) AS definition
                 FROM pg_constraint pgc
                 JOIN pg_namespace nsp ON nsp.oid = pgc.connamespace
                 JOIN pg_class  cls ON pgc.conrelid = cls.oid
