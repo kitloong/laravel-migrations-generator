@@ -1,48 +1,39 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/03/31
- */
 
 namespace KitLoong\MigrationsGenerator;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\Connection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Generators\Platform;
 
 class MigrationsGeneratorSetting
 {
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     private $connection;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $platform;
 
-    /**
-     * @var AbstractSchemaManager
-     */
+    /** @var AbstractSchemaManager */
     private $schema;
 
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     private $useDBCollation;
 
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     private $ignoreIndexNames;
 
-    /**
-     * @var boolean
-     */
+    /** @var boolean */
     private $ignoreForeignKeyNames;
+
+    /** @var string */
+    private $path;
+
+    /** @var string */
+    private $stubPath;
 
     /**
      * @return Connection
@@ -54,16 +45,16 @@ class MigrationsGeneratorSetting
 
     /**
      * @param  string  $connection
+     * @throws \Doctrine\DBAL\Exception
      */
     public function setConnection(string $connection): void
     {
         $this->connection = DB::connection($connection);
 
-        /** @var \Doctrine\DBAL\Connection $doctConn */
-        $doctConn = $this->connection->getDoctrineConnection();
+        $doctConn     = $this->connection->getDoctrineConnection();
         $this->schema = $doctConn->getSchemaManager();
-        $classPath = explode('\\', get_class($doctConn->getDatabasePlatform()));
-        $platform = end($classPath);
+        $classPath    = explode('\\', get_class($doctConn->getDatabasePlatform()));
+        $platform     = end($classPath);
 
         switch (true) {
             case preg_match('/mysql/i', $platform) > 0:
@@ -146,5 +137,50 @@ class MigrationsGeneratorSetting
     public function getSchema(): AbstractSchemaManager
     {
         return $this->schema;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    /**
+     * @param  string  $path
+     */
+    public function setPath(string $path): void
+    {
+        $this->path = $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStubPath(): string
+    {
+        return $this->stubPath;
+    }
+
+    /**
+     * @param  string  $stubPath
+     */
+    public function setStubPath(string $stubPath): void
+    {
+        // Use user defined stub path.
+        if ($stubPath !== Config::get('generators.config.migration_template_path')) {
+            $this->stubPath = $stubPath;
+            return;
+        }
+
+        // Use stub:publish stub path if any.
+        if (File::exists($frameworkPublishedStub = base_path('stubs/migration.stub'))) {
+            $this->stubPath = $frameworkPublishedStub;
+            return;
+        }
+
+        // Use default stub path.
+        $this->stubPath = Config::get('generators.config.migration_template_path');
     }
 }

@@ -1,47 +1,38 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- */
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Types\Type;
 use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\DBAL\Types\DoubleType;
+use KitLoong\MigrationsGenerator\DBAL\Types\EnumType;
+use KitLoong\MigrationsGenerator\DBAL\Types\GeographyType;
+use KitLoong\MigrationsGenerator\DBAL\Types\GeomCollectionType;
+use KitLoong\MigrationsGenerator\DBAL\Types\GeometryCollectionType;
+use KitLoong\MigrationsGenerator\DBAL\Types\GeometryType;
+use KitLoong\MigrationsGenerator\DBAL\Types\IpAddressType;
+use KitLoong\MigrationsGenerator\DBAL\Types\JsonbType;
+use KitLoong\MigrationsGenerator\DBAL\Types\LineStringType;
+use KitLoong\MigrationsGenerator\DBAL\Types\LongTextType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MacAddressType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MediumIntegerType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MediumTextType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MultiLineStringType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MultiPointType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MultiPolygonType;
+use KitLoong\MigrationsGenerator\DBAL\Types\PointType;
+use KitLoong\MigrationsGenerator\DBAL\Types\PolygonType;
+use KitLoong\MigrationsGenerator\DBAL\Types\SetType;
+use KitLoong\MigrationsGenerator\DBAL\Types\TimestampType;
+use KitLoong\MigrationsGenerator\DBAL\Types\TimestampTzType;
+use KitLoong\MigrationsGenerator\DBAL\Types\TimeTzType;
+use KitLoong\MigrationsGenerator\DBAL\Types\TinyIntegerType;
+use KitLoong\MigrationsGenerator\DBAL\Types\UUIDType;
+use KitLoong\MigrationsGenerator\DBAL\Types\YearType;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
-use KitLoong\MigrationsGenerator\Types\DoubleType;
-use KitLoong\MigrationsGenerator\Types\EnumType;
-use KitLoong\MigrationsGenerator\Types\GeographyType;
-use KitLoong\MigrationsGenerator\Types\GeomCollectionType;
-use KitLoong\MigrationsGenerator\Types\GeometryCollectionType;
-use KitLoong\MigrationsGenerator\Types\GeometryType;
-use KitLoong\MigrationsGenerator\Types\IpAddressType;
-use KitLoong\MigrationsGenerator\Types\JsonbType;
-use KitLoong\MigrationsGenerator\Types\LineStringType;
-use KitLoong\MigrationsGenerator\Types\LongTextType;
-use KitLoong\MigrationsGenerator\Types\MacAddressType;
-use KitLoong\MigrationsGenerator\Types\MediumIntegerType;
-use KitLoong\MigrationsGenerator\Types\MediumTextType;
-use KitLoong\MigrationsGenerator\Types\MultiLineStringType;
-use KitLoong\MigrationsGenerator\Types\MultiPointType;
-use KitLoong\MigrationsGenerator\Types\MultiPolygonType;
-use KitLoong\MigrationsGenerator\Types\PointType;
-use KitLoong\MigrationsGenerator\Types\PolygonType;
-use KitLoong\MigrationsGenerator\Types\SetType;
-use KitLoong\MigrationsGenerator\Types\TimestampType;
-use KitLoong\MigrationsGenerator\Types\TimestampTzType;
-use KitLoong\MigrationsGenerator\Types\TimeTzType;
-use KitLoong\MigrationsGenerator\Types\TinyIntegerType;
-use KitLoong\MigrationsGenerator\Types\UUIDType;
-use KitLoong\MigrationsGenerator\Types\YearType;
 
 class SchemaGenerator
 {
-    /**
-     * @var FieldGenerator
-     */
-    private $fieldGenerator;
-
     /**
      * @var ForeignKeyGenerator
      */
@@ -92,11 +83,9 @@ class SchemaGenerator
     protected $schema;
 
     public function __construct(
-        FieldGenerator $fieldGenerator,
         IndexGenerator $indexGenerator,
         ForeignKeyGenerator $foreignKeyGenerator
     ) {
-        $this->fieldGenerator = $fieldGenerator;
         $this->indexGenerator = $indexGenerator;
         $this->foreignKeyGenerator = $foreignKeyGenerator;
     }
@@ -149,7 +138,7 @@ class SchemaGenerator
      */
     public function getIndexes(string $table): array
     {
-        return $this->indexGenerator->generate(
+        return $this->indexGenerator->_generate(
             $table,
             $this->schema->listTableIndexes($table),
             app(MigrationsGeneratorSetting::class)->isIgnoreIndexNames()

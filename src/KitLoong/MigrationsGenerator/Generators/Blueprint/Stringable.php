@@ -38,7 +38,7 @@ trait Stringable
             case 'NULL':
                 return 'null';
             case 'string':
-                return "'".$value."'";
+                return "'".addcslashes($value, "'")."'";
             default:
                 return $value;
         }

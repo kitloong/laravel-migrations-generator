@@ -1,29 +1,63 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/03/31
- */
 
 namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
-use KitLoong\MigrationsGenerator\Generators\Decorator;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Index;
+use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use KitLoong\MigrationsGenerator\Generators\IndexGenerator;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class IndexModifier
 {
-    private $decorator;
+    private $indexGenerator;
 
-    public function __construct(Decorator $decorator)
+    public function __construct(IndexGenerator $indexGenerator)
     {
-        $this->decorator = $decorator;
+        $this->indexGenerator = $indexGenerator;
     }
 
-    public function generate(array $index): string
+    /**
+     * @param  string  $table
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \Illuminate\Support\Collection<string, \Doctrine\DBAL\Schema\Index>  $singleColumnIndexes
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     */
+    public function chainIndex(string $table, ColumnMethod $method, Collection $singleColumnIndexes, Column $column): ColumnMethod
     {
-        return $this->decorator->decorate(
-            $index['type'],
-            // $index['args'] is wrapped with '
-            (!empty($index['args'][0]) ? [$index['args'][0]] : [])
-        );
+        if ($singleColumnIndexes->has($column->getName())) {
+            /** @var Index $index */
+            $index = $singleColumnIndexes->get($column->getName());
+
+            // autoIncrement is handled in IntegerColumn
+            if ($index->isPrimary() && $column->getAutoincrement()) {
+                return $method;
+            }
+
+            $indexType = $this->indexGenerator->getIndexType($index);
+            if ($index->isPrimary() ||
+                app(MigrationsGeneratorSetting::class)->isIgnoreIndexNames() ||
+                $this->shouldSkipName($table, $index, $indexType)) {
+                $method->chain($indexType);
+            } else {
+                $method->chain($indexType, $index->getName());
+            }
+        }
+        return $method;
+    }
+
+    /**
+     * @param  string  $table
+     * @param  Index  $index
+     * @param  string  $type
+     * @return bool
+     */
+    private function shouldSkipName(string $table, Index $index, string $type): bool
+    {
+        $guessIndexName = strtolower($table.'_'.implode('_', $index->getColumns()).'_'.$type);
+        $guessIndexName = str_replace(['-', '.'], '_', $guessIndexName);
+        return $guessIndexName === $index->getName();
     }
 }

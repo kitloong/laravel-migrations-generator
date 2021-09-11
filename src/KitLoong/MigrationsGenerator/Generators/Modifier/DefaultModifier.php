@@ -1,60 +1,129 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/03/31
- */
 
 namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
-use KitLoong\MigrationsGenerator\Generators\BooleanField;
-use KitLoong\MigrationsGenerator\Generators\DatetimeField;
-use KitLoong\MigrationsGenerator\Generators\Decorator;
+use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
-use KitLoong\MigrationsGenerator\Types\DBALTypes;
+use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class DefaultModifier
 {
-    private $booleanField;
-    private $datetimeField;
-    private $decorator;
-
-    public function __construct(BooleanField $booleanField, DatetimeField $datetimeField, Decorator $decorator)
+    /**
+     * Set default value.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  string  $type
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     */
+    public function chainDefault(ColumnMethod $method, string $type, Column $column): ColumnMethod
     {
-        $this->booleanField = $booleanField;
-        $this->datetimeField = $datetimeField;
-        $this->decorator = $decorator;
+        if ($column->getDefault() === null) {
+            return $method;
+        }
+
+        switch ($type) {
+            case ColumnType::INTEGER:
+            case ColumnType::BIG_INTEGER:
+            case ColumnType::MEDIUM_INTEGER:
+            case ColumnType::SMALL_INTEGER:
+            case ColumnType::TINY_INTEGER:
+                $method = $this->chainDefaultForInteger($method, $column);
+                break;
+            case ColumnType::DECIMAL:
+            case ColumnType::FLOAT:
+            case ColumnType::DOUBLE:
+                $method = $this->chainDefaultForDecimal($method, $column);
+                break;
+            case ColumnType::BOOLEAN:
+                $method = $this->chainDefaultForBoolean($method, $column);
+                break;
+            case ColumnType::SOFT_DELETES:
+            case ColumnType::DATETIME:
+            case ColumnType::TIMESTAMP:
+                $method = $this->chainDefaultForDatetime($method, $column);
+                break;
+            default:
+                $method = $this->chainDefaultForString($method, $column);
+        }
+        return $method;
     }
 
     /**
-     * @param  string  $dbalType
-     * @param  Column  $column
-     * @return string
+     * Set default value to method for integer column.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod
      */
-    public function generate(string $dbalType, Column $column): string
+    private function chainDefaultForInteger(ColumnMethod $method, Column $column): ColumnMethod
     {
-        switch ($dbalType) {
-            case DBALTypes::SMALLINT:
-            case DBALTypes::INTEGER:
-            case DBALTypes::BIGINT:
-            case DBALTypes::MEDIUMINT:
-            case DBALTypes::TINYINT:
-            case DBALTypes::DECIMAL:
-            case DBALTypes::FLOAT:
-            case DBALTypes::DOUBLE:
-                $default = $column->getDefault();
+        $method->chain(ColumnModifier::DEFAULT, (int) $column->getDefault());
+        return $method;
+    }
+
+    /**
+     * Set default value to method for decimal column.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     */
+    private function chainDefaultForDecimal(ColumnMethod $method, Column $column): ColumnMethod
+    {
+        $method->chain(ColumnModifier::DEFAULT, (float) $column->getDefault());
+        return $method;
+    }
+
+    /**
+     * Set default value to method for boolean column.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     */
+    private function chainDefaultForBoolean(ColumnMethod $method, Column $column): ColumnMethod
+    {
+        $method->chain(ColumnModifier::DEFAULT, ((int) $column->getDefault()) === 1);
+        return $method;
+    }
+
+    /**
+     * Set default value to method for datetime column.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     */
+    private function chainDefaultForDatetime(ColumnMethod $method, Column $column): ColumnMethod
+    {
+        switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
+            case Platform::POSTGRESQL:
+                if ($column->getDefault() === 'now()') {
+                    $method->chain(ColumnModifier::USE_CURRENT);
+                }
                 break;
-            case DBALTypes::BOOLEAN:
-                $default = $this->booleanField->makeDefault($column);
-                break;
-            case DBALTypes::DATETIME_MUTABLE:
-            case DBALTypes::TIMESTAMP:
-                return $this->datetimeField->makeDefault($column);
             default:
-                $default = $this->decorator->columnDefaultToString($column->getDefault());
+                if ($column->getDefault() === 'CURRENT_TIMESTAMP') {
+                    $method->chain(ColumnModifier::USE_CURRENT);
+                } else {
+                    $method->chain(ColumnModifier::DEFAULT, $column->getDefault());
+                }
         }
 
-        return $this->decorator->decorate(ColumnModifier::DEFAULT, [$default]);
+        return $method;
+    }
+
+    private function chainDefaultForString(ColumnMethod $method, Column $column): ColumnMethod
+    {
+        $quotes  = '\'';
+        $default = $column->getDefault();
+        // To replace from ' to \\\'
+        $method->chain(ColumnModifier::DEFAULT, str_replace($quotes, '\\\\'.$quotes, $default));
+
+        return $method;
     }
 }

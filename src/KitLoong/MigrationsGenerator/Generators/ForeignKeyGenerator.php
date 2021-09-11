@@ -7,13 +7,6 @@ class ForeignKeyGenerator
      */
     protected $table;
 
-    private $decorator;
-
-    public function __construct(Decorator $decorator)
-    {
-        $this->decorator = $decorator;
-    }
-
     /**
      * Get array of foreign keys
      *

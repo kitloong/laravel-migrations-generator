@@ -50,6 +50,8 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->dateTimeTz('dateTimeTz_default')->default('2020-10-08 10:20:30');
             $table->decimal('decimal');
             $table->decimal('decimal_82', 8, 2);
+            $table->decimal('decimal_83', 8, 3);
+            $table->decimal('decimal_92', 9, 2);
             $table->decimal('decimal_53', 5, 3);
             $table->decimal('decimal_default')->default(10.8);
             $table->double('double');

@@ -1,29 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/03/31
- */
 
 namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
-use KitLoong\MigrationsGenerator\Generators\Decorator;
+use Doctrine\DBAL\Schema\Column;
+use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 
 class CommentModifier
 {
-    private $decorator;
-
-    public function __construct(Decorator $decorator)
+    public function chainComment(ColumnMethod $method, string $type, Column $column): ColumnMethod
     {
-        $this->decorator = $decorator;
-    }
-
-    public function generate(string $comment): string
-    {
-        return $this->decorator->decorate(
-            ColumnModifier::COMMENT,
-            ["'".$this->decorator->addSlash($comment)."'"]
-        );
+        if ($column->getComment() !== null) {
+            $method->chain(ColumnModifier::COMMENT, $column->getComment());
+        }
+        return $method;
     }
 }

@@ -8,7 +8,7 @@ class TableBlueprint
 {
     use Stringable;
 
-    /** @var Property|Method|string[] */
+    /** @var Property|ColumnMethod|string[] */
     private $lines;
 
     public function __construct()
@@ -31,11 +31,21 @@ class TableBlueprint
     /**
      * @param  string  $name  Method name.
      * @param  mixed  ...$values
-     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\Method
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod
      */
-    public function setMethod(string $name, ...$values): Method
+    public function setColumnMethodByName(string $name, ...$values): ColumnMethod
     {
-        $method        = new Method($name, ...$values);
+        $method        = new ColumnMethod($name, ...$values);
+        $this->lines[] = $method;
+        return $method;
+    }
+
+    /**
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     */
+    public function setColumnMethod(ColumnMethod $method): ColumnMethod
+    {
         $this->lines[] = $method;
         return $method;
     }
@@ -43,6 +53,29 @@ class TableBlueprint
     public function setLineBreak(): void
     {
         $this->lines[] = $this->lineBreak;
+    }
+
+    /**
+     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\Property|\KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod|string|null
+     */
+    public function removeLastLine()
+    {
+        return array_pop($this->lines);
+    }
+
+    /**
+     * @param  string[]  $columnNameList
+     */
+    public function removeLinesByColumnNames(array $columnNameList): void
+    {
+        $this->lines = collect($this->lines)->filter(function ($line) use ($columnNameList) {
+            if ($line instanceof ColumnMethod) {
+                $columnName = $line->getValues()[0] ?? '';
+                return !in_array($columnName, $columnNameList);
+            }
+
+            return true;
+        })->toArray();
     }
 
     /**
@@ -61,7 +94,7 @@ class TableBlueprint
                 case $line instanceof Property:
                     $lines[] = $this->propertyToString($line);
                     break;
-                case $line instanceof Method:
+                case $line instanceof ColumnMethod:
                     $lines[] = $this->methodToString($line);
                     break;
                 default:
@@ -95,10 +128,10 @@ class TableBlueprint
      *
      * $table->string('name', 100)->comment('Hello')->default('Test');
      *
-     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
      * @return string
      */
-    private function methodToString(Method $method): string
+    private function methodToString(ColumnMethod $method): string
     {
         $methodStrings[] = $this->flattenMethod($method);
         if ($method->countChain() > 0) {
@@ -116,10 +149,10 @@ class TableBlueprint
      * comment('Hello')
      * default('Test')
      *
-     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
      * @return string
      */
-    private function flattenMethod(Method $method): string
+    private function flattenMethod(ColumnMethod $method): string
     {
         $v = (new Collection($method->getValues()))->map(function ($v) {
             return $this->convertFromAnyTypeToString($v);

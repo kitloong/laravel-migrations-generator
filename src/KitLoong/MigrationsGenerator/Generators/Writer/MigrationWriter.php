@@ -5,38 +5,40 @@ namespace KitLoong\MigrationsGenerator\Generators\Writer;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
-use KitLoong\MigrationsGenerator\Support\Str;
 
 class MigrationWriter
 {
-    private $str;
-
     /** @var string */
+    /**
+     * @deprecated
+     */
     private $className;
-
-    public function __construct(Str $str)
-    {
-        $this->str = $str;
-    }
 
     public function writeTo(
         string $path,
+        string $stubPath,
+        string $className,
         SchemaBlueprint $up,
-        SchemaBlueprint $down,
-        ?string $userDefinedStubPath
+        SchemaBlueprint $down
     ): void {
-        $stub = $this->getStub($userDefinedStubPath);
+        $stub = $this->getStub($stubPath);
         File::put(
             $path,
-            $this->populateStub($stub, $up, $down)
+            $this->populateStub($stub, $className, $up, $down)
         );
     }
 
+    /**
+     * @deprecated
+     */
     public function getClassName(): string
     {
         return $this->className;
     }
 
+    /**
+     * @deprecated
+     */
     public function setClassName(string $className): void
     {
         $this->className = $className;
@@ -45,39 +47,31 @@ class MigrationWriter
     /**
      * Get the migration stub file.
      *
-     * @param  string|null  $userDefinedStubPath
+     * @param  string  $stubPath
      * @return string
      */
-    private function getStub(?string $userDefinedStubPath): string
+    private function getStub(string $stubPath): string
     {
-        if ($userDefinedStubPath !== null) {
-            // Use user defined stub
-            return File::get($userDefinedStubPath);
-        } else {
-            $customStubPath = base_path('stubs/migration.stub');
-            // Use framework stub file if exists.
-            if (File::exists($customStubPath)) {
-                return File::get($customStubPath);
-            } else {
-                // Use default stub
-                return File::get(Config::get('generators.config.migration_template_path'));
-            }
-        }
+        return File::get($stubPath);
     }
 
     /**
      * Populate the place-holders in the migration stub.
      *
      * @param  string  $stub
+     * @param  string  $className
      * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $up
      * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $down
      * @return string
      */
-    private function populateStub(string $stub, SchemaBlueprint $up, SchemaBlueprint $down): string
+    private function populateStub(string $stub, string $className, SchemaBlueprint $up, SchemaBlueprint $down): string
     {
         $content = $stub;
-        $content = $this->str->replacePlaceholder('{{ class }}', $this->className, $content);
-        $content = $this->str->replacePlaceholder('{{ up }}', $up->toString(), $content);
-        return $this->str->replacePlaceholder('{{ down }}', $down->toString(), $content);
+        $replace = [
+            '{{ class }}' => $className,
+            '{{ up }}' => $up->toString(),
+            '{{ down }}' => $down->toString(),
+        ];
+        return str_replace(array_keys($replace), $replace, $content);
     }
 }

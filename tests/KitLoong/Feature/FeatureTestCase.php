@@ -1,9 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/11/15
- */
 
 namespace Tests\KitLoong\Feature;
 
@@ -11,16 +6,10 @@ use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 use Tests\KitLoong\TestCase;
 
 abstract class FeatureTestCase extends TestCase
 {
-    protected function getPackageProviders($app)
-    {
-        return [MigrationsGeneratorServiceProvider::class];
-    }
-
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
@@ -30,13 +19,6 @@ abstract class FeatureTestCase extends TestCase
         } catch (InvalidPathException $exception) {
             $this->markTestSkipped('Skipped feature tests.');
         }
-
-        $app['config']->set(
-            'generators.config.migration_template_path',
-            base_path('src/Way/Generators/templates/migration.txt')
-        );
-
-//        $app['config']->set('generators.config.migration_target_path', $this->storageMigrations());
     }
 
     protected function setUp(): void
@@ -59,14 +41,6 @@ abstract class FeatureTestCase extends TestCase
             $dotenv = new Dotenv(base_path());
         }
         $dotenv->load();
-    }
-
-    protected function prepareStorage()
-    {
-        File::deleteDirectory(storage_path());
-        File::makeDirectory($this->storageMigrations(), 0775, true);
-        File::makeDirectory($this->storageFrom());
-        File::makeDirectory($this->storageSql());
     }
 
     protected function storageMigrations(string $path = ''): string
@@ -125,6 +99,8 @@ abstract class FeatureTestCase extends TestCase
             array_merge($options, [
                 '--path' => $this->storageMigrations(),
                 '--no-interaction' => true,
+                // TODO For test
+//                '--tables' => 'reserved_name_not_null_mysql57',
             ])
         );
     }

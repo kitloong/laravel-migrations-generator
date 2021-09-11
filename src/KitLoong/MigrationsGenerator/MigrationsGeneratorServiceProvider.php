@@ -37,8 +37,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
                 return new MigrateGenerateCommand(
                     $app->make(Generator::class),
                     $app->make(SchemaGenerator::class),
-                    $app->make('migration.repository'),
-                    $app->make(Decorator::class)
+                    $app->make('migration.repository')
                 );
             }
         );

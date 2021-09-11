@@ -7,13 +7,13 @@
 
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
+use KitLoong\MigrationsGenerator\DBAL\Types\DBALTypes;
 use KitLoong\MigrationsGenerator\Generators\GeometryField;
 use KitLoong\MigrationsGenerator\Generators\Platform;
-use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\MigrationMethod\PgSQLGeography;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
-use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery\MockInterface;
 use Tests\KitLoong\TestCase;
 

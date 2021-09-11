@@ -1,34 +1,29 @@
-<?php namespace KitLoong\MigrationsGenerator;
+<?php
 
+namespace KitLoong\MigrationsGenerator;
+
+use Illuminate\Console\Command;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Str;
-use KitLoong\MigrationsGenerator\Generators\Decorator;
-use KitLoong\MigrationsGenerator\Generators\SchemaGenerator;
-use Way\Generators\Commands\GeneratorCommand;
-use Way\Generators\Generator;
-use Xethron\MigrationsGenerator\Syntax\AddForeignKeysToTable;
-use Xethron\MigrationsGenerator\Syntax\AddToTable;
-use Xethron\MigrationsGenerator\Syntax\DroppedTable;
-use Xethron\MigrationsGenerator\Syntax\RemoveForeignKeysFromTable;
+use KitLoong\MigrationsGenerator\DBAL\Schema;
+use KitLoong\MigrationsGenerator\Generators\Generator;
 
-class MigrateGenerateCommand extends GeneratorCommand
+class MigrateGenerateCommand extends Command
 {
-
     /**
      * The name and signature of the console command.
      * @var string
      */
     protected $signature = 'migrate:generate
-                {tables? : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
-                {--c|connection= : The database connection to use}
-                {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
-                {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
-                {--p|path= : Where should the file be created?}
-                {--tp|templatePath= : The location of the template for this generator}
-                {--useDBCollation : Follow db collations for migrations}
-                {--defaultIndexNames : Don\'t use db index names for migrations}
-                {--defaultFKNames : Don\'t use db foreign key names for migrations}';
+                            {tables? : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
+                            {--c|connection= : The database connection to use}
+                            {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
+                            {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
+                            {--p|path= : Where should the file be created?}
+                            {--tp|templatePath= : The location of the template for this generator}
+                            {--useDBCollation : Follow db collations for migrations}
+                            {--defaultIndexNames : Don\'t use db index names for migrations}
+                            {--defaultFKNames : Don\'t use db foreign key names for migrations}';
 
     /**
      * The console command description.
@@ -41,11 +36,6 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected $repository;
 
     /**
-     * @var SchemaGenerator
-     */
-    protected $schemaGenerator;
-
-    /**
      * Array of Fields to create in a new Migration
      * Namely: Columns, Indexes and Foreign Keys
      */
@@ -56,12 +46,12 @@ class MigrateGenerateCommand extends GeneratorCommand
      */
     protected $migrations = array();
 
-    protected $log = false;
+    protected $shouldLog = false;
 
     /**
      * @var int
      */
-    protected $batch;
+    protected $nextBatchNumber;
 
     /**
      * Filename date prefix (Y_m_d_His)
@@ -92,18 +82,11 @@ class MigrateGenerateCommand extends GeneratorCommand
 
     protected $decorator;
 
-    public function __construct(
-        Generator $generator,
-        SchemaGenerator $schemaGenerator,
-        MigrationRepositoryInterface $repository,
-        Decorator $decorator
-    ) {
-        $this->schemaGenerator = $schemaGenerator;
-        $this->repository = $repository;
-        $this->decorator = $decorator;
+    /** @var Schema */
+    protected $schema;
 
-        parent::__construct($generator);
-    }
+    /** @var \KitLoong\MigrationsGenerator\Generators\Generator */
+    protected $generator;
 
     /**
      * Execute the console command. Added for Laravel 5.5
@@ -111,13 +94,17 @@ class MigrateGenerateCommand extends GeneratorCommand
      * @return void
      * @throws \Doctrine\DBAL\Exception
      */
-    public function handle()
+    public function handle(MigrationRepositoryInterface $repository, Generator $generator)
     {
+        $this->generator  = $generator;
+        $this->repository = $repository;
+
         $this->setup($this->connection = $this->option('connection') ?: Config::get('database.default'));
 
-        $this->info('Using connection: '.$this->connection."\n");
+        $this->schema = app(Schema::class);
+        $this->schema->initialize();
 
-        $this->schemaGenerator->initialize();
+        $this->info('Using connection: '.$this->connection."\n");
 
         $tables = $this->filterTables();
         $this->info('Generating migrations for: '.implode(', ', $tables));
@@ -129,14 +116,22 @@ class MigrateGenerateCommand extends GeneratorCommand
         $this->info("\nFinished!\n");
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     protected function setup(string $connection): void
     {
-        /** @var MigrationsGeneratorSetting $setting */
         $setting = app(MigrationsGeneratorSetting::class);
         $setting->setConnection($connection);
         $setting->setUseDBCollation($this->option('useDBCollation'));
         $setting->setIgnoreIndexNames($this->option('defaultIndexNames'));
         $setting->setIgnoreForeignKeyNames($this->option('defaultFKNames'));
+        $setting->setPath(
+            $this->option('path') ?? Config::get('generators.config.migration_target_path')
+        );
+        $setting->setStubPath(
+            $this->option('templatePath') ?? Config::get('generators.config.migration_template_path')
+        );
     }
 
     /**
@@ -145,58 +140,64 @@ class MigrateGenerateCommand extends GeneratorCommand
      * Also exclude migrations table
      *
      * @return string[]
+     * @throws \Doctrine\DBAL\Exception
      */
-    protected function filterTables()
+    protected function filterTables(): array
     {
         if ($tableArg = (string) $this->argument('tables')) {
             $tables = explode(',', $tableArg);
         } elseif ($tableOpt = (string) $this->option('tables')) {
             $tables = explode(',', $tableOpt);
         } else {
-            $tables = $this->schemaGenerator->getTables();
+            $tables = $this->schema->getTableNames();
         }
 
-        return $this->filterAndExcludeTables($tables);
+        return array_diff($tables, $this->getExcludedTables());
+    }
+
+    /**
+     * Get a list of tables to be excluded.
+     *
+     * @return string[]
+     */
+    protected function getExcludedTables(): array
+    {
+        $prefix         = app(MigrationsGeneratorSetting::class)->getConnection()->getTablePrefix();
+        $migrationTable = $prefix.Config::get('database.migrations');
+
+        $excludes = [$migrationTable];
+        $ignore   = (string) $this->option('ignore');
+        if (!empty($ignore)) {
+            return array_merge([$migrationTable], explode(',', $ignore));
+        }
+
+        return $excludes;
     }
 
     protected function askIfLogMigrationTable(): void
     {
         if (!$this->option('no-interaction')) {
-            $this->log = $this->askYn('Do you want to log these migrations in the migrations table?');
+            $this->shouldLog = $this->askYn('Do you want to log these migrations in the migrations table?');
         }
 
-        if ($this->log) {
-            $migrationSource = $this->connection;
+        if ($this->shouldLog) {
+            $this->repository->setSource($this->connection);
 
-            if ($migrationSource !== Config::get('database.default')) {
+            if ($this->connection !== Config::get('database.default')) {
                 if (!$this->askYn('Log into current connection: '.$this->connection.'? [Y = '.$this->connection.', n = '.Config::get('database.default').' (default connection)]')) {
-                    $migrationSource = Config::get('database.default');
+                    $this->repository->setSource(Config::get('database.default'));
                 }
             }
 
-            $this->repository->setSource($migrationSource);
             if (!$this->repository->repositoryExists()) {
-                $options = array('--database' => $migrationSource);
-                $this->call('migrate:install', $options);
+                $this->repository->createRepository();
             }
-            $this->batch = $this->askNumeric(
+
+            $this->nextBatchNumber = $this->askNumeric(
                 'Next Batch Number is: '.$this->repository->getNextBatchNumber().'. We recommend using Batch Number 0 so that it becomes the "first" migration',
                 0
             );
         }
-    }
-
-    protected function generateMigrationFiles(array $tables): void
-    {
-        $this->info("Setting up Tables and Index Migrations");
-        $this->datePrefix = date('Y_m_d_His');
-        $this->generateTablesAndIndices($tables);
-
-        $this->info("\nSetting up Foreign Key Migrations\n");
-
-        // Plus 1 second to have foreign key migrations generate after table migrations generated
-        $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
-        $this->generateForeignKeys($tables);
     }
 
     /**
@@ -228,7 +229,7 @@ class MigrateGenerateCommand extends GeneratorCommand
 
         if (!is_null($default)) {
             $question .= ' [Default: '.$default.'] ';
-            $ask .= ' or blank for default';
+            $ask      .= ' or blank for default';
         }
 
         $answer = $this->ask($question);
@@ -243,157 +244,43 @@ class MigrateGenerateCommand extends GeneratorCommand
     }
 
     /**
-     * Generate tables and index migrations.
-     *
-     * @param  string[]  $tables  List of tables to create migrations for
-     * @return void
+     * @param  string[]  $tables
+     * @throws \Doctrine\DBAL\Exception
      */
-    protected function generateTablesAndIndices($tables)
+    private function generateMigrationFiles(array $tables): void
     {
-        $this->method = 'create';
+        $this->info("Setting up Tables and Index Migrations");
 
-        foreach ($tables as $tableName) {
-            $this->table = $tableName;
-            $this->migrationName = 'create_'.$this->decorator->tableUsedInFilename($tableName).'_table';
-            $indexes = $this->schemaGenerator->getIndexes($tableName);
+        $this->generateTables($tables);
 
-            $fields = $this->schemaGenerator->getFields($tableName, $indexes['single']);
-            $this->fields = array_merge($fields, $indexes['multi']->toArray());
+        $this->info("\nSetting up Foreign Key Migrations\n");
 
-            $this->generate();
-        }
+        $this->generateForeignKeys($tables);
+
+        // Generate foreign key
+
+        // Log migration repository
     }
 
     /**
-     * Generate foreign key migrations.
-     *
-     * @param  array  $tables  List of tables to create migrations for
-     * @return void
+     * @param  array  $tables
+     * @throws \Doctrine\DBAL\Exception
      */
-    protected function generateForeignKeys(array $tables)
+    private function generateTables(array $tables): void
     {
-        $this->method = 'table';
+        foreach ($tables as $table) {
+            $migrationFilepath = $this->generator->generateTable(
+                $this->schema->getTable($table),
+                $this->schema->getColumns($table)
+            );
 
-        foreach ($tables as $tableName) {
-            $this->table = $tableName;
-            $this->migrationName = 'add_foreign_keys_to_'.$this->decorator->tableUsedInFilename($tableName).'_table';
-            $this->fields = $this->schemaGenerator->getForeignKeyConstraints($tableName);
+            $this->info("Created: {$migrationFilepath}");
 
-            $this->generate();
-        }
-    }
-
-    /**
-     * Generate Migration for the current table.
-     *
-     * @return void
-     */
-    protected function generate()
-    {
-        if (!empty($this->fields)) {
-            $this->create();
-
-            if ($this->log) {
-                $file = $this->datePrefix.'_'.$this->migrationName;
-                $this->repository->log($file, $this->batch);
+            // Log migration repository
+            if ($this->shouldLog) {
+                $file = basename($migrationFilepath, '.php');
+                $this->repository->log($file, $this->nextBatchNumber);
             }
         }
-    }
-
-    /**
-     * The path where the file will be created.
-     *
-     * @return string
-     */
-    protected function getFileGenerationPath(): string
-    {
-        $path = $this->getPathByOptionOrConfig('path', 'migration_target_path');
-        $fileName = $this->datePrefix.'_'.$this->migrationName.'.php';
-
-        return "{$path}/{$fileName}";
-    }
-
-    /**
-     * Fetch the template data.
-     *
-     * @return array
-     */
-    protected function getTemplateData(): array
-    {
-        if ($this->method == 'create') {
-            $up = app(AddToTable::class)->run(
-                $this->fields,
-                $this->table,
-                $this->connection,
-                'create'
-            );
-            $down = app(DroppedTable::class)->run(
-                $this->fields,
-                $this->table,
-                $this->connection,
-                'drop'
-            );
-        } else {
-            $up = app(AddForeignKeysToTable::class)->run(
-                $this->fields,
-                $this->table,
-                $this->connection
-            );
-            $down = app(RemoveForeignKeysFromTable::class)->run(
-                $this->fields,
-                $this->table,
-                $this->connection
-            );
-        }
-
-        return [
-            'CLASS' => ucwords(Str::camel($this->migrationName)),
-            'UP' => $up,
-            'DOWN' => $down
-        ];
-    }
-
-    /**
-     * Get path to template for generator.
-     *
-     * @return string
-     */
-    protected function getTemplatePath(): string
-    {
-        return $this->getPathByOptionOrConfig('templatePath', 'migration_template_path');
-    }
-
-    /**
-     * Remove all the tables to exclude from the array of tables.
-     *
-     * @param  string[]  $tables
-     *
-     * @return string[]
-     */
-    protected function filterAndExcludeTables($tables)
-    {
-        $excludes = $this->getExcludedTables();
-        $tables = array_diff($tables, $excludes);
-
-        return $tables;
-    }
-
-    /**
-     * Get a list of tables to be excluded.
-     *
-     * @return string[]
-     */
-    protected function getExcludedTables()
-    {
-        /** @var MigrationsGeneratorSetting $setting */
-        $setting = app(MigrationsGeneratorSetting::class);
-
-        $excludes = [$setting->getConnection()->getTablePrefix().Config::get('database.migrations')];
-        $ignore = (string) $this->option('ignore');
-        if (!empty($ignore)) {
-            return array_merge($excludes, explode(',', $ignore));
-        }
-
-        return $excludes;
     }
 }

@@ -17,6 +17,7 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
             $table->integer('id');
             $table->string('code', 50);
             $table->string('email')->unique();
+            $table->string('column-hyphen')->index();
             $table->enum('enum', ['PROGRESS', 'DONE']);
             $table->lineString('lineString');
             $table->timestamps(2);

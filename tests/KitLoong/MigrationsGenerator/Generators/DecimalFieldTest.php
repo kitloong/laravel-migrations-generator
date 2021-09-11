@@ -8,12 +8,12 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Column;
+use KitLoong\MigrationsGenerator\DBAL\Types\DBALTypes;
 use KitLoong\MigrationsGenerator\Generators\DecimalField;
 use KitLoong\MigrationsGenerator\Generators\Platform;
-use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
-use KitLoong\MigrationsGenerator\Types\DBALTypes;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\KitLoong\TestCase;

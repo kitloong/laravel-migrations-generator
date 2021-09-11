@@ -18,10 +18,10 @@ class NullableModifierTest extends TestCase
         /** @var NullableModifier $nullableModifier */
         $nullableModifier = resolve(NullableModifier::class);
 
-        $this->assertFalse($nullableModifier->shouldAddNullableModifier(ColumnType::SOFT_DELETES));
-        $this->assertFalse($nullableModifier->shouldAddNullableModifier(ColumnType::REMEMBER_TOKEN));
-        $this->assertFalse($nullableModifier->shouldAddNullableModifier(ColumnType::TIMESTAMPS));
+        $this->assertFalse($nullableModifier->shouldAddNullableModifierOld(ColumnType::SOFT_DELETES));
+        $this->assertFalse($nullableModifier->shouldAddNullableModifierOld(ColumnType::REMEMBER_TOKEN));
+        $this->assertFalse($nullableModifier->shouldAddNullableModifierOld(ColumnType::TIMESTAMPS));
 
-        $this->assertTrue($nullableModifier->shouldAddNullableModifier('others'));
+        $this->assertTrue($nullableModifier->shouldAddNullableModifierOld('others'));
     }
 }

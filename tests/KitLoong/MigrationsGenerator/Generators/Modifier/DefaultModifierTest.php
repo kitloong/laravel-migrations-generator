@@ -8,11 +8,11 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
+use KitLoong\MigrationsGenerator\DBAL\Types\DBALTypes;
 use KitLoong\MigrationsGenerator\Generators\DatetimeField;
 use KitLoong\MigrationsGenerator\Generators\Decorator;
 use KitLoong\MigrationsGenerator\Generators\Modifier\DefaultModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
-use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\KitLoong\TestCase;

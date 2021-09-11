@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/03/29
- */
 
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
 use KitLoong\MigrationsGenerator\MigrationMethod\IndexType;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
@@ -16,88 +12,77 @@ use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 
 class IndexGenerator
 {
-    private $decorator;
     private $pgSQLRepository;
     private $sqlSrvRepository;
 
-    public function __construct(Decorator $decorator, PgSQLRepository $pgSQLRepository, SQLSrvRepository $sqlSrvRepository)
+    public function __construct(PgSQLRepository $pgSQLRepository, SQLSrvRepository $sqlSrvRepository)
     {
-        $this->decorator = $decorator;
-        $this->pgSQLRepository = $pgSQLRepository;
+        $this->pgSQLRepository  = $pgSQLRepository;
         $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
+    public function generate(Index $index): ColumnMethod
+    {
+        return new ColumnMethod($this->getIndexType($index), $index->getColumns());
+    }
+
     /**
-     * @param  string  $table
      * @param  Index[]  $indexes
-     * @param  bool  $ignoreIndexNames
-     * @return Collection[]
+     * @param  string  $table
      */
-    public function generate(string $table, $indexes, bool $ignoreIndexNames): array
+    public function setSpatialFlag(array $indexes, string $table): void
     {
-        $singleColIndexes = collect([]);
-        $multiColIndexes = collect([]);
-
-        // Doctrine/Dbal doesn't return spatial information from PostgreSQL
-        // Use raw SQL here to create $spatial index name list.
-        $spatials = $this->getSpatialList($table);
-
+        $spatialNames = $this->getSpatialList($table);
         foreach ($indexes as $index) {
-            $indexField = [
-                'field' => array_map([$this->decorator, 'addSlash'], $index->getColumns()),
-                'type' => IndexType::INDEX,
-                'args' => [],
-            ];
-
-            if ($index->isPrimary()) {
-                $indexField['type'] = IndexType::PRIMARY;
-            } elseif ($index->isUnique()) {
-                $indexField['type'] = IndexType::UNIQUE;
-            } elseif ((
-                    count($index->getFlags()) > 0 && $index->hasFlag('spatial')
-                ) || $spatials->contains($index->getName())) {
-                $indexField['type'] = IndexType::SPATIAL_INDEX;
-            }
-
-            if (!$index->isPrimary()) {
-                if (!$ignoreIndexNames && !$this->useLaravelStyleDefaultName($table, $index, $indexField['type'])) {
-                    $indexField['args'][] = $this->decorateName($index->getName());
-                }
-            }
-
-            if (count($index->getColumns()) === 1) {
-                $singleColIndexes->put($this->decorator->addSlash($index->getColumns()[0]), $indexField);
-            } else {
-                $multiColIndexes->push($indexField);
+            if ($spatialNames->contains($index->getName())) {
+                $index->addFlag('spatial');
             }
         }
-
-        return ['single' => $singleColIndexes, 'multi' => $multiColIndexes];
     }
 
-    private function getLaravelStyleDefaultName(string $table, array $columns, string $type): string
+    /**
+     * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
+     * @return \Illuminate\Support\Collection<string, \Doctrine\DBAL\Schema\Index>
+     */
+    public function getSingleColumnIndexes(array $indexes): Collection
     {
-        if ($type === IndexType::PRIMARY) {
-            return 'PRIMARY';
+        return (new Collection($indexes))
+            ->filter(function (Index $index) {
+                return count($index->getColumns()) === 1;
+            })->keyBy(function (Index $index) {
+                return $index->getColumns()[0];
+            });
+    }
+
+    /**
+     * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
+     * @return \Illuminate\Support\Collection<\Doctrine\DBAL\Schema\Index>
+     */
+    public function getMultiColumnsIndexes(array $indexes): Collection
+    {
+        return (new Collection($indexes))
+            ->filter(function (Index $index) {
+                return count($index->getColumns()) > 1;
+            });
+    }
+
+    public function getIndexType(Index $index): string
+    {
+        if ($index->isPrimary()) {
+            return IndexType::PRIMARY;
+        } elseif ($index->isUnique()) {
+            return IndexType::UNIQUE;
+        } elseif ($index->hasFlag('spatial')) {
+            return IndexType::SPATIAL_INDEX;
+        } else {
+            return IndexType::INDEX;
         }
-
-        $index = strtolower($table.'_'.implode('_', $columns).'_'.$type);
-        return str_replace(['-', '.'], '_', $index);
-    }
-
-    private function useLaravelStyleDefaultName(string $table, Index $index, string $type): bool
-    {
-        return $this->getLaravelStyleDefaultName($table, $index->getColumns(), $type) === $index->getName();
-    }
-
-    private function decorateName(string $name): string
-    {
-        return "'".$this->decorator->addSlash($name)."'";
     }
 
     /**
      * Doctrine/Dbal doesn't return spatial information from PostgreSQL
      * Use raw SQL here to create $spatial index name list.
+     *
      * @param  string  $table
      * @return \Illuminate\Support\Collection Spatial index name list
      */
@@ -109,7 +94,7 @@ class IndexGenerator
             case Platform::SQLSERVER:
                 return $this->sqlSrvRepository->getSpatialIndexNames($table);
             default:
-                return collect([]);
+                return new Collection();
         }
     }
 }

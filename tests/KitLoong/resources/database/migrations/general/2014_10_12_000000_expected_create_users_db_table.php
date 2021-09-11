@@ -21,13 +21,13 @@ class ExpectedCreateUsers_DB_Table extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->softDeletes()->comment('Soft delete');
+            $table->softDeletes('deleted_at2', 2)->comment('Soft delete');
             $table->rememberToken()->comment('Remember token');
             $table->timestamps();
 
             $table->primary(['id', 'sub_id']);
         });
     }
-
 
     /**
      * Reverse the migrations.

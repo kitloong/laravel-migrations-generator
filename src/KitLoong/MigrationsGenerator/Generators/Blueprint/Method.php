@@ -2,16 +2,13 @@
 
 namespace KitLoong\MigrationsGenerator\Generators\Blueprint;
 
-class Method
+abstract class Method
 {
     /** @var string */
     private $name;
 
     /** @var array */
     private $values;
-
-    /** @var Method[] */
-    private $chains;
 
     /**
      * Method constructor.
@@ -23,23 +20,6 @@ class Method
     {
         $this->name   = $name;
         $this->values = $values;
-        $this->chains = [];
-    }
-
-    /**
-     * @param  string  $name
-     * @param  ...$values
-     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\Method
-     */
-    public function chain(string $name, ...$values): Method
-    {
-        $this->chains[] = new Method($name, ...$values);
-        return $this;
-    }
-
-    public function countChain(): int
-    {
-        return count($this->chains);
     }
 
     /**
@@ -56,13 +36,5 @@ class Method
     public function getValues(): array
     {
         return $this->values;
-    }
-
-    /**
-     * @return \KitLoong\MigrationsGenerator\Generators\Blueprint\Method[]
-     */
-    public function getChains(): array
-    {
-        return $this->chains;
     }
 }

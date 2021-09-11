@@ -1,8 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- */
 
 namespace KitLoong\MigrationsGenerator\Generators;
 

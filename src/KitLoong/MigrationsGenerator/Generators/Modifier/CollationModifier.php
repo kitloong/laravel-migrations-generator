@@ -1,9 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/11/22
- */
 
 namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
