@@ -11,12 +11,12 @@ class ForeignKeyGenerator
     public function generate(Table $table, ForeignKeyConstraint $foreignKey): ColumnMethod
     {
         if ($this->shouldSkipName($table->getName(), $foreignKey)) {
-            $method = new ColumnMethod(Foreign::FOREIGN, $foreignKey->getLocalColumns());
+            $method = new ColumnMethod(Foreign::FOREIGN, $foreignKey->getUnquotedLocalColumns());
         } else {
-            $method = new ColumnMethod(Foreign::FOREIGN, $foreignKey->getLocalColumns(), $foreignKey->getName());
+            $method = new ColumnMethod(Foreign::FOREIGN, $foreignKey->getUnquotedLocalColumns(), $foreignKey->getName());
         }
 
-        $method->chain(Foreign::REFERENCES, $foreignKey->getForeignColumns())
+        $method->chain(Foreign::REFERENCES, $foreignKey->getUnquotedForeignColumns())
             ->chain(Foreign::ON, $foreignKey->getForeignTableName());
 
         if ($foreignKey->hasOption('onUpdate')) {
@@ -41,7 +41,7 @@ class ForeignKeyGenerator
             return true;
         }
 
-        $guessIndexName = strtolower($table.'_'.implode('_', $foreignKey->getLocalColumns()).'_foreign');
+        $guessIndexName = strtolower($table.'_'.implode('_', $foreignKey->getUnquotedLocalColumns()).'_foreign');
         $guessIndexName = str_replace(['-', '.'], '_', $guessIndexName);
         return $guessIndexName === $foreignKey->getName();
     }

@@ -16,7 +16,8 @@ class CollationModifier
             return $method;
         }
 
-        $defaultCollation = $table->getOptions()['collation'];
+        // collation is not set in PgSQL
+        $defaultCollation = $table->getOptions()['collation'] ?? '';
 
         $collation = $column->getPlatformOptions()['collation'] ?? null;
         if ($collation !== null && $collation !== $defaultCollation) {

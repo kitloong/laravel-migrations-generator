@@ -17,7 +17,8 @@ class CharsetModifier
             return $method;
         }
 
-        $defaultCollation = $table->getOptions()['collation'];
+        // collation is not set in PgSQL
+        $defaultCollation = $table->getOptions()['collation'] ?? '';
         $defaultCharset   = Str::before($defaultCollation, '_');
 
         $charset = $column->getPlatformOptions()['charset'] ?? null;

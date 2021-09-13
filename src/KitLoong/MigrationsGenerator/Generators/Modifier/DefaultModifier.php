@@ -4,10 +4,8 @@ namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
-use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
-use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class DefaultModifier
 {
@@ -100,18 +98,13 @@ class DefaultModifier
      */
     private function chainDefaultForDatetime(ColumnMethod $method, Column $column): ColumnMethod
     {
-        switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
-            case Platform::POSTGRESQL:
-                if ($column->getDefault() === 'now()') {
-                    $method->chain(ColumnModifier::USE_CURRENT);
-                }
+        switch ($column->getDefault()) {
+            case 'now()':
+            case 'CURRENT_TIMESTAMP':
+                $method->chain(ColumnModifier::USE_CURRENT);
                 break;
             default:
-                if ($column->getDefault() === 'CURRENT_TIMESTAMP') {
-                    $method->chain(ColumnModifier::USE_CURRENT);
-                } else {
-                    $method->chain(ColumnModifier::DEFAULT, $column->getDefault());
-                }
+                $method->chain(ColumnModifier::DEFAULT, $column->getDefault());
         }
 
         return $method;

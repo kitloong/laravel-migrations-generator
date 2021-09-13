@@ -25,7 +25,8 @@ class ExpectedCreateUsers_DB_Table extends Migration
             $table->rememberToken()->comment('Remember token');
             $table->timestamps();
 
-            $table->primary(['id', 'sub_id']);
+            $table->primary('id');
+            $table->unique(['id', 'sub_id']);
         });
     }
 

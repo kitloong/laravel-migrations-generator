@@ -1,6 +1,5 @@
 <?php
 /** @noinspection PhpIllegalPsrClassPathInspection */
-
 /** @noinspection PhpUnused */
 
 use Illuminate\Database\Migrations\Migration;

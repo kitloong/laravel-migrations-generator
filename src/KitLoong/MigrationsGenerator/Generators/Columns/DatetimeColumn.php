@@ -86,12 +86,15 @@ class DatetimeColumn implements GeneratableColumn
     {
         switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
             case Platform::POSTGRESQL:
-                return $this->getPgSQLLength($table, $column);
+                $length = $this->getPgSQLLength($table, $column);
+                break;
             case Platform::SQLSERVER:
-                return $this->getSQLSrvLength($table, $column);
+                $length = $this->getSQLSrvLength($table, $column);
+                break;
             default:
-                return $column->getLength() === self::MIGRATION_DEFAULT_PRECISION ? null : $column->getLength();
+                $length = $column->getLength() === self::MIGRATION_DEFAULT_PRECISION ? null : $column->getLength();
         }
+        return $length === self::MIGRATION_DEFAULT_PRECISION ? null : $length;
     }
 
     /**

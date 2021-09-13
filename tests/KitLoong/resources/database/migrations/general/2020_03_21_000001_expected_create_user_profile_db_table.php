@@ -25,7 +25,6 @@ class ExpectedCreateUserProfile_DB_Table extends Migration
             $table->foreign('custom_name', 'custom_foreign')->references('id')->on('users_[db]');
             $table->foreign('column-hyphen')->references('id')->on('users_[db]');
             $table->foreign(['user_id', 'sub_id'])->references(['id', 'sub_id'])->on('users_[db]');
-            $table->foreign(['user_id_2', 'sub_id'])->references(['id', 'sub_id'])->on('users_[db]');
         });
     }
 
