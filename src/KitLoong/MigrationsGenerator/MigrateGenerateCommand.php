@@ -20,10 +20,14 @@ class MigrateGenerateCommand extends Command
                             {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
                             {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
                             {--p|path= : Where should the file be created?}
+                            {--s|single : Generate all migrations into a single file}
                             {--tp|templatePath= : The location of the template for this generator}
                             {--useDBCollation : Follow db collations for migrations}
                             {--defaultIndexNames : Don\'t use db index names for migrations}
-                            {--defaultFKNames : Don\'t use db foreign key names for migrations}';
+                            {--defaultFKNames : Don\'t use db foreign key names for migrations}
+                            {--date= : Specify date for created migrations}
+                            {--guessMorphs : Try to guess morph columns}
+                            {--filenamePrefix= : Prefix for migrations filenames}';
 
     /**
      * The console command description.
@@ -256,10 +260,6 @@ class MigrateGenerateCommand extends Command
         $this->info("\nSetting up Foreign Key Migrations\n");
 
         $this->generateForeignKeys($tables);
-
-        // Generate foreign key
-
-        // Log migration repository
     }
 
     /**
