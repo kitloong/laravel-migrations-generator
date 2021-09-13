@@ -17,7 +17,7 @@ use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery;
 use Mockery\MockInterface;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class IntegerFieldTest extends TestCase
 {

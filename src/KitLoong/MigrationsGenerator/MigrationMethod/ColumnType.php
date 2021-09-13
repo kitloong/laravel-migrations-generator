@@ -42,6 +42,8 @@ final class ColumnType
     const SMALL_INCREMENTS = 'smallIncrements';
     const SMALL_INTEGER = 'smallInteger';
     const SOFT_DELETES = 'softDeletes';
+    const STRING = 'string';
+    const TEXT = 'text';
     const TIME_TZ = 'timeTz';
     const TIMESTAMP = 'timestamp';
     const TIMESTAMPS = 'timestamps';

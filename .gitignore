@@ -4,3 +4,6 @@ composer.lock
 build
 .idea
 .phpunit.result.cache
+storage
+.env
+.phpstorm.meta.php
