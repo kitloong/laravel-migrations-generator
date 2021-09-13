@@ -38,8 +38,8 @@ class ForeignKeyGenerator
                 'fields' => $foreignKey->getLocalColumns(),
                 'references' => $foreignKey->getForeignColumns(),
                 'on' => $this->decorator->tableWithoutPrefix($foreignKey->getForeignTableName()),
-                'onUpdate' => $foreignKey->hasOption('onUpdate') ? $foreignKey->getOption('onUpdate') : 'RESTRICT',
-                'onDelete' => $foreignKey->hasOption('onDelete') ? $foreignKey->getOption('onDelete') : 'RESTRICT',
+                'onUpdate' => $foreignKey->hasOption('onUpdate') ? $foreignKey->getOption('onUpdate') : null,
+                'onDelete' => $foreignKey->hasOption('onDelete') ? $foreignKey->getOption('onDelete') : null,
             ];
         }
         return $fields;

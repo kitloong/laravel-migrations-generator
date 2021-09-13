@@ -1,0 +1,114 @@
+name: "Run tests"
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    services:
+      mysql57:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: migration
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      mysql8:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: migration
+        ports:
+          - 33062:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      postgres:
+        image: mdillon/postgis:11
+        env:
+          POSTGRES_DB: migration
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: "!QAZ2wsx"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      sqlsrv:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          SA_PASSWORD: "!QAZ2wsx"
+          ACCEPT_EULA: "Y"
+        ports:
+          - 1433:1433
+
+    strategy:
+      matrix:
+        php: [ 7.3, 7.4 ]
+        laravel: [ 8.*, 7.*, 6.*, 5.8.*, 5.7.*, 5.6.* ]
+        dbal: [ 2.* ]
+        stability: [ prefer-stable ]
+        include:
+          - laravel: 8.*
+            php: 8.0
+            dbal: 3.*
+            stability: prefer-stable
+          - laravel: 7.*
+            php: 8.0
+            dbal: 2.*
+            stability: prefer-stable
+          - laravel: 6.*
+            php: 8.0
+            dbal: 2.*
+            stability: prefer-stable
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Alter MySQL 8 root plugin
+        run: |
+          mysql --version
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql8.ports['3306'] }} -u root -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY ''"
+
+      - name: SQL Server Create Database
+        run: |
+          sleep 5s
+
+          # Test connection
+          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b
+
+          # Create DB
+          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'CREATE DATABASE migration' -b
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached, pdo_sqlsrv
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          php -m
+          composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal:${{ matrix.dbal }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+
+      - name: Setup .env
+        run: composer run action-env-setup
+
+      - name: Execute tests
+        run: vendor/bin/phpunit

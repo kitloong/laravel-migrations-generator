@@ -15,7 +15,7 @@ use KitLoong\MigrationsGenerator\MigrationMethod\PgSQLGeography;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 use KitLoong\MigrationsGenerator\Types\DBALTypes;
 use Mockery\MockInterface;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class GeometryFieldTest extends TestCase
 {

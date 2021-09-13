@@ -102,7 +102,7 @@ class SchemaGenerator
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     public function initialize()
     {
@@ -118,9 +118,10 @@ class SchemaGenerator
         switch ($setting->getPlatform()) {
             case Platform::POSTGRESQL:
                 $this->addNewDoctrineType('_text', 'text');
-                $this->addNewDoctrineType('_int4', 'integer');
+                $this->addNewDoctrineType('_int4', 'text');
                 $this->addNewDoctrineType('_numeric', 'float');
                 $this->addNewDoctrineType('cidr', 'string');
+                $this->addNewDoctrineType('oid', 'string');
                 break;
             default:
         }
@@ -130,6 +131,7 @@ class SchemaGenerator
 
     /**
      * @return string[]
+     * @throws \Doctrine\DBAL\Exception
      */
     public function getTables(): array
     {
@@ -143,6 +145,7 @@ class SchemaGenerator
      *  'single' => Collection of single column indexes, with column name as key
      *  'multi' => Collection of multi columns indexes
      * ]
+     * @throws \Doctrine\DBAL\Exception
      */
     public function getIndexes(string $table): array
     {
@@ -153,6 +156,12 @@ class SchemaGenerator
         );
     }
 
+    /**
+     * @param  string  $table
+     * @param  \Illuminate\Support\Collection  $singleColIndexes
+     * @return array
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function getFields(string $table, Collection $singleColIndexes): array
     {
         return $this->fieldGenerator->generate(
@@ -162,6 +171,11 @@ class SchemaGenerator
         );
     }
 
+    /**
+     * @param  string  $table
+     * @return array
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function getForeignKeyConstraints(string $table): array
     {
         return $this->foreignKeyGenerator->generate(
@@ -178,7 +192,7 @@ class SchemaGenerator
      * @param  string  $class
      * @param  string  $name
      * @param  string  $type
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function registerCustomDoctrineType(string $class, string $name, string $type): void
     {
@@ -194,7 +208,7 @@ class SchemaGenerator
     /**
      * @param  string  $type
      * @param  string  $name
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function addNewDoctrineType(string $type, string $name): void
     {

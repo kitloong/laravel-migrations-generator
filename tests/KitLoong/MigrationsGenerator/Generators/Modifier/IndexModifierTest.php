@@ -8,7 +8,7 @@
 namespace Tests\KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use KitLoong\MigrationsGenerator\Generators\Modifier\IndexModifier;
-use Orchestra\Testbench\TestCase;
+use Tests\KitLoong\TestCase;
 
 class IndexModifierTest extends TestCase
 {
