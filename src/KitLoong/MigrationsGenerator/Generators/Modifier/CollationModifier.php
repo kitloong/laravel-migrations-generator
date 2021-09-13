@@ -3,38 +3,26 @@
 namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
-use KitLoong\MigrationsGenerator\Generators\Decorator;
+use Doctrine\DBAL\Schema\Table;
+use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class CollationModifier
 {
-    private $decorator;
-
-    public function __construct(Decorator $decorator)
+    public function chainCollation(Table $table, ColumnMethod $method, string $type, Column $column): ColumnMethod
     {
-        $this->decorator = $decorator;
-    }
-
-    public function generate(string $tableName, Column $column): string
-    {
-//        $setting = app(MigrationsGeneratorSetting::class);
-//        $tableCollation = $setting->getSchema()->listTableDetails($tableName)->getOptions()['collation'] ?? null;
-
-        if (app(MigrationsGeneratorSetting::class)->isUseDBCollation()) {
-            $collation = $column->getPlatformOptions()['collation'] ?? null;
-            //        if (!empty($column->getPlatformOptions()['collation'])) {
-            //            if ($columnCollation !== $tableCollation) {
-            if ($collation != null) {
-                return $this->decorator->decorate(
-                    ColumnModifier::COLLATION,
-                    [$this->decorator->columnDefaultToString($collation)]
-                );
-            }
+        if (!app(MigrationsGeneratorSetting::class)->isUseDBCollation()) {
+            return $method;
         }
-//            }
-//        }
 
-        return '';
+        $defaultCollation = $table->getOptions()['collation'];
+
+        $collation = $column->getPlatformOptions()['collation'] ?? null;
+        if ($collation !== null && $collation !== $defaultCollation) {
+            $method->chain(ColumnModifier::COLLATION, $collation);
+        }
+
+        return $method;
     }
 }

@@ -15,6 +15,8 @@ use KitLoong\MigrationsGenerator\Generators\Columns\IntegerColumn;
 use KitLoong\MigrationsGenerator\Generators\Columns\MiscColumn;
 use KitLoong\MigrationsGenerator\Generators\Columns\SetColumn;
 use KitLoong\MigrationsGenerator\Generators\Columns\StringColumn;
+use KitLoong\MigrationsGenerator\Generators\Modifier\CharsetModifier;
+use KitLoong\MigrationsGenerator\Generators\Modifier\CollationModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CommentModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\DefaultModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\IndexModifier;
@@ -31,7 +33,9 @@ class ColumnGenerator
     private $miscColumn;
     private $setColumn;
     private $stringColumn;
+    private $charsetModifier;
     private $commentModifier;
+    private $collationModifier;
     private $defaultModifier;
     private $indexModifier;
     private $nullableModifier;
@@ -45,23 +49,27 @@ class ColumnGenerator
         MiscColumn $miscColumn,
         SetColumn $setColumn,
         StringColumn $stringColumn,
+        CharsetModifier $charsetModifier,
         CommentModifier $commentModifier,
+        CollationModifier $collationModifier,
         DefaultModifier $defaultModifier,
         IndexModifier $indexModifier,
         NullableModifier $nullableModifier
     ) {
-        $this->datetimeColumn   = $datetimeColumn;
-        $this->decimalColumn    = $decimalColumn;
-        $this->enumColumn       = $enumColumn;
-        $this->geometryColumn   = $geometryColumn;
-        $this->integerColumn    = $integerColumn;
-        $this->miscColumn       = $miscColumn;
-        $this->setColumn        = $setColumn;
-        $this->stringColumn     = $stringColumn;
-        $this->commentModifier  = $commentModifier;
-        $this->defaultModifier  = $defaultModifier;
-        $this->indexModifier    = $indexModifier;
-        $this->nullableModifier = $nullableModifier;
+        $this->datetimeColumn    = $datetimeColumn;
+        $this->decimalColumn     = $decimalColumn;
+        $this->enumColumn        = $enumColumn;
+        $this->geometryColumn    = $geometryColumn;
+        $this->integerColumn     = $integerColumn;
+        $this->miscColumn        = $miscColumn;
+        $this->setColumn         = $setColumn;
+        $this->stringColumn      = $stringColumn;
+        $this->charsetModifier   = $charsetModifier;
+        $this->commentModifier   = $commentModifier;
+        $this->collationModifier = $collationModifier;
+        $this->defaultModifier   = $defaultModifier;
+        $this->indexModifier     = $indexModifier;
+        $this->nullableModifier  = $nullableModifier;
     }
 
     /**
@@ -77,7 +85,7 @@ class ColumnGenerator
         $type = $this->mapToColumnType($column->getType()->getName());
 
         // Generate method with given $type.
-        // eg: TINYINT(1) will be changed into BOOLEAN.
+        // For example: TINYINT(1) will be changed into BOOLEAN.
         // Both old and new $type will be set into $method->name.
         switch ($type) {
             case ColumnType::INTEGER:
@@ -121,6 +129,8 @@ class ColumnGenerator
         // Refresh $type by get method name.
         $type = $method->getName();
 
+        $method = $this->charsetModifier->chainCharset($table, $method, $type, $column);
+        $method = $this->collationModifier->chainCollation($table, $method, $type, $column);
         $method = $this->nullableModifier->chainNullable($method, $type, $column);
         $method = $this->defaultModifier->chainDefault($method, $type, $column);
         $method = $this->indexModifier->chainIndex($table->getName(), $method, $singleColumnIndexes, $column);
