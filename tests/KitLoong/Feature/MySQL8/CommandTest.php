@@ -24,7 +24,6 @@ class CommandTest extends MySQL8TestCase
 
     public function testCollation()
     {
-        $this->markTestSkipped();
         $migrateTemplates = function () {
             $this->migrateCollation('mysql8');
         };
