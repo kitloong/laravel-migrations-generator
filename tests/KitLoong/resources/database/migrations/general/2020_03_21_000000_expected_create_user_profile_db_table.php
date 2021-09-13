@@ -14,13 +14,18 @@ class ExpectedCreateUserProfile_DB_Table extends Migration
     public function up()
     {
         Schema::create('user_profile_[db]', function (Blueprint $table) {
-            $table->integer('id');
+            $table->increments('id');
             $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('column-hyphen')->unsigned();
+            $table->bigInteger('custom_name')->unsigned();
+            $table->bigInteger('user_id_2')->unsigned();
             $table->unsignedInteger('sub_id');
 
-            $table->primary('id');
-//            $table->foreign('user_id')->references('id')->on('users_[db]');
+            $table->foreign('user_id')->references('id')->on('users_[db]');
+            $table->foreign('custom_name', 'custom_foreign')->references('id')->on('users_[db]');
+            $table->foreign('column-hyphen')->references('id')->on('users_[db]');
             $table->foreign(['user_id', 'sub_id'])->references(['id', 'sub_id'])->on('users_[db]');
+            $table->foreign(['user_id_2', 'sub_id'])->references(['id', 'sub_id'])->on('users_[db]');
         });
     }
 

@@ -221,7 +221,7 @@ class MigrateGenerateCommand extends Command
      *
      * @param  string  $question  Question to ask
      * @param  int|null  $default  Default Value (optional)
-     * @return int           Answer
+     * @return int Answer
      */
     protected function askNumeric(string $question, $default = null): int
     {
@@ -263,7 +263,7 @@ class MigrateGenerateCommand extends Command
     }
 
     /**
-     * @param  array  $tables
+     * @param  string[]  $tables
      * @throws \Doctrine\DBAL\Exception
      */
     private function generateTables(array $tables): void
@@ -271,16 +271,45 @@ class MigrateGenerateCommand extends Command
         foreach ($tables as $table) {
             $migrationFilepath = $this->generator->generateTable(
                 $this->schema->getTable($table),
-                $this->schema->getColumns($table)
+                $this->schema->getColumns($table),
+                $this->schema->getIndexes($table)
             );
 
             $this->info("Created: {$migrationFilepath}");
+            $this->logMigration($migrationFilepath);
+        }
+    }
 
-            // Log migration repository
-            if ($this->shouldLog) {
-                $file = basename($migrationFilepath, '.php');
-                $this->repository->log($file, $this->nextBatchNumber);
+    /**
+     * @param  string[]  $tables
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function generateForeignKeys(array $tables): void
+    {
+        foreach ($tables as $table) {
+            $foreignKeys = $this->schema->getForeignKeys($table);
+            if (count($foreignKeys) > 0) {
+                $migrationFilepath = $this->generator->generateForeignKeys(
+                    $this->schema->getTable($table),
+                    $foreignKeys
+                );
+
+                $this->info("Created: {$migrationFilepath}");
+                $this->logMigration($migrationFilepath);
             }
+        }
+    }
+
+    /**
+     * Log migration repository
+     *
+     * @param  string  $migrationFilepath
+     */
+    private function logMigration(string $migrationFilepath): void
+    {
+        if ($this->shouldLog) {
+            $file = basename($migrationFilepath, '.php');
+            $this->repository->log($file, $this->nextBatchNumber);
         }
     }
 }

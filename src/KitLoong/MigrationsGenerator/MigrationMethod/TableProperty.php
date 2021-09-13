@@ -4,7 +4,7 @@ namespace KitLoong\MigrationsGenerator\MigrationMethod;
 
 final class TableProperty
 {
-    const CHARSET = 'charset';
+    const CHARSET   = 'charset';
     const COLLATION = 'collation';
-    const ENGINE = 'engine';
+    const ENGINE    = 'engine';
 }

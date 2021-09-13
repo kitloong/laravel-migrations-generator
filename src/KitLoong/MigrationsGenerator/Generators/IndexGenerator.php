@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Index;
+use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
 use KitLoong\MigrationsGenerator\MigrationMethod\IndexType;
@@ -21,9 +22,14 @@ class IndexGenerator
         $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
-    public function generate(Index $index): ColumnMethod
+    public function generate(Table $table, Index $index): ColumnMethod
     {
-        return new ColumnMethod($this->getIndexType($index), $index->getColumns());
+        $indexType = $this->getIndexType($index);
+        if ($this->shouldSkipName($table->getName(), $index, $indexType)) {
+            return new ColumnMethod($indexType, $index->getColumns());
+        } else {
+            return new ColumnMethod($indexType, $index->getColumns(), $index->getName());
+        }
     }
 
     /**
@@ -77,6 +83,27 @@ class IndexGenerator
         } else {
             return IndexType::INDEX;
         }
+    }
+
+    /**
+     * @param  string  $table
+     * @param  Index  $index
+     * @param  string  $type
+     * @return bool
+     */
+    public function shouldSkipName(string $table, Index $index, string $type): bool
+    {
+        if ($index->isPrimary()) {
+            return true;
+        }
+
+        if (app(MigrationsGeneratorSetting::class)->isIgnoreIndexNames()) {
+            return true;
+        }
+
+        $guessIndexName = strtolower($table.'_'.implode('_', $index->getColumns()).'_'.$type);
+        $guessIndexName = str_replace(['-', '.'], '_', $guessIndexName);
+        return $guessIndexName === $index->getName();
     }
 
     /**

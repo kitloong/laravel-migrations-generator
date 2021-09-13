@@ -4,6 +4,7 @@ namespace Tests\KitLoong\Feature;
 
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
+use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Tests\KitLoong\TestCase;
@@ -94,15 +95,35 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function generateMigrations(array $options = []): void
     {
+//        $this->artisan(
+//            'migrate:generate',
+//            array_merge($options, [
+//                '--path' => $this->storageMigrations(),
+//                '--no-interaction' => true,
+//            ])
+//        );
         $this->artisan(
             'migrate:generate',
-            array_merge($options, [
+            array_merge([], [
                 '--path' => $this->storageMigrations(),
-                '--no-interaction' => true,
-                // TODO For test
-//                '--tables' => 'reserved_name_not_null_mysql57',
             ])
-        );
+        )
+            ->expectsQuestion('Do you want to log these migrations in the migrations table? [Y/n] ', 'y')
+            ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0] ', 0);
+
+        $migrations = [];
+        foreach (File::files($this->storageMigrations()) as $migration) {
+            $migrations[] = $migration->getFilenameWithoutExtension();
+        }
+
+        $dbMigrations = app(MigrationRepositoryInterface::class)->getRan();
+
+        // Both file and DB migrations are sorted by name ascending however the result is slightly different.
+        // Use PHP sort here to maintain same ordering.
+        sort($migrations);
+        sort($dbMigrations);
+
+        $this->assertSame($migrations, $dbMigrations);
     }
 
     protected function truncateMigration()

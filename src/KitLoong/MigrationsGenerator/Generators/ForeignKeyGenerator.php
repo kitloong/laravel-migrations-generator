@@ -1,77 +1,48 @@
 <?php namespace KitLoong\MigrationsGenerator\Generators;
 
+use Doctrine\DBAL\Schema\ForeignKeyConstraint;
+use Doctrine\DBAL\Schema\Table;
+use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use KitLoong\MigrationsGenerator\MigrationMethod\Foreign;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
+
 class ForeignKeyGenerator
 {
-    /**
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * Get array of foreign keys
-     *
-     * @param  string  $table  Table name
-     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint[]  $foreignKeys
-     * @param  bool  $ignoreForeignKeyNames
-     *
-     * @return array
-     */
-    public function generate(string $table, $foreignKeys, bool $ignoreForeignKeyNames): array
+    public function generate(Table $table, ForeignKeyConstraint $foreignKey): ColumnMethod
     {
-        $this->table = $table;
-        $fields = [];
-
-        if (empty($foreignKeys)) {
-            return [];
+        if ($this->shouldSkipName($table->getName(), $foreignKey)) {
+            $method = new ColumnMethod(Foreign::FOREIGN, $foreignKey->getLocalColumns());
+        } else {
+            $method = new ColumnMethod(Foreign::FOREIGN, $foreignKey->getLocalColumns(), $foreignKey->getName());
         }
 
-        foreach ($foreignKeys as $foreignKey) {
-            $fields[] = [
-                'name' => $this->getName($foreignKey, $ignoreForeignKeyNames),
-                'fields' => $foreignKey->getLocalColumns(),
-                'references' => $foreignKey->getForeignColumns(),
-                'on' => $this->decorator->tableWithoutPrefix($foreignKey->getForeignTableName()),
-                'onUpdate' => $foreignKey->hasOption('onUpdate') ? $foreignKey->getOption('onUpdate') : null,
-                'onDelete' => $foreignKey->hasOption('onDelete') ? $foreignKey->getOption('onDelete') : null,
-            ];
+        $method->chain(Foreign::REFERENCES, $foreignKey->getForeignColumns())
+            ->chain(Foreign::ON, $foreignKey->getForeignTableName());
+
+        if ($foreignKey->hasOption('onUpdate')) {
+            $method->chain(Foreign::ON_UPDATE, $foreignKey->getOption('onUpdate'));
         }
-        return $fields;
-    }
 
-    /**
-     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint  $foreignKey
-     * @param  bool  $ignoreForeignKeyNames
-     *
-     * @return null|string
-     */
-    protected function getName($foreignKey, bool $ignoreForeignKeyNames): ?string
-    {
-        if ($ignoreForeignKeyNames or $this->isDefaultName($foreignKey)) {
-            return null;
+        if ($foreignKey->hasOption('onDelete')) {
+            $method->chain(Foreign::ON_DELETE, $foreignKey->getOption('onDelete'));
         }
-        return $foreignKey->getName();
+
+        return $method;
     }
 
-    /**
-     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint  $foreignKey
-     *
-     * @return bool
-     */
-    protected function isDefaultName($foreignKey): bool
+    public function generateDrop(ForeignKeyConstraint $foreignKey): ColumnMethod
     {
-        return $foreignKey->getName() === $this->createIndexName($foreignKey->getLocalColumns());
+        return new ColumnMethod(Foreign::FOREIGN, $foreignKey->getName());
     }
 
-    /**
-     * Create a default index name for the table.
-     *
-     * @param  array  $columns
-     * @return string
-     */
-    protected function createIndexName(array $columns): string
+    private function shouldSkipName(string $table, ForeignKeyConstraint $foreignKey): bool
     {
-        $index = strtolower($this->table.'_'.implode('_', $columns).'_foreign');
+        if (app(MigrationsGeneratorSetting::class)->isIgnoreForeignKeyNames()) {
+            return true;
+        }
 
-        return str_replace(['-', '.'], '_', $index);
+        $guessIndexName = strtolower($table.'_'.implode('_', $foreignKey->getLocalColumns()).'_foreign');
+        $guessIndexName = str_replace(['-', '.'], '_', $guessIndexName);
+        return $guessIndexName === $foreignKey->getName();
     }
 }

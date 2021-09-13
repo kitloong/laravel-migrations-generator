@@ -108,6 +108,26 @@ class Schema
 
     /**
      * @param  string  $table
+     * @return \Doctrine\DBAL\Schema\Table
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getTable(string $table): Table
+    {
+        return $this->schema->listTableDetails($table);
+    }
+
+    /**
+     * @param  string  $table
+     * @return \Doctrine\DBAL\Schema\Index[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getIndexes(string $table): array
+    {
+        return $this->schema->listTableIndexes($table);
+    }
+
+    /**
+     * @param  string  $table
      * @return \Doctrine\DBAL\Schema\Column[]
      * @throws \Doctrine\DBAL\Exception
      */
@@ -118,12 +138,12 @@ class Schema
 
     /**
      * @param  string  $table
-     * @return \Doctrine\DBAL\Schema\Table
+     * @return \Doctrine\DBAL\Schema\ForeignKeyConstraint[]
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getTable(string $table): Table
+    public function getForeignKeys(string $table): array
     {
-        return $this->schema->listTableDetails($table);
+        return $this->schema->listTableForeignKeys($table);
     }
 
     /**

@@ -37,9 +37,7 @@ class IndexModifier
             }
 
             $indexType = $this->indexGenerator->getIndexType($index);
-            if ($index->isPrimary() ||
-                app(MigrationsGeneratorSetting::class)->isIgnoreIndexNames() ||
-                $this->shouldSkipName($table, $index, $indexType)) {
+            if ($this->indexGenerator->shouldSkipName($table, $index, $indexType)) {
                 $method->chain($indexType);
             } else {
                 $method->chain($indexType, $index->getName());
@@ -48,16 +46,5 @@ class IndexModifier
         return $method;
     }
 
-    /**
-     * @param  string  $table
-     * @param  Index  $index
-     * @param  string  $type
-     * @return bool
-     */
-    private function shouldSkipName(string $table, Index $index, string $type): bool
-    {
-        $guessIndexName = strtolower($table.'_'.implode('_', $index->getColumns()).'_'.$type);
-        $guessIndexName = str_replace(['-', '.'], '_', $guessIndexName);
-        return $guessIndexName === $index->getName();
-    }
+
 }
