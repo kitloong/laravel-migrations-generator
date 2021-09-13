@@ -28,7 +28,9 @@ abstract class Table extends WayTable
         $table = $this->decorator->tableWithoutPrefix($table);
         $this->table = $table;
         if ($connection !== Config::get('database.default')) {
-            $method = 'connection(\''.$connection.'\')->'.$method;
+            $connection = 'connection(\''.$connection.'\')->';
+        } else {
+            $connection = '';
         }
 
         $compiled = $this->compiler->compile($this->getTemplate($method), ['table' => $table, 'method' => $method]);
