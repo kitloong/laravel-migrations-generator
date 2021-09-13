@@ -28,7 +28,14 @@ class WriterTest extends TestCase
         $down = new SchemaBlueprint('mysql', 'users', SchemaBuilder::DROP_IF_EXISTS);
 
         $migration = app(MigrationWriter::class);
-        $migration->setClassName('Gogo');
-        $migration->writeTo(storage_path('migration.php'), $up, $down, null);
+        $migration->writeTo(
+            storage_path('migration.php'),
+            config('generators.config.migration_template_path'),
+            'Tester',
+            $up,
+            $down
+        );
+
+        $this->assertFileExists(storage_path('migration.php'));
     }
 }

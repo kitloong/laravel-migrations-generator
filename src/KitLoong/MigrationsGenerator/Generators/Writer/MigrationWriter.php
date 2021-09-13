@@ -2,18 +2,11 @@
 
 namespace KitLoong\MigrationsGenerator\Generators\Writer;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 
 class MigrationWriter
 {
-    /** @var string */
-    /**
-     * @deprecated
-     */
-    private $className;
-
     public function writeTo(
         string $path,
         string $stubPath,
@@ -26,22 +19,6 @@ class MigrationWriter
             $path,
             $this->populateStub($stub, $className, $up, $down)
         );
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getClassName(): string
-    {
-        return $this->className;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function setClassName(string $className): void
-    {
-        $this->className = $className;
     }
 
     /**
@@ -69,8 +46,8 @@ class MigrationWriter
         $content = $stub;
         $replace = [
             '{{ class }}' => $className,
-            '{{ up }}' => $up->toString(),
-            '{{ down }}' => $down->toString(),
+            '{{ up }}'    => $up->toString(),
+            '{{ down }}'  => $down->toString(),
         ];
         return str_replace(array_keys($replace), $replace, $content);
     }
