@@ -7,3 +7,4 @@ build
 storage
 .env
 .phpstorm.meta.php
+migrations
