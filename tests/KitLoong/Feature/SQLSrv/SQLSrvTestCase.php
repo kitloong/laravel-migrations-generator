@@ -57,7 +57,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
         $tables = Schema::connection('sqlsrv')->getConnection()->getDoctrineSchemaManager()->listTableNames();
         foreach ($tables as $table) {
-            Schema::drop($table);
+            Schema::dropIfExists($table);
         }
     }
 }

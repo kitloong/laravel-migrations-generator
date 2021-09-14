@@ -12,9 +12,12 @@ class FilenameGenerator
     private $createPattern;
     private $foreignKeyDatePrefix;
     private $foreignKeyPattern;
+    private $tableNameGenerator;
 
-    public function __construct()
+    public function __construct(TableNameGenerator $tableNameGenerator)
     {
+        $this->tableNameGenerator = $tableNameGenerator;
+
         $this->createDatePrefix     = (string) date('Y_m_d_His');
         $this->foreignKeyDatePrefix = (string) date('Y_m_d_His', strtotime('+1 second'));
 
@@ -83,8 +86,7 @@ class FilenameGenerator
 
     private function stripTablePrefix(string $table): string
     {
-        $setting          = app(MigrationsGeneratorSetting::class);
         $tableNameEscaped = (string) preg_replace('/[^a-zA-Z0-9_]/', '_', $table);
-        return substr($tableNameEscaped, strlen($setting->getConnection()->getTablePrefix()));
+        return $this->tableNameGenerator->stripPrefix($tableNameEscaped);
     }
 }

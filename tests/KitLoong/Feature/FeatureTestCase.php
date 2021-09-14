@@ -30,6 +30,13 @@ abstract class FeatureTestCase extends TestCase
         $this->dropAllTables();
     }
 
+    protected function tearDown(): void
+    {
+        $this->dropAllTables();
+
+        parent::tearDown();
+    }
+
     protected function loadDotenv()
     {
         if (method_exists(Dotenv::class, 'createImmutable')) {
@@ -42,6 +49,14 @@ abstract class FeatureTestCase extends TestCase
             $dotenv = new Dotenv(base_path());
         }
         $dotenv->load();
+    }
+
+    protected function prepareStorage()
+    {
+        File::deleteDirectory(storage_path());
+        File::makeDirectory($this->storageMigrations(), 0775, true);
+        File::makeDirectory($this->storageFrom());
+        File::makeDirectory($this->storageSql());
     }
 
     protected function storageMigrations(string $path = ''): string
@@ -69,7 +84,7 @@ abstract class FeatureTestCase extends TestCase
         $this->migrateFromTemplate($connection, base_path('tests/KitLoong/resources/database/migrations/collation'));
     }
 
-    private function migrateFromTemplate(string $connection, string $templatePath): void
+    protected function migrateFromTemplate(string $connection, string $templatePath): void
     {
         File::copyDirectory($templatePath, $this->storageFrom());
         foreach (File::files($this->storageFrom()) as $file) {
@@ -86,7 +101,23 @@ abstract class FeatureTestCase extends TestCase
             );
         }
 
-        $this->loadMigrationsFrom($this->storageFrom());
+        $this->runMigrationsFrom($this->storageFrom());
+    }
+
+    protected function runMigrationsFrom(string $path): void
+    {
+        $this->artisan('migrate', [
+            '--realpath' => true,
+            '--path' => $path
+        ]);
+    }
+
+    protected function rollbackMigrationsFrom($path): void
+    {
+        $this->artisan('migrate:rollback', [
+            '--realpath' => true,
+            '--path' => $path
+        ]);
     }
 
     /**
@@ -95,22 +126,19 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function generateMigrations(array $options = []): void
     {
-//        $this->artisan(
-//            'migrate:generate',
-//            array_merge($options, [
-//                '--path' => $this->storageMigrations(),
-//                '--no-interaction' => true,
-//            ])
-//        );
         $this->artisan(
             'migrate:generate',
             array_merge($options, [
                 '--path' => $this->storageMigrations(),
+                '--templatePath' => base_path('src/KitLoong/MigrationsGenerator/stub/migration.stub'),
             ])
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table? [Y/n] ', 'y')
             ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0] ', 0);
+    }
 
+    protected function assertMigrations(): void
+    {
         $migrations = [];
         foreach (File::files($this->storageMigrations()) as $migration) {
             $migrations[] = $migration->getFilenameWithoutExtension();

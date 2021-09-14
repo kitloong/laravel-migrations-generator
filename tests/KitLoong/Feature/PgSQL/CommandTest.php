@@ -63,6 +63,8 @@ class CommandTest extends PgSQLTestCase
 
         $generateMigrations();
 
+        $this->assertMigrations();
+
         foreach (File::files($this->storageMigrations()) as $file) {
             if (Str::contains($file->getBasename(), 'tiger')) {
                 File::delete($file);
@@ -75,7 +77,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->dropAllTables();
 
-        $this->loadMigrationsFrom($this->storageMigrations());
+        $this->runMigrationsFrom($this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));

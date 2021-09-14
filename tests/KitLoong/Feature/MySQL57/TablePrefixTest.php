@@ -1,35 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/11/14
- */
 
-namespace Tests\KitLoong\Feature\MySQL8;
+namespace Tests\KitLoong\Feature\MySQL57;
 
-class CommandTest extends MySQL8TestCase
+class TablePrefixTest extends MySQL57TestCase
 {
-    public function testRun()
+    protected function getEnvironmentSetUp($app)
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('database.connections.mysql.prefix', 'kit_');
+    }
+
+    public function testTablePrefix()
     {
         $migrateTemplates = function () {
-            $this->migrateGeneral('mysql8');
+            $this->migrateGeneral('mysql57');
         };
 
         $generateMigrations = function () {
             $this->generateMigrations();
-        };
-
-        $this->verify($migrateTemplates, $generateMigrations);
-    }
-
-    public function testCollation()
-    {
-        $migrateTemplates = function () {
-            $this->migrateCollation('mysql8');
-        };
-
-        $generateMigrations = function () {
-            $this->generateMigrations(['--useDBCollation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);

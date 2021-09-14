@@ -90,7 +90,7 @@ Run `php artisan help migrate:generate` for a list of options.
 |  --useDBCollation|Follow db collations for migrations|
 |  --defaultIndexNames|Don't use db index names for migrations|
 |  --defaultFKNames|Don't use db foreign key names for migrations|
-|-tp, --templatePath[=TEMPLATEPATH]|The location of the template for this generator|
+|-tp, --templatePath[=TEMPLATE_PATH]|The location of the template for this generator|
 |--date=[DATE]|Migrations will be created with specified date. Foreign keys will be crated for specified time + 1 second. Date should be in format suitable for Carbon::parse|
 |--guessMorphs|Try to guess morphs columns|
 |--filenamePrefix[=FILENAME_PREFIX]|Prefix for filename, may be used to specify connection in filename|

@@ -8,6 +8,13 @@ use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class ForeignKeyGenerator
 {
+    private $tableNameGenerator;
+
+    public function __construct(TableNameGenerator $tableNameGenerator)
+    {
+        $this->tableNameGenerator = $tableNameGenerator;
+    }
+
     public function generate(Table $table, ForeignKeyConstraint $foreignKey): ColumnMethod
     {
         if ($this->shouldSkipName($table->getName(), $foreignKey)) {
@@ -17,7 +24,7 @@ class ForeignKeyGenerator
         }
 
         $method->chain(Foreign::REFERENCES, $foreignKey->getUnquotedForeignColumns())
-            ->chain(Foreign::ON, $foreignKey->getForeignTableName());
+            ->chain(Foreign::ON, $this->tableNameGenerator->stripPrefix($foreignKey->getForeignTableName()));
 
         if ($foreignKey->hasOption('onUpdate')) {
             $method->chain(Foreign::ON_UPDATE, $foreignKey->getOption('onUpdate'));
@@ -32,7 +39,7 @@ class ForeignKeyGenerator
 
     public function generateDrop(ForeignKeyConstraint $foreignKey): ColumnMethod
     {
-        return new ColumnMethod(Foreign::FOREIGN, $foreignKey->getName());
+        return new ColumnMethod(Foreign::DROP_FOREIGN, $foreignKey->getName());
     }
 
     private function shouldSkipName(string $table, ForeignKeyConstraint $foreignKey): bool

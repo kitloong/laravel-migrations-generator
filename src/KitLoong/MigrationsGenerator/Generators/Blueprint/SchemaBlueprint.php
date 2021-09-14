@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator\Generators\Blueprint;
 
 use Illuminate\Support\Facades\Config;
 use KitLoong\MigrationsGenerator\Generators\Methods\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Generators\TableNameGenerator;
 use KitLoong\MigrationsGenerator\Generators\Writer\WriterConstant;
 
 class SchemaBlueprint
@@ -50,14 +51,16 @@ class SchemaBlueprint
             $schema = "Schema::$this->schemaBuilder";
         }
 
+        $tableWithoutPrefix = app(TableNameGenerator::class)->stripPrefix($this->table);
+
         $lines = [];
         if ($this->blueprint !== null) {
-            $lines[] = "$schema('$this->table', function (Blueprint \$table) {";
+            $lines[] = "$schema('$tableWithoutPrefix', function (Blueprint \$table) {";
             // Add 1 tabulation to indent blueprint definition.
             $lines[] = WriterConstant::TAB.$this->blueprint->toString();
             $lines[] = "});";
         } else {
-            $lines[] = "$schema('$this->table');";
+            $lines[] = "$schema('$tableWithoutPrefix');";
         }
 
         return $this->implodeLines($lines, 2);

@@ -1,12 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/11/14
- */
 
 namespace Tests\KitLoong\Feature\MySQL57;
 
+use Illuminate\Support\Facades\DB;
+
+/**
+ * @runTestsInSeparateProcesses
+ */
 class CommandTest extends MySQL57TestCase
 {
     public function testRun()
@@ -20,6 +20,21 @@ class CommandTest extends MySQL57TestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testDown()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations();
+
+        $this->rollbackMigrationsFrom($this->storageMigrations());
+
+        $tables = DB::select('SHOW TABLES');
+        $this->assertSame(1, count($tables));
+        $this->assertSame(0, DB::table('migrations')->count());
     }
 
     public function testCollation()
@@ -44,9 +59,11 @@ class CommandTest extends MySQL57TestCase
 
         $generateMigrations();
 
+        $this->assertMigrations();
+
         $this->dropAllTables();
 
-        $this->loadMigrationsFrom($this->storageMigrations());
+        $this->runMigrationsFrom($this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));

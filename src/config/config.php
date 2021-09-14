@@ -1,23 +1,15 @@
 <?php
 
 return [
+    // Where the templates for the generators are stored.
+    'migration_template_path' => __DIR__ . '/../KitLoong/MigrationsGenerator/stub/migration.stub',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Where the templates for the generators are stored...
-    |--------------------------------------------------------------------------
-    |
-    */
+    // Where the generated files will be saved.
+    'migration_target_path' => base_path('database/migrations'),
 
-    'migration_template_path' => __DIR__ . '/../Way/Generators/templates/migration.txt',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Where the generated files will be saved...
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'migration_target_path'   => base_path('database/migrations'),
-
+    // Migration filename pattern.
+    'filename_pattern' => [
+        'create' => '{{ datetime_prefix }}_create_{{ table }}_table.php',
+        'foreign_key' => '{{ datetime_prefix }}_add_foreign_keys_to_{{ table }}_table.php',
+    ],
 ];

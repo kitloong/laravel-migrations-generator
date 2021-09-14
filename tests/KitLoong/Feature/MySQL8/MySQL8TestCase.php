@@ -59,7 +59,7 @@ abstract class MySQL8TestCase extends FeatureTestCase
     {
         $tables = DB::select('SHOW TABLES');
         foreach ($tables as $table) {
-            Schema::drop($table->{'Tables_in_'.config('database.connections.mysql.database')});
+            Schema::dropIfExists($table->{'Tables_in_'.config('database.connections.mysql.database')});
         }
     }
 }

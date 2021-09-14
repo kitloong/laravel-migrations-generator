@@ -39,9 +39,11 @@ class CommandTest extends SQLSrvTestCase
 
         $generateMigrations();
 
+        $this->assertMigrations();
+
         $this->dropAllTables();
 
-        $this->loadMigrationsFrom($this->storageMigrations());
+        $this->runMigrationsFrom($this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));
