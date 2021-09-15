@@ -51,14 +51,6 @@ class DatetimeColumn implements GeneratableColumn
 
     public function generate(string $type, Table $table, Column $column): ColumnMethod
     {
-//        if ($this->guessTimestamps($type, $column) !== null) {
-//            $method = new ColumnMethod(ColumnType::TIMESTAMPS);
-//
-//            // To remove `created_at` in previous line
-//            $method->setMergeColumns(['created_at']);
-//            return $method;
-//        }
-
         $length = $this->getLength($table->getName(), $column);
 
         switch ($column->getName()) {
@@ -142,63 +134,6 @@ class DatetimeColumn implements GeneratableColumn
             default:
                 return $column->getScale();
         }
-    }
-
-    /**
-     * @param  string  $type
-     * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return bool
-     */
-    private function guessTimestamps(string $type, Column $column): bool
-    {
-        // To check if this column is `created_at`.
-        if ($this->checkIsCreatedAt($type, $column)) {
-            $this->hasCreatedAt = true;
-            return false;
-        }
-
-        if ($this->checkIsUpdatedAt($type, $column)) {
-            if ($this->hasCreatedAt) {
-                // Reset
-                $this->hasCreatedAt = false;
-                return true;
-            }
-        }
-
-        // `created_at` and `updated_at` column sequence matters and must be next to each other.
-        // in case of column order `created_at`, `other_column`,
-        // We need to reset `hasCreatedAt` to false since this is not `timestamps`.
-        $this->hasCreatedAt = false;
-
-        return false;
-    }
-
-    private function checkIsCreatedAt(string $type, Column $column): bool
-    {
-        switch ($type) {
-            case ColumnType::TIMESTAMP:
-            case ColumnType::TIMESTAMP_TZ:
-                if ($column->getName() === ColumnName::CREATED_AT) {
-                    return true;
-                }
-                break;
-            default:
-        }
-        return false;
-    }
-
-    private function checkIsUpdatedAt(string $type, Column $column): bool
-    {
-        switch ($type) {
-            case ColumnType::TIMESTAMP:
-            case ColumnType::TIMESTAMP_TZ:
-                if ($column->getName() === ColumnName::UPDATED_AT) {
-                    return true;
-                }
-                break;
-            default:
-        }
-        return false;
     }
 
     /**

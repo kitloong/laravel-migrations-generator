@@ -64,12 +64,6 @@ class Generator
 
         foreach ($columns as $column) {
             $columnMethod = $this->columnGenerator->generate($table, $column, $singleColumnIndexes);
-
-            // Some columns can be merged with existing columns in the blueprint.
-            // We need to provide the merge name list for blueprint to remove the previous lines.
-            if ($columnMethod->hasMergeColumns()) {
-                $blueprint->removeLinesByColumnNames($columnMethod->getMergeColumns());
-            }
             $blueprint->setColumnMethod($columnMethod);
         }
 

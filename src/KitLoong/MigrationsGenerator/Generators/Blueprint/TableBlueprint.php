@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator\Generators\Blueprint;
 
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
+use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
 use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 
 class TableBlueprint
@@ -66,21 +67,6 @@ class TableBlueprint
     }
 
     /**
-     * @param  string[]  $columnNameList
-     */
-    public function removeLinesByColumnNames(array $columnNameList): void
-    {
-        $this->lines = collect($this->lines)->filter(function ($line) use ($columnNameList) {
-            if ($line instanceof ColumnMethod) {
-                $columnName = $line->getValues()[0] ?? '';
-                return !in_array($columnName, $columnNameList);
-            }
-
-            return true;
-        })->toArray();
-    }
-
-    /**
      * @return array
      */
     public function getLines(): array
@@ -100,7 +86,7 @@ class TableBlueprint
                 continue;
             }
 
-            if (!$this->checkTimestamps('created_at', $line)) {
+            if (!$this->checkTimestamps(ColumnName::CREATED_AT, $line)) {
                 continue;
             }
 
@@ -115,7 +101,7 @@ class TableBlueprint
             return;
         }
 
-        if (!$this->checkTimestamps('updated_at', $updatedAt)) {
+        if (!$this->checkTimestamps(ColumnName::UPDATED_AT, $updatedAt)) {
             return;
         }
 
@@ -125,7 +111,7 @@ class TableBlueprint
         }
 
         if ($isTimestamps === true) {
-            if ($length === 0) {
+            if ($length === 0) { // MIGRATION_DEFAULT_PRECISION = 0
                 $this->lines[$createdAtLineKey] = new ColumnMethod(ColumnType::TIMESTAMPS);
             } else {
                 $this->lines[$createdAtLineKey] = new ColumnMethod(ColumnType::TIMESTAMPS, $length);
