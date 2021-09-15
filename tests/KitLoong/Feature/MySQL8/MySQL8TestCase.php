@@ -18,8 +18,8 @@ abstract class MySQL8TestCase extends FeatureTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('database.default', 'mysql');
-        $app['config']->set('database.connections.mysql', [
+        $app['config']->set('database.default', 'mysql8');
+        $app['config']->set('database.connections.mysql8', [
             'driver' => 'mysql',
             'url' => null,
             'host' => env('MYSQL8_HOST'),
@@ -42,14 +42,14 @@ abstract class MySQL8TestCase extends FeatureTestCase
 
     protected function dumpSchemaAs(string $destination): void
     {
-        $password = (!empty(config('database.connections.mysql.password')) ?
-            '-p\''.config('database.connections.mysql.password').'\'' :
+        $password = (!empty(config('database.connections.mysql8.password')) ?
+            '-p\''.config('database.connections.mysql8.password').'\'' :
             '');
         $command = sprintf(
             'mysqldump -h %s -u %s '.$password.' %s --compact --no-data > %s',
-            config('database.connections.mysql.host'),
-            config('database.connections.mysql.username'),
-            config('database.connections.mysql.database'),
+            config('database.connections.mysql8.host'),
+            config('database.connections.mysql8.username'),
+            config('database.connections.mysql8.database'),
             $destination
         );
         exec($command);
@@ -59,7 +59,7 @@ abstract class MySQL8TestCase extends FeatureTestCase
     {
         $tables = DB::select('SHOW TABLES');
         foreach ($tables as $table) {
-            Schema::dropIfExists($table->{'Tables_in_'.config('database.connections.mysql.database')});
+            Schema::dropIfExists($table->{'Tables_in_'.config('database.connections.mysql8.database')});
         }
     }
 }

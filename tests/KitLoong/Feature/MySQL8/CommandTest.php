@@ -48,7 +48,7 @@ class CommandTest extends MySQL8TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom($this->storageMigrations());
+        $this->runMigrationsFrom('mysql8', $this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));

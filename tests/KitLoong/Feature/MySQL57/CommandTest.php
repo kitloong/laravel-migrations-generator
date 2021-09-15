@@ -30,7 +30,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->generateMigrations();
 
-        $this->rollbackMigrationsFrom($this->storageMigrations());
+        $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
 
         $tables = DB::select('SHOW TABLES');
         $this->assertSame(1, count($tables));
@@ -63,7 +63,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom($this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));

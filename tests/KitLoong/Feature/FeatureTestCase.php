@@ -101,20 +101,22 @@ abstract class FeatureTestCase extends TestCase
             );
         }
 
-        $this->runMigrationsFrom($this->storageFrom());
+        $this->runMigrationsFrom($connection, $this->storageFrom());
     }
 
-    protected function runMigrationsFrom(string $path): void
+    protected function runMigrationsFrom(string $connection, string $path): void
     {
         $this->artisan('migrate', [
+            '--database' => $connection,
             '--realpath' => true,
             '--path' => $path
         ]);
     }
 
-    protected function rollbackMigrationsFrom($path): void
+    protected function rollbackMigrationsFrom(string $connection, string $path): void
     {
         $this->artisan('migrate:rollback', [
+            '--database' => $connection,
             '--realpath' => true,
             '--path' => $path
         ]);

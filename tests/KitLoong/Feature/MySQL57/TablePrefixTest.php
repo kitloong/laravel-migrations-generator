@@ -37,7 +37,7 @@ class TablePrefixTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom($this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));

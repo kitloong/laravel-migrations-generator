@@ -77,7 +77,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom($this->storageMigrations());
+        $this->runMigrationsFrom('pgsql', $this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));

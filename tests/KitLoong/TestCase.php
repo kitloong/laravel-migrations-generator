@@ -3,7 +3,6 @@
 namespace Tests\KitLoong;
 
 use Exception;
-use KitLoong\AppLogger\AppLoggerServiceProvider;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 use Mockery;
 use Orchestra\Testbench\TestCase as Testbench;
@@ -32,7 +31,6 @@ abstract class TestCase extends Testbench
     protected function getPackageProviders($app)
     {
         return [
-            AppLoggerServiceProvider::class,
             MigrationsGeneratorServiceProvider::class
         ];
     }

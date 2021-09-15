@@ -18,8 +18,8 @@ abstract class MySQL57TestCase extends FeatureTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('database.default', 'mysql');
-        $app['config']->set('database.connections.mysql', [
+        $app['config']->set('database.default', 'mysql57');
+        $app['config']->set('database.connections.mysql57', [
             'driver'         => 'mysql',
             'url'            => null,
             'host'           => env('MYSQL57_HOST'),
@@ -42,14 +42,14 @@ abstract class MySQL57TestCase extends FeatureTestCase
 
     protected function dumpSchemaAs(string $destination): void
     {
-        $password = (!empty(config('database.connections.mysql.password')) ?
-            '-p\''.config('database.connections.mysql.password').'\'' :
+        $password = (!empty(config('database.connections.mysql57.password')) ?
+            '-p\''.config('database.connections.mysql57.password').'\'' :
             '');
         $command  = sprintf(
             'mysqldump -h %s -u %s '.$password.' %s --compact --no-data > %s',
-            config('database.connections.mysql.host'),
-            config('database.connections.mysql.username'),
-            config('database.connections.mysql.database'),
+            config('database.connections.mysql57.host'),
+            config('database.connections.mysql57.username'),
+            config('database.connections.mysql57.database'),
             $destination
         );
         exec($command);
@@ -59,10 +59,10 @@ abstract class MySQL57TestCase extends FeatureTestCase
     {
         $tables = DB::select('SHOW TABLES');
         foreach ($tables as $table) {
-            Schema::dropIfExists(
+            Schema::connection('mysql57')->dropIfExists(
                 substr(
-                    $table->{'Tables_in_'.config('database.connections.mysql.database')},
-                    strlen(config('database.connections.mysql.prefix'))
+                    $table->{'Tables_in_'.config('database.connections.mysql57.database')},
+                    strlen(config('database.connections.mysql57.prefix'))
                 )
             );
         }
