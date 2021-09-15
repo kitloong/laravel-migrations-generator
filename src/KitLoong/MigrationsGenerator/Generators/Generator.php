@@ -73,6 +73,8 @@ class Generator
             $blueprint->setColumnMethod($columnMethod);
         }
 
+        $blueprint->mergeTimestamps();
+
         if ($multiColumnsIndexes->isNotEmpty()) {
             $blueprint->setLineBreak();
             foreach ($multiColumnsIndexes as $index) {

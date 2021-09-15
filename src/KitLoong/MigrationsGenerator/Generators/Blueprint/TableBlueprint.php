@@ -3,6 +3,8 @@
 namespace KitLoong\MigrationsGenerator\Generators\Blueprint;
 
 use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
+use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 
 class TableBlueprint
 {
@@ -86,6 +88,53 @@ class TableBlueprint
         return $this->lines;
     }
 
+    public function mergeTimestamps(): void
+    {
+        $length           = 0;
+        $createdAtLineKey = 0;
+        $updatedAtLineKey = 0;
+        $isTimestamps     = false;
+
+        foreach ($this->lines as $key => $line) {
+            if (!$line instanceof ColumnMethod) {
+                continue;
+            }
+
+            if (!$this->checkTimestamps('created_at', $line)) {
+                continue;
+            }
+
+            $length           = $line->getValues()[1] ?? 0;
+            $createdAtLineKey = $key;
+            $updatedAtLineKey = $key + 1;
+            break;
+        }
+
+        $updatedAt = $this->lines[$updatedAtLineKey] ?? null;
+        if (!$updatedAt instanceof ColumnMethod) {
+            return;
+        }
+
+        if (!$this->checkTimestamps('updated_at', $updatedAt)) {
+            return;
+        }
+
+        $updatedAtLength = $updatedAt->getValues()[1] ?? 0;
+        if ($length === $updatedAtLength) {
+            $isTimestamps = true;
+        }
+
+        if ($isTimestamps === true) {
+            if ($length === 0) {
+                $this->lines[$createdAtLineKey] = new ColumnMethod(ColumnType::TIMESTAMPS);
+            } else {
+                $this->lines[$createdAtLineKey] = new ColumnMethod(ColumnType::TIMESTAMPS, $length);
+            }
+
+            unset($this->lines[$updatedAtLineKey]);
+        }
+    }
+
     public function toString(): string
     {
         $lines = [];
@@ -158,5 +207,22 @@ class TableBlueprint
             return $this->convertFromAnyTypeToString($v);
         })->implode(', ');
         return $method->getName()."($v)";
+    }
+
+    private function checkTimestamps(string $name, ColumnMethod $columnMethod): bool
+    {
+        if ($columnMethod->getName() !== ColumnType::TIMESTAMP) {
+            return false;
+        }
+
+        if ($columnMethod->getValues()[0] !== $name) {
+            return false;
+        }
+
+        if ($columnMethod->countChain() !== 1) {
+            return false;
+        }
+
+        return $columnMethod->getChains()[0]->getName() === ColumnModifier::NULLABLE && empty($columnMethod->getChains()[0]->getValues());
     }
 }

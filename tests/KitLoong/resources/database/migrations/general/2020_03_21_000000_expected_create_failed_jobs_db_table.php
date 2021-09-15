@@ -20,6 +20,8 @@ class ExpectedCreateFailedJobs_DB_Table extends Migration
             $table->longText('payload');
             $table->longText('exception');
             $table->timestamp('failed_at')->useCurrent();
+            $table->timestamp('created_at', 2)->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

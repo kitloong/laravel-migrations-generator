@@ -21,7 +21,8 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
             $table->string('column-hyphen')->index();
             $table->enum('enum', ['PROGRESS', 'DONE']);
             $table->lineString('line_string')->spatialIndex();
-            $table->timestamps(2);
+            $table->timestamp('created_at')->nullable();
+
             $table->primary('id');
             $table->index(['code', 'enum']);
             $table->index(['code', 'enum'], 'custom_multi_key_index');
