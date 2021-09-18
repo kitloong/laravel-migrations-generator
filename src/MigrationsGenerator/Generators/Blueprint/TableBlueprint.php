@@ -11,7 +11,7 @@ class TableBlueprint
 {
     use Stringable;
 
-    /** @var Property|ColumnMethod|string[] */
+    /** @var Property|Method|string[] */
     private $lines;
 
     public function __construct()
@@ -34,20 +34,20 @@ class TableBlueprint
     /**
      * @param  string  $name  Method name.
      * @param  mixed  ...$values
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    public function setColumnMethodByName(string $name, ...$values): ColumnMethod
+    public function setMethodByName(string $name, ...$values): Method
     {
-        $method        = new ColumnMethod($name, ...$values);
+        $method        = new Method($name, ...$values);
         $this->lines[] = $method;
         return $method;
     }
 
     /**
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    public function setColumnMethod(ColumnMethod $method): ColumnMethod
+    public function setMethod(Method $method): Method
     {
         $this->lines[] = $method;
         return $method;
@@ -59,7 +59,7 @@ class TableBlueprint
     }
 
     /**
-     * @return \MigrationsGenerator\Generators\Blueprint\Property|\MigrationsGenerator\Generators\Blueprint\ColumnMethod|string|null
+     * @return \MigrationsGenerator\Generators\Blueprint\Property|\MigrationsGenerator\Generators\Blueprint\Method|string|null
      */
     public function removeLastLine()
     {
@@ -82,7 +82,7 @@ class TableBlueprint
         $isTimestamps     = false;
 
         foreach ($this->lines as $key => $line) {
-            if (!$line instanceof ColumnMethod) {
+            if (!$line instanceof Method) {
                 continue;
             }
 
@@ -97,7 +97,7 @@ class TableBlueprint
         }
 
         $updatedAt = $this->lines[$updatedAtLineKey] ?? null;
-        if (!$updatedAt instanceof ColumnMethod) {
+        if (!$updatedAt instanceof Method) {
             return;
         }
 
@@ -112,9 +112,9 @@ class TableBlueprint
 
         if ($isTimestamps === true) {
             if ($length === 0) { // MIGRATION_DEFAULT_PRECISION = 0
-                $this->lines[$createdAtLineKey] = new ColumnMethod(ColumnType::TIMESTAMPS);
+                $this->lines[$createdAtLineKey] = new Method(ColumnType::TIMESTAMPS);
             } else {
-                $this->lines[$createdAtLineKey] = new ColumnMethod(ColumnType::TIMESTAMPS, $length);
+                $this->lines[$createdAtLineKey] = new Method(ColumnType::TIMESTAMPS, $length);
             }
 
             unset($this->lines[$updatedAtLineKey]);
@@ -129,7 +129,7 @@ class TableBlueprint
                 case $line instanceof Property:
                     $lines[] = $this->propertyToString($line);
                     break;
-                case $line instanceof ColumnMethod:
+                case $line instanceof Method:
                     $lines[] = $this->methodToString($line);
                     break;
                 default:
@@ -163,10 +163,10 @@ class TableBlueprint
      *
      * $table->string('name', 100)->comment('Hello')->default('Test');
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @return string
      */
-    private function methodToString(ColumnMethod $method): string
+    private function methodToString(Method $method): string
     {
         $methodStrings[] = $this->flattenMethod($method);
         if ($method->countChain() > 0) {
@@ -184,10 +184,10 @@ class TableBlueprint
      * comment('Hello')
      * default('Test')
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @return string
      */
-    private function flattenMethod(ColumnMethod $method): string
+    private function flattenMethod(Method $method): string
     {
         $v = (new Collection($method->getValues()))->map(function ($v) {
             return $this->convertFromAnyTypeToString($v);
@@ -195,20 +195,20 @@ class TableBlueprint
         return $method->getName()."($v)";
     }
 
-    private function checkTimestamps(string $name, ColumnMethod $columnMethod): bool
+    private function checkTimestamps(string $name, Method $method): bool
     {
-        if ($columnMethod->getName() !== ColumnType::TIMESTAMP) {
+        if ($method->getName() !== ColumnType::TIMESTAMP) {
             return false;
         }
 
-        if ($columnMethod->getValues()[0] !== $name) {
+        if ($method->getValues()[0] !== $name) {
             return false;
         }
 
-        if ($columnMethod->countChain() !== 1) {
+        if ($method->countChain() !== 1) {
             return false;
         }
 
-        return $columnMethod->getChains()[0]->getName() === ColumnModifier::NULLABLE && empty($columnMethod->getChains()[0]->getValues());
+        return $method->getChains()[0]->getName() === ColumnModifier::NULLABLE && empty($method->getChains()[0]->getValues());
     }
 }

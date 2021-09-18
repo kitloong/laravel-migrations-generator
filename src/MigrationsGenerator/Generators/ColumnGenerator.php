@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use MigrationsGenerator\DBAL\Types\DBALTypes;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\Columns\DatetimeColumn;
 use MigrationsGenerator\Generators\Columns\DecimalColumn;
 use MigrationsGenerator\Generators\Columns\EnumColumn;
@@ -78,9 +78,9 @@ class ColumnGenerator
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @param  \Illuminate\Support\Collection<string, \Doctrine\DBAL\Schema\Index>  $singleColumnIndexes
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    public function generate(Table $table, Column $column, Collection $singleColumnIndexes): ColumnMethod
+    public function generate(Table $table, Column $column, Collection $singleColumnIndexes): Method
     {
         $type = $this->mapToColumnType($column->getType()->getName());
 

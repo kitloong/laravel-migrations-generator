@@ -3,7 +3,7 @@
 namespace MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 
@@ -12,12 +12,12 @@ class NullableModifier
     /**
      * Set nullable.
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  string  $type
      * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    public function chainNullable(ColumnMethod $method, string $type, Column $column): ColumnMethod
+    public function chainNullable(Method $method, string $type, Column $column): Method
     {
         if ($column->getNotnull()) {
             if ($this->shouldAddNotNullModifier($type)) {

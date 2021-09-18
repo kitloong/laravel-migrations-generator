@@ -5,7 +5,7 @@ namespace MigrationsGenerator\Generators\Columns;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use MigrationsGenerator\DBAL\Platform;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\PgSQLGeography;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 use MigrationsGenerator\Repositories\PgSQLRepository;
@@ -19,7 +19,7 @@ class GeometryColumn implements GeneratableColumn
         $this->pgsqlRepository = $pgSQLRepository;
     }
 
-    public function generate(string $type, Table $table, Column $column): ColumnMethod
+    public function generate(string $type, Table $table, Column $column): Method
     {
         switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
             case Platform::POSTGRESQL:
@@ -35,6 +35,6 @@ class GeometryColumn implements GeneratableColumn
                 break;
             default:
         }
-        return new ColumnMethod($type, $column->getName());
+        return new Method($type, $column->getName());
     }
 }

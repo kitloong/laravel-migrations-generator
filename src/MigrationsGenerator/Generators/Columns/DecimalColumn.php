@@ -5,7 +5,7 @@ namespace MigrationsGenerator\Generators\Columns;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use MigrationsGenerator\DBAL\Platform;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 use MigrationsGenerator\MigrationsGeneratorSetting;
@@ -20,11 +20,11 @@ class DecimalColumn implements GeneratableColumn
     private const EMPTY_PRECISION = 10;
     private const EMPTY_SCALE = 0;
 
-    public function generate(string $type, Table $table, Column $column): ColumnMethod
+    public function generate(string $type, Table $table, Column $column): Method
     {
         $precisions = $this->getPrecisions($type, $column);
 
-        $method = new ColumnMethod($type, $column->getName(), ...$precisions);
+        $method = new Method($type, $column->getName(), ...$precisions);
 
         if ($column->getUnsigned()) {
             $method->chain(ColumnModifier::UNSIGNED);

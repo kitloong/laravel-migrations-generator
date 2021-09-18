@@ -5,7 +5,7 @@ namespace MigrationsGenerator\Generators\Modifier;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Index;
 use Illuminate\Support\Collection;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\IndexGenerator;
 
 class IndexModifier
@@ -19,12 +19,12 @@ class IndexModifier
 
     /**
      * @param  string  $table
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  \Illuminate\Support\Collection<string, \Doctrine\DBAL\Schema\Index>  $singleColumnIndexes
      * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    public function chainIndex(string $table, ColumnMethod $method, Collection $singleColumnIndexes, Column $column): ColumnMethod
+    public function chainIndex(string $table, Method $method, Collection $singleColumnIndexes, Column $column): Method
     {
         if ($singleColumnIndexes->has($column->getName())) {
             /** @var Index $index */

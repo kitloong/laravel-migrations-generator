@@ -4,12 +4,12 @@ namespace MigrationsGenerator\Generators\Columns;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 
 class MiscColumn implements GeneratableColumn
 {
-    public function generate(string $type, Table $table, Column $column): ColumnMethod
+    public function generate(string $type, Table $table, Column $column): Method
     {
-        return new ColumnMethod($type, $column->getName());
+        return new Method($type, $column->getName());
     }
 }

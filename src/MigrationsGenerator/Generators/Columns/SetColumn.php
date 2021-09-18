@@ -4,7 +4,7 @@ namespace MigrationsGenerator\Generators\Columns;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Repositories\MySQLRepository;
 
 class SetColumn implements GeneratableColumn
@@ -16,9 +16,9 @@ class SetColumn implements GeneratableColumn
         $this->mysqlRepository = $mySQLRepository;
     }
 
-    public function generate(string $type, Table $table, Column $column): ColumnMethod
+    public function generate(string $type, Table $table, Column $column): Method
     {
         $values = $this->mysqlRepository->getSetPresetValues($table->getName(), $column->getName());
-        return new ColumnMethod($type, $column->getName(), $values);
+        return new Method($type, $column->getName(), $values);
     }
 }

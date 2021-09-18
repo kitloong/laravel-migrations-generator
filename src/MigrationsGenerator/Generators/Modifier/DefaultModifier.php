@@ -3,7 +3,7 @@
 namespace MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 
@@ -12,12 +12,12 @@ class DefaultModifier
     /**
      * Set default value.
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  string  $type
      * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    public function chainDefault(ColumnMethod $method, string $type, Column $column): ColumnMethod
+    public function chainDefault(Method $method, string $type, Column $column): Method
     {
         if ($column->getDefault() === null) {
             return $method;
@@ -53,11 +53,11 @@ class DefaultModifier
     /**
      * Set default value to method for integer column.
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    private function chainDefaultForInteger(ColumnMethod $method, Column $column): ColumnMethod
+    private function chainDefaultForInteger(Method $method, Column $column): Method
     {
         $method->chain(ColumnModifier::DEFAULT, (int) $column->getDefault());
         return $method;
@@ -66,11 +66,11 @@ class DefaultModifier
     /**
      * Set default value to method for decimal column.
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    private function chainDefaultForDecimal(ColumnMethod $method, Column $column): ColumnMethod
+    private function chainDefaultForDecimal(Method $method, Column $column): Method
     {
         $method->chain(ColumnModifier::DEFAULT, (float) $column->getDefault());
         return $method;
@@ -79,11 +79,11 @@ class DefaultModifier
     /**
      * Set default value to method for boolean column.
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    private function chainDefaultForBoolean(ColumnMethod $method, Column $column): ColumnMethod
+    private function chainDefaultForBoolean(Method $method, Column $column): Method
     {
         $method->chain(ColumnModifier::DEFAULT, ((int) $column->getDefault()) === 1);
         return $method;
@@ -92,11 +92,11 @@ class DefaultModifier
     /**
      * Set default value to method for datetime column.
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \MigrationsGenerator\Generators\Blueprint\ColumnMethod
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    private function chainDefaultForDatetime(ColumnMethod $method, Column $column): ColumnMethod
+    private function chainDefaultForDatetime(Method $method, Column $column): Method
     {
         switch ($column->getDefault()) {
             case 'now()':
@@ -110,7 +110,7 @@ class DefaultModifier
         return $method;
     }
 
-    private function chainDefaultForString(ColumnMethod $method, Column $column): ColumnMethod
+    private function chainDefaultForString(Method $method, Column $column): Method
     {
         $quotes  = '\'';
         $default = $column->getDefault();

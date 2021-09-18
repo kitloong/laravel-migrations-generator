@@ -21,7 +21,7 @@ class WriterTest extends TestCase
         $blueprint->setProperty('something', null);
         $blueprint->setProperty('something', [1, 2, 3, 'abc', null, true, false, ['a', 2, 'c']]);
         $blueprint->setLineBreak();
-        $blueprint->setColumnMethodByName('string', 'name', 100)
+        $blueprint->setMethodByName('string', 'name', 100)
             ->chain('comment', 'Hello')
             ->chain('default', 'Test');
         $up->setBlueprint($blueprint);

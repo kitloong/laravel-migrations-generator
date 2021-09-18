@@ -3,12 +3,12 @@
 namespace MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 
 class CommentModifier
 {
-    public function chainComment(ColumnMethod $method, string $type, Column $column): ColumnMethod
+    public function chainComment(Method $method, string $type, Column $column): Method
     {
         if ($column->getComment() !== null) {
             $method->chain(ColumnModifier::COMMENT, $column->getComment());

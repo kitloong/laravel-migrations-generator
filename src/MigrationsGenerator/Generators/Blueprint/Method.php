@@ -2,7 +2,7 @@
 
 namespace MigrationsGenerator\Generators\Blueprint;
 
-abstract class Method
+class Method
 {
     /** @var string */
     private $name;
@@ -10,16 +10,14 @@ abstract class Method
     /** @var array */
     private $values;
 
-    /**
-     * Method constructor.
-     *
-     * @param  string  $name
-     * @param  ...$values
-     */
+    /** @var Method[] */
+    private $chains;
+
     public function __construct(string $name, ...$values)
     {
         $this->name   = $name;
         $this->values = $values;
+        $this->chains = [];
     }
 
     /**
@@ -36,5 +34,36 @@ abstract class Method
     public function getValues(): array
     {
         return $this->values;
+    }
+
+    /**
+     * Chain method.
+     *
+     * @param  string  $name
+     * @param  ...$values
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
+    public function chain(string $name, ...$values): Method
+    {
+        $this->chains[] = new Method($name, ...$values);
+        return $this;
+    }
+
+    /**
+     * Total chain.
+     *
+     * @return int
+     */
+    public function countChain(): int
+    {
+        return count($this->chains);
+    }
+
+    /**
+     * @return \MigrationsGenerator\Generators\Blueprint\Method[]
+     */
+    public function getChains(): array
+    {
+        return $this->chains;
     }
 }

@@ -4,13 +4,13 @@ namespace MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 
 class CollationModifier
 {
-    public function chainCollation(Table $table, ColumnMethod $method, string $type, Column $column): ColumnMethod
+    public function chainCollation(Table $table, Method $method, string $type, Column $column): Method
     {
         if (!app(MigrationsGeneratorSetting::class)->isUseDBCollation()) {
             return $method;

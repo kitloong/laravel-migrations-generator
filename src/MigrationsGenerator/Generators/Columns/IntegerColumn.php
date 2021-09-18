@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Str;
 use MigrationsGenerator\DBAL\Platform;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 use MigrationsGenerator\MigrationsGeneratorSetting;
@@ -23,7 +23,7 @@ class IntegerColumn implements GeneratableColumn
         $this->setting         = $setting;
     }
 
-    public function generate(string $type, Table $table, Column $column): ColumnMethod
+    public function generate(string $type, Table $table, Column $column): Method
     {
         // MySQL uses TINYINT(1) as boolean
         // Check if column type is TINYINT(1) and generate as `boolean` type
@@ -36,23 +36,23 @@ class IntegerColumn implements GeneratableColumn
         return $this->generateAsInteger($type, $column);
     }
 
-    private function generateAsBoolean(Column $column): ColumnMethod
+    private function generateAsBoolean(Column $column): Method
     {
-        $method =  new ColumnMethod(ColumnType::BOOLEAN, $column->getName());
+        $method =  new Method(ColumnType::BOOLEAN, $column->getName());
         if ($column->getUnsigned()) {
             $method->chain(ColumnModifier::UNSIGNED);
         }
         return $method;
     }
 
-    private function generateAsInteger(string $type, Column $column): ColumnMethod
+    private function generateAsInteger(string $type, Column $column): Method
     {
         if ($column->getUnsigned() && $column->getAutoincrement()) {
             if ($type === ColumnType::INTEGER) {
-                return new ColumnMethod(ColumnType::INCREMENTS, $column->getName());
+                return new Method(ColumnType::INCREMENTS, $column->getName());
             } else {
                 // bigIncrements, smallIncrements, etc
-                return new ColumnMethod(str_replace('Integer', 'Increments', $type), $column->getName());
+                return new Method(str_replace('Integer', 'Increments', $type), $column->getName());
             }
 //            $indexes->forget($field['field']);
         } else {
@@ -63,10 +63,10 @@ class IntegerColumn implements GeneratableColumn
             }
 
             if ($column->getAutoincrement()) {
-                return new ColumnMethod($methodType, $column->getName(), true);
+                return new Method($methodType, $column->getName(), true);
 //                $indexes->forget($field['field']);
             }
-            return new ColumnMethod($methodType, $column->getName());
+            return new Method($methodType, $column->getName());
         }
     }
 

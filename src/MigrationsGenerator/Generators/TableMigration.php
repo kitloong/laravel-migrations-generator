@@ -54,8 +54,8 @@ class TableMigration
         $multiColumnsIndexes = $this->indexGenerator->getMultiColumnsIndexes($indexes);
 
         foreach ($columns as $column) {
-            $columnMethod = $this->columnGenerator->generate($table, $column, $singleColumnIndexes);
-            $blueprint->setColumnMethod($columnMethod);
+            $method = $this->columnGenerator->generate($table, $column, $singleColumnIndexes);
+            $blueprint->setMethod($method);
         }
 
         $blueprint->mergeTimestamps();
@@ -63,8 +63,8 @@ class TableMigration
         if ($multiColumnsIndexes->isNotEmpty()) {
             $blueprint->setLineBreak();
             foreach ($multiColumnsIndexes as $index) {
-                $columnMethod = $this->indexGenerator->generate($table, $index);
-                $blueprint->setColumnMethod($columnMethod);
+                $method = $this->indexGenerator->generate($table, $index);
+                $blueprint->setMethod($method);
             }
         }
 

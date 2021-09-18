@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\Schema\Builder;
 use MigrationsGenerator\DBAL\Platform;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\ColumnName;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 use MigrationsGenerator\MigrationsGeneratorSetting;
@@ -33,14 +33,14 @@ class StringColumn implements GeneratableColumn
         $this->regex            = $regex;
     }
 
-    public function generate(string $type, Table $table, Column $column): ColumnMethod
+    public function generate(string $type, Table $table, Column $column): Method
     {
         switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
             // It could be pgsql enum
             case Platform::POSTGRESQL:
                 $values = $this->getPgSQLEnumValues($table->getName(), $column->getName());
                 if (!empty($values)) {
-                    return new ColumnMethod(ColumnType::ENUM, $column->getName(), $values);
+                    return new Method(ColumnType::ENUM, $column->getName(), $values);
                 }
                 break;
             // It could be sqlsrv text
@@ -48,7 +48,7 @@ class StringColumn implements GeneratableColumn
                 $colDef = $this->sqlSrvRepository->getColumnDefinition($table->getName(), $column->getName());
                 if ($colDef->getType() === self::SQLSRV_TEXT_TYPE &&
                     $colDef->getLength() === self::SQLSRV_TEXT_LENGTH) {
-                    return new ColumnMethod(ColumnType::TEXT, $column->getName());
+                    return new Method(ColumnType::TEXT, $column->getName());
                 }
                 break;
             default:
@@ -57,7 +57,7 @@ class StringColumn implements GeneratableColumn
         if ($column->getName() === ColumnName::REMEMBER_TOKEN &&
             $column->getLength() === 100 &&
             !$column->getFixed()) {
-            return new ColumnMethod(ColumnType::REMEMBER_TOKEN);
+            return new Method(ColumnType::REMEMBER_TOKEN);
         }
 
         if ($column->getFixed()) {
@@ -67,9 +67,9 @@ class StringColumn implements GeneratableColumn
         }
 
         if ($column->getLength() !== null && $column->getLength() !== Builder::$defaultStringLength) {
-            return new ColumnMethod($columnType, $column->getName(), $column->getLength());
+            return new Method($columnType, $column->getName(), $column->getLength());
         } else {
-            return new ColumnMethod($columnType, $column->getName());
+            return new Method($columnType, $column->getName());
         }
     }
 

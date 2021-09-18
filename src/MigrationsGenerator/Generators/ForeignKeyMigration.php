@@ -31,8 +31,8 @@ class ForeignKeyMigration
         $up          = $this->getSchemaBlueprint($table);
         $upBlueprint = new TableBlueprint();
         foreach ($foreignKeys as $foreignKey) {
-            $columnMethod = $this->foreignKeyGenerator->generate($table, $foreignKey);
-            $upBlueprint->setColumnMethod($columnMethod);
+            $method = $this->foreignKeyGenerator->generate($table, $foreignKey);
+            $upBlueprint->setMethod($method);
         }
         $up->setBlueprint($upBlueprint);
 
@@ -49,8 +49,8 @@ class ForeignKeyMigration
         $down          = $this->getSchemaBlueprint($table);
         $downBlueprint = new TableBlueprint();
         foreach ($foreignKeys as $foreignKey) {
-            $columnMethod = $this->foreignKeyGenerator->generateDrop($foreignKey);
-            $downBlueprint->setColumnMethod($columnMethod);
+            $method = $this->foreignKeyGenerator->generateDrop($foreignKey);
+            $downBlueprint->setMethod($method);
         }
         $down->setBlueprint($downBlueprint);
 

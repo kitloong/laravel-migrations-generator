@@ -2,7 +2,7 @@
 
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Table;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\Foreign;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 
@@ -15,12 +15,12 @@ class ForeignKeyGenerator
         $this->tableNameGenerator = $tableNameGenerator;
     }
 
-    public function generate(Table $table, ForeignKeyConstraint $foreignKey): ColumnMethod
+    public function generate(Table $table, ForeignKeyConstraint $foreignKey): Method
     {
         if ($this->shouldSkipName($table->getName(), $foreignKey)) {
-            $method = new ColumnMethod(Foreign::FOREIGN, $foreignKey->getUnquotedLocalColumns());
+            $method = new Method(Foreign::FOREIGN, $foreignKey->getUnquotedLocalColumns());
         } else {
-            $method = new ColumnMethod(Foreign::FOREIGN, $foreignKey->getUnquotedLocalColumns(), $foreignKey->getName());
+            $method = new Method(Foreign::FOREIGN, $foreignKey->getUnquotedLocalColumns(), $foreignKey->getName());
         }
 
         $method->chain(Foreign::REFERENCES, $foreignKey->getUnquotedForeignColumns())
@@ -37,9 +37,9 @@ class ForeignKeyGenerator
         return $method;
     }
 
-    public function generateDrop(ForeignKeyConstraint $foreignKey): ColumnMethod
+    public function generateDrop(ForeignKeyConstraint $foreignKey): Method
     {
-        return new ColumnMethod(Foreign::DROP_FOREIGN, $foreignKey->getName());
+        return new Method(Foreign::DROP_FOREIGN, $foreignKey->getName());
     }
 
     private function shouldSkipName(string $table, ForeignKeyConstraint $foreignKey): bool

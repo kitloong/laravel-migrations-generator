@@ -5,13 +5,13 @@ namespace MigrationsGenerator\Generators\Modifier;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Str;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 
 class CharsetModifier
 {
-    public function chainCharset(Table $table, ColumnMethod $method, string $type, Column $column): ColumnMethod
+    public function chainCharset(Table $table, Method $method, string $type, Column $column): Method
     {
         if (!app(MigrationsGeneratorSetting::class)->isUseDBCollation()) {
             return $method;

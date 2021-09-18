@@ -9,7 +9,7 @@ use Doctrine\DBAL\Types\DateTimeType;
 use Doctrine\DBAL\Types\DateTimeTzImmutableType;
 use Doctrine\DBAL\Types\DateTimeTzType;
 use MigrationsGenerator\DBAL\Platform;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\ColumnName;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
@@ -49,23 +49,23 @@ class DatetimeColumn implements GeneratableColumn
         $this->regex            = $regex;
     }
 
-    public function generate(string $type, Table $table, Column $column): ColumnMethod
+    public function generate(string $type, Table $table, Column $column): Method
     {
         $length = $this->getLength($table->getName(), $column);
 
         switch ($column->getName()) {
             case ColumnName::DELETED_AT:
                 if ($length !== null) {
-                    $method = new ColumnMethod(ColumnType::SOFT_DELETES, ColumnName::DELETED_AT, $length);
+                    $method = new Method(ColumnType::SOFT_DELETES, ColumnName::DELETED_AT, $length);
                 } else {
-                    $method = new ColumnMethod(ColumnType::SOFT_DELETES);
+                    $method = new Method(ColumnType::SOFT_DELETES);
                 }
                 break;
             default:
                 if ($length !== null) {
-                    $method = new ColumnMethod($type, $column->getName(), $length);
+                    $method = new Method($type, $column->getName(), $length);
                 } else {
-                    $method = new ColumnMethod($type, $column->getName());
+                    $method = new Method($type, $column->getName());
                 }
         }
 
@@ -139,9 +139,9 @@ class DatetimeColumn implements GeneratableColumn
     /**
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @param  \Doctrine\DBAL\Schema\Table  $table
-     * @param  \MigrationsGenerator\Generators\Blueprint\ColumnMethod  $method
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      */
-    private function chainUseCurrentOnUpdate(Column $column, Table $table, ColumnMethod $method): void
+    private function chainUseCurrentOnUpdate(Column $column, Table $table, Method $method): void
     {
         if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::MYSQL) {
             if ($column->getType()->getName() === ColumnType::TIMESTAMP) {

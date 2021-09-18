@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use MigrationsGenerator\DBAL\Platform;
-use MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\IndexType;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 use MigrationsGenerator\Repositories\PgSQLRepository;
@@ -23,13 +23,13 @@ class IndexGenerator
         $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
-    public function generate(Table $table, Index $index): ColumnMethod
+    public function generate(Table $table, Index $index): Method
     {
         $indexType = $this->getIndexType($index);
         if ($this->shouldSkipName($table->getName(), $index, $indexType)) {
-            return new ColumnMethod($indexType, $index->getColumns());
+            return new Method($indexType, $index->getColumns());
         } else {
-            return new ColumnMethod($indexType, $index->getColumns(), $index->getName());
+            return new Method($indexType, $index->getColumns(), $index->getName());
         }
     }
 
