@@ -22,9 +22,7 @@
     },
 	"autoload": {
 		"psr-4": {
-            "KitLoong\\MigrationsGenerator\\": "src/KitLoong/MigrationsGenerator",
-			"Xethron\\MigrationsGenerator\\": "src/Xethron/MigrationsGenerator",
-			"Way\\Generators\\": "src/Way/Generators"
+            "KitLoong\\MigrationsGenerator\\": "src/KitLoong/MigrationsGenerator"
 		}
 	},
 	"autoload-dev": {
