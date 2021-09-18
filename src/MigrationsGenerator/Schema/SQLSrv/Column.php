@@ -59,16 +59,16 @@ class Column
         ?string $collation,
         ?string $comment
     ) {
-        $this->name = $name;
-        $this->type = $type;
-        $this->length = $length;
-        $this->notnull = $notnull;
-        $this->default = $default;
-        $this->scale = $scale;
-        $this->precision = $precision;
+        $this->name          = $name;
+        $this->type          = $type;
+        $this->length        = $length;
+        $this->notnull       = $notnull;
+        $this->default       = $default;
+        $this->scale         = $scale;
+        $this->precision     = $precision;
         $this->autoincrement = $autoincrement;
-        $this->collation = $collation;
-        $this->comment = $comment;
+        $this->collation     = $collation;
+        $this->comment       = $comment;
     }
 
     /**

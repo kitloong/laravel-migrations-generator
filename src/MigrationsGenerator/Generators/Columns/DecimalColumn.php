@@ -14,11 +14,11 @@ class DecimalColumn implements GeneratableColumn
 {
     // (8, 2) are default value of decimal, float
     private const DEFAULT_DECIMAL_PRECISION = 8;
-    private const DEFAULT_DECIMAL_SCALE = 2;
+    private const DEFAULT_DECIMAL_SCALE     = 2;
 
     // DBAL return (10, 0) if double length is empty
     private const EMPTY_PRECISION = 10;
-    private const EMPTY_SCALE = 0;
+    private const EMPTY_SCALE     = 0;
 
     public function generate(string $type, Table $table, Column $column): Method
     {

@@ -44,6 +44,4 @@ class IndexModifier
         }
         return $method;
     }
-
-
 }

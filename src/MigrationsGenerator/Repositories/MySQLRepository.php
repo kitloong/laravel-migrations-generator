@@ -25,7 +25,7 @@ class MySQLRepository extends Repository
     public function showColumn(string $table, string $column): ?ShowColumn
     {
         $setting = app(MigrationsGeneratorSetting::class);
-        $column = $setting->getConnection()
+        $column  = $setting->getConnection()
             ->selectOne("SHOW COLUMNS FROM `${table}` where Field = '${column}'");
         if ($column !== null) {
             return new ShowColumn($column);
@@ -39,7 +39,7 @@ class MySQLRepository extends Repository
         $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'enum(%'");
         if (count($columns) > 0) {
             $showColumn = new ShowColumn($columns[0]);
-            $value = substr(
+            $value      = substr(
                 str_replace('enum(\'', '', $showColumn->getType()),
                 0,
                 -2
@@ -55,7 +55,7 @@ class MySQLRepository extends Repository
         $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'set(%'");
         if (count($columns) > 0) {
             $showColumn = new ShowColumn($columns[0]);
-            $value = substr(
+            $value      = substr(
                 str_replace('set(\'', '', $showColumn->getType()),
                 0,
                 -2

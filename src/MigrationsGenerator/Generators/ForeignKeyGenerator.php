@@ -1,4 +1,6 @@
-<?php namespace MigrationsGenerator\Generators;
+<?php
+
+namespace MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Table;

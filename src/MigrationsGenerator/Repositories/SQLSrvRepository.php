@@ -12,8 +12,8 @@ class SQLSrvRepository extends Repository
 
     public function getSpatialIndexNames(string $table): Collection
     {
-        $setting = app(MigrationsGeneratorSetting::class);
-        $columns = $setting->getConnection()
+        $setting     = app(MigrationsGeneratorSetting::class);
+        $columns     = $setting->getConnection()
             ->select("
                 SELECT idx.name AS indexname
                 FROM sys.tables AS tbl

@@ -36,7 +36,7 @@ class PgSQLRepository extends Repository
     public function getCheckConstraintDefinition(string $table, string $column): ?string
     {
         $setting = app(MigrationsGeneratorSetting::class);
-        $column = $setting->getConnection()
+        $column  = $setting->getConnection()
             ->select("
                 SELECT pgc.conname AS constraint_name,
                        pgc.contype,
@@ -62,8 +62,8 @@ class PgSQLRepository extends Repository
 
     public function getSpatialIndexNames(string $table): Collection
     {
-        $setting = app(MigrationsGeneratorSetting::class);
-        $columns = $setting->getConnection()
+        $setting     = app(MigrationsGeneratorSetting::class);
+        $columns     = $setting->getConnection()
             ->select("
                 SELECT tablename,
                        indexname,

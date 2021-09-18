@@ -38,7 +38,7 @@ class IntegerColumn implements GeneratableColumn
 
     private function generateAsBoolean(Column $column): Method
     {
-        $method =  new Method(ColumnType::BOOLEAN, $column->getName());
+        $method = new Method(ColumnType::BOOLEAN, $column->getName());
         if ($column->getUnsigned()) {
             $method->chain(ColumnModifier::UNSIGNED);
         }

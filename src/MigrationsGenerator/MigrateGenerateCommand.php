@@ -58,8 +58,8 @@ class MigrateGenerateCommand extends Command
     ) {
         parent::__construct();
 
-        $this->generator    = $generator;
-        $this->repository   = $repository;
+        $this->generator  = $generator;
+        $this->repository = $repository;
     }
 
     /**
