@@ -3,7 +3,7 @@
 namespace KitLoong\MigrationsGenerator\DBAL\Types;
 
 use Doctrine\DBAL\Types\Types;
-use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 
 final class DBALTypes
 {

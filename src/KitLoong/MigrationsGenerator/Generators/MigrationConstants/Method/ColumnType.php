@@ -1,6 +1,6 @@
 <?php
 
-namespace KitLoong\MigrationsGenerator\MigrationMethod;
+namespace KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method;
 
 final class ColumnType
 {

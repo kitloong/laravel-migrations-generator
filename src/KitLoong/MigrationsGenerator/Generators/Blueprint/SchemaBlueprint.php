@@ -3,7 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Generators\Blueprint;
 
 use Illuminate\Support\Facades\Config;
-use KitLoong\MigrationsGenerator\Generators\Methods\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Generators\TableNameGenerator;
 use KitLoong\MigrationsGenerator\Generators\Writer\WriterConstant;
 

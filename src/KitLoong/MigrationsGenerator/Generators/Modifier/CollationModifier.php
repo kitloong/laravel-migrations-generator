@@ -5,7 +5,7 @@ namespace KitLoong\MigrationsGenerator\Generators\Modifier;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
-use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class CollationModifier

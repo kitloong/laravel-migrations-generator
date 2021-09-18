@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
-use KitLoong\MigrationsGenerator\MigrationMethod\IndexType;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\IndexType;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;

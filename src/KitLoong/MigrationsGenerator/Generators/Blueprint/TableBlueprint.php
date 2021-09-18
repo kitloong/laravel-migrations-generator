@@ -3,9 +3,9 @@
 namespace KitLoong\MigrationsGenerator\Generators\Blueprint;
 
 use Illuminate\Support\Collection;
-use KitLoong\MigrationsGenerator\MigrationMethod\ColumnModifier;
-use KitLoong\MigrationsGenerator\MigrationMethod\ColumnName;
-use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\ColumnName;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 
 class TableBlueprint
 {

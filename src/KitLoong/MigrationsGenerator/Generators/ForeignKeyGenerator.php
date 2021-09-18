@@ -3,7 +3,7 @@
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Table;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
-use KitLoong\MigrationsGenerator\MigrationMethod\Foreign;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\Foreign;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class ForeignKeyGenerator

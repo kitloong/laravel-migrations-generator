@@ -15,13 +15,13 @@ use KitLoong\MigrationsGenerator\Generators\Columns\IntegerColumn;
 use KitLoong\MigrationsGenerator\Generators\Columns\MiscColumn;
 use KitLoong\MigrationsGenerator\Generators\Columns\SetColumn;
 use KitLoong\MigrationsGenerator\Generators\Columns\StringColumn;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CharsetModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CollationModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\CommentModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\DefaultModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\IndexModifier;
 use KitLoong\MigrationsGenerator\Generators\Modifier\NullableModifier;
-use KitLoong\MigrationsGenerator\MigrationMethod\ColumnType;
 
 class ColumnGenerator
 {

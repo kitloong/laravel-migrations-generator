@@ -5,8 +5,8 @@ namespace KitLoong\MigrationsGenerator\Generators\Columns;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\PgSQLGeography;
 use KitLoong\MigrationsGenerator\Generators\Platform;
-use KitLoong\MigrationsGenerator\MigrationMethod\PgSQLGeography;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 

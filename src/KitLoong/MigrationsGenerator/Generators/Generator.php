@@ -6,9 +6,9 @@ use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\TableBlueprint;
-use KitLoong\MigrationsGenerator\Generators\Methods\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Property\TableProperty;
 use KitLoong\MigrationsGenerator\Generators\Writer\MigrationWriter;
-use KitLoong\MigrationsGenerator\MigrationMethod\TableProperty;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class Generator

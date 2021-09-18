@@ -4,7 +4,7 @@ namespace Tests\KitLoong;
 
 use KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\TableBlueprint;
-use KitLoong\MigrationsGenerator\Generators\Methods\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Generators\Writer\MigrationWriter;
 
 class WriterTest extends TestCase

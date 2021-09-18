@@ -1,6 +1,6 @@
 <?php
 
-namespace KitLoong\MigrationsGenerator\Generators\Methods;
+namespace KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method;
 
 final class SchemaBuilder
 {
