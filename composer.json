@@ -22,7 +22,7 @@
     },
 	"autoload": {
 		"psr-4": {
-            "KitLoong\\MigrationsGenerator\\": "src/KitLoong/MigrationsGenerator"
+            "MigrationsGenerator\\": "src/MigrationsGenerator"
 		}
 	},
 	"autoload-dev": {

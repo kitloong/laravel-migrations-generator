@@ -66,7 +66,7 @@ $app->withFacades();
 Add following line
 
 ```
-$app->register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+$app->register(\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
 ```
 
 ## Usage
