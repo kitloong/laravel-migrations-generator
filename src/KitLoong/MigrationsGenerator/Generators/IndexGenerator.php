@@ -5,6 +5,7 @@ namespace KitLoong\MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\DBAL\Platform;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
 use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\IndexType;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;

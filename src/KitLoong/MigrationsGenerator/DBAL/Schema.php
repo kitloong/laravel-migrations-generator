@@ -28,7 +28,6 @@ use KitLoong\MigrationsGenerator\DBAL\Types\TimeTzType;
 use KitLoong\MigrationsGenerator\DBAL\Types\TinyIntegerType;
 use KitLoong\MigrationsGenerator\DBAL\Types\UUIDType;
 use KitLoong\MigrationsGenerator\DBAL\Types\YearType;
-use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 
 class Schema

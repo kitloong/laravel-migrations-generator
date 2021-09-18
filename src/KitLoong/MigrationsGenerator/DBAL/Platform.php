@@ -1,6 +1,6 @@
 <?php
 
-namespace KitLoong\MigrationsGenerator\Generators;
+namespace KitLoong\MigrationsGenerator\DBAL;
 
 final class Platform
 {

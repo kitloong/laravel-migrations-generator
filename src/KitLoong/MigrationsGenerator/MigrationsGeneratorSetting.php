@@ -7,7 +7,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use KitLoong\MigrationsGenerator\Generators\Platform;
+use KitLoong\MigrationsGenerator\DBAL\Platform;
 
 class MigrationsGeneratorSetting
 {

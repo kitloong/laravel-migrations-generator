@@ -5,10 +5,10 @@ namespace KitLoong\MigrationsGenerator\Generators\Columns;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Str;
+use KitLoong\MigrationsGenerator\DBAL\Platform;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\ColumnMethod;
 use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use KitLoong\MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
-use KitLoong\MigrationsGenerator\Generators\Platform;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorSetting;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 
