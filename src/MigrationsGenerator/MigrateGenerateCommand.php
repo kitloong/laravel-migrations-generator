@@ -36,11 +36,6 @@ class MigrateGenerateCommand extends Command
 
     protected $repository;
 
-    /**
-     * List of Migrations that has been done
-     */
-    protected $migrations = [];
-
     protected $shouldLog = false;
 
     protected $nextBatchNumber = 0;
@@ -154,14 +149,14 @@ class MigrateGenerateCommand extends Command
     protected function askIfLogMigrationTable(): void
     {
         if (!$this->option('no-interaction')) {
-            $this->shouldLog = $this->askYn('Do you want to log these migrations in the migrations table?');
+            $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table? [Y/n] ', true);
         }
 
         if ($this->shouldLog) {
             $this->repository->setSource($this->connection);
 
             if ($this->connection !== Config::get('database.default')) {
-                if (!$this->askYn('Log into current connection: '.$this->connection.'? [Y = '.$this->connection.', n = '.Config::get('database.default').' (default connection)]')) {
+                if (!$this->confirm('Log into current connection: '.$this->connection.'? [Y = '.$this->connection.', n = '.Config::get('database.default').' (default connection)] [Y/n] ', true)) {
                     $this->repository->setSource(Config::get('database.default'));
                 }
             }
@@ -175,22 +170,6 @@ class MigrateGenerateCommand extends Command
                 0
             );
         }
-    }
-
-    /**
-     * Ask for user input: Yes/No.
-     *
-     * @param  string  $question  Question to ask
-     * @return boolean          Answer from user
-     */
-    protected function askYn(string $question): bool
-    {
-        $answer = $this->ask($question.' [Y/n] ') ?? 'y';
-
-        while (!in_array(strtolower($answer), ['y', 'n', 'yes', 'no'])) {
-            $answer = $this->ask('Please choose either yes or no. [Y/n]') ?? 'y';
-        }
-        return in_array(strtolower($answer), ['y', 'yes']);
     }
 
     /**
