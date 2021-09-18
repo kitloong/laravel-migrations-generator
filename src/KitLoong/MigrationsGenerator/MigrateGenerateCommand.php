@@ -7,6 +7,7 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\Config;
 use KitLoong\MigrationsGenerator\DBAL\Schema;
 use KitLoong\MigrationsGenerator\Generators\Generator;
+use KitLoong\MigrationsGenerator\Generators\Writer\SquashWriter;
 
 class MigrateGenerateCommand extends Command
 {
@@ -20,11 +21,11 @@ class MigrateGenerateCommand extends Command
                             {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
                             {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
                             {--p|path= : Where should the file be created?}
-                            {--s|single : Generate all migrations into a single file}
                             {--tp|templatePath= : The location of the template for this generator}
                             {--useDBCollation : Follow db collations for migrations}
                             {--defaultIndexNames : Don\'t use db index names for migrations}
                             {--defaultFKNames : Don\'t use db foreign key names for migrations}
+                            {--squash : Generate all migrations into a single file}
                             {--date= : Specify date for created migrations}
                             {--guessMorphs : Try to guess morph columns}
                             {--filenamePrefix= : Prefix for migrations filenames}';
@@ -34,75 +35,51 @@ class MigrateGenerateCommand extends Command
      */
     protected $description = 'Generate a migration from an existing table structure.';
 
-    /**
-     * @var MigrationRepositoryInterface $repository
-     */
     protected $repository;
-
-    /**
-     * Array of Fields to create in a new Migration
-     * Namely: Columns, Indexes and Foreign Keys
-     */
-    protected $fields = array();
 
     /**
      * List of Migrations that has been done
      */
-    protected $migrations = array();
+    protected $migrations = [];
 
     protected $shouldLog = false;
 
-    /**
-     * @var int
-     */
-    protected $nextBatchNumber;
+    protected $nextBatchNumber = 0;
 
     /**
-     * Filename date prefix (Y_m_d_His)
-     * @var string
-     */
-    protected $datePrefix;
-
-    /**
-     * @var string
-     */
-    protected $migrationName;
-
-    /**
-     * @var string
-     */
-    protected $method;
-
-    /**
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * Will append connection method if not default connection
+     * Database connection name
+     *
      * @var string
      */
     protected $connection;
 
-    protected $decorator;
-
     /** @var Schema */
     protected $schema;
 
-    /** @var \KitLoong\MigrationsGenerator\Generators\Generator */
     protected $generator;
 
+    private $squashWriter;
+
+    public function __construct(
+        SquashWriter $squashWriter,
+        MigrationRepositoryInterface $repository,
+        Generator $generator
+    ) {
+        parent::__construct();
+
+        $this->squashWriter = $squashWriter;
+        $this->generator    = $generator;
+        $this->repository   = $repository;
+    }
+
     /**
-     * Execute the console command. Added for Laravel 5.5
+     * Execute the console command.
      *
      * @return void
      * @throws \Doctrine\DBAL\Exception
      */
-    public function handle(MigrationRepositoryInterface $repository, Generator $generator)
+    public function handle()
     {
-        $this->generator  = $generator;
-        $this->repository = $repository;
-
         $this->setup($this->connection = $this->option('connection') ?: Config::get('database.default'));
 
         $this->schema = app(Schema::class);
@@ -136,6 +113,7 @@ class MigrateGenerateCommand extends Command
         $setting->setStubPath(
             $this->option('templatePath') ?? Config::get('generators.config.migration_template_path')
         );
+        $setting->setSquash((bool) $this->option('squash'));
     }
 
     /**
@@ -253,6 +231,10 @@ class MigrateGenerateCommand extends Command
      */
     private function generateMigrationFiles(array $tables): void
     {
+        if (app(MigrationsGeneratorSetting::class)->isSquash()) {
+            $this->squashWriter->cleanTemp();
+        }
+
         $this->info("Setting up Tables and Index Migrations");
 
         $this->generateTables($tables);
@@ -260,6 +242,14 @@ class MigrateGenerateCommand extends Command
         $this->info("\nSetting up Foreign Key Migrations\n");
 
         $this->generateForeignKeys($tables);
+
+        if (app(MigrationsGeneratorSetting::class)->isSquash()) {
+            $migrationFilepath = $this->generator->squashMigration();
+
+            if ($this->shouldLog) {
+                $this->logMigration($migrationFilepath);
+            }
+        }
     }
 
     /**
@@ -275,8 +265,14 @@ class MigrateGenerateCommand extends Command
                 $this->schema->getIndexes($table)
             );
 
-            $this->info("Created: {$migrationFilepath}");
-            $this->logMigration($migrationFilepath);
+            if (app(MigrationsGeneratorSetting::class)->isSquash()) {
+                $this->info("Prepared: {$table}");
+            } else {
+                $this->info("Created: {$migrationFilepath}");
+                if ($this->shouldLog) {
+                    $this->logMigration($migrationFilepath);
+                }
+            }
         }
     }
 
@@ -294,8 +290,14 @@ class MigrateGenerateCommand extends Command
                     $foreignKeys
                 );
 
-                $this->info("Created: {$migrationFilepath}");
-                $this->logMigration($migrationFilepath);
+                if (app(MigrationsGeneratorSetting::class)->isSquash()) {
+                    $this->info("Prepared: {$table} foreign keys");
+                } else {
+                    $this->info("Created: {$migrationFilepath}");
+                    if ($this->shouldLog) {
+                        $this->logMigration($migrationFilepath);
+                    }
+                }
             }
         }
     }
@@ -307,9 +309,7 @@ class MigrateGenerateCommand extends Command
      */
     private function logMigration(string $migrationFilepath): void
     {
-        if ($this->shouldLog) {
-            $file = basename($migrationFilepath, '.php');
-            $this->repository->log($file, $this->nextBatchNumber);
-        }
+        $file = basename($migrationFilepath, '.php');
+        $this->repository->log($file, $this->nextBatchNumber);
     }
 }

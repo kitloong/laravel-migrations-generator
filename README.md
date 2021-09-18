@@ -87,13 +87,14 @@ Run `php artisan help migrate:generate` for a list of options.
 |-t, --tables[=TABLES]|A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments|
 |-i, --ignore[=IGNORE]|A list of Tables you wish to ignore, separated by a comma: users,posts,comments|
 |-p, --path[=PATH]|Where should the file be created?|
-|  --useDBCollation|Follow db collations for migrations|
-|  --defaultIndexNames|Don't use db index names for migrations|
-|  --defaultFKNames|Don't use db foreign key names for migrations|
 |-tp, --templatePath[=TEMPLATE_PATH]|The location of the template for this generator|
 |--date=[DATE]|Migrations will be created with specified date. Foreign keys will be crated for specified time + 1 second. Date should be in format suitable for Carbon::parse|
 |--guessMorphs|Try to guess morphs columns|
 |--filenamePrefix[=FILENAME_PREFIX]|Prefix for filename, may be used to specify connection in filename|
+|--squash|Generate all migrations into a single file|
+|--useDBCollation|Follow db collations for migrations|
+|--defaultIndexNames|Don't use db index names for migrations|
+|--defaultFKNames|Don't use db foreign key names for migrations|
 
 ## Thank You
 

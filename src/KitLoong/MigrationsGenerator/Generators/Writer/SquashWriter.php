@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Generators\FilenameGenerator;
 
-class MigrationWriter
+class SquashWriter
 {
     private $filenameGenerator;
     private $migrationStub;
@@ -15,20 +15,6 @@ class MigrationWriter
     {
         $this->filenameGenerator = $filenameGenerator;
         $this->migrationStub     = $migrationStub;
-    }
-
-    public function writeTo(
-        string $path,
-        string $stubPath,
-        string $className,
-        SchemaBlueprint $up,
-        SchemaBlueprint $down
-    ): void {
-        $stub = $this->migrationStub->getStub($stubPath);
-        File::put(
-            $path,
-            $this->migrationStub->populateStub($stub, $className, $up->toString(), $down->toString())
-        );
     }
 
     public function writeToTemp(SchemaBlueprint $upBlueprint, SchemaBlueprint $downBlueprint): void
@@ -46,6 +32,12 @@ class MigrationWriter
             $prettySpace = PHP_EOL.PHP_EOL.WriterConstant::TAB.WriterConstant::TAB;
         }
         File::prepend($downTempPath, $downBlueprint->toString().$prettySpace);
+    }
+
+    public function cleanTemp(): void
+    {
+        File::delete($this->filenameGenerator->makeUpTempPath());
+        File::delete($this->filenameGenerator->makeDownTempPath());
     }
 
     public function squashMigrations(string $path, string $stubPath, string $className): void

@@ -79,19 +79,19 @@ class Generator
 
         $up->setBlueprint($blueprint);
 
-        $down      = $this->getSchemaBlueprint($table, SchemaBuilder::DROP_IF_EXISTS);
-        $path      = $this->filenameGenerator->generateCreatePath($table->getName());
-        $className = $this->filenameGenerator->generateCreateClassName($table->getName());
+        $down = $this->getSchemaBlueprint($table, SchemaBuilder::DROP_IF_EXISTS);
 
-        $this->migrationWriter->writeTo(
-            $path,
-            $this->setting->getStubPath(),
-            $className,
-            $up,
-            $down
-        );
-
-        return $path;
+        if (app(MigrationsGeneratorSetting::class)->isSquash()) {
+            $this->migrationWriter->writeToTemp($up, $down);
+            return '';
+        } else {
+            return $this->writeMigration(
+                $this->filenameGenerator->makeCreatePath($table->getName()),
+                $this->filenameGenerator->makeCreateClassName($table->getName()),
+                $up,
+                $down
+            );
+        }
     }
 
     /**
@@ -117,17 +117,25 @@ class Generator
         }
         $down->setBlueprint($downBlueprint);
 
-        $path      = $this->filenameGenerator->generateForeignKeyPath($table->getName());
-        $className = $this->filenameGenerator->generateForeignKeyClassName($table->getName());
+        if (app(MigrationsGeneratorSetting::class)->isSquash()) {
+            $this->migrationWriter->writeToTemp($up, $down);
+            return '';
+        } else {
+            return $this->writeMigration(
+                $this->filenameGenerator->makeForeignKeyPath($table->getName()),
+                $this->filenameGenerator->makeForeignKeyClassName($table->getName()),
+                $up,
+                $down
+            );
+        }
+    }
 
-        $this->migrationWriter->writeTo(
-            $path,
-            $this->setting->getStubPath(),
-            $className,
-            $up,
-            $down
-        );
-
+    public function squashMigration(): string
+    {
+        $database  = $this->setting->getConnection()->getDatabaseName();
+        $path      = $this->filenameGenerator->makeCreatePath($database);
+        $className = $this->filenameGenerator->makeCreateClassName($database);
+        $this->migrationWriter->squashMigrations($path, $this->setting->getStubPath(), $className);
         return $path;
     }
 
@@ -165,5 +173,25 @@ class Generator
             $table->getName(),
             $schemaBuilder
         );
+    }
+
+    /**
+     * @param  string  $path
+     * @param  string  $className
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $up
+     * @param  \KitLoong\MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $down
+     * @return string
+     */
+    private function writeMigration(string $path, string $className, SchemaBlueprint $up, SchemaBlueprint $down): string
+    {
+        $this->migrationWriter->writeTo(
+            $path,
+            $this->setting->getStubPath(),
+            $className,
+            $up,
+            $down
+        );
+
+        return $path;
     }
 }

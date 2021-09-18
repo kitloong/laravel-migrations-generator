@@ -50,6 +50,38 @@ class CommandTest extends MySQL57TestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
+    public function testSquashUp()
+    {
+        $migrateTemplates = function () {
+            $this->migrateGeneral('mysql57');
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations([
+                '--squash' => true
+            ]);
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testSquashDown()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations([
+            '--squash' => true
+        ]);
+
+        $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
+
+        $tables = DB::select('SHOW TABLES');
+        $this->assertSame(1, count($tables));
+        $this->assertSame(0, DB::table('migrations')->count());
+    }
+
     private function verify(callable $migrateTemplates, callable $generateMigrations)
     {
         $migrateTemplates();

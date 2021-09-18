@@ -25,61 +25,73 @@ class FilenameGenerator
         $this->foreignKeyPattern = Config::get('generators.config.filename_pattern.foreign_key');
     }
 
-    public function generateCreateClassName(string $table): string
+    public function makeCreateClassName(string $table): string
     {
-        $className = $this->generateClassName(
+        $className = $this->makeClassName(
             $this->createPattern,
             $table
         );
         return Str::studly($className);
     }
 
-    public function generateCreatePath(string $table): string
+    public function makeCreatePath(string $table): string
     {
-        return $this->generateFilename(
+        return $this->makeFilename(
             $this->createPattern,
             $this->createDatePrefix,
             $table
         );
     }
 
-    public function generateForeignKeyClassName(string $table): string
+    public function makeForeignKeyClassName(string $table): string
     {
-        $className = $this->generateClassName(
+        $className = $this->makeClassName(
             $this->foreignKeyPattern,
             $table
         );
         return Str::studly($className);
     }
 
-    public function generateForeignKeyPath(string $table): string
+    public function makeForeignKeyPath(string $table): string
     {
-        return $this->generateFilename(
+        return $this->makeFilename(
             $this->foreignKeyPattern,
             $this->foreignKeyDatePrefix,
             $table
         );
     }
 
-    private function generateFilename(string $pattern, string $datetimePrefix, string $table): string
+    public function makeUpTempPath(): string
     {
         $path = app(MigrationsGeneratorSetting::class)->getPath();
+        return "$path/lmg-up-temp";
+    }
+
+    public function makeDownTempPath(): string
+    {
+        $path = app(MigrationsGeneratorSetting::class)->getPath();
+        return "$path/lmg-down-temp";
+    }
+
+    private function makeFilename(string $pattern, string $datetimePrefix, string $table): string
+    {
+        $path     = app(MigrationsGeneratorSetting::class)->getPath();
         $filename = $pattern;
         $replace  = [
             '{{ datetime_prefix }}' => $datetimePrefix,
-            '{{ table }}' => $this->stripTablePrefix($table),
+            '{{ table }}'           => $this->stripTablePrefix($table),
         ];
         $filename = str_replace(array_keys($replace), $replace, $filename);
         return "$path/$filename";
     }
 
-    private function generateClassName(string $pattern, string $table): string
+    private function makeClassName(string $pattern, string $table): string
     {
         $className = $pattern;
         $replace   = [
             '{{ datetime_prefix }}_' => '',
-            '{{ table }}' => $this->stripTablePrefix($table),
-            '.php' => '',
+            '{{ table }}'            => $this->stripTablePrefix($table),
+            '.php'                   => '',
         ];
         return str_replace(array_keys($replace), $replace, $className);
     }

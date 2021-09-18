@@ -29,6 +29,9 @@ class MigrationsGeneratorSetting
     /** @var boolean */
     private $ignoreForeignKeyNames;
 
+    /** @var boolean */
+    private $squash;
+
     /** @var string */
     private $path;
 
@@ -182,5 +185,21 @@ class MigrationsGeneratorSetting
 
         // Use default stub path.
         $this->stubPath = Config::get('generators.config.migration_template_path');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSquash(): bool
+    {
+        return $this->squash;
+    }
+
+    /**
+     * @param  bool  $squash
+     */
+    public function setSquash(bool $squash): void
+    {
+        $this->squash = $squash;
     }
 }
