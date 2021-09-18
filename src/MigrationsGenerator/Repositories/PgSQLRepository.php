@@ -9,7 +9,6 @@ class PgSQLRepository extends Repository
 {
     public function getTypeByColumnName(string $table, string $columnName): ?string
     {
-        /** @var MigrationsGeneratorSetting $setting */
         $setting = app(MigrationsGeneratorSetting::class);
 
         $column = $setting->getConnection()

@@ -7,13 +7,6 @@ use MigrationsGenerator\Schema\MySQL\ShowColumn;
 
 class MySQLRepository extends Repository
 {
-    private $setting;
-
-    public function __construct(MigrationsGeneratorSetting $setting)
-    {
-        $this->setting = $setting;
-    }
-
     /**
      * @return array [
      *  'charset' => string,
@@ -31,27 +24,11 @@ class MySQLRepository extends Repository
 
     public function showColumn(string $table, string $column): ?ShowColumn
     {
-        $column = $this->setting->getConnection()
+        $setting = app(MigrationsGeneratorSetting::class);
+        $column = $setting->getConnection()
             ->selectOne("SHOW COLUMNS FROM `${table}` where Field = '${column}'");
         if ($column !== null) {
             return new ShowColumn($column);
-        }
-        return null;
-    }
-
-    public function getEnumPresetValue(string $table, string $columnName): ?string
-    {
-        /** @var MigrationsGeneratorSetting $setting */
-        $setting = app(MigrationsGeneratorSetting::class);
-
-        $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'enum(%'");
-        if (count($columns) > 0) {
-            $showColumn = new ShowColumn($columns[0]);
-            return substr(
-                str_replace('enum(', '[', $this->spaceAfterComma($showColumn->getType())),
-                0,
-                -1
-            ).']';
         }
         return null;
     }
@@ -63,11 +40,11 @@ class MySQLRepository extends Repository
         if (count($columns) > 0) {
             $showColumn = new ShowColumn($columns[0]);
             $value = substr(
-                    str_replace('enum(\'', '', $this->spaceAfterComma($showColumn->getType())),
-                    0,
-                    -2
-                );
-            return explode("', '", $value);
+                str_replace('enum(\'', '', $showColumn->getType()),
+                0,
+                -2
+            );
+            return explode("','", $value);
         }
         return [];
     }
@@ -79,32 +56,14 @@ class MySQLRepository extends Repository
         if (count($columns) > 0) {
             $showColumn = new ShowColumn($columns[0]);
             $value = substr(
-                    str_replace('set(\'', '', $this->spaceAfterComma($showColumn->getType())),
-                    0,
-                    -2
-                );
-            return explode("', '", $value);
+                str_replace('set(\'', '', $showColumn->getType()),
+                0,
+                -2
+            );
+            return explode("','", $value);
         }
 
         return [];
-    }
-
-    public function getSetPresetValue(string $table, string $columnName): ?string
-    {
-        /** @var MigrationsGeneratorSetting $setting */
-        $setting = app(MigrationsGeneratorSetting::class);
-
-        $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'set(%'");
-        if (count($columns) > 0) {
-            $showColumn = new ShowColumn($columns[0]);
-            return substr(
-                str_replace('set(', '[', $this->spaceAfterComma($showColumn->getType())),
-                0,
-                -1
-            ).']';
-        }
-
-        return null;
     }
 
     public function useOnUpdateCurrentTimestamp(string $table, string $columnName): bool
@@ -125,10 +84,5 @@ class MySQLRepository extends Repository
         }
 
         return false;
-    }
-
-    private function spaceAfterComma(string $value): string
-    {
-        return str_replace("','", "', '", $value);
     }
 }

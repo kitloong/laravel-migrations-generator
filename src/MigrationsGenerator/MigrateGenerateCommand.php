@@ -179,7 +179,7 @@ class MigrateGenerateCommand extends Command
      * @param  int|null  $default  Default Value (optional)
      * @return int Answer
      */
-    protected function askNumeric(string $question, $default = null): int
+    protected function askNumeric(string $question, int $default = null): int
     {
         $ask = 'Your answer needs to be a numeric value';
 

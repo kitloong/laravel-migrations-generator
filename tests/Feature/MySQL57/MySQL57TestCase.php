@@ -1,9 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2021/01/01
- */
 
 namespace Tests\Feature\MySQL57;
 

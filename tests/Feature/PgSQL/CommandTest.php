@@ -1,9 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: liow.kitloong
- * Date: 2020/11/14
- */
 
 namespace Tests\Feature\PgSQL;
 
