@@ -5,11 +5,13 @@ namespace MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Table;
 use MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 use MigrationsGenerator\Generators\Writer\MigrationWriter;
+use MigrationsGenerator\Generators\Writer\SquashWriter;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 
 class Generator
 {
     private $migrationWriter;
+    private $squashWriter;
     private $filenameGenerator;
     private $foreignKeyMigration;
     private $tableMigration;
@@ -17,12 +19,14 @@ class Generator
 
     public function __construct(
         MigrationWriter $migrationWriter,
+        SquashWriter $squashWriter,
         FilenameGenerator $filenameGenerator,
         ForeignKeyMigration $foreignKeyMigration,
         TableMigration $tableMigration,
         MigrationsGeneratorSetting $setting
     ) {
         $this->migrationWriter     = $migrationWriter;
+        $this->squashWriter        = $squashWriter;
         $this->filenameGenerator   = $filenameGenerator;
         $this->foreignKeyMigration = $foreignKeyMigration;
         $this->tableMigration      = $tableMigration;
@@ -33,57 +37,75 @@ class Generator
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\Column[]  $columns
      * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
-     * @return string file path
+     * @return string Generated file path.
      */
-    public function generateTable(Table $table, array $columns, array $indexes): string
+    public function writeTableToMigrationFile(Table $table, array $columns, array $indexes): string
     {
-        $up = $this->tableMigration->up($table, $columns, $indexes);
-
+        $up   = $this->tableMigration->up($table, $columns, $indexes);
         $down = $this->tableMigration->down($table);
 
-        if (app(MigrationsGeneratorSetting::class)->isSquash()) {
-            $this->migrationWriter->writeToTemp($up, $down);
-            return '';
-        } else {
-            return $this->writeMigration(
-                $this->filenameGenerator->makeCreatePath($table->getName()),
-                $this->filenameGenerator->makeCreateClassName($table->getName()),
-                $up,
-                $down
-            );
-        }
+        return $this->writeMigration(
+            $this->filenameGenerator->makeCreatePath($table->getName()),
+            $this->filenameGenerator->makeCreateClassName($table->getName()),
+            $up,
+            $down
+        );
+    }
+
+    /**
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \Doctrine\DBAL\Schema\Column[]  $columns
+     * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
+     */
+    public function writeTableToTemp(Table $table, array $columns, array $indexes): void
+    {
+        $up   = $this->tableMigration->up($table, $columns, $indexes);
+        $down = $this->tableMigration->down($table);
+
+        $this->squashWriter->writeToTemp($up, $down);
     }
 
     /**
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint[]  $foreignKeys
-     * @return string file path
+     * @return string Generated file path.
      */
-    public function generateForeignKeys(Table $table, array $foreignKeys): string
+    public function writeForeignKeysToMigrationFile(Table $table, array $foreignKeys): string
     {
-        $up = $this->foreignKeyMigration->up($table, $foreignKeys);
-
+        $up   = $this->foreignKeyMigration->up($table, $foreignKeys);
         $down = $this->foreignKeyMigration->down($table, $foreignKeys);
 
-        if (app(MigrationsGeneratorSetting::class)->isSquash()) {
-            $this->migrationWriter->writeToTemp($up, $down);
-            return '';
-        } else {
-            return $this->writeMigration(
-                $this->filenameGenerator->makeForeignKeyPath($table->getName()),
-                $this->filenameGenerator->makeForeignKeyClassName($table->getName()),
-                $up,
-                $down
-            );
-        }
+        return $this->writeMigration(
+            $this->filenameGenerator->makeForeignKeyPath($table->getName()),
+            $this->filenameGenerator->makeForeignKeyClassName($table->getName()),
+            $up,
+            $down
+        );
     }
 
-    public function squashMigration(): string
+    /**
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint[]  $foreignKeys
+     */
+    public function writeForeignKeysToTemp(Table $table, array $foreignKeys): void
+    {
+        $up   = $this->foreignKeyMigration->up($table, $foreignKeys);
+        $down = $this->foreignKeyMigration->down($table, $foreignKeys);
+
+        $this->squashWriter->writeToTemp($up, $down);
+    }
+
+    public function cleanTemps(): void
+    {
+        $this->squashWriter->cleanTemps();
+    }
+
+    public function squashMigrations(): string
     {
         $database  = $this->setting->getConnection()->getDatabaseName();
         $path      = $this->filenameGenerator->makeCreatePath($database);
         $className = $this->filenameGenerator->makeCreateClassName($database);
-        $this->migrationWriter->squashMigrations($path, $this->setting->getStubPath(), $className);
+        $this->squashWriter->squashMigrations($path, $this->setting->getStubPath(), $className);
         return $path;
     }
 

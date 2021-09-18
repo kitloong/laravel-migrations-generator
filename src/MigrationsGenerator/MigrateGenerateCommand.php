@@ -7,7 +7,6 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\Config;
 use MigrationsGenerator\DBAL\Schema;
 use MigrationsGenerator\Generators\Generator;
-use MigrationsGenerator\Generators\Writer\SquashWriter;
 
 class MigrateGenerateCommand extends Command
 {
@@ -58,16 +57,12 @@ class MigrateGenerateCommand extends Command
 
     protected $generator;
 
-    private $squashWriter;
-
     public function __construct(
-        SquashWriter $squashWriter,
         MigrationRepositoryInterface $repository,
         Generator $generator
     ) {
         parent::__construct();
 
-        $this->squashWriter = $squashWriter;
         $this->generator    = $generator;
         $this->repository   = $repository;
     }
@@ -232,7 +227,7 @@ class MigrateGenerateCommand extends Command
     private function generateMigrationFiles(array $tables): void
     {
         if (app(MigrationsGeneratorSetting::class)->isSquash()) {
-            $this->squashWriter->cleanTemp();
+            $this->generator->cleanTemps();
         }
 
         $this->info("Setting up Tables and Index Migrations");
@@ -244,7 +239,7 @@ class MigrateGenerateCommand extends Command
         $this->generateForeignKeys($tables);
 
         if (app(MigrationsGeneratorSetting::class)->isSquash()) {
-            $migrationFilepath = $this->generator->squashMigration();
+            $migrationFilepath = $this->generator->squashMigrations();
 
             if ($this->shouldLog) {
                 $this->logMigration($migrationFilepath);
@@ -259,20 +254,23 @@ class MigrateGenerateCommand extends Command
     private function generateTables(array $tables): void
     {
         foreach ($tables as $table) {
-            $migrationFilepath = $this->generator->generateTable(
-                $this->schema->getTable($table),
-                $this->schema->getColumns($table),
-                $this->schema->getIndexes($table)
-            );
-
-            if (app(MigrationsGeneratorSetting::class)->isSquash()) {
-                $this->info("Prepared: {$table}");
-            } else {
-                $this->info("Created: {$migrationFilepath}");
-                if ($this->shouldLog) {
-                    $this->logMigration($migrationFilepath);
+            $this->writeMigration(
+                $table,
+                function () use ($table) {
+                    $this->generator->writeTableToTemp(
+                        $this->schema->getTable($table),
+                        $this->schema->getColumns($table),
+                        $this->schema->getIndexes($table)
+                    );
+                },
+                function () use ($table): string {
+                    return $this->generator->writeTableToMigrationFile(
+                        $this->schema->getTable($table),
+                        $this->schema->getColumns($table),
+                        $this->schema->getIndexes($table)
+                    );
                 }
-            }
+            );
         }
     }
 
@@ -285,19 +283,40 @@ class MigrateGenerateCommand extends Command
         foreach ($tables as $table) {
             $foreignKeys = $this->schema->getForeignKeys($table);
             if (count($foreignKeys) > 0) {
-                $migrationFilepath = $this->generator->generateForeignKeys(
-                    $this->schema->getTable($table),
-                    $foreignKeys
-                );
-
-                if (app(MigrationsGeneratorSetting::class)->isSquash()) {
-                    $this->info("Prepared: {$table} foreign keys");
-                } else {
-                    $this->info("Created: {$migrationFilepath}");
-                    if ($this->shouldLog) {
-                        $this->logMigration($migrationFilepath);
+                $this->writeMigration(
+                    $table,
+                    function () use ($table, $foreignKeys) {
+                        $this->generator->writeForeignKeysToTemp(
+                            $this->schema->getTable($table),
+                            $foreignKeys
+                        );
+                    },
+                    function () use ($table, $foreignKeys): string {
+                        return $this->generator->writeForeignKeysToMigrationFile(
+                            $this->schema->getTable($table),
+                            $foreignKeys
+                        );
                     }
-                }
+                );
+            }
+        }
+    }
+
+    /**
+     * @param  string  $table
+     * @param  callable  $writeToTemp
+     * @param  callable  $writeToMigrationFile
+     */
+    protected function writeMigration(string $table, callable $writeToTemp, callable $writeToMigrationFile): void
+    {
+        if (app(MigrationsGeneratorSetting::class)->isSquash()) {
+            $writeToTemp();
+            $this->info("Prepared: $table foreign keys");
+        } else {
+            $migrationFilePath = $writeToMigrationFile();
+            $this->info("Created: $migrationFilePath");
+            if ($this->shouldLog) {
+                $this->logMigration($migrationFilePath);
             }
         }
     }
@@ -307,7 +326,7 @@ class MigrateGenerateCommand extends Command
      *
      * @param  string  $migrationFilepath
      */
-    private function logMigration(string $migrationFilepath): void
+    protected function logMigration(string $migrationFilepath): void
     {
         $file = basename($migrationFilepath, '.php');
         $this->repository->log($file, $this->nextBatchNumber);

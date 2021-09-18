@@ -34,7 +34,7 @@ class SquashWriter
         File::prepend($downTempPath, $downBlueprint->toString().$prettySpace);
     }
 
-    public function cleanTemp(): void
+    public function cleanTemps(): void
     {
         File::delete($this->filenameGenerator->makeUpTempPath());
         File::delete($this->filenameGenerator->makeDownTempPath());
