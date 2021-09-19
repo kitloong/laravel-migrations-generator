@@ -1,5 +1,6 @@
 /.idea
 /build
+/docker
 /report
 /migrations
 /storage
@@ -8,4 +9,5 @@
 .php-cs-fixer.cache
 .phpstorm.meta.php
 .phpunit.result.cache
+docker-compose.yml
 composer.lock
