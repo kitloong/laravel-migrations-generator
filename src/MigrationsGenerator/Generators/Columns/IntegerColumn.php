@@ -54,7 +54,6 @@ class IntegerColumn implements GeneratableColumn
                 // bigIncrements, smallIncrements, etc
                 return new Method(str_replace('Integer', 'Increments', $type), $column->getName());
             }
-//            $indexes->forget($field['field']);
         } else {
             $methodType = $type;
             if ($column->getUnsigned()) {
@@ -64,7 +63,6 @@ class IntegerColumn implements GeneratableColumn
 
             if ($column->getAutoincrement()) {
                 return new Method($methodType, $column->getName(), true);
-//                $indexes->forget($field['field']);
             }
             return new Method($methodType, $column->getName());
         }
