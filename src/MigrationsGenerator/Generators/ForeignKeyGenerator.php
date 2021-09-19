@@ -39,9 +39,13 @@ class ForeignKeyGenerator
         return $method;
     }
 
-    public function generateDrop(ForeignKeyConstraint $foreignKey): Method
+    public function generateDrop(Table $table, ForeignKeyConstraint $foreignKey): Method
     {
-        return new Method(Foreign::DROP_FOREIGN, $foreignKey->getName());
+        if ($this->shouldSkipName($table->getName(), $foreignKey)) {
+            return new Method(Foreign::DROP_FOREIGN, $this->guessForeignKeyName($table->getName(), $foreignKey));
+        } else {
+            return new Method(Foreign::DROP_FOREIGN, $foreignKey->getName());
+        }
     }
 
     private function shouldSkipName(string $table, ForeignKeyConstraint $foreignKey): bool
@@ -50,8 +54,12 @@ class ForeignKeyGenerator
             return true;
         }
 
-        $guessIndexName = strtolower($table.'_'.implode('_', $foreignKey->getUnquotedLocalColumns()).'_foreign');
-        $guessIndexName = str_replace(['-', '.'], '_', $guessIndexName);
-        return $guessIndexName === $foreignKey->getName();
+        return $this->guessForeignKeyName($table, $foreignKey) === $foreignKey->getName();
+    }
+
+    private function guessForeignKeyName(string $table, ForeignKeyConstraint $foreignKey)
+    {
+        $name = strtolower($table.'_'.implode('_', $foreignKey->getUnquotedLocalColumns()).'_foreign');
+        return str_replace(['-', '.'], '_', $name);
     }
 }

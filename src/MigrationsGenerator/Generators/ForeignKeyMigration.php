@@ -49,7 +49,7 @@ class ForeignKeyMigration
         $down          = $this->getSchemaBlueprint($table);
         $downBlueprint = new TableBlueprint();
         foreach ($foreignKeys as $foreignKey) {
-            $method = $this->foreignKeyGenerator->generateDrop($foreignKey);
+            $method = $this->foreignKeyGenerator->generateDrop($table, $foreignKey);
             $downBlueprint->setMethod($method);
         }
         $down->setBlueprint($downBlueprint);

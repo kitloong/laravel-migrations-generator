@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\MySQL57;
 
+use Doctrine\DBAL\Schema\ForeignKeyConstraint;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use MigrationsGenerator\DBAL\Schema as DBALSchema;
@@ -131,7 +133,7 @@ class CommandTest extends MySQL57TestCase
         $this->truncateMigration();
 
         $this->generateMigrations([
-            '--tables' => 'test_index_mysql57',
+            '--tables'              => 'test_index_mysql57',
             '--default-index-names' => true
         ]);
 
@@ -139,7 +141,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $indexes = app(DBALSchema::class)->getIndexes('test_index_mysql57');
+        $indexes    = app(DBALSchema::class)->getIndexes('test_index_mysql57');
         $indexNames = array_keys($indexes);
         sort($indexNames);
         $this->assertSame(
@@ -156,6 +158,40 @@ class CommandTest extends MySQL57TestCase
             ],
             $indexNames
         );
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testDefaultFKNames()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations(['--default-fk-names' => true]);
+
+        $this->dropAllTables();
+
+        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+
+        $foreignKeyArray = app(DBALSchema::class)->getForeignKeys('user_profile_mysql57');
+        $foreignKeys     = new Collection($foreignKeyArray);
+        $foreignKeyNames = $foreignKeys->map(function (ForeignKeyConstraint $foreignKey) {
+            return $foreignKey->getName();
+        })->toArray();
+
+        $this->assertSame(
+            [
+                'user_profile_mysql57_column_hyphen_foreign',
+                'user_profile_mysql57_custom_name_foreign',
+                'user_profile_mysql57_user_id_foreign',
+                'user_profile_mysql57_user_id_sub_id_foreign',
+            ],
+            $foreignKeyNames
+        );
+
+        $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)
