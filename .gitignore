@@ -5,6 +5,7 @@
 /storage
 /vendor
 .env
+.php-cs-fixer.cache
 .phpstorm.meta.php
 .phpunit.result.cache
 composer.lock
