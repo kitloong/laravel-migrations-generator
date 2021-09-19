@@ -9,7 +9,7 @@ return [
 
     // Migration filename pattern.
     'filename_pattern'        => [
-        'create'      => '{{ datetime_prefix }}_create_{{ table }}_table.php',
-        'foreign_key' => '{{ datetime_prefix }}_add_foreign_keys_to_{{ table }}_table.php',
+        'table'       => '[datetime_prefix]_create_[table]_table.php',
+        'foreign_key' => '[datetime_prefix]_add_foreign_keys_to_[table]_table.php',
     ],
 ];

@@ -38,6 +38,12 @@ class MigrationsGeneratorSetting
     /** @var string */
     private $stubPath;
 
+    /** @var string */
+    private $tableFilename;
+
+    /** @var string */
+    private $fkFilename;
+
     /**
      * @return Connection
      */
@@ -201,5 +207,37 @@ class MigrationsGeneratorSetting
     public function setSquash(bool $squash): void
     {
         $this->squash = $squash;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTableFilename(): string
+    {
+        return $this->tableFilename;
+    }
+
+    /**
+     * @param  string  $tableFilename
+     */
+    public function setTableFilename(string $tableFilename): void
+    {
+        $this->tableFilename = $tableFilename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFkFilename(): string
+    {
+        return $this->fkFilename;
+    }
+
+    /**
+     * @param  string  $fkFilename
+     */
+    public function setFkFilename(string $fkFilename): void
+    {
+        $this->fkFilename = $fkFilename;
     }
 }

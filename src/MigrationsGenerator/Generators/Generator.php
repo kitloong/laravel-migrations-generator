@@ -45,8 +45,8 @@ class Generator
         $down = $this->tableMigration->down($table);
 
         return $this->writeMigration(
-            $this->filenameGenerator->makeCreatePath($table->getName()),
-            $this->filenameGenerator->makeCreateClassName($table->getName()),
+            $this->filenameGenerator->makeTablePath($table->getName()),
+            $this->filenameGenerator->makeTableClassName($table->getName()),
             $up,
             $down
         );
@@ -103,8 +103,8 @@ class Generator
     public function squashMigrations(): string
     {
         $database  = $this->setting->getConnection()->getDatabaseName();
-        $path      = $this->filenameGenerator->makeCreatePath($database);
-        $className = $this->filenameGenerator->makeCreateClassName($database);
+        $path      = $this->filenameGenerator->makeTablePath($database);
+        $className = $this->filenameGenerator->makeTableClassName($database);
         $this->squashWriter->squashMigrations($path, $this->setting->getStubPath(), $className);
         return $path;
     }

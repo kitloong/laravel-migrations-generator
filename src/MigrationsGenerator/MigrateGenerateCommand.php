@@ -22,7 +22,8 @@ class MigrateGenerateCommand extends Command
                             {--p|path= : Where should the file be created?}
                             {--tp|template-path= : The location of the template for this generator}
                             {--date= : Specify date for created migrations}
-                            {--filename-prefix= : Prefix for migrations filenames}
+                            {--table-filename= : Define table migration filename, default pattern: [datetime_prefix]_create_[table]_table.php}
+                            {--fk-filename= : Define foreign key migration filename, default pattern: [datetime_prefix]_add_foreign_keys_to_[table]_table.php}
                             {--default-index-names : Don\'t use db index names for migrations}
                             {--default-fk-names : Don\'t use db foreign key names for migrations}
                             {--use-db-collation : Follow db collations for migrations}
@@ -96,13 +97,22 @@ class MigrateGenerateCommand extends Command
         $setting->setUseDBCollation($this->option('use-db-collation'));
         $setting->setIgnoreIndexNames($this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));
+        $setting->setSquash((bool) $this->option('squash'));
+
         $setting->setPath(
             $this->option('path') ?? Config::get('generators.config.migration_target_path')
         );
         $setting->setStubPath(
             $this->option('template-path') ?? Config::get('generators.config.migration_template_path')
         );
-        $setting->setSquash((bool) $this->option('squash'));
+
+        $setting->setTableFilename(
+            $this->option('table-filename') ?? Config::get('generators.config.filename_pattern.table')
+        );
+
+        $setting->setFkFilename(
+            $this->option('fk-filename') ?? Config::get('generators.config.filename_pattern.foreign_key')
+        );
     }
 
     /**

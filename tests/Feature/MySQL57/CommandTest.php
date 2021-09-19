@@ -5,6 +5,7 @@ namespace Tests\Feature\MySQL57;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use MigrationsGenerator\DBAL\Schema as DBALSchema;
 
@@ -193,6 +194,38 @@ class CommandTest extends MySQL57TestCase
         );
 
         $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
+    }
+
+    public function testTableFilename()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations(['--table-filename' => '[datetime_prefix]_custom_[table]_table.php']);
+
+        $migrations = [];
+        foreach (File::files($this->storageMigrations()) as $migration) {
+            $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
+        }
+
+        $this->assertSame('custom_all_columns_mysql57_table', $migrations[0]);
+    }
+
+    public function testFKFilename()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations(['--fk-filename' => '[datetime_prefix]_custom_[table]_table.php']);
+
+        $migrations = [];
+        foreach (File::files($this->storageMigrations()) as $migration) {
+            $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
+        }
+
+        $this->assertSame('custom_user_profile_mysql57_table', $migrations[count($migrations) - 1]);
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)

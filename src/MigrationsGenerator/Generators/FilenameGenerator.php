@@ -2,43 +2,32 @@
 
 namespace MigrationsGenerator\Generators;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 
 class FilenameGenerator
 {
-    private $createDatePrefix;
-    private $createPattern;
-    private $foreignKeyDatePrefix;
-    private $foreignKeyPattern;
     private $tableNameGenerator;
 
     public function __construct(TableNameGenerator $tableNameGenerator)
     {
         $this->tableNameGenerator = $tableNameGenerator;
-
-        $this->createDatePrefix     = (string) date('Y_m_d_His');
-        $this->foreignKeyDatePrefix = (string) date('Y_m_d_His', strtotime('+1 second'));
-
-        $this->createPattern     = Config::get('generators.config.filename_pattern.create');
-        $this->foreignKeyPattern = Config::get('generators.config.filename_pattern.foreign_key');
     }
 
-    public function makeCreateClassName(string $table): string
+    public function makeTableClassName(string $table): string
     {
         $className = $this->makeClassName(
-            $this->createPattern,
+            app(MigrationsGeneratorSetting::class)->getTableFilename(),
             $table
         );
         return Str::studly($className);
     }
 
-    public function makeCreatePath(string $table): string
+    public function makeTablePath(string $table): string
     {
         return $this->makeFilename(
-            $this->createPattern,
-            $this->createDatePrefix,
+            app(MigrationsGeneratorSetting::class)->getTableFilename(),
+            (string) date('Y_m_d_His'),
             $table
         );
     }
@@ -46,7 +35,7 @@ class FilenameGenerator
     public function makeForeignKeyClassName(string $table): string
     {
         $className = $this->makeClassName(
-            $this->foreignKeyPattern,
+            app(MigrationsGeneratorSetting::class)->getFkFilename(),
             $table
         );
         return Str::studly($className);
@@ -55,8 +44,8 @@ class FilenameGenerator
     public function makeForeignKeyPath(string $table): string
     {
         return $this->makeFilename(
-            $this->foreignKeyPattern,
-            $this->foreignKeyDatePrefix,
+            app(MigrationsGeneratorSetting::class)->getFkFilename(),
+            (string) date('Y_m_d_His', strtotime('+1 second')),
             $table
         );
     }
@@ -78,8 +67,8 @@ class FilenameGenerator
         $path     = app(MigrationsGeneratorSetting::class)->getPath();
         $filename = $pattern;
         $replace  = [
-            '{{ datetime_prefix }}' => $datetimePrefix,
-            '{{ table }}'           => $this->stripTablePrefix($table),
+            '[datetime_prefix]' => $datetimePrefix,
+            '[table]'           => $this->stripTablePrefix($table),
         ];
         $filename = str_replace(array_keys($replace), $replace, $filename);
         return "$path/$filename";
@@ -89,9 +78,9 @@ class FilenameGenerator
     {
         $className = $pattern;
         $replace   = [
-            '{{ datetime_prefix }}_' => '',
-            '{{ table }}'            => $this->stripTablePrefix($table),
-            '.php'                   => '',
+            '[datetime_prefix]_' => '',
+            '[table]'            => $this->stripTablePrefix($table),
+            '.php'               => '',
         ];
         return str_replace(array_keys($replace), $replace, $className);
     }
