@@ -89,7 +89,8 @@ Run `php artisan help migrate:generate` for a list of options.
 |-p, --path[=PATH]|Where should the file be created?|
 |-tp, --template-path[=TEMPLATE-PATH]|The location of the template for this generator|
 |--date[=DATE]|Specify date for created migrations|
-|--filename-prefix[=FILENAME-PREFIX]|Prefix for migrations filenames|
+|--table-filename[=TABLE-FILENAME]|Define table migration filename, default pattern: [datetime_prefix]\_create_[table]_table.php|
+|--fk-filename[=FK-FILENAME]|Define foreign key migration filename, default pattern: [datetime_prefix]\_add_foreign_keys_to_[table]_table.php|
 |--default-index-names|Don\'t use db index names for migrations|
 |--default-fk-names|Don\'t use db foreign key names for migrations|
 |--use-db-collation|Follow db collations for migrations|
