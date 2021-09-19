@@ -102,6 +102,28 @@ class CommandTest extends MySQL57TestCase
         $this->assertTrue(Schema::hasTable('users_mysql57'));
     }
 
+    public function testIgnore()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations(['--ignore' => 'failed_jobs_mysql57,reserved_name_not_null_mysql57,reserved_name_with_precision_mysql57']);
+
+        $this->dropAllTables();
+
+        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+
+        $tables = DB::select('SHOW TABLES');
+        $this->assertSame(6, count($tables));
+        $this->assertTrue(Schema::hasTable('all_columns_mysql57'));
+        $this->assertTrue(Schema::hasTable('migrations'));
+        $this->assertTrue(Schema::hasTable('test_index_mysql57'));
+        $this->assertTrue(Schema::hasTable('users_mysql57'));
+        $this->assertTrue(Schema::hasTable('composite_primary_mysql57'));
+        $this->assertTrue(Schema::hasTable('user_profile_mysql57'));
+    }
+
     private function verify(callable $migrateTemplates, callable $generateMigrations)
     {
         $migrateTemplates();
