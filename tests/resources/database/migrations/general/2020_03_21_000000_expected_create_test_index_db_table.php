@@ -25,7 +25,7 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
 
             $table->primary('id');
             $table->index(['code', 'enum']);
-            $table->index(['code', 'enum'], 'custom_multi_key_index');
+            $table->index(['code', 'email'], 'custom_multi_key_index');
             $table->unique(['enum', 'code']);
         });
     }

@@ -4,6 +4,7 @@ namespace Tests\Feature\MySQL57;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use MigrationsGenerator\DBAL\Schema as DBALSchema;
 
 /**
  * @runTestsInSeparateProcesses
@@ -58,9 +59,7 @@ class CommandTest extends MySQL57TestCase
         };
 
         $generateMigrations = function () {
-            $this->generateMigrations([
-                '--squash' => true
-            ]);
+            $this->generateMigrations(['--squash' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
@@ -72,9 +71,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigration();
 
-        $this->generateMigrations([
-            '--squash' => true
-        ]);
+        $this->generateMigrations(['--squash' => true]);
 
         $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
 
@@ -122,6 +119,43 @@ class CommandTest extends MySQL57TestCase
         $this->assertTrue(Schema::hasTable('users_mysql57'));
         $this->assertTrue(Schema::hasTable('composite_primary_mysql57'));
         $this->assertTrue(Schema::hasTable('user_profile_mysql57'));
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testDefaultIndexNames()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations([
+            '--tables' => 'test_index_mysql57',
+            '--default-index-names' => true
+        ]);
+
+        $this->dropAllTables();
+
+        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+
+        $indexes = app(DBALSchema::class)->getIndexes('test_index_mysql57');
+        $indexNames = array_keys($indexes);
+        sort($indexNames);
+        $this->assertSame(
+            [
+                'primary',
+                'test_index_mysql57_code_email_index',
+                'test_index_mysql57_code_enum_index',
+                'test_index_mysql57_code_index',
+                'test_index_mysql57_column_hyphen_index',
+                'test_index_mysql57_custom_name_index',
+                'test_index_mysql57_email_unique',
+                'test_index_mysql57_enum_code_unique',
+                'test_index_mysql57_line_string_spatialindex',
+            ],
+            $indexNames
+        );
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)

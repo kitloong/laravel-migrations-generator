@@ -130,10 +130,10 @@ abstract class FeatureTestCase extends TestCase
     {
         $this->artisan(
             'migrate:generate',
-            array_merge($options, [
+            array_merge([
                 '--path' => $this->storageMigrations(),
                 '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
-            ])
+            ], $options)
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table? [Y/n] ', 'y')
             ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0] ', '0');
