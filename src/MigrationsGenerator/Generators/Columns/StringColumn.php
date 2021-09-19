@@ -16,8 +16,8 @@ use MigrationsGenerator\Support\Regex;
 
 class StringColumn implements GeneratableColumn
 {
-    const SQLSRV_TEXT_TYPE   = 'nvarchar';
-    const SQLSRV_TEXT_LENGTH = -1;
+    public const SQLSRV_TEXT_TYPE   = 'nvarchar';
+    public const SQLSRV_TEXT_LENGTH = -1;
 
     private $pgSQLRepository;
     private $sqlSrvRepository;

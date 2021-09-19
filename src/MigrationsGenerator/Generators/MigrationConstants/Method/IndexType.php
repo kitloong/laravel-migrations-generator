@@ -4,8 +4,8 @@ namespace MigrationsGenerator\Generators\MigrationConstants\Method;
 
 final class IndexType
 {
-    const PRIMARY       = 'primary';
-    const UNIQUE        = 'unique';
-    const INDEX         = 'index';
-    const SPATIAL_INDEX = 'spatialIndex';
+    public const PRIMARY       = 'primary';
+    public const UNIQUE        = 'unique';
+    public const INDEX         = 'index';
+    public const SPATIAL_INDEX = 'spatialIndex';
 }

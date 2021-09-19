@@ -4,7 +4,7 @@ namespace MigrationsGenerator\Generators\MigrationConstants\Property;
 
 final class TableProperty
 {
-    const CHARSET   = 'charset';
-    const COLLATION = 'collation';
-    const ENGINE    = 'engine';
+    public const CHARSET   = 'charset';
+    public const COLLATION = 'collation';
+    public const ENGINE    = 'engine';
 }

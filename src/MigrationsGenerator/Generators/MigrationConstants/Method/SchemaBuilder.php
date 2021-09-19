@@ -4,8 +4,8 @@ namespace MigrationsGenerator\Generators\MigrationConstants\Method;
 
 final class SchemaBuilder
 {
-    const CONNECTION     = 'connection';
-    const CREATE         = 'create';
-    const DROP_IF_EXISTS = 'dropIfExists';
-    const TABLE          = 'table';
+    public const CONNECTION     = 'connection';
+    public const CREATE         = 'create';
+    public const DROP_IF_EXISTS = 'dropIfExists';
+    public const TABLE          = 'table';
 }

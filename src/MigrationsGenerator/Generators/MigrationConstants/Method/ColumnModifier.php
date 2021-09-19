@@ -4,17 +4,17 @@ namespace MigrationsGenerator\Generators\MigrationConstants\Method;
 
 final class ColumnModifier
 {
-    const ALWAYS                = 'always';
-    const AUTO_INCREMENT        = 'autoIncrement';
-    const CHARSET               = 'charset';
-    const COLLATION             = 'collation';
-    const COMMENT               = 'comment';
-    const DEFAULT               = 'default';
-    const NULLABLE              = 'nullable';
-    const STORED_AS             = 'storedAs';
-    const UNSIGNED              = 'unsigned';
-    const USE_CURRENT           = 'useCurrent';
-    const USE_CURRENT_ON_UPDATE = 'useCurrentOnUpdate';
-    const VIRTUAL_AS            = 'virtualAs';
-    const GENERATED_AS          = 'generatedAs';
+    public const ALWAYS                = 'always';
+    public const AUTO_INCREMENT        = 'autoIncrement';
+    public const CHARSET               = 'charset';
+    public const COLLATION             = 'collation';
+    public const COMMENT               = 'comment';
+    public const DEFAULT               = 'default';
+    public const NULLABLE              = 'nullable';
+    public const STORED_AS             = 'storedAs';
+    public const UNSIGNED              = 'unsigned';
+    public const USE_CURRENT           = 'useCurrent';
+    public const USE_CURRENT_ON_UPDATE = 'useCurrentOnUpdate';
+    public const VIRTUAL_AS            = 'virtualAs';
+    public const GENERATED_AS          = 'generatedAs';
 }

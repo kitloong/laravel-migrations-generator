@@ -8,7 +8,7 @@ use MigrationsGenerator\Schema\SQLSrv\Column;
 
 class SQLSrvRepository extends Repository
 {
-    const INDEX_TYPE_SPATIAL = 4;
+    public const INDEX_TYPE_SPATIAL = 4;
 
     public function getSpatialIndexNames(string $table): Collection
     {

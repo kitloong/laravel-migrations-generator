@@ -4,9 +4,9 @@ namespace MigrationsGenerator\DBAL;
 
 final class Platform
 {
-    const MYSQL      = 'MySQL';
-    const POSTGRESQL = 'PostgreSQL';
-    const SQLITE     = 'SQLite';
-    const SQLSERVER  = 'SQLServer';
-    const OTHERS     = 'others';
+    public const MYSQL      = 'MySQL';
+    public const POSTGRESQL = 'PostgreSQL';
+    public const SQLITE     = 'SQLite';
+    public const SQLSERVER  = 'SQLServer';
+    public const OTHERS     = 'others';
 }

@@ -7,7 +7,6 @@ use Doctrine\DBAL\Types\Type;
 
 class LongTextType extends Type
 {
-
     /**
      * @inheritDoc
      */

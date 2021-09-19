@@ -4,7 +4,7 @@ namespace MigrationsGenerator\Generators\MigrationConstants\Method;
 
 class PgSQLGeography
 {
-    const MAP = [
+    public const MAP = [
         'geography(geometry,4326)'           => ColumnType::GEOMETRY,
         'geography(geometrycollection,4326)' => ColumnType::GEOMETRY_COLLECTION,
         'geography(linestring,4326)'         => ColumnType::LINE_STRING,

@@ -4,10 +4,10 @@ namespace MigrationsGenerator\Generators\MigrationConstants\Method;
 
 class Foreign
 {
-    const DROP_FOREIGN = 'dropForeign';
-    const FOREIGN      = 'foreign';
-    const ON           = 'on';
-    const ON_DELETE    = 'onDelete';
-    const ON_UPDATE    = 'onUpdate';
-    const REFERENCES   = 'references';
+    public const DROP_FOREIGN = 'dropForeign';
+    public const FOREIGN      = 'foreign';
+    public const ON           = 'on';
+    public const ON_DELETE    = 'onDelete';
+    public const ON_UPDATE    = 'onUpdate';
+    public const REFERENCES   = 'references';
 }

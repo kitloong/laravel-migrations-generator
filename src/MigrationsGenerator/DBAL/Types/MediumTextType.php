@@ -7,7 +7,6 @@ use Doctrine\DBAL\Types\Type;
 
 class MediumTextType extends Type
 {
-
     /**
      * @inheritDoc
      */
