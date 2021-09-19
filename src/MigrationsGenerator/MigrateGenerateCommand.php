@@ -22,9 +22,9 @@ class MigrateGenerateCommand extends Command
                             {--p|path= : Where should the file be created?}
                             {--tp|template-path= : The location of the template for this generator}
                             {--date= : Specify date for created migrations}
+                            {--filename-prefix= : Prefix for migrations filenames}
                             {--default-index-names : Don\'t use db index names for migrations}
                             {--default-fk-names : Don\'t use db foreign key names for migrations}
-                            {--filename-prefix= : Prefix for migrations filenames}
                             {--use-db-collation : Follow db collations for migrations}
                             {--squash : Generate all migrations into a single file}';
 
