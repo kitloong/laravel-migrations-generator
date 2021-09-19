@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpIllegalPsrClassPathInspection */
 /** @noinspection PhpUnused */
 

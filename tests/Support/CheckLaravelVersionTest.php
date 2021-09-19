@@ -70,7 +70,7 @@ class CheckLaravelVersionTest extends TestCase
 
     private function stubInstance()
     {
-        return new class {
+        return new class() {
             use CheckLaravelVersion;
         };
     }
