@@ -40,7 +40,7 @@ class Method
      * Chain method.
      *
      * @param  string  $name
-     * @param  ...$values
+     * @param  mixed  ...$values
      * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
     public function chain(string $name, ...$values): Method

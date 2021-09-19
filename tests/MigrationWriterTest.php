@@ -5,13 +5,19 @@ namespace Tests;
 use MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 use MigrationsGenerator\Generators\Blueprint\TableBlueprint;
 use MigrationsGenerator\Generators\MigrationConstants\Method\SchemaBuilder;
+use MigrationsGenerator\Generators\TableNameGenerator;
 use MigrationsGenerator\Generators\Writer\MigrationWriter;
+use Mockery\MockInterface;
 
-class WriterTest extends TestCase
+class MigrationWriterTest extends TestCase
 {
     public function testWrite()
     {
-        $this->markTestSkipped();
+        $this->mock(TableNameGenerator::class, function (MockInterface $mock) {
+            $mock->shouldReceive('stripPrefix')
+                ->andReturn('test');
+        });
+
         $up        = new SchemaBlueprint('mysql', 'users', SchemaBuilder::CREATE);
         $blueprint = new TableBlueprint();
         $blueprint->setProperty('collation', 'utf-8');

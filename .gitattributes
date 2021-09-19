@@ -8,5 +8,6 @@
 /.env.*             export-ignore
 /.gitattributes     export-ignore
 /.gitignore         export-ignore
+phpstan.neon
 /phpunit.xml        export-ignore
 /phpcs.xml          export-ignore

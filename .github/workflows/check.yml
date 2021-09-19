@@ -28,3 +28,6 @@ jobs:
 
       - name: phpcs
         run: vendor/bin/phpcs
+
+      - name: phpstan
+        run: vendor/bin/phpstan analyse

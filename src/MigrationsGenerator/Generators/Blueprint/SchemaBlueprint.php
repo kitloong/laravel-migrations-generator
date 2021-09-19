@@ -17,7 +17,7 @@ class SchemaBlueprint
     /** @var string */
     private $connection;
 
-    /** @var SchemaBuilder */
+    /** @var string */
     private $schemaBuilder;
 
     /** @var TableBlueprint|null */
