@@ -45,7 +45,7 @@ class DBConnectionTest extends MySQL57TestCase
                 [
                     '--connection'   => 'mysql57',
                     '--path'         => $this->storageMigrations(),
-                    '--templatePath' => base_path('src/MigrationsGenerator/stub/migration.stub'),
+                    '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
                 ]
             )
                 ->expectsQuestion('Do you want to log these migrations in the migrations table? [Y/n] ', 'y')

@@ -44,7 +44,7 @@ class CommandTest extends MySQL57TestCase
         };
 
         $generateMigrations = function () {
-            $this->generateMigrations(['--useDBCollation' => true]);
+            $this->generateMigrations(['--use-db-collation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);

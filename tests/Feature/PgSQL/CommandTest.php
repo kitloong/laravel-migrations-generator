@@ -43,7 +43,7 @@ class CommandTest extends PgSQLTestCase
         };
 
         $generateMigrations = function () {
-            $this->generateMigrations(['--useDBCollation' => true]);
+            $this->generateMigrations(['--use-db-collation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);

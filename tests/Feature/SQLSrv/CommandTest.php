@@ -24,7 +24,7 @@ class CommandTest extends SQLSrvTestCase
         };
 
         $generateMigrations = function () {
-            $this->generateMigrations(['--useDBCollation' => true]);
+            $this->generateMigrations(['--use-db-collation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);

@@ -20,14 +20,13 @@ class MigrateGenerateCommand extends Command
                             {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
                             {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
                             {--p|path= : Where should the file be created?}
-                            {--tp|templatePath= : The location of the template for this generator}
-                            {--useDBCollation : Follow db collations for migrations}
-                            {--defaultIndexNames : Don\'t use db index names for migrations}
-                            {--defaultFKNames : Don\'t use db foreign key names for migrations}
-                            {--squash : Generate all migrations into a single file}
+                            {--tp|template-path= : The location of the template for this generator}
                             {--date= : Specify date for created migrations}
-                            {--guessMorphs : Try to guess morph columns}
-                            {--filenamePrefix= : Prefix for migrations filenames}';
+                            {--default-index-names : Don\'t use db index names for migrations}
+                            {--default-fk-names : Don\'t use db foreign key names for migrations}
+                            {--filename-prefix= : Prefix for migrations filenames}
+                            {--use-db-collation : Follow db collations for migrations}
+                            {--squash : Generate all migrations into a single file}';
 
     /**
      * The console command description.
@@ -94,14 +93,14 @@ class MigrateGenerateCommand extends Command
     {
         $setting = app(MigrationsGeneratorSetting::class);
         $setting->setConnection($connection);
-        $setting->setUseDBCollation($this->option('useDBCollation'));
-        $setting->setIgnoreIndexNames($this->option('defaultIndexNames'));
-        $setting->setIgnoreForeignKeyNames($this->option('defaultFKNames'));
+        $setting->setUseDBCollation($this->option('use-db-collation'));
+        $setting->setIgnoreIndexNames($this->option('default-index-names'));
+        $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));
         $setting->setPath(
             $this->option('path') ?? Config::get('generators.config.migration_target_path')
         );
         $setting->setStubPath(
-            $this->option('templatePath') ?? Config::get('generators.config.migration_template_path')
+            $this->option('template-path') ?? Config::get('generators.config.migration_template_path')
         );
         $setting->setSquash((bool) $this->option('squash'));
     }
