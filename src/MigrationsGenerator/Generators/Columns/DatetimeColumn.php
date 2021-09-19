@@ -34,9 +34,6 @@ class DatetimeColumn implements GeneratableColumn
     private $sqlSrvRepository;
     private $regex;
 
-    /** @var bool */
-    private $hasCreatedAt = false;
-
     public function __construct(
         MySQLRepository $mySQLRepository,
         PgSQLRepository $pgSQLRepository,
