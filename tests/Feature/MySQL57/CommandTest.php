@@ -179,11 +179,12 @@ class CommandTest extends MySQL57TestCase
         $foreignKeys     = new Collection($foreignKeyArray);
         $foreignKeyNames = $foreignKeys->map(function (ForeignKeyConstraint $foreignKey) {
             return $foreignKey->getName();
-        })->toArray();
+        })->sort()->toArray();
 
         $this->assertSame(
             [
                 'user_profile_mysql57_column_hyphen_foreign',
+                'user_profile_mysql57_constraint_foreign',
                 'user_profile_mysql57_custom_name_foreign',
                 'user_profile_mysql57_user_id_foreign',
                 'user_profile_mysql57_user_id_sub_id_foreign',
