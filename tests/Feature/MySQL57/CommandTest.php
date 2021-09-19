@@ -3,6 +3,7 @@
 namespace Tests\Feature\MySQL57;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * @runTestsInSeparateProcesses
@@ -80,6 +81,25 @@ class CommandTest extends MySQL57TestCase
         $tables = DB::select('SHOW TABLES');
         $this->assertSame(1, count($tables));
         $this->assertSame(0, DB::table('migrations')->count());
+    }
+
+    public function testTables()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations(['--tables' => 'all_columns_mysql57,users_mysql57']);
+
+        $this->dropAllTables();
+
+        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+
+        $tables = DB::select('SHOW TABLES');
+        $this->assertSame(3, count($tables));
+        $this->assertTrue(Schema::hasTable('all_columns_mysql57'));
+        $this->assertTrue(Schema::hasTable('migrations'));
+        $this->assertTrue(Schema::hasTable('users_mysql57'));
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)
