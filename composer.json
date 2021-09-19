@@ -20,7 +20,8 @@
 		"mockery/mockery": "^1.0",
         "ext-pdo": "*",
 		"friendsofphp/php-cs-fixer": "^3.1",
-		"nunomaduro/larastan": "^0.7.12"
+		"nunomaduro/larastan": "^0.7.12",
+		"phpmd/phpmd": "^2.10"
     },
 	"autoload": {
 		"psr-4": {
