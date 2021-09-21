@@ -41,8 +41,9 @@ abstract class MySQL57TestCase extends FeatureTestCase
             '-p\''.config('database.connections.mysql57.password').'\'' :
             '');
         $command  = sprintf(
-            'mysqldump -h %s -u %s '.$password.' %s --compact --no-data > %s',
+            'mysqldump -h %s -P %s -u %s '.$password.' %s --compact --no-data --skip-column-statistics > %s',
             config('database.connections.mysql57.host'),
+            config('database.connections.mysql57.port'),
             config('database.connections.mysql57.username'),
             config('database.connections.mysql57.database'),
             $destination
