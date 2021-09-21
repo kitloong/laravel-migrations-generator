@@ -9,7 +9,9 @@ use MigrationsGenerator\DBAL\Types\DBALTypes;
 use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\Columns\DatetimeColumn;
 use MigrationsGenerator\Generators\Columns\DecimalColumn;
+use MigrationsGenerator\Generators\Columns\DoubleColumn;
 use MigrationsGenerator\Generators\Columns\EnumColumn;
+use MigrationsGenerator\Generators\Columns\FloatColumn;
 use MigrationsGenerator\Generators\Columns\GeometryColumn;
 use MigrationsGenerator\Generators\Columns\IntegerColumn;
 use MigrationsGenerator\Generators\Columns\MiscColumn;
@@ -27,7 +29,9 @@ class ColumnGenerator
 {
     private $datetimeColumn;
     private $decimalColumn;
+    private $doubleColumn;
     private $enumColumn;
+    private $floatColumn;
     private $geometryColumn;
     private $integerColumn;
     private $miscColumn;
@@ -43,7 +47,9 @@ class ColumnGenerator
     public function __construct(
         DatetimeColumn $datetimeColumn,
         DecimalColumn $decimalColumn,
+        DoubleColumn $doubleColumn,
         EnumColumn $enumColumn,
+        FloatColumn $floatColumn,
         GeometryColumn $geometryColumn,
         IntegerColumn $integerColumn,
         MiscColumn $miscColumn,
@@ -58,7 +64,9 @@ class ColumnGenerator
     ) {
         $this->datetimeColumn    = $datetimeColumn;
         $this->decimalColumn     = $decimalColumn;
+        $this->doubleColumn      = $doubleColumn;
         $this->enumColumn        = $enumColumn;
+        $this->floatColumn       = $floatColumn;
         $this->geometryColumn    = $geometryColumn;
         $this->integerColumn     = $integerColumn;
         $this->miscColumn        = $miscColumn;
@@ -105,9 +113,13 @@ class ColumnGenerator
                 $method = $this->datetimeColumn->generate($type, $table, $column);
                 break;
             case ColumnType::DECIMAL:
-            case ColumnType::FLOAT:
-            case ColumnType::DOUBLE:
                 $method = $this->decimalColumn->generate($type, $table, $column);
+                break;
+            case ColumnType::FLOAT:
+                $method = $this->floatColumn->generate($type, $table, $column);
+                break;
+            case ColumnType::DOUBLE:
+                $method = $this->doubleColumn->generate($type, $table, $column);
                 break;
             case ColumnType::ENUM:
                 $method = $this->enumColumn->generate($type, $table, $column);

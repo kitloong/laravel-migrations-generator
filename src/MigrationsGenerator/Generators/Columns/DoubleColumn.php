@@ -7,11 +7,11 @@ use Doctrine\DBAL\Schema\Table;
 use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 
-class DecimalColumn implements GeneratableColumn
+class DoubleColumn implements GeneratableColumn
 {
-    // (8, 2) are default value of decimal, float
-    private const DECIMAL_DEFAULT_PRECISION = 8;
-    private const DECIMAL_DEFAULT_SCALE     = 2;
+    // DBAL return (10, 0) if double length is empty
+    private const DOUBLE_EMPTY_PRECISION = 10;
+    private const DOUBLE_EMPTY_SCALE     = 0;
 
     public function generate(string $type, Table $table, Column $column): Method
     {
@@ -28,25 +28,21 @@ class DecimalColumn implements GeneratableColumn
 
     private function getPrecisions(Column $column): array
     {
-        return $this->getDecimalPrecisions($column->getPrecision(), $column->getScale());
+        return $this->getDoublePrecisions($column->getPrecision(), $column->getScale());
     }
 
     /**
-     * Default decimal precision and scale is (8, 2)
-     * Return precision and scale if this column is not (8, 2)
+     * Default decimal precision and scale is (10, 0)
+     * Return precision and scale if this column is not (10, 0)
      *
      * @param  int  $precision
      * @param  int  $scale
-     * @return int[] [precision, scale]
+     * @return int[]
      */
-    private function getDecimalPrecisions(int $precision, int $scale): array
+    private function getDoublePrecisions(int $precision, int $scale): array
     {
-        if ($precision === self::DECIMAL_DEFAULT_PRECISION && $scale === self::DECIMAL_DEFAULT_SCALE) {
+        if ($precision === self::DOUBLE_EMPTY_PRECISION && $scale === self::DOUBLE_EMPTY_SCALE) {
             return [];
-        }
-
-        if ($scale === self::DECIMAL_DEFAULT_SCALE) {
-            return [$precision];
         }
 
         return [$precision, $scale];

@@ -45,6 +45,17 @@
     "scripts": {
         "action-env-setup": [
             "@php -r \"file_exists('.env') || copy('.env.action', '.env');\""
+        ],
+        "check-migration-files": [
+            "rm -rf migrations/mysql8/* migrations/mysql57/* migrations/pgsql/* migrations/sqlsrv/*",
+            "phpunit --filter testRun tests/Feature/MySQL57/CommandTest.php && cp storage/migrations/* migrations/mysql57/",
+            "phpunit --filter testCollation tests/Feature/MySQL57/CommandTest.php && cp storage/migrations/* migrations/mysql57/",
+            "phpunit --filter testRun tests/Feature/MySQL8/CommandTest.php && cp storage/migrations/* migrations/mysql8/",
+            "phpunit --filter testCollation tests/Feature/MySQL8/CommandTest.php && cp storage/migrations/* migrations/mysql8/",
+            "phpunit --filter testRun tests/Feature/PgSQL/CommandTest.php && cp storage/migrations/* migrations/pgsql/",
+            "phpunit --filter testCollation tests/Feature/PgSQL/CommandTest.php && cp storage/migrations/* migrations/pgsql/",
+            "phpunit --filter testRun tests/Feature/SQLSrv/CommandTest.php && cp storage/migrations/* migrations/sqlsrv/",
+            "phpunit --filter testCollation tests/Feature/SQLSrv/CommandTest.php && cp storage/migrations/* migrations/sqlsrv/"
         ]
     }
 }

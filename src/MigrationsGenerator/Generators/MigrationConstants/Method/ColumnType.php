@@ -46,6 +46,7 @@ final class ColumnType
     public const TIMESTAMP               = 'timestamp';
     public const TIMESTAMPS              = 'timestamps';
     public const TIMESTAMP_TZ            = 'timestampTz';
+    public const TIMESTAMPS_TZ           = 'timestampsTz';
     public const TINY_INCREMENTS         = 'tinyIncrements';
     public const TINY_INTEGER            = 'tinyInteger';
     public const UNSIGNED_BIG_INTEGER    = 'unsignedBigInteger';

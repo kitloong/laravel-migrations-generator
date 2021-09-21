@@ -3,9 +3,7 @@
 namespace MigrationsGenerator\Generators\Blueprint;
 
 use Illuminate\Support\Collection;
-use MigrationsGenerator\Generators\MigrationConstants\ColumnName;
-use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
-use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
+use MigrationsGenerator\Generators\Blueprint\Support\MergeTimestamps;
 
 class TableBlueprint
 {
@@ -76,49 +74,8 @@ class TableBlueprint
 
     public function mergeTimestamps(): void
     {
-        $length           = 0;
-        $createdAtLineKey = 0;
-        $updatedAtLineKey = 0;
-        $isTimestamps     = false;
-
-        foreach ($this->lines as $key => $line) {
-            if (!$line instanceof Method) {
-                continue;
-            }
-
-            if (!$this->checkTimestamps(ColumnName::CREATED_AT, $line)) {
-                continue;
-            }
-
-            $length           = $line->getValues()[1] ?? 0;
-            $createdAtLineKey = $key;
-            $updatedAtLineKey = $key + 1;
-            break;
-        }
-
-        $updatedAt = $this->lines[$updatedAtLineKey] ?? null;
-        if (!$updatedAt instanceof Method) {
-            return;
-        }
-
-        if (!$this->checkTimestamps(ColumnName::UPDATED_AT, $updatedAt)) {
-            return;
-        }
-
-        $updatedAtLength = $updatedAt->getValues()[1] ?? 0;
-        if ($length === $updatedAtLength) {
-            $isTimestamps = true;
-        }
-
-        if ($isTimestamps === true) {
-            if ($length === 0) { // MIGRATION_DEFAULT_PRECISION = 0
-                $this->lines[$createdAtLineKey] = new Method(ColumnType::TIMESTAMPS);
-            } else {
-                $this->lines[$createdAtLineKey] = new Method(ColumnType::TIMESTAMPS, $length);
-            }
-
-            unset($this->lines[$updatedAtLineKey]);
-        }
+        $this->lines = app(MergeTimestamps::class)->merge($this->lines, false);
+        $this->lines = app(MergeTimestamps::class)->merge($this->lines, true);
     }
 
     public function toString(): string
@@ -193,22 +150,5 @@ class TableBlueprint
             return $this->convertFromAnyTypeToString($v);
         })->implode(', ');
         return $method->getName()."($v)";
-    }
-
-    private function checkTimestamps(string $name, Method $method): bool
-    {
-        if ($method->getName() !== ColumnType::TIMESTAMP) {
-            return false;
-        }
-
-        if ($method->getValues()[0] !== $name) {
-            return false;
-        }
-
-        if ($method->countChain() !== 1) {
-            return false;
-        }
-
-        return $method->getChains()[0]->getName() === ColumnModifier::NULLABLE && empty($method->getChains()[0]->getValues());
     }
 }

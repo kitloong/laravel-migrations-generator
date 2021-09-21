@@ -23,11 +23,11 @@ class DatetimeColumn implements GeneratableColumn
 {
     private const MIGRATION_DEFAULT_PRECISION = 0;
 
-    private const SQLSRV_DATETIME_DEFAULT_SCALE  = 3;
-    private const SQLSRV_DATETIME_DEFAULT_LENGTH = 8;
+    private const SQLSRV_DATETIME_EMPTY_SCALE  = 3;
+    private const SQLSRV_DATETIME_EMPTY_LENGTH = 8;
 
-    private const SQLSRV_DATETIME_TZ_DEFAULT_SCALE  = 7;
-    private const SQLSRV_DATETIME_TZ_DEFAULT_LENGTH = 10;
+    private const SQLSRV_DATETIME_TZ_EMPTY_SCALE  = 7;
+    private const SQLSRV_DATETIME_TZ_EMPTY_LENGTH = 10;
 
     private $mySQLRepository;
     private $pgSQLRepository;
@@ -114,8 +114,8 @@ class DatetimeColumn implements GeneratableColumn
         switch (get_class($column->getType())) {
             case DateTimeType::class:
             case DateTimeImmutableType::class:
-                if ($colDef->getScale() === self::SQLSRV_DATETIME_DEFAULT_SCALE &&
-                    $colDef->getLength() === self::SQLSRV_DATETIME_DEFAULT_LENGTH) {
+                if ($colDef->getScale() === self::SQLSRV_DATETIME_EMPTY_SCALE &&
+                    $colDef->getLength() === self::SQLSRV_DATETIME_EMPTY_LENGTH) {
                     return null;
                 } else {
                     return $column->getScale();
@@ -123,8 +123,8 @@ class DatetimeColumn implements GeneratableColumn
                 // no break
             case DateTimeTzType::class:
             case DateTimeTzImmutableType::class:
-                if ($colDef->getScale() === self::SQLSRV_DATETIME_TZ_DEFAULT_SCALE &&
-                    $colDef->getLength() === self::SQLSRV_DATETIME_TZ_DEFAULT_LENGTH) {
+                if ($colDef->getScale() === self::SQLSRV_DATETIME_TZ_EMPTY_SCALE &&
+                    $colDef->getLength() === self::SQLSRV_DATETIME_TZ_EMPTY_LENGTH) {
                     return null;
                 } else {
                     return $column->getScale();

@@ -23,6 +23,7 @@ class ExpectedCreateUserProfile_DB_Table extends Migration
             $table->bigInteger('custom_name')->unsigned();
             $table->bigInteger('constraint')->unsigned();
             $table->unsignedInteger('sub_id');
+            $table->timestampsTz();
 
             $table->foreign('user_id')->references('id')->on('users_[db]');
             $table->foreign('custom_name', 'custom_foreign')->references('id')->on('users_[db]');

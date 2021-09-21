@@ -56,12 +56,16 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->decimal('decimal_default')->default(10.8);
             $table->double('double');
             $table->double('double_82', 8, 2);
+            $table->double('double_83', 8, 3);
+            $table->double('double_92', 9, 2);
             $table->double('double_53', 5, 3);
             $table->double('double_default')->default(10.8);
             $table->enum('enum', ['easy', 'hard']);
             $table->enum('enum_default', ['easy', 'hard'])->default('easy');
             $table->float('float');
             $table->float('float_82', 8, 2);
+            $table->float('float_83', 8, 3);
+            $table->float('float_92', 9, 2);
             $table->float('float_53', 5, 3);
             $table->float('float_default')->default(10.8);
 
