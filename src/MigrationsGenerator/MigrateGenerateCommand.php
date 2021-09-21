@@ -21,7 +21,6 @@ class MigrateGenerateCommand extends Command
                             {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
                             {--p|path= : Where should the file be created?}
                             {--tp|template-path= : The location of the template for this generator}
-                            {--date= : Specify date for created migrations}
                             {--table-filename= : Define table migration filename, default pattern: [datetime_prefix]_create_[table]_table.php}
                             {--fk-filename= : Define foreign key migration filename, default pattern: [datetime_prefix]_add_foreign_keys_to_[table]_table.php}
                             {--default-index-names : Don\'t use db index names for migrations}
