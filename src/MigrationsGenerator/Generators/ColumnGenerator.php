@@ -144,8 +144,8 @@ class ColumnGenerator
         $method = $this->charsetModifier->chainCharset($table, $method, $type, $column);
         $method = $this->collationModifier->chainCollation($table, $method, $type, $column);
         $method = $this->nullableModifier->chainNullable($method, $type, $column);
-        $method = $this->defaultModifier->chainDefault($method, $type, $column);
-        $method = $this->indexModifier->chainIndex($table->getName(), $method, $singleColumnIndexes, $column);
+        $method = $this->defaultModifier->chainDefault($table, $method, $type, $column);
+        $method = $this->indexModifier->chainIndex($table, $method, $singleColumnIndexes, $column);
         $method = $this->commentModifier->chainComment($method, $type, $column);
 
         return $method;

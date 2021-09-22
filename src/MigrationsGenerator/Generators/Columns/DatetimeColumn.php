@@ -17,10 +17,13 @@ use MigrationsGenerator\MigrationsGeneratorSetting;
 use MigrationsGenerator\Repositories\MySQLRepository;
 use MigrationsGenerator\Repositories\PgSQLRepository;
 use MigrationsGenerator\Repositories\SQLSrvRepository;
+use MigrationsGenerator\Support\CheckMigrationMethod;
 use MigrationsGenerator\Support\Regex;
 
 class DatetimeColumn implements GeneratableColumn
 {
+    use CheckMigrationMethod;
+
     private const MIGRATION_DEFAULT_PRECISION = 0;
 
     private const SQLSRV_DATETIME_EMPTY_SCALE  = 3;
@@ -69,6 +72,31 @@ class DatetimeColumn implements GeneratableColumn
         $this->chainUseCurrentOnUpdate($column, $table, $method);
 
         return $method;
+    }
+
+    /**
+     * Check if column has "on update CURRENT_TIMESTAMP"
+     *
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @return bool
+     */
+    public function hasOnUpdateCurrentTimestamp(Column $column, Table $table, Method $method): bool
+    {
+        if (app(MigrationsGeneratorSetting::class)->getPlatform() !== Platform::MYSQL) {
+            return false;
+        }
+
+        if ($column->getType()->getName() !== ColumnType::TIMESTAMP) {
+            return false;
+        }
+
+        if ($this->mySQLRepository->useOnUpdateCurrentTimestamp($table->getName(), $column->getName())) {
+            return true;
+        }
+
+        return false;
     }
 
     private function getLength(string $table, Column $column): ?int
@@ -142,12 +170,13 @@ class DatetimeColumn implements GeneratableColumn
      */
     private function chainUseCurrentOnUpdate(Column $column, Table $table, Method $method): void
     {
-        if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::MYSQL) {
-            if ($column->getType()->getName() === ColumnType::TIMESTAMP) {
-                if ($this->mySQLRepository->useOnUpdateCurrentTimestamp($table->getName(), $column->getName())) {
-                    $method->chain(ColumnModifier::USE_CURRENT_ON_UPDATE);
-                }
-            }
+        // `useCurrentOnUpdate` exists only after Laravel 8
+        if (!$this->hasUseCurrentOnUpdate()) {
+            return;
+        }
+
+        if ($this->hasOnUpdateCurrentTimestamp($column, $table, $method)) {
+            $method->chain(ColumnModifier::USE_CURRENT_ON_UPDATE);
         }
     }
 }

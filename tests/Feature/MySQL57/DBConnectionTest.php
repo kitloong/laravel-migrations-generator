@@ -40,6 +40,9 @@ class DBConnectionTest extends MySQL57TestCase
         };
 
         $generateMigrations = function () {
+            // Set default connection, to fix Laravel < 6.x.
+            DB::setDefaultConnection('mysql8');
+
             $this->artisan(
                 'migrate:generate',
                 [

@@ -40,8 +40,15 @@ abstract class MySQL57TestCase extends FeatureTestCase
         $password = (!empty(config('database.connections.mysql57.password')) ?
             '-p\''.config('database.connections.mysql57.password').'\'' :
             '');
+
+        if (!$this->isMaria()) {
+            $skipColumnStatistics = '--skip-column-statistics';
+        } else {
+            $skipColumnStatistics = '';
+        }
+
         $command  = sprintf(
-            'mysqldump -h %s -P %s -u %s '.$password.' %s --compact --no-data --skip-column-statistics > %s',
+            'mysqldump -h %s -P %s -u %s '.$password.' %s --compact --no-data '.$skipColumnStatistics.' > %s',
             config('database.connections.mysql57.host'),
             config('database.connections.mysql57.port'),
             config('database.connections.mysql57.username'),

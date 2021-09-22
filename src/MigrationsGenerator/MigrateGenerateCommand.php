@@ -162,7 +162,6 @@ class MigrateGenerateCommand extends Command
 
         if ($this->shouldLog) {
             $this->repository->setSource($this->connection);
-
             if ($this->connection !== Config::get('database.default')) {
                 if (!$this->confirm('Log into current connection: '.$this->connection.'? [Y = '.$this->connection.', n = '.Config::get('database.default').' (default connection)] [Y/n] ', true)) {
                     $this->repository->setSource(Config::get('database.default'));

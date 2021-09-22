@@ -3,21 +3,31 @@
 namespace MigrationsGenerator\Generators\Modifier;
 
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
 use MigrationsGenerator\Generators\Blueprint\Method;
+use MigrationsGenerator\Generators\Columns\DatetimeColumn;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
 
 class DefaultModifier
 {
+    private $datetimeColumn;
+
+    public function __construct(DatetimeColumn $datetimeColumn)
+    {
+        $this->datetimeColumn = $datetimeColumn;
+    }
+
     /**
      * Set default value.
      *
+     * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  string  $type
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    public function chainDefault(Method $method, string $type, Column $column): Method
+    public function chainDefault(Table $table, Method $method, string $type, Column $column): Method
     {
         if ($column->getDefault() === null) {
             return $method;
@@ -42,7 +52,7 @@ class DefaultModifier
             case ColumnType::SOFT_DELETES:
             case ColumnType::DATETIME:
             case ColumnType::TIMESTAMP:
-                $method = $this->chainDefaultForDatetime($method, $column);
+                $method = $this->chainDefaultForDatetime($method, $table, $column);
                 break;
             default:
                 $method = $this->chainDefaultForString($method, $column);
@@ -93,15 +103,20 @@ class DefaultModifier
      * Set default value to method for datetime column.
      *
      * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    private function chainDefaultForDatetime(Method $method, Column $column): Method
+    private function chainDefaultForDatetime(Method $method, Table $table, Column $column): Method
     {
         switch ($column->getDefault()) {
             case 'now()':
             case 'CURRENT_TIMESTAMP':
-                $method->chain(ColumnModifier::USE_CURRENT);
+                // Fallback for old Laravel version which doesn't have `useCurrentOnUpdate` yet.
+                if (!$this->datetimeColumn->hasOnUpdateCurrentTimestamp($column, $table, $method) ||
+                    $method->hasChain(ColumnModifier::USE_CURRENT_ON_UPDATE)) {
+                    $method->chain(ColumnModifier::USE_CURRENT);
+                }
                 break;
             default:
                 $method->chain(ColumnModifier::DEFAULT, $column->getDefault());

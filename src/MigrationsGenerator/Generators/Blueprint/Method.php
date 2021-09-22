@@ -7,7 +7,7 @@ class Method
     /** @var string */
     private $name;
 
-    /** @var array */
+    /** @var mixed */
     private $values;
 
     /** @var Method[] */
@@ -47,6 +47,22 @@ class Method
     {
         $this->chains[] = new Method($name, ...$values);
         return $this;
+    }
+
+    /**
+     * Check if chain name exists.
+     *
+     * @param  string  $name
+     * @return bool
+     */
+    public function hasChain(string $name): bool
+    {
+        foreach ($this->chains as $chain) {
+            if ($chain->getName() === $name) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

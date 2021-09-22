@@ -161,5 +161,15 @@ abstract class FeatureTestCase extends TestCase
         DB::table('migrations')->truncate();
     }
 
+    /**
+     * Determine if the connected database is a MariaDB database.
+     *
+     * @return bool
+     */
+    protected function isMaria(): bool
+    {
+        return env('IS_MARIA_CLIENT') === true;
+    }
+
     abstract protected function dropAllTables(): void;
 }

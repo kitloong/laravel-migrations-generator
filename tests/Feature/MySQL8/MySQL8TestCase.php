@@ -40,8 +40,15 @@ abstract class MySQL8TestCase extends FeatureTestCase
         $password = (!empty(config('database.connections.mysql8.password')) ?
             '-p\''.config('database.connections.mysql8.password').'\'' :
             '');
+
+        if (!$this->isMaria()) {
+            $skipColumnStatistics = '--skip-column-statistics';
+        } else {
+            $skipColumnStatistics = '';
+        }
+
         $command  = sprintf(
-            'mysqldump -h %s -P %s -u %s '.$password.' %s --compact --no-data --skip-column-statistics > %s',
+            'mysqldump -h %s -P %s -u %s '.$password.' %s --compact --no-data '.$skipColumnStatistics.' > %s',
             config('database.connections.mysql8.host'),
             config('database.connections.mysql8.port'),
             config('database.connections.mysql8.username'),

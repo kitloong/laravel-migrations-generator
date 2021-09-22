@@ -19,14 +19,14 @@ class SquashWriter
 
     public function writeToTemp(SchemaBlueprint $upBlueprint, SchemaBlueprint $downBlueprint): void
     {
-        if (File::missing($upTempPath = $this->filenameGenerator->makeUpTempPath())) {
+        if (!File::exists($upTempPath = $this->filenameGenerator->makeUpTempPath())) {
             $prettySpace = '';
         } else {
             $prettySpace = PHP_EOL.PHP_EOL.WriterConstant::TAB.WriterConstant::TAB;
         }
         File::append($upTempPath, $prettySpace.$upBlueprint->toString());
 
-        if (File::missing($downTempPath = $this->filenameGenerator->makeDownTempPath())) {
+        if (!File::exists($downTempPath = $this->filenameGenerator->makeDownTempPath())) {
             $prettySpace = '';
         } else {
             $prettySpace = PHP_EOL.PHP_EOL.WriterConstant::TAB.WriterConstant::TAB;
