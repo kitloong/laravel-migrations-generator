@@ -1,40 +1,25 @@
 # Laravel Migrations Generator
 
-[![Build Status](https://travis-ci.org/kitloong/laravel-migrations-generator.svg)](https://travis-ci.org/kitloong/laravel-migrations-generator)
+![example workflow](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/check.yml/badge.svg?branch=5.x)
+![example workflow](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/tests.yml/badge.svg?branch=5.x)
 [![Latest Stable Version](https://poser.pugx.org/kitloong/laravel-migrations-generator/v/stable.png)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 [![Total Downloads](http://poser.pugx.org/kitloong/laravel-migrations-generator/downloads)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 [![License](https://poser.pugx.org/kitloong/laravel-migrations-generator/license.png)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 
 Generate Laravel Migrations from an existing database, including indexes and foreign keys!
 
-## V4 Changes
-
-1. Major rewrite on `FieldGenerator` and `IndexGenerator`.
-1. Fixed miscellaneous bugs.
-1. Added `spatial` data type support such as `geometry`, `point`, etc.
-1. Support more Laravel migration types such as `json`, `uuid`, `longText`, `year`, etc
-1. Added `spatialIndex` support.
-1. `timestamp` and `datetime` support precision.
-1. Fixed MySQL `tinyInteger` and `boolean` issue.
-1. Able generate `softDeletes`, `rememberToken`, `timestamps` types.
-1. Support `set` for MySQL.
-1. It is now possible to generate nullable `timestamp`
-1. Removed unused classes.
-1. Added UT!
-1. More UT will be added to increase coverage.
-
-This package is clone from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
+This package is clone from https://github.com/Xethron/migrations-generator and updated to support Laravel 5.6 and above.
 
 ## Version Compatibility
 
 |Laravel|Version|
 |---|---|
-|8.x|4.x|
-|7.x|4.x|
-|6.x|4.x|
-|5.8.x|4.x|
-|5.7.x|4.x|
-|5.6.x|4.x|
+|8.x|5.x|
+|7.x|5.x|
+|6.x|5.x|
+|5.8.x|5.x|
+|5.7.x|5.x|
+|5.6.x|5.x|
 |5.5 and below|https://github.com/Xethron/migrations-generator|
 
 ## Install
@@ -77,7 +62,17 @@ Run `php artisan migrate:generate` to create migrations for all the tables, or y
 
 Laravel Migrations Generator will first generate all the tables, columns and indexes, and afterwards setup all the foreign key constraints. So make sure you include all the tables listed in the foreign keys so that they are present when the foreign keys are created.
 
-You can also specify the connection name if you are not using your default connection with `--connection="connection_name"`
+You can also specify the connection name if you are not using your default connection with `--connection="connection_name"`.
+
+### Squash migrations
+
+By default, Generator will generate multiple migration files for each table. You can squash all migrations into single file with `--squash`.
+
+```bash
+php artisan migrate:generate --squash
+```
+
+### Options
 
 Run `php artisan help migrate:generate` for a list of options.
 
