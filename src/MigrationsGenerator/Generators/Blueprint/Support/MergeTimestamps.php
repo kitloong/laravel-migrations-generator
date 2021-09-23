@@ -15,9 +15,9 @@ class MergeTimestamps
     /**
      * Merges created_at and updated_at into timestamps or timestampsTz.
      *
-     * @param  Property|Method|string[]  $lines  TableBlueprint lines.
+     * @param  Property[]|Method[]|string[]  $lines  TableBlueprint lines.
      * @param  bool  $tz  Is timezone.
-     * @return array  TableBlueprint lines after merged.
+     * @return Property[]|Method[]|string[]  TableBlueprint lines after merged.
      */
     public function merge(array $lines, bool $tz): array
     {

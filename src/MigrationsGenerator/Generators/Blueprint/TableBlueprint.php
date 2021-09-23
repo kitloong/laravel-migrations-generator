@@ -9,7 +9,7 @@ class TableBlueprint
 {
     use Stringable;
 
-    /** @var Property|Method|string[] */
+    /** @var Property[]|Method[]|string[] */
     private $lines;
 
     public function __construct()
@@ -57,7 +57,7 @@ class TableBlueprint
     }
 
     /**
-     * @return Property|Method|string[]|null
+     * @return Method|Property|string|null
      */
     public function removeLastLine()
     {
@@ -65,7 +65,7 @@ class TableBlueprint
     }
 
     /**
-     * @return Property|Method|string[]
+     * @return Property[]|Method[]|string[]
      */
     public function getLines(): array
     {
