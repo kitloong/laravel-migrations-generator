@@ -158,6 +158,7 @@ class DatetimeColumn implements GeneratableColumn
                 } else {
                     return $column->getScale();
                 }
+                // no break
             case DateTimeTzType::class:
             case DateTimeTzImmutableType::class:
                 if ($colDef->getScale() === self::SQLSRV_DATETIME_TZ_EMPTY_SCALE &&
@@ -166,6 +167,7 @@ class DatetimeColumn implements GeneratableColumn
                 } else {
                     return $column->getScale();
                 }
+                // no break
             default:
                 return $column->getScale();
         }
