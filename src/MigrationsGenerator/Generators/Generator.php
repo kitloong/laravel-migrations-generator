@@ -34,6 +34,8 @@ class Generator
     }
 
     /**
+     * Creates table migration.
+     *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\Column[]  $columns
      * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
@@ -53,6 +55,8 @@ class Generator
     }
 
     /**
+     * Writes table schema into temp files.
+     *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\Column[]  $columns
      * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
@@ -66,6 +70,8 @@ class Generator
     }
 
     /**
+     * Creates foreign key migration.
+     *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint[]  $foreignKeys
      * @return string Generated file path.
@@ -84,6 +90,8 @@ class Generator
     }
 
     /**
+     * Writes foreign key schema into temp files.
+     *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint[]  $foreignKeys
      */
@@ -95,11 +103,20 @@ class Generator
         $this->squashWriter->writeToTemp($up, $down);
     }
 
+    /**
+     * Cleans all migration temporary paths.
+     * Execute at the beginning, if `--squash` options provided.
+     */
     public function cleanTemps(): void
     {
         $this->squashWriter->cleanTemps();
     }
 
+    /**
+     * Squash temporary paths into single migration file.
+     *
+     * @return string Squashed migration file path.
+     */
     public function squashMigrations(): string
     {
         $database  = $this->setting->getConnection()->getDatabaseName();
@@ -110,11 +127,13 @@ class Generator
     }
 
     /**
-     * @param  string  $path
+     * Writes migration files.
+     *
+     * @param  string  $path  Migration file destination path.
      * @param  string  $className
-     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $up
-     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $down
-     * @return string
+     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $up  Blueprint of migration `up`.
+     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $down  Blueprint of migration `down`.
+     * @return string Generated migration file path.
      */
     private function writeMigration(string $path, string $className, SchemaBlueprint $up, SchemaBlueprint $down): string
     {

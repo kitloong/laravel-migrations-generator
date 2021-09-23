@@ -28,6 +28,8 @@ class TableMigration
     }
 
     /**
+     * Generates `up` schema for table.
+     *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\Column[]  $columns
      * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
@@ -51,7 +53,7 @@ class TableMigration
         // Use $indexes instead.
         $this->indexGenerator->setSpatialFlag($indexes, $table->getName());
         $singleColumnIndexes = $this->indexGenerator->getSingleColumnIndexes($indexes);
-        $multiColumnsIndexes = $this->indexGenerator->getMultiColumnsIndexes($indexes);
+        $multiColumnsIndexes = $this->indexGenerator->getCompositeIndexes($indexes);
 
         foreach ($columns as $column) {
             $method = $this->columnGenerator->generate($table, $column, $singleColumnIndexes);
@@ -73,11 +75,22 @@ class TableMigration
         return $up;
     }
 
+    /**
+     * Generates `down` schema for table.
+     *
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @return \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint
+     */
     public function down(Table $table): SchemaBlueprint
     {
         return $this->getSchemaBlueprint($table, SchemaBuilder::DROP_IF_EXISTS);
     }
 
+    /**
+     * Checks should set charset into table.
+     *
+     * @return bool
+     */
     private function shouldSetCharset(): bool
     {
         if ($this->setting->getPlatform() !== Platform::MYSQL) {
@@ -87,6 +100,11 @@ class TableMigration
         return $this->setting->isUseDBCollation();
     }
 
+    /**
+     * @param  \MigrationsGenerator\Generators\Blueprint\TableBlueprint  $blueprint
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @return \MigrationsGenerator\Generators\Blueprint\TableBlueprint
+     */
     private function setTableCharset(TableBlueprint $blueprint, Table $table): TableBlueprint
     {
         $blueprint->setProperty(

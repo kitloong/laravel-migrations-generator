@@ -20,7 +20,7 @@ class TableBlueprint
     /**
      * @param  string  $name  Property name.
      * @param  mixed  $value
-     * @return \MigrationsGenerator\Generators\Blueprint\Property
+     * @return Property
      */
     public function setProperty(string $name, $value): Property
     {
@@ -31,8 +31,8 @@ class TableBlueprint
 
     /**
      * @param  string  $name  Method name.
-     * @param  mixed  ...$values
-     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     * @param  mixed  ...$values  Method arguments.
+     * @return Method
      */
     public function setMethodByName(string $name, ...$values): Method
     {
@@ -42,8 +42,8 @@ class TableBlueprint
     }
 
     /**
-     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
-     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     * @param  Method  $method
+     * @return Method
      */
     public function setMethod(Method $method): Method
     {
@@ -57,7 +57,7 @@ class TableBlueprint
     }
 
     /**
-     * @return \MigrationsGenerator\Generators\Blueprint\Property|\MigrationsGenerator\Generators\Blueprint\Method|string|null
+     * @return Property|Method|string[]|null
      */
     public function removeLastLine()
     {
@@ -65,19 +65,25 @@ class TableBlueprint
     }
 
     /**
-     * @return array
+     * @return Property|Method|string[]
      */
     public function getLines(): array
     {
         return $this->lines;
     }
 
+    /**
+     * Checks lines and merge into timestamps or timestampsTz if possible.
+     */
     public function mergeTimestamps(): void
     {
         $this->lines = app(MergeTimestamps::class)->merge($this->lines, false);
         $this->lines = app(MergeTimestamps::class)->merge($this->lines, true);
     }
 
+    /**
+     * @return string
+     */
     public function toString(): string
     {
         $lines = [];
@@ -106,7 +112,7 @@ class TableBlueprint
      * $table->test = null;
      * $table->test = [1, 'abc', true];
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\Property  $property
+     * @param  Property  $property
      * @return string
      */
     private function propertyToString(Property $property): string
@@ -120,7 +126,7 @@ class TableBlueprint
      *
      * $table->string('name', 100)->comment('Hello')->default('Test');
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  Method  $method
      * @return string
      */
     private function methodToString(Method $method): string
@@ -141,7 +147,7 @@ class TableBlueprint
      * comment('Hello')
      * default('Test')
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  Method  $method
      * @return string
      */
     private function flattenMethod(Method $method): string

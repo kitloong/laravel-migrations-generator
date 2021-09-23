@@ -19,6 +19,8 @@ class IndexModifier
     }
 
     /**
+     * Set index.
+     *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @param  \Illuminate\Support\Collection<string, \Doctrine\DBAL\Schema\Index>  $singleColumnIndexes

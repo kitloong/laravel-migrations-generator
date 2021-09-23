@@ -36,6 +36,10 @@ class IntegerColumn implements GeneratableColumn
         return $this->generateAsInteger($type, $column);
     }
 
+    /**
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
     private function generateAsBoolean(Column $column): Method
     {
         $method = new Method(ColumnType::BOOLEAN, $column->getName());
@@ -45,6 +49,11 @@ class IntegerColumn implements GeneratableColumn
         return $method;
     }
 
+    /**
+     * @param  string  $type  Column type name.
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
     private function generateAsInteger(string $type, Column $column): Method
     {
         if ($column->getUnsigned() && $column->getAutoincrement()) {
@@ -68,6 +77,11 @@ class IntegerColumn implements GeneratableColumn
         }
     }
 
+    /**
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return bool
+     */
     private function checkMySQLBoolean(Table $table, Column $column): bool
     {
         if ($this->setting->getPlatform() !== Platform::MYSQL) {

@@ -13,6 +13,12 @@ class Method
     /** @var Method[] */
     private $chains;
 
+    /**
+     * Method constructor.
+     *
+     * @param  string  $name  Method name.
+     * @param  mixed  ...$values  Method arguments.
+     */
     public function __construct(string $name, ...$values)
     {
         $this->name   = $name;
@@ -39,9 +45,9 @@ class Method
     /**
      * Chain method.
      *
-     * @param  string  $name
-     * @param  mixed  ...$values
-     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     * @param  string  $name  Method name.
+     * @param  mixed  ...$values  Method arguments.
+     * @return Method
      */
     public function chain(string $name, ...$values): Method
     {
@@ -50,9 +56,9 @@ class Method
     }
 
     /**
-     * Check if chain name exists.
+     * Checks if chain name exists.
      *
-     * @param  string  $name
+     * @param  string  $name  Method name.
      * @return bool
      */
     public function hasChain(string $name): bool
@@ -76,7 +82,9 @@ class Method
     }
 
     /**
-     * @return \MigrationsGenerator\Generators\Blueprint\Method[]
+     * Get a list of chained methods.
+     *
+     * @return Method[]
      */
     public function getChains(): array
     {

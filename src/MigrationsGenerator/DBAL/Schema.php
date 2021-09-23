@@ -42,6 +42,8 @@ class Schema
     }
 
     /**
+     * Register custom column type into doctrine dbal.
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function initialize(): void
@@ -97,6 +99,8 @@ class Schema
     }
 
     /**
+     * Get a list of table names.
+     *
      * @return string[]
      * @throws \Doctrine\DBAL\Exception
      */
@@ -106,7 +110,9 @@ class Schema
     }
 
     /**
-     * @param  string  $table
+     * Get single table detail.
+     *
+     * @param  string  $table  Table name.
      * @return \Doctrine\DBAL\Schema\Table
      * @throws \Doctrine\DBAL\Exception
      */
@@ -116,7 +122,9 @@ class Schema
     }
 
     /**
-     * @param  string  $table
+     * Get a list of table indexes.
+     *
+     * @param  string  $table  Table name.
      * @return \Doctrine\DBAL\Schema\Index[]
      * @throws \Doctrine\DBAL\Exception
      */
@@ -126,7 +134,9 @@ class Schema
     }
 
     /**
-     * @param  string  $table
+     * Get a list of table columns.
+     *
+     * @param  string  $table  Table name.
      * @return \Doctrine\DBAL\Schema\Column[]
      * @throws \Doctrine\DBAL\Exception
      */
@@ -136,7 +146,9 @@ class Schema
     }
 
     /**
-     * @param  string  $table
+     * Get a list of table foreign keys.
+     *
+     * @param  string  $table  Table name.
      * @return \Doctrine\DBAL\Schema\ForeignKeyConstraint[]
      * @throws \Doctrine\DBAL\Exception
      */
@@ -146,7 +158,7 @@ class Schema
     }
 
     /**
-     * Register custom doctrineType, override if exists.
+     * Register custom doctrine type, override if exists.
      *
      * @param  string  $dbType
      * @param  string  $class  The class name of the custom type.

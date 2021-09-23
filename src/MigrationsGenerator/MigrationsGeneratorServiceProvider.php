@@ -17,6 +17,8 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
      * Register the service provider.
      *
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function register()
     {
@@ -47,7 +49,10 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the config paths
+     * Register the config path.
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function registerConfig()
     {

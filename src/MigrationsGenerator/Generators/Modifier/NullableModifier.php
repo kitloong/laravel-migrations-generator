@@ -13,7 +13,7 @@ class NullableModifier
      * Set nullable.
      *
      * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
-     * @param  string  $type
+     * @param  string  $type  Column type.
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return \MigrationsGenerator\Generators\Blueprint\Method
      */

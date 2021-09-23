@@ -81,7 +81,7 @@ class ColumnGenerator
     }
 
     /**
-     * Generate tables.
+     * Converts column into migration column method.
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\Column  $column
@@ -141,12 +141,12 @@ class ColumnGenerator
         // Refresh $type by get method name.
         $type = $method->getName();
 
-        $method = $this->charsetModifier->chainCharset($table, $method, $type, $column);
-        $method = $this->collationModifier->chainCollation($table, $method, $type, $column);
+        $method = $this->charsetModifier->chainCharset($table, $method, $column);
+        $method = $this->collationModifier->chainCollation($table, $method, $column);
         $method = $this->nullableModifier->chainNullable($method, $type, $column);
         $method = $this->defaultModifier->chainDefault($table, $method, $type, $column);
         $method = $this->indexModifier->chainIndex($table, $method, $singleColumnIndexes, $column);
-        $method = $this->commentModifier->chainComment($method, $type, $column);
+        $method = $this->commentModifier->chainComment($method, $column);
 
         return $method;
     }

@@ -8,10 +8,9 @@ use MigrationsGenerator\Schema\MySQL\ShowColumn;
 class MySQLRepository extends Repository
 {
     /**
-     * @return array [
-     *  'charset' => string,
-     *  'collation' => string
-     * ]
+     * Get database charset and collation.
+     *
+     * @return array{charset: string, collation: string}
      */
     public function getDatabaseCollation(): array
     {
@@ -22,21 +21,35 @@ class MySQLRepository extends Repository
         ];
     }
 
+    /**
+     * Show column by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return \MigrationsGenerator\Schema\MySQL\ShowColumn|null
+     */
     public function showColumn(string $table, string $column): ?ShowColumn
     {
         $setting = app(MigrationsGeneratorSetting::class);
         $column  = $setting->getConnection()
-            ->selectOne("SHOW COLUMNS FROM `${table}` where Field = '${column}'");
+            ->selectOne("SHOW COLUMNS FROM `$table` where Field = '$column'");
         if ($column !== null) {
             return new ShowColumn($column);
         }
         return null;
     }
 
-    public function getEnumPresetValues(string $table, string $columnName): array
+    /**
+     * Get enum values.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string[]
+     */
+    public function getEnumPresetValues(string $table, string $column): array
     {
         $setting = app(MigrationsGeneratorSetting::class);
-        $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'enum(%'");
+        $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'enum(%'");
         if (count($columns) > 0) {
             $showColumn = new ShowColumn($columns[0]);
             $value      = substr(
@@ -49,10 +62,17 @@ class MySQLRepository extends Repository
         return [];
     }
 
-    public function getSetPresetValues(string $table, string $columnName): array
+    /**
+     * Get set values.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string[]
+     */
+    public function getSetPresetValues(string $table, string $column): array
     {
         $setting = app(MigrationsGeneratorSetting::class);
-        $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `${table}` where Field = '${columnName}' AND Type LIKE 'set(%'");
+        $columns = $setting->getConnection()->select("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'set(%'");
         if (count($columns) > 0) {
             $showColumn = new ShowColumn($columns[0]);
             $value      = substr(
@@ -66,20 +86,27 @@ class MySQLRepository extends Repository
         return [];
     }
 
-    public function useOnUpdateCurrentTimestamp(string $table, string $columnName): bool
+    /**
+     * Checks if column has `on update CURRENT_TIMESTAMP`
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return bool
+     */
+    public function useOnUpdateCurrentTimestamp(string $table, string $column): bool
     {
         $setting = app(MigrationsGeneratorSetting::class);
 
         // MySQL5.7 shows "on update CURRENT_TIMESTAMP"
         // MySQL8 shows "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
-        $column = $setting->getConnection()
+        $showColumn = $setting->getConnection()
             ->select(
-                "SHOW COLUMNS FROM `${table}`
-                WHERE Field = '${columnName}'
+                "SHOW COLUMNS FROM `$table`
+                WHERE Field = '$column'
                     AND Type = 'timestamp'
                     AND EXTRA LIKE '%on update CURRENT_TIMESTAMP%'"
             );
-        if (count($column) > 0) {
+        if (count($showColumn) > 0) {
             return true;
         }
 

@@ -75,14 +75,13 @@ class DatetimeColumn implements GeneratableColumn
     }
 
     /**
-     * Check if column has "on update CURRENT_TIMESTAMP"
+     * Checks if column has "on update CURRENT_TIMESTAMP".
      *
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @param  \Doctrine\DBAL\Schema\Table  $table
-     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
      * @return bool
      */
-    public function hasOnUpdateCurrentTimestamp(Column $column, Table $table, Method $method): bool
+    public function hasOnUpdateCurrentTimestamp(Column $column, Table $table): bool
     {
         if (app(MigrationsGeneratorSetting::class)->getPlatform() !== Platform::MYSQL) {
             return false;
@@ -99,6 +98,13 @@ class DatetimeColumn implements GeneratableColumn
         return false;
     }
 
+    /**
+     * Get datetime length.
+     *
+     * @param  string  $table  Table name.
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return int|null
+     */
     private function getLength(string $table, Column $column): ?int
     {
         switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
@@ -115,7 +121,9 @@ class DatetimeColumn implements GeneratableColumn
     }
 
     /**
-     * @param  string  $table
+     * Get datetime length for PgSQL.
+     *
+     * @param  string  $table  Table name.
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return int|null
      */
@@ -131,7 +139,9 @@ class DatetimeColumn implements GeneratableColumn
     }
 
     /**
-     * @param  string  $table
+     * Get datetime length for SQLSrv.
+     *
+     * @param  string  $table  Table name.
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return int|null
      */
@@ -148,7 +158,6 @@ class DatetimeColumn implements GeneratableColumn
                 } else {
                     return $column->getScale();
                 }
-                // no break
             case DateTimeTzType::class:
             case DateTimeTzImmutableType::class:
                 if ($colDef->getScale() === self::SQLSRV_DATETIME_TZ_EMPTY_SCALE &&
@@ -157,7 +166,6 @@ class DatetimeColumn implements GeneratableColumn
                 } else {
                     return $column->getScale();
                 }
-                // no break
             default:
                 return $column->getScale();
         }
@@ -170,12 +178,11 @@ class DatetimeColumn implements GeneratableColumn
      */
     private function chainUseCurrentOnUpdate(Column $column, Table $table, Method $method): void
     {
-        // `useCurrentOnUpdate` exists only after Laravel 8
         if (!$this->hasUseCurrentOnUpdate()) {
             return;
         }
 
-        if ($this->hasOnUpdateCurrentTimestamp($column, $table, $method)) {
+        if ($this->hasOnUpdateCurrentTimestamp($column, $table)) {
             $method->chain(ColumnModifier::USE_CURRENT_ON_UPDATE);
         }
     }

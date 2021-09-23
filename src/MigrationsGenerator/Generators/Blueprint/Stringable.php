@@ -7,8 +7,16 @@ use MigrationsGenerator\Generators\Writer\WriterConstant;
 
 trait Stringable
 {
+    /** @var string Empty string will be parsed as line break. */
     protected $lineBreak = '';
 
+    /**
+     * Implodes lines with tab.
+     *
+     * @param  string[]  $lines
+     * @param  int  $numberOfPrefixTab  Number of tabs to implode.
+     * @return string
+     */
     public function implodeLines(array $lines, int $numberOfPrefixTab): string
     {
         $tab = WriterConstant::TAB;

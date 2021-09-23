@@ -23,7 +23,7 @@ class DefaultModifier
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
-     * @param  string  $type
+     * @param  string  $type  Column type.
      * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
@@ -113,7 +113,7 @@ class DefaultModifier
             case 'now()':
             case 'CURRENT_TIMESTAMP':
                 // Fallback for old Laravel version which doesn't have `useCurrentOnUpdate` yet.
-                if (!$this->datetimeColumn->hasOnUpdateCurrentTimestamp($column, $table, $method) ||
+                if (!$this->datetimeColumn->hasOnUpdateCurrentTimestamp($column, $table) ||
                     $method->hasChain(ColumnModifier::USE_CURRENT_ON_UPDATE)) {
                     $method->chain(ColumnModifier::USE_CURRENT);
                 }
@@ -125,6 +125,13 @@ class DefaultModifier
         return $method;
     }
 
+    /**
+     * Set default value to method, which support string.
+     *
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
     private function chainDefaultForString(Method $method, Column $column): Method
     {
         $quotes  = '\'';

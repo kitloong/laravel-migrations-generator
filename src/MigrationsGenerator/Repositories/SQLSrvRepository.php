@@ -10,6 +10,12 @@ class SQLSrvRepository extends Repository
 {
     public const INDEX_TYPE_SPATIAL = 4;
 
+    /**
+     * Get a list of spatial indexes.
+     *
+     * @param  string  $table  Table name.
+     * @return \Illuminate\Support\Collection<string>
+     */
     public function getSpatialIndexNames(string $table): Collection
     {
         $setting     = app(MigrationsGeneratorSetting::class);
@@ -34,8 +40,10 @@ class SQLSrvRepository extends Repository
     }
 
     /**
-     * @param  string  $table
-     * @param  string  $column
+     * Get column definition by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name..
      * @return \MigrationsGenerator\Schema\SQLSrv\Column|null
      */
     public function getColumnDefinition(string $table, string $column): ?Column
@@ -97,6 +105,7 @@ class SQLSrvRepository extends Repository
      * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
      *
      * @return string
+     * @see https://github.com/doctrine/dbal/blob/3.1.x/src/Platforms/SQLServer2012Platform.php#L1064
      */
     private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
     {

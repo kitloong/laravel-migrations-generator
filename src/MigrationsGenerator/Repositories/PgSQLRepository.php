@@ -7,11 +7,18 @@ use MigrationsGenerator\MigrationsGeneratorSetting;
 
 class PgSQLRepository extends Repository
 {
-    public function getTypeByColumnName(string $table, string $columnName): ?string
+    /**
+     * Get column type by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string|null
+     */
+    public function getTypeByColumnName(string $table, string $column): ?string
     {
         $setting = app(MigrationsGeneratorSetting::class);
 
-        $column = $setting->getConnection()
+        $columnDetail = $setting->getConnection()
             ->select("
                 SELECT pg_catalog.format_type(a.atttypid, a.atttypmod) as datatype
                 FROM
@@ -23,20 +30,27 @@ class PgSQLRepository extends Repository
                         SELECT c.oid
                         FROM pg_catalog.pg_class c
                             LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-                        WHERE c.relname ~ '^(${table})$'
+                        WHERE c.relname ~ '^($table)$'
                             AND pg_catalog.pg_table_is_visible(c.oid)
                     )
-                    AND a.attname='${columnName}'");
-        if (count($column) > 0) {
-            return $column[0]->datatype;
+                    AND a.attname='$column'");
+        if (count($columnDetail) > 0) {
+            return $columnDetail[0]->datatype;
         }
         return null;
     }
 
+    /**
+     * Get constraint by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string|null
+     */
     public function getCheckConstraintDefinition(string $table, string $column): ?string
     {
-        $setting = app(MigrationsGeneratorSetting::class);
-        $column  = $setting->getConnection()
+        $setting      = app(MigrationsGeneratorSetting::class);
+        $columnDetail = $setting->getConnection()
             ->select("
                 SELECT pgc.conname AS constraint_name,
                        pgc.contype,
@@ -51,15 +65,21 @@ class PgSQLRepository extends Repository
                           ON pgc.conname = ccu.constraint_name
                           AND nsp.nspname = ccu.constraint_schema
                 WHERE contype ='c'
-                    AND ccu.table_name='${table}'
-                    AND ccu.column_name='${column}';
+                    AND ccu.table_name='$table'
+                    AND ccu.column_name='$column';
             ");
-        if (count($column) > 0) {
-            return $column[0]->definition;
+        if (count($columnDetail) > 0) {
+            return $columnDetail[0]->definition;
         }
         return null;
     }
 
+    /**
+     * Get a list of spatial indexes.
+     *
+     * @param  string  $table  Table name.
+     * @return \Illuminate\Support\Collection<string>
+     */
     public function getSpatialIndexNames(string $table): Collection
     {
         $setting     = app(MigrationsGeneratorSetting::class);
@@ -69,7 +89,7 @@ class PgSQLRepository extends Repository
                        indexname,
                        indexdef
                 FROM pg_indexes
-                WHERE tablename = '${table}'
+                WHERE tablename = '$table'
                     AND indexdef LIKE '% USING gist %'");
         $definitions = collect([]);
         if (count($columns) > 0) {

@@ -26,14 +26,18 @@ class DecimalColumn implements GeneratableColumn
         return $method;
     }
 
+    /**
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return int[] [precision, scale]
+     */
     private function getPrecisions(Column $column): array
     {
         return $this->getDecimalPrecisions($column->getPrecision(), $column->getScale());
     }
 
     /**
-     * Default decimal precision and scale is (8, 2)
-     * Return precision and scale if this column is not (8, 2)
+     * Default decimal precision and scale is (8, 2).
+     * Return precision and scale if this column is not (8, 2).
      *
      * @param  int  $precision
      * @param  int  $scale

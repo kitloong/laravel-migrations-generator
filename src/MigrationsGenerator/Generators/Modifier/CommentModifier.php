@@ -8,7 +8,14 @@ use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 
 class CommentModifier
 {
-    public function chainComment(Method $method, string $type, Column $column): Method
+    /**
+     * Set comment.
+     *
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
+    public function chainComment(Method $method, Column $column): Method
     {
         if ($column->getComment() !== null) {
             $method->chain(ColumnModifier::COMMENT, $column->getComment());

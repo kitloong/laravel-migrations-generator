@@ -17,6 +17,13 @@ class ForeignKeyGenerator
         $this->tableNameGenerator = $tableNameGenerator;
     }
 
+    /**
+     * Converts foreign keys into migration foreign key method.
+     *
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint  $foreignKey
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
     public function generate(Table $table, ForeignKeyConstraint $foreignKey): Method
     {
         if ($this->shouldSkipName($table->getName(), $foreignKey)) {
@@ -39,25 +46,46 @@ class ForeignKeyGenerator
         return $method;
     }
 
+    /**
+     * Generates drop foreign migration method.
+     *
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint  $foreignKey
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
     public function generateDrop(Table $table, ForeignKeyConstraint $foreignKey): Method
     {
         if ($this->shouldSkipName($table->getName(), $foreignKey)) {
-            return new Method(Foreign::DROP_FOREIGN, $this->guessForeignKeyName($table->getName(), $foreignKey));
+            return new Method(Foreign::DROP_FOREIGN, $this->makeLaravelForeignKeyName($table->getName(), $foreignKey));
         } else {
             return new Method(Foreign::DROP_FOREIGN, $foreignKey->getName());
         }
     }
 
+    /**
+     * Checks should skip current foreign key name from DB.
+     *
+     * @param  string  $table  Table name.
+     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint  $foreignKey
+     * @return bool
+     */
     private function shouldSkipName(string $table, ForeignKeyConstraint $foreignKey): bool
     {
         if (app(MigrationsGeneratorSetting::class)->isIgnoreForeignKeyNames()) {
             return true;
         }
 
-        return $this->guessForeignKeyName($table, $foreignKey) === $foreignKey->getName();
+        return $this->makeLaravelForeignKeyName($table, $foreignKey) === $foreignKey->getName();
     }
 
-    private function guessForeignKeyName(string $table, ForeignKeyConstraint $foreignKey)
+    /**
+     * Makes foreign key name with Laravel way.
+     *
+     * @param  string  $table  Table name.
+     * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint  $foreignKey
+     * @return string
+     */
+    private function makeLaravelForeignKeyName(string $table, ForeignKeyConstraint $foreignKey): string
     {
         $name = strtolower($table.'_'.implode('_', $foreignKey->getUnquotedLocalColumns()).'_foreign');
         return str_replace(['-', '.'], '_', $name);

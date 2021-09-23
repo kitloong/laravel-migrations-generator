@@ -7,7 +7,9 @@ use MigrationsGenerator\MigrationsGeneratorSetting;
 class TableNameGenerator
 {
     /**
-     * @param  string  $table
+     * Strips prefix from table name.
+     *
+     * @param  string  $table  Table name.
      * @return string
      */
     public function stripPrefix(string $table): string

@@ -22,6 +22,8 @@ class ForeignKeyMigration
     }
 
     /**
+     * Generates `up` schema for foreign key.
+     *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint[]  $foreignKeys
      * @return SchemaBlueprint
@@ -40,6 +42,8 @@ class ForeignKeyMigration
     }
 
     /**
+     * Generates `down` schema for foreign key.
+     *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\ForeignKeyConstraint[]  $foreignKeys
      * @return SchemaBlueprint

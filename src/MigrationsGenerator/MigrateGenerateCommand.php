@@ -154,6 +154,9 @@ class MigrateGenerateCommand extends Command
         return $excludes;
     }
 
+    /**
+     * Asks user for log migration permission.
+     */
     protected function askIfLogMigrationTable(): void
     {
         if (!$this->option('no-interaction')) {
@@ -207,6 +210,8 @@ class MigrateGenerateCommand extends Command
     }
 
     /**
+     * Generates table and foreign key migrations.
+     *
      * @param  string[]  $tables
      * @throws \Doctrine\DBAL\Exception
      */
@@ -234,6 +239,8 @@ class MigrateGenerateCommand extends Command
     }
 
     /**
+     * Generates table migrations.
+     *
      * @param  string[]  $tables
      * @throws \Doctrine\DBAL\Exception
      */
@@ -261,6 +268,8 @@ class MigrateGenerateCommand extends Command
     }
 
     /**
+     * Generates foreign key migration.
+     *
      * @param  string[]  $tables
      * @throws \Doctrine\DBAL\Exception
      */
@@ -289,7 +298,9 @@ class MigrateGenerateCommand extends Command
     }
 
     /**
-     * @param  string  $table
+     * Writes migration files.
+     *
+     * @param  string  $table  Table name.
      * @param  callable  $writeToTemp
      * @param  callable  $writeToMigrationFile
      */
@@ -308,7 +319,7 @@ class MigrateGenerateCommand extends Command
     }
 
     /**
-     * Log migration repository
+     * Logs migration repository.
      *
      * @param  string  $migrationFilepath
      */

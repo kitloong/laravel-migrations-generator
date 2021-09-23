@@ -5,9 +5,11 @@ namespace MigrationsGenerator\Support;
 class Regex
 {
     /**
-     * @param  string  $text
-     * @param  string  $left
-     * @param  string  $right
+     * Get first string between 2 tags.
+     *
+     * @param  string  $text  Subject.
+     * @param  string  $left  Left tag.
+     * @param  string  $right  Right tag.
      * @return string|null
      */
     public function getTextBetween(string $text, string $left = '\(', string $right = '\)'): ?string
@@ -20,10 +22,12 @@ class Regex
     }
 
     /**
-     * @param  string  $text
-     * @param  string  $left
-     * @param  string  $right
-     * @return array|null|string[]
+     * Get all strings between 2 tags.
+     *
+     * @param  string  $text  Subject.
+     * @param  string  $left  Left tag.
+     * @param  string  $right  Right tag.
+     * @return string[]|null
      */
     public function getTextBetweenAll(string $text, string $left = '\(', string $right = '\)'): ?array
     {

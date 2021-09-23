@@ -10,7 +10,15 @@ use MigrationsGenerator\MigrationsGeneratorSetting;
 
 class CollationModifier
 {
-    public function chainCollation(Table $table, Method $method, string $type, Column $column): Method
+    /**
+     * Set collation.
+     *
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
+    public function chainCollation(Table $table, Method $method, Column $column): Method
     {
         if (!app(MigrationsGeneratorSetting::class)->isUseDBCollation()) {
             return $method;

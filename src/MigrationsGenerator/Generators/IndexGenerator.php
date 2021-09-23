@@ -23,6 +23,13 @@ class IndexGenerator
         $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
+    /**
+     * Converts index into migration method.
+     *
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \Doctrine\DBAL\Schema\Index  $index
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
     public function generate(Table $table, Index $index): Method
     {
         $indexType = $this->getIndexType($index);
@@ -34,6 +41,8 @@ class IndexGenerator
     }
 
     /**
+     * Checks and set `spatial` flag into Index if index is spatial index.
+     *
      * @param  Index[]  $indexes
      * @param  string  $table
      */
@@ -48,6 +57,8 @@ class IndexGenerator
     }
 
     /**
+     * Get a collection of single column indexes.
+     *
      * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
      * @return \Illuminate\Support\Collection<string, \Doctrine\DBAL\Schema\Index>
      */
@@ -62,10 +73,12 @@ class IndexGenerator
     }
 
     /**
+     * Get a collection of composite indexes.
+     *
      * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
      * @return \Illuminate\Support\Collection<\Doctrine\DBAL\Schema\Index>
      */
-    public function getMultiColumnsIndexes(array $indexes): Collection
+    public function getCompositeIndexes(array $indexes): Collection
     {
         return (new Collection($indexes))
             ->filter(function (Index $index) {
@@ -73,6 +86,10 @@ class IndexGenerator
             });
     }
 
+    /**
+     * @param  \Doctrine\DBAL\Schema\Index  $index
+     * @return string primary|unique|spatialIndex|index
+     */
     public function getIndexType(Index $index): string
     {
         if ($index->isPrimary()) {
@@ -112,7 +129,7 @@ class IndexGenerator
      * Use raw SQL here to create $spatial index name list.
      *
      * @param  string  $table
-     * @return \Illuminate\Support\Collection Spatial index name list
+     * @return \Illuminate\Support\Collection<string> Spatial index name list
      */
     private function getSpatialList(string $table): Collection
     {

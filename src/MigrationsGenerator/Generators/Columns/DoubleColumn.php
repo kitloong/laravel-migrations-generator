@@ -26,18 +26,22 @@ class DoubleColumn implements GeneratableColumn
         return $method;
     }
 
+    /**
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return int[] [precision, scale]
+     */
     private function getPrecisions(Column $column): array
     {
         return $this->getDoublePrecisions($column->getPrecision(), $column->getScale());
     }
 
     /**
-     * Default decimal precision and scale is (10, 0)
-     * Return precision and scale if this column is not (10, 0)
+     * Empty double precision and scale is (10, 0).
+     * Return precision and scale if this column is not (10, 0).
      *
      * @param  int  $precision
      * @param  int  $scale
-     * @return int[]
+     * @return int[] [precision, scale]
      */
     private function getDoublePrecisions(int $precision, int $scale): array
     {

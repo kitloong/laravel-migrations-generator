@@ -34,6 +34,12 @@ class FloatColumn implements GeneratableColumn
         return $method;
     }
 
+    /**
+     * Get float precision.
+     *
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return int[] [precision, scale]
+     */
     private function getPrecisions(Column $column): array
     {
         switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
@@ -46,6 +52,13 @@ class FloatColumn implements GeneratableColumn
         }
     }
 
+    /**
+     * Get float precision for SQLSrv.
+     *
+     * @param  int  $precision
+     * @param  int  $scale
+     * @return int[] [precision, scale]
+     */
     private function getSQLSrvFloatPrecisions(int $precision, int $scale): array
     {
         if ($precision === self::SQLSRV_FLOAT_EMPTY_PRECISION && $scale === self::SQLSRV_FLOAT_EMPTY_SCALE) {
@@ -55,6 +68,13 @@ class FloatColumn implements GeneratableColumn
         return $this->getFloatPrecisions($precision, $scale);
     }
 
+    /**
+     * Get float precision for PgSQL.
+     *
+     * @param  int  $precision
+     * @param  int  $scale
+     * @return int[] [precision, scale]
+     */
     private function getPgSQLFloatPrecisions(int $precision, int $scale): array
     {
         if ($precision === self::PGSQL_FLOAT_EMPTY_PRECISION && $scale === self::PGSQL_FLOAT_EMPTY_SCALE) {
@@ -64,6 +84,13 @@ class FloatColumn implements GeneratableColumn
         return $this->getFloatPrecisions($precision, $scale);
     }
 
+    /**
+     * Get float precision.
+     *
+     * @param  int  $precision
+     * @param  int  $scale
+     * @return int[] [precision, scale]
+     */
     private function getFloatPrecisions(int $precision, int $scale): array
     {
         if ($precision === self::MIGRATION_FLOAT_DEFAULT_PRECISION && $scale === self::MIGRATION_FLOAT_DEFAULT_SCALE) {

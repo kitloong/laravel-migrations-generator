@@ -25,24 +25,30 @@ class SchemaBlueprint
 
     /**
      * SchemaBlueprint constructor.
-     * @param  string  $table
-     * @param  string  $connection
-     * @param  string  $schemaBuilder
-     * @see SchemaBuilder for $builderType
+     *
+     * @param  string  $connection  Connection name.
+     * @param  string  $table  Table name.
+     * @param  string  $schemaBuilder  SchemaBuilder name.
      */
     public function __construct(string $connection, string $table, string $schemaBuilder)
     {
-        $this->table         = $table;
         $this->connection    = $connection;
+        $this->table         = $table;
         $this->schemaBuilder = $schemaBuilder;
         $this->blueprint     = null;
     }
 
+    /**
+     * @param  TableBlueprint  $blueprint
+     */
     public function setBlueprint(TableBlueprint $blueprint): void
     {
         $this->blueprint = $blueprint;
     }
 
+    /**
+     * @return string
+     */
     public function toString(): string
     {
         if ($this->connection !== Config::get('database.default')) {

@@ -17,6 +17,14 @@ class SquashWriter
         $this->migrationStub     = $migrationStub;
     }
 
+    /**
+     * Writes migration `up` and `down` to temporary path.
+     * Append new content into `up`.
+     * Prepend new content into `down`.
+     *
+     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $upBlueprint
+     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $downBlueprint
+     */
     public function writeToTemp(SchemaBlueprint $upBlueprint, SchemaBlueprint $downBlueprint): void
     {
         if (!File::exists($upTempPath = $this->filenameGenerator->makeUpTempPath())) {
@@ -34,12 +42,22 @@ class SquashWriter
         File::prepend($downTempPath, $downBlueprint->toString().$prettySpace);
     }
 
+    /**
+     * Cleans all migration temporary paths.
+     */
     public function cleanTemps(): void
     {
         File::delete($this->filenameGenerator->makeUpTempPath());
         File::delete($this->filenameGenerator->makeDownTempPath());
     }
 
+    /**
+     * Squash temporary paths into single migration file.
+     *
+     * @param  string  $path  Migration file destination path.
+     * @param  string  $stubPath  Migration stub file path.
+     * @param  string  $className
+     */
     public function squashMigrations(string $path, string $stubPath, string $className): void
     {
         File::put(

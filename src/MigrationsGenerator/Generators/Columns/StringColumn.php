@@ -16,8 +16,9 @@ use MigrationsGenerator\Support\Regex;
 
 class StringColumn implements GeneratableColumn
 {
-    public const SQLSRV_TEXT_TYPE   = 'nvarchar';
-    public const SQLSRV_TEXT_LENGTH = -1;
+    public const SQLSRV_TEXT_TYPE      = 'nvarchar';
+    public const SQLSRV_TEXT_LENGTH    = -1;
+    public const REMEMBER_TOKEN_LENGTH = 100;
 
     private $pgSQLRepository;
     private $sqlSrvRepository;
@@ -55,7 +56,7 @@ class StringColumn implements GeneratableColumn
         }
 
         if ($column->getName() === ColumnName::REMEMBER_TOKEN &&
-            $column->getLength() === 100 &&
+            $column->getLength() === self::REMEMBER_TOKEN_LENGTH &&
             !$column->getFixed()) {
             return new Method(ColumnType::REMEMBER_TOKEN);
         }
@@ -73,9 +74,16 @@ class StringColumn implements GeneratableColumn
         }
     }
 
-    private function getPgSQLEnumValues(string $tableName, string $column): array
+    /**
+     * Get PgSQL enum values.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string[]
+     */
+    private function getPgSQLEnumValues(string $table, string $column): array
     {
-        $definition = $this->pgSQLRepository->getCheckConstraintDefinition($tableName, $column);
+        $definition = $this->pgSQLRepository->getCheckConstraintDefinition($table, $column);
         if (!empty($definition)) {
             $enumValues = $this->regex->getTextBetweenAll($definition, "'", "'::");
             if ($enumValues !== null) {

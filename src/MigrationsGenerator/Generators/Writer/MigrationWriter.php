@@ -11,9 +11,18 @@ class MigrationWriter
 
     public function __construct(MigrationStub $migrationStub)
     {
-        $this->migrationStub     = $migrationStub;
+        $this->migrationStub = $migrationStub;
     }
 
+    /**
+     * Writes migration to destination.
+     *
+     * @param  string  $path  Migration file destination path.
+     * @param  string  $stubPath  Migration stub file path.
+     * @param  string  $className
+     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $up  Blueprint of migration `up`.
+     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $down  Blueprint of migration `down`.
+     */
     public function writeTo(
         string $path,
         string $stubPath,

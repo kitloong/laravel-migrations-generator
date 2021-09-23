@@ -4,6 +4,7 @@ namespace MigrationsGenerator\Generators\Blueprint\Support;
 
 use MigrationsGenerator\DBAL\Platform;
 use MigrationsGenerator\Generators\Blueprint\Method;
+use MigrationsGenerator\Generators\Blueprint\Property;
 use MigrationsGenerator\Generators\MigrationConstants\ColumnName;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnModifier;
 use MigrationsGenerator\Generators\MigrationConstants\Method\ColumnType;
@@ -11,9 +12,16 @@ use MigrationsGenerator\MigrationsGeneratorSetting;
 
 class MergeTimestamps
 {
+    /**
+     * Merges created_at and updated_at into timestamps or timestampsTz.
+     *
+     * @param  Property|Method|string[]  $lines  TableBlueprint lines.
+     * @param  bool  $tz  Is timezone.
+     * @return array  TableBlueprint lines after merged.
+     */
     public function merge(array $lines, bool $tz): array
     {
-        $length           = 0;
+        $length           = 0; // Default length.
         $createdAtLineKey = 0;
         $updatedAtLineKey = 0;
         $isTimestamps     = false;
@@ -27,9 +35,9 @@ class MergeTimestamps
                 continue;
             }
 
-            $length           = $line->getValues()[1] ?? 0;
+            $length           = $line->getValues()[1] ?? 0; // Get length from values or default to 0.
             $createdAtLineKey = $key;
-            $updatedAtLineKey = $key + 1;
+            $updatedAtLineKey = $key + 1; // updated_at should be the next column.
             break;
         }
 
@@ -42,13 +50,13 @@ class MergeTimestamps
             return $lines;
         }
 
-        $updatedAtLength = $updatedAt->getValues()[1] ?? 0;
+        $updatedAtLength = $updatedAt->getValues()[1] ?? 0; // Get length from values or default to 0.
         if ($length === $updatedAtLength) {
             $isTimestamps = true;
         }
 
         if ($isTimestamps === true) {
-            if ($length === 0) { // MIGRATION_DEFAULT_PRECISION = 0
+            if ($length === 0) { // MIGRATION_DEFAULT_PRECISION = 0, no need specify length 0.
                 $lines[$createdAtLineKey] = new Method($this->timestamps($tz));
             } else {
                 $lines[$createdAtLineKey] = new Method($this->timestamps($tz), $length);
@@ -60,6 +68,14 @@ class MergeTimestamps
         return $lines;
     }
 
+    /**
+     * Checks if column name (created_at or updated_at) is possible a timestamps.
+     *
+     * @param  string  $name  Column name, created_at or updated_at.
+     * @param  Method  $method
+     * @param  bool  $tz  Is timezone.
+     * @return bool
+     */
     private function checkTimestamps(string $name, Method $method, bool $tz): bool
     {
         if (!$this->isPossibleTimestampsColumn($method, $tz)) {
@@ -77,6 +93,13 @@ class MergeTimestamps
         return $method->getChains()[0]->getName() === ColumnModifier::NULLABLE && empty($method->getChains()[0]->getValues());
     }
 
+    /**
+     * Checks if column type is possible a timestamps.
+     *
+     * @param  Method  $method
+     * @param  bool  $tz  Is timezone.
+     * @return bool
+     */
     private function isPossibleTimestampsColumn(Method $method, bool $tz): bool
     {
         if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::SQLSERVER) {
@@ -96,6 +119,13 @@ class MergeTimestamps
         return false;
     }
 
+    /**
+     * SQL server uses datetime.
+     * Only datetime or datetimeTz can be merged into timestamps.
+     *
+     * @param  bool  $tz  Is timezone.
+     * @return string Column type.
+     */
     private function sqlSrvTimestampsColumnType(bool $tz): string
     {
         if ($tz) {
@@ -105,6 +135,12 @@ class MergeTimestamps
         }
     }
 
+    /**
+     * Only timestamp or timestampTz can be merged into timestamps.
+     *
+     * @param  bool  $tz  Is timezone.
+     * @return string Column type.
+     */
     private function timestampsColumnType(bool $tz): string
     {
         if ($tz) {
@@ -114,6 +150,12 @@ class MergeTimestamps
         }
     }
 
+    /**
+     * Could merge into timestamps or timestampsTz.
+     *
+     * @param  bool  $tz  Is timezone.
+     * @return string
+     */
     private function timestamps(bool $tz): string
     {
         if ($tz) {

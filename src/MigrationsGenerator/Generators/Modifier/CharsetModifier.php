@@ -11,7 +11,15 @@ use MigrationsGenerator\MigrationsGeneratorSetting;
 
 class CharsetModifier
 {
-    public function chainCharset(Table $table, Method $method, string $type, Column $column): Method
+    /**
+     * Set charset.
+     *
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  \MigrationsGenerator\Generators\Blueprint\Method  $method
+     * @param  \Doctrine\DBAL\Schema\Column  $column
+     * @return \MigrationsGenerator\Generators\Blueprint\Method
+     */
+    public function chainCharset(Table $table, Method $method, Column $column): Method
     {
         if (!app(MigrationsGeneratorSetting::class)->isUseDBCollation()) {
             return $method;
