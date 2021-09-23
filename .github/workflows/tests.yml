@@ -31,7 +31,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
       postgres:
-        image: mdillon/postgis:11
+        image: postgis/postgis:11
         env:
           POSTGRES_DB: migration
           POSTGRES_USER: root
