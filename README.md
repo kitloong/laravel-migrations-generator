@@ -8,7 +8,7 @@
 
 Generate Laravel Migrations from an existing database, including indexes and foreign keys!
 
-This package is cloned from https://github.com/Xethron/migrations-generator and updated to support Laravel 5.6 and above, with a lot of feature improvements and bug fixes.
+This package is cloned from https://github.com/Xethron/migrations-generator and updated to support Laravel 5.6 and above, with a lot of feature improvements.
 
 ## Supported Database
 
