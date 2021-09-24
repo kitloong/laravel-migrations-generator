@@ -25,6 +25,7 @@ class MigrateGenerateCommand extends GeneratorCommand
                 {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
                 {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
                 {--p|path= : Where should the file be created?}
+                {--d|date=now : The date used in the file name}
                 {--tp|templatePath= : The location of the template for this generator}
                 {--useDBCollation : Follow db collations for migrations}
                 {--defaultIndexNames : Don\'t use db index names for migrations}
@@ -189,13 +190,13 @@ class MigrateGenerateCommand extends GeneratorCommand
     protected function generateMigrationFiles(array $tables): void
     {
         $this->info("Setting up Tables and Index Migrations");
-        $this->datePrefix = date('Y_m_d_His');
+        $this->datePrefix = date('Y_m_d_His', strtotime($this->option('date')));
         $this->generateTablesAndIndices($tables);
 
         $this->info("\nSetting up Foreign Key Migrations\n");
 
         // Plus 1 second to have foreign key migrations generate after table migrations generated
-        $this->datePrefix = date('Y_m_d_His', strtotime('+1 second'));
+        $this->datePrefix = date('Y_m_d_His', strtotime($this->option('date') . ' +1 second'));
         $this->generateForeignKeys($tables);
     }
 
