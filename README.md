@@ -129,9 +129,7 @@ Thanks to Jeffrey Way for his amazing Laravel-4-Generators package. This package
 
 ## Contributors
 
-Kit Loong
-
-Bernhard Breytenbach ([@BBreyten](https://twitter.com/BBreyten))
+[![Contributors](https://contrib.rocks/image?repo=kitloong/laravel-migrations-generator)](https://github.com/kitloong/laravel-migrations-generator/graphs/contributors)
 
 ## License
 
