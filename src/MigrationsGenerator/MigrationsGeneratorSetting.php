@@ -6,7 +6,6 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use MigrationsGenerator\DBAL\Platform;
 
 class MigrationsGeneratorSetting
@@ -180,12 +179,6 @@ class MigrationsGeneratorSetting
         // Use user defined stub path.
         if ($stubPath !== Config::get('generators.config.migration_template_path')) {
             $this->stubPath = $stubPath;
-            return;
-        }
-
-        // Use stub:publish stub path if any.
-        if (File::exists($frameworkPublishedStub = base_path('stubs/migration.stub'))) {
-            $this->stubPath = $frameworkPublishedStub;
             return;
         }
 
