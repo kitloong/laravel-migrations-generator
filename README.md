@@ -22,6 +22,7 @@ Generate Laravel Migrations from an existing database, including indexes and for
 1. Removed unused classes.
 1. Added UT!
 1. More UT will be added to increase coverage.
+1. It is now possible to specify the date used in the migration file name
 
 This package is clone from https://github.com/Xethron/migrations-generator and updated to support Laravel 6 and above.
 
@@ -87,6 +88,7 @@ Run `php artisan help migrate:generate` for a list of options.
 |-t, --tables[=TABLES]|A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments|
 |-i, --ignore[=IGNORE]|A list of Tables you wish to ignore, separated by a comma: users,posts,comments|
 |-p, --path[=PATH]|Where should the file be created?|
+|-d, --date[=DATE]|The date used in the migration file name|
 |  --useDBCollation|Follow db collations for migrations|
 |  --defaultIndexNames|Don't use db index names for migrations|
 |  --defaultFKNames|Don't use db foreign key names for migrations|
@@ -103,6 +105,8 @@ Thanks to Jeffrey Way for his amazing Laravel-4-Generators package. This package
 Kit Loong
 
 Bernhard Breytenbach ([@BBreyten](https://twitter.com/BBreyten))
+
+Patrick Falize ([@defser](https://github.com/defser))
 
 ## License
 
