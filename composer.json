@@ -36,7 +36,7 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"KitLoong\\MigrationsGenerator\\MigrationsGeneratorServiceProvider"
+				"MigrationsGenerator\\MigrationsGeneratorServiceProvider"
 			]
 		}
 	},
