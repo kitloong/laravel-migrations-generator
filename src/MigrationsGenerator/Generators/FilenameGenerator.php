@@ -2,6 +2,7 @@
 
 namespace MigrationsGenerator\Generators;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 
@@ -39,7 +40,7 @@ class FilenameGenerator
     {
         return $this->makeFilename(
             app(MigrationsGeneratorSetting::class)->getTableFilename(),
-            (string) date('Y_m_d_His'),
+            app(MigrationsGeneratorSetting::class)->getDate()->format('Y_m_d_His'),
             $table
         );
     }
@@ -69,7 +70,7 @@ class FilenameGenerator
     {
         return $this->makeFilename(
             app(MigrationsGeneratorSetting::class)->getFkFilename(),
-            (string) date('Y_m_d_His', strtotime('+1 second')),
+            Carbon::parse(app(MigrationsGeneratorSetting::class)->getDate())->addSecond()->format('Y_m_d_His'),
             $table
         );
     }

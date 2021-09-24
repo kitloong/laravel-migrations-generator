@@ -2,6 +2,7 @@
 
 namespace MigrationsGenerator;
 
+use Carbon\Carbon;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Config;
@@ -36,6 +37,9 @@ class MigrationsGeneratorSetting
 
     /** @var string */
     private $stubPath;
+
+    /** @var Carbon */
+    private $date;
 
     /** @var string */
     private $tableFilename;
@@ -232,5 +236,21 @@ class MigrationsGeneratorSetting
     public function setFkFilename(string $fkFilename): void
     {
         $this->fkFilename = $fkFilename;
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getDate(): Carbon
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param  Carbon  $date
+     */
+    public function setDate(Carbon $date): void
+    {
+        $this->date = $date;
     }
 }

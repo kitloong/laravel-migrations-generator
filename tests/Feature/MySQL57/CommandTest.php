@@ -196,6 +196,21 @@ class CommandTest extends MySQL57TestCase
         $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
     }
 
+    public function testDate()
+    {
+        $migrateTemplates = function () {
+            $this->migrateGeneral('mysql57');
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations([
+                '--date' => '2021-10-08 09:30:40',
+            ]);
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
     public function testTableFilename()
     {
         $this->migrateGeneral('mysql57');
