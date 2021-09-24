@@ -136,7 +136,7 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->unsignedTinyInteger('unsignedTinyInteger');
             $table->year('year')->default(2020);
 
-            if (config('database.default') === 'mysql') {
+            if (config('database.default') === 'mysql57') {
                 if ($this->atLeastLaravel5Dot8()) {
                     $table->set('set', ['strawberry', 'vanilla']);
                 }

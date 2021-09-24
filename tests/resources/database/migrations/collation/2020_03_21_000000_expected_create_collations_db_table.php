@@ -54,7 +54,7 @@ class ExpectedCreateCollations_DB_Table extends Migration
             $table->text('text_charset')->charset('utf8');
             $table->text('text_collation')->collation($collation);
 
-            if (config('database.default') === 'mysql') {
+            if (config('database.default') === 'mysql57') {
                 if ($this->atLeastLaravel5Dot8()) {
                     $table->set('set', ['strawberry', 'vanilla']);
                     $table->set('set_default', ['strawberry', 'vanilla'])->default('strawberry');
