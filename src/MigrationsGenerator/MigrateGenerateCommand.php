@@ -232,12 +232,14 @@ class MigrateGenerateCommand extends Command
 
         $this->generateTables($tables);
 
-        $this->info("\nSetting up Foreign Key Migrations\n");
+        $this->info("\nSetting up Foreign Key Migrations");
 
         $this->generateForeignKeys($tables);
 
         if (app(MigrationsGeneratorSetting::class)->isSquash()) {
             $migrationFilepath = $this->generator->squashMigrations();
+
+            $this->info('All migrations squashed.');
 
             if ($this->shouldLog) {
                 $this->logMigration($migrationFilepath);

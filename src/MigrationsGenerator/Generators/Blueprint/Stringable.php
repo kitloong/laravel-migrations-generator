@@ -7,9 +7,6 @@ use MigrationsGenerator\Generators\Writer\WriterConstant;
 
 trait Stringable
 {
-    /** @var string Empty string will be parsed as line break. */
-    protected $lineBreak = '';
-
     /**
      * Implodes lines with tab.
      *
@@ -20,10 +17,18 @@ trait Stringable
     public function implodeLines(array $lines, int $numberOfPrefixTab): string
     {
         $tab = WriterConstant::TAB;
-        return implode(
-            WriterConstant::LINE_BREAK.str_repeat($tab, $numberOfPrefixTab),
-            $lines
-        );
+
+        $content = '';
+        foreach ($lines as $i => $line) {
+            // First line or line break
+            if ($i === 0 || $line === WriterConstant::LINE_BREAK) {
+                $content .= $line;
+                continue;
+            }
+
+            $content .= WriterConstant::LINE_BREAK.str_repeat($tab, $numberOfPrefixTab).$line;
+        }
+        return $content;
     }
 
     /**
@@ -34,7 +39,7 @@ trait Stringable
      */
     public function convertFromAnyTypeToString($value): string
     {
-        if ($value === $this->lineBreak) {
+        if ($value === WriterConstant::LINE_BREAK) {
             return $value;
         }
 

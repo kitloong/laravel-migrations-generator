@@ -4,6 +4,7 @@ namespace MigrationsGenerator\Generators\Blueprint;
 
 use Illuminate\Support\Collection;
 use MigrationsGenerator\Generators\Blueprint\Support\MergeTimestamps;
+use MigrationsGenerator\Generators\Writer\WriterConstant;
 
 class TableBlueprint
 {
@@ -53,7 +54,7 @@ class TableBlueprint
 
     public function setLineBreak(): void
     {
-        $this->lines[] = $this->lineBreak;
+        $this->lines[] = WriterConstant::LINE_BREAK;
     }
 
     /**

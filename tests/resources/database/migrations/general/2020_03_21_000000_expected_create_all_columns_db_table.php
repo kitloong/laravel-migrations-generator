@@ -103,6 +103,8 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
                 $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ \\\' quotes');
                 $table->string('comment_double_quote')->comment("string with \" ' quotes");
             }
+            $table->string('string_default_empty')->default('');
+            $table->string('string_default_null')->default(null);
             $table->text('text');
             $table->time('time');
             $table->time('time_0', 0);
