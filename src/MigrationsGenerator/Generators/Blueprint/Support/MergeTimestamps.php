@@ -111,7 +111,7 @@ class MergeTimestamps
         } else {
             switch ($method->getName()) {
                 case $this->timestampsColumnType($tz):
-                    return false;
+                    return true;
                 default:
             }
         }
