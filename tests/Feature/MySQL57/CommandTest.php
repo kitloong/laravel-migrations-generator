@@ -243,6 +243,16 @@ class CommandTest extends MySQL57TestCase
         $this->assertSame('custom_user_profile_mysql57_table', $migrations[count($migrations) - 1]);
     }
 
+    public function testWillCreateMigrationTable()
+    {
+        $this->migrateGeneral('mysql57');
+        Schema::dropIfExists('migrations');
+
+        $this->generateMigrations();
+
+        $this->assertTrue(Schema::hasTable('migrations'));
+    }
+
     private function verify(callable $migrateTemplates, callable $generateMigrations)
     {
         $migrateTemplates();
