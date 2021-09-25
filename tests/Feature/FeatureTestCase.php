@@ -135,8 +135,8 @@ abstract class FeatureTestCase extends TestCase
                 '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
             ], $options)
         )
-            ->expectsQuestion('Do you want to log these migrations in the migrations table? [Y/n] ', 'y')
-            ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0] ', '0');
+            ->expectsQuestion('Do you want to log these migrations in the migrations table?', 'y')
+            ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]', '0');
     }
 
     protected function assertMigrations(): void

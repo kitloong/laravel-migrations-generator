@@ -79,7 +79,7 @@ class MigrateGenerateCommand extends Command
         $this->info('Using connection: '.$this->connection."\n");
 
         $tables = $this->filterTables();
-        $this->info('Generating migrations for: '.implode(', ', $tables));
+        $this->info('Generating migrations for: '.implode(', ', $tables). "\n");
 
         $this->askIfLogMigrationTable();
 
@@ -167,13 +167,13 @@ class MigrateGenerateCommand extends Command
     protected function askIfLogMigrationTable(): void
     {
         if (!$this->option('no-interaction')) {
-            $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table? [Y/n] ', true);
+            $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table?', true);
         }
 
         if ($this->shouldLog) {
             $this->repository->setSource($this->connection);
             if ($this->connection !== Config::get('database.default')) {
-                if (!$this->confirm('Log into current connection: '.$this->connection.'? [Y = '.$this->connection.', n = '.Config::get('database.default').' (default connection)] [Y/n] ', true)) {
+                if (!$this->confirm('Log into current connection: '.$this->connection.'? [Y = '.$this->connection.', n = '.Config::get('database.default').' (default connection)]', true)) {
                     $this->repository->setSource(Config::get('database.default'));
                 }
             }
@@ -182,7 +182,7 @@ class MigrateGenerateCommand extends Command
                 $this->repository->createRepository();
             }
 
-            $this->nextBatchNumber = $this->askNumeric(
+            $this->nextBatchNumber = $this->askInt(
                 'Next Batch Number is: '.$this->repository->getNextBatchNumber().'. We recommend using Batch Number 0 so that it becomes the "first" migration',
                 0
             );
@@ -196,24 +196,25 @@ class MigrateGenerateCommand extends Command
      * @param  int|null  $default  Default Value (optional)
      * @return int Answer
      */
-    protected function askNumeric(string $question, int $default = null): int
+    protected function askInt(string $question, int $default = null): int
     {
         $ask = 'Your answer needs to be a numeric value';
 
         if (!is_null($default)) {
-            $question .= ' [Default: '.$default.'] ';
-            $ask      .= ' or blank for default';
+            $question .= ' [Default: '.$default.']';
+            $ask      .= ' or blank for default. [Default: '.$default.']';
         }
 
-        $answer = $this->ask($question);
-
-        while (!is_numeric($answer) and !($answer == '' and !is_null($default))) {
-            $answer = $this->ask($ask.'. ');
+        $answer = $this->ask($question, $default);
+        while (!ctype_digit($answer) && !($answer === '' && !is_null($default))) {
+            $answer = $this->ask($ask, $default);
         }
-        if ($answer == '') {
+
+        if ($answer === '') {
             $answer = $default;
         }
-        return $answer;
+
+        return (int) $answer;
     }
 
     /**
