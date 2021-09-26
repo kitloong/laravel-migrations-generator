@@ -135,7 +135,7 @@ abstract class FeatureTestCase extends TestCase
                 '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
             ], $options)
         )
-            ->expectsQuestion('Do you want to log these migrations in the migrations table?', 'y')
+            ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
             ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]', '0');
     }
 
@@ -169,6 +169,12 @@ abstract class FeatureTestCase extends TestCase
     protected function isMaria(): bool
     {
         return env('IS_MARIA_CLIENT') === true;
+    }
+
+    protected function setDefaultConnection(string $name): void
+    {
+        // Set default connection, to fix Laravel < 6.x.
+        DB::setDefaultConnection($name);
     }
 
     abstract protected function dropAllTables(): void;
