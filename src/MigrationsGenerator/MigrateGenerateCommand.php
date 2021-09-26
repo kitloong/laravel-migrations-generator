@@ -205,9 +205,9 @@ class MigrateGenerateCommand extends Command
             $ask      .= ' or blank for default. [Default: '.$default.']';
         }
 
-        $answer = $this->ask($question, $default);
+        $answer = $this->ask($question, (string) $default);
         while (!ctype_digit($answer) && !($answer === '' && !is_null($default))) {
-            $answer = $this->ask($ask, $default);
+            $answer = $this->ask($ask, (string) $default);
         }
 
         if ($answer === '') {
