@@ -1,1 +1,0 @@
-/Users/jeffreyway/code/open-source/generators/workbench/way/generators/tests/features/bootstrap/../../tmp/orders/bar/index.blade.php

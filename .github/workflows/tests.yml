@@ -1,6 +1,10 @@
-name: Run tests
+name: "Run tests"
 
-on: [ push, pull_request ]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   test:
@@ -27,7 +31,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
       postgres:
-        image: mdillon/postgis:11
+        image: postgis/postgis:11-3.1
         env:
           POSTGRES_DB: migration
           POSTGRES_USER: root
@@ -51,7 +55,7 @@ jobs:
     strategy:
       matrix:
         php: [ 7.3, 7.4 ]
-        laravel: [ 8.*, 7.*, 6.*, 5.8.*, 5.7.*, 5.6.* ]
+        laravel: [ 8.*, 7.*, 6.*, 5.8.*, 5.7.* ]
         dbal: [ 2.* ]
         stability: [ prefer-stable ]
         include:
@@ -81,7 +85,7 @@ jobs:
 
       - name: SQL Server Create Database
         run: |
-          sleep 5s
+          sleep 10s
 
           # Test connection
           sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b
