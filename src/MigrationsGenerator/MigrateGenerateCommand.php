@@ -240,7 +240,7 @@ class MigrateGenerateCommand extends Command
         if (app(MigrationsGeneratorSetting::class)->isSquash()) {
             $migrationFilepath = $this->generator->squashMigrations();
 
-            $this->info('All migrations squashed.');
+            $this->info("\nAll migrations squashed.");
 
             if ($this->shouldLog) {
                 $this->logMigration($migrationFilepath);
@@ -318,7 +318,7 @@ class MigrateGenerateCommand extends Command
     {
         if (app(MigrationsGeneratorSetting::class)->isSquash()) {
             $writeToTemp();
-            $this->info("Prepared: $table foreign keys");
+            $this->info("Prepared: $table");
         } else {
             $migrationFilePath = $writeToMigrationFile();
             $this->info("Created: $migrationFilePath");
