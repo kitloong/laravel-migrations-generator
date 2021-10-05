@@ -132,9 +132,9 @@ class MigrateGenerateCommand extends Command
     protected function filterTables(): array
     {
         if ($tableArg = (string) $this->argument('tables')) {
-            $tables = explode(',', $tableArg);
+            $tables = collect(explode(',', $tableArg))->map(fn ($table) => '"'.$table.'"')->toArray();
         } elseif ($tableOpt = (string) $this->option('tables')) {
-            $tables = explode(',', $tableOpt);
+            $tables = collect(explode(',', $tableOpt))->map(fn ($table) => '"'.$table.'"')->toArray();
         } else {
             $tables = $this->schema->getTableNames();
         }
