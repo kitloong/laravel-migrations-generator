@@ -139,7 +139,10 @@ class MigrateGenerateCommand extends Command
             $tables = $this->schema->getTableNames();
         }
 
-        return array_diff($tables, $this->getExcludedTables());
+        return array_diff(
+            collect($this->getExcludedTables())->map(fn ($table) => '"'.$table.'"')->toArray(),
+            $this->getExcludedTables()
+        );
     }
 
     /**
