@@ -40,7 +40,7 @@ composer require --dev "kitloong/laravel-migrations-generator"
 
 ### Laravel Setup
 
-Laravel will automatically register service provider for you.
+Laravel will automatically a register service provider for you.
 
 ### Lumen Setup
 
