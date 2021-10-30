@@ -19,7 +19,11 @@ jobs:
           MYSQL_DATABASE: migration
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
       mysql8:
         image: mysql:8
@@ -28,7 +32,11 @@ jobs:
           MYSQL_DATABASE: migration
         ports:
           - 33062:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
       postgres:
         image: postgis/postgis:11-3.1
@@ -51,6 +59,8 @@ jobs:
           ACCEPT_EULA: "Y"
         ports:
           - 1433:1433
+        options: >-
+          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P '!QAZ2wsx'"
 
     strategy:
       matrix:
@@ -59,17 +69,21 @@ jobs:
         dbal: [ 2.* ]
         stability: [ prefer-stable ]
         include:
-          - laravel: 8.*
-            php: 8.0
+          - php: 8.0
+            laravel: 8.*
             dbal: 3.*
             stability: prefer-stable
-          - laravel: 7.*
-            php: 8.0
+          - php: 8.0
+            laravel: 7.*
             dbal: 2.*
             stability: prefer-stable
-          - laravel: 6.*
-            php: 8.0
+          - php: 8.0
+            laravel: 6.*
             dbal: 2.*
+            stability: prefer-stable
+          - php: 8.1
+            laravel: 8.*
+            dbal: 3.*
             stability: prefer-stable
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
@@ -85,11 +99,6 @@ jobs:
 
       - name: SQL Server Create Database
         run: |
-          sleep 10s
-
-          # Test connection
-          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'SELECT 1' -b
-
           # Create DB
           sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'CREATE DATABASE migration' -b
 
@@ -99,7 +108,7 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached, pdo_sqlsrv
           tools: composer:v2
-          coverage: none
+          coverage: xdebug
 
       - name: Install dependencies
         run: |
@@ -111,4 +120,17 @@ jobs:
         run: composer run action-env-setup
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload coverage file
+        if: ${{ matrix.php == '8.0' && matrix.laravel == '8.*' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: PHP-${{ matrix.php }}.coverage
+          path: coverage.xml
+
+      - name: Upload to codecov
+        if: ${{ matrix.php == '8.0' && matrix.laravel == '8.*' }}
+        uses: codecov/codecov-action@v1
+        with:
+          files: coverage.xml
