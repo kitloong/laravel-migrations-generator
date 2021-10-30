@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\MySQL57;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use PDO;
 use Tests\Feature\FeatureTestCase;
@@ -47,7 +46,7 @@ abstract class MySQL57TestCase extends FeatureTestCase
             $skipColumnStatistics = '';
         }
 
-        $command  = sprintf(
+        $command = sprintf(
             'mysqldump -h %s -P %s -u %s '.$password.' %s --compact --no-data '.$skipColumnStatistics.' > %s',
             config('database.connections.mysql57.host'),
             config('database.connections.mysql57.port'),
@@ -60,14 +59,7 @@ abstract class MySQL57TestCase extends FeatureTestCase
 
     protected function dropAllTables(): void
     {
-        $tables = DB::select('SHOW TABLES');
-        foreach ($tables as $table) {
-            Schema::connection('mysql57')->dropIfExists(
-                substr(
-                    $table->{'Tables_in_'.config('database.connections.mysql57.database')},
-                    strlen(config('database.connections.mysql57.prefix'))
-                )
-            );
-        }
+        Schema::connection('mysql57')->dropAllViews();
+        Schema::connection('mysql57')->dropAllTables();
     }
 }

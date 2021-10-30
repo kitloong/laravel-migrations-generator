@@ -4,6 +4,9 @@ namespace Tests\Feature\SQLSrv;
 
 class CommandTest extends SQLSrvTestCase
 {
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testRun()
     {
         $migrateTemplates = function () {
@@ -17,6 +20,9 @@ class CommandTest extends SQLSrvTestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testCollation()
     {
         $migrateTemplates = function () {
@@ -30,6 +36,11 @@ class CommandTest extends SQLSrvTestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
+    /**
+     * @param  callable  $migrateTemplates
+     * @param  callable  $generateMigrations
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function verify(callable $migrateTemplates, callable $generateMigrations)
     {
         $migrateTemplates();

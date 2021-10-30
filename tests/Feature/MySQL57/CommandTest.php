@@ -89,7 +89,12 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigration();
 
-        $this->generateMigrations(['--tables' => 'all_columns_mysql57,users_mysql57']);
+        $this->generateMigrations([
+            '--tables' => implode(',', [
+                'all_columns_mysql57',
+                'users_mysql57'
+            ])
+        ]);
 
         $this->dropAllTables();
 
@@ -108,20 +113,32 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigration();
 
-        $this->generateMigrations(['--ignore' => 'failed_jobs_mysql57,reserved_name_not_null_mysql57,reserved_name_with_precision_mysql57']);
+        $this->generateMigrations([
+            '--ignore' => implode(',', [
+                'failed_jobs_mysql57',
+                'reserved_name_not_null_mysql57',
+                'reserved_name_with_precision_mysql57',
+                'users_mysql57_view'
+            ])
+        ]);
 
         $this->dropAllTables();
 
         $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $tables = DB::select('SHOW TABLES');
-        $this->assertSame(6, count($tables));
-        $this->assertTrue(Schema::hasTable('all_columns_mysql57'));
-        $this->assertTrue(Schema::hasTable('migrations'));
-        $this->assertTrue(Schema::hasTable('test_index_mysql57'));
-        $this->assertTrue(Schema::hasTable('users_mysql57'));
-        $this->assertTrue(Schema::hasTable('composite_primary_mysql57'));
-        $this->assertTrue(Schema::hasTable('user_profile_mysql57'));
+        $tables = collect(DB::select('SHOW TABLES'))->map(function ($view) {
+            return $view->{'Tables_in_'.config('database.connections.mysql57.database')};
+        })->values();
+
+        $this->assertCount(8, $tables);
+        $this->assertContains('migrations', $tables);
+        $this->assertContains('all_columns_mysql57', $tables);
+        $this->assertContains('composite_primary_mysql57', $tables);
+        $this->assertContains('name-with-hyphen-mysql57', $tables);
+        $this->assertContains('test_index_mysql57', $tables);
+        $this->assertContains('user_profile_mysql57', $tables);
+        $this->assertContains('users_mysql57', $tables);
+        $this->assertContains('name-with-hyphen-mysql57_view', $tables);
     }
 
     /**
@@ -211,20 +228,24 @@ class CommandTest extends MySQL57TestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testTableFilename()
+    public function testTableFilenameAndViewFilename()
     {
         $this->migrateGeneral('mysql57');
 
         $this->truncateMigration();
 
-        $this->generateMigrations(['--table-filename' => '[datetime_prefix]_custom_[table]_table.php']);
+        $this->generateMigrations([
+            '--table-filename' => '[datetime_prefix]_custom_[table]_table.php',
+            '--view-filename'  => '[datetime_prefix]_custom_[table]_view.php',
+        ]);
 
         $migrations = [];
         foreach (File::files($this->storageMigrations()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
-        $this->assertSame('custom_all_columns_mysql57_table', $migrations[0]);
+        $this->assertTrue(in_array('custom_all_columns_mysql57_table', $migrations));
+        $this->assertTrue(in_array('custom_users_mysql57_view_view', $migrations));
     }
 
     public function testFKFilename()
@@ -241,6 +262,25 @@ class CommandTest extends MySQL57TestCase
         }
 
         $this->assertSame('custom_user_profile_mysql57_table', $migrations[count($migrations) - 1]);
+    }
+
+    public function testSkipView()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations([
+            '--skip-views' => true,
+        ]);
+
+        $migrations = [];
+        foreach (File::files($this->storageMigrations()) as $migration) {
+            $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
+        }
+
+        $this->assertTrue(in_array('create_all_columns_mysql57_table', $migrations));
+        $this->assertFalse(in_array('create_users_mysql57_view_view', $migrations));
     }
 
     public function testWillCreateMigrationTable()

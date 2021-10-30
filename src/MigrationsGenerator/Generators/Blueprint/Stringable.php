@@ -51,10 +51,32 @@ trait Stringable
             case 'NULL':
                 return 'null';
             case 'string':
-                return "'".addcslashes($value, "'")."'";
+                return "'".$this->escapeSingleQuote($value)."'";
             default:
                 return $value;
         }
+    }
+
+    /**
+     * Escapes single quotes by adding backslash.
+     *
+     * @param  string  $string
+     * @return string
+     */
+    public function escapeSingleQuote(string $string): string
+    {
+        return addcslashes($string, "'");
+    }
+
+    /**
+     * Escapes double quotes by adding backslash.
+     *
+     * @param  string  $string
+     * @return string
+     */
+    public function escapeDoubleQuote(string $string): string
+    {
+        return addcslashes($string, '"');
     }
 
     /**

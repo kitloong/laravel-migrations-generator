@@ -14,18 +14,18 @@ abstract class PgSQLTestCase extends FeatureTestCase
 
         $app['config']->set('database.default', 'pgsql');
         $app['config']->set('database.connections.pgsql', [
-            'driver' => 'pgsql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('POSTGRES_HOST'),
-            'port' => env('POSTGRES_PORT'),
-            'database' => env('POSTGRES_DATABASE'),
-            'username' => env('POSTGRES_USERNAME'),
-            'password' => env('POSTGRES_PASSWORD'),
-            'charset' => 'utf8',
-            'prefix' => '',
+            'driver'         => 'pgsql',
+            'url'            => env('DATABASE_URL'),
+            'host'           => env('POSTGRES_HOST'),
+            'port'           => env('POSTGRES_PORT'),
+            'database'       => env('POSTGRES_DATABASE'),
+            'username'       => env('POSTGRES_USERNAME'),
+            'password'       => env('POSTGRES_PASSWORD'),
+            'charset'        => 'utf8',
+            'prefix'         => '',
             'prefix_indexes' => true,
-            'schema' => 'public',
-            'sslmode' => 'prefer',
+            'schema'         => 'public',
+            'sslmode'        => 'prefer',
         ]);
     }
 
@@ -42,6 +42,9 @@ abstract class PgSQLTestCase extends FeatureTestCase
         exec($command);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     protected function dropAllTables(): void
     {
         $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
@@ -54,6 +57,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
                 continue;
             }
 
+            // CASCADE, Automatically drop objects that depend on the table (such as views).
             DB::statement("DROP TABLE if exists $table cascade");
         }
     }

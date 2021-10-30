@@ -89,9 +89,9 @@ abstract class FeatureTestCase extends TestCase
         File::copyDirectory($templatePath, $this->storageFrom());
         foreach (File::files($this->storageFrom()) as $file) {
             $content = str_replace([
-                '[db]', '_DB_Table'
+                '[db]', '_DB_'
             ], [
-                $connection, ucfirst("${connection}Table")
+                $connection, ucfirst("$connection")
             ], $file->getContents());
 
             file_put_contents($this->storageFrom($file->getBasename()), $content);
@@ -109,7 +109,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan('migrate', [
             '--database' => $connection,
             '--realpath' => true,
-            '--path' => $path
+            '--path'     => $path
         ]);
     }
 
@@ -118,7 +118,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan('migrate:rollback', [
             '--database' => $connection,
             '--realpath' => true,
-            '--path' => $path
+            '--path'     => $path
         ]);
     }
 
@@ -131,7 +131,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan(
             'migrate:generate',
             array_merge([
-                '--path' => $this->storageMigrations(),
+                '--path'          => $this->storageMigrations(),
                 '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
             ], $options)
         )

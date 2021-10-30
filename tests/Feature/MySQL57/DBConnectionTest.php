@@ -39,6 +39,9 @@ class DBConnectionTest extends MySQL57TestCase
 
     public function tearDown(): void
     {
+        // Clean migrations table after test.
+        Schema::connection('mysql8')->dropIfExists('migrations');
+
         // Switch back to mysql57, to drop mysql57 tables in tearDown.
         $this->setDefaultConnection('mysql57');
 
@@ -57,8 +60,8 @@ class DBConnectionTest extends MySQL57TestCase
             $this->artisan(
                 'migrate:generate',
                 [
-                    '--connection'   => 'mysql57',
-                    '--path'         => $this->storageMigrations(),
+                    '--connection'    => 'mysql57',
+                    '--path'          => $this->storageMigrations(),
                     '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
                 ]
             )
@@ -79,8 +82,8 @@ class DBConnectionTest extends MySQL57TestCase
         $this->artisan(
             'migrate:generate',
             [
-                '--connection'   => 'mysql57',
-                '--path'         => $this->storageMigrations(),
+                '--connection'    => 'mysql57',
+                '--path'          => $this->storageMigrations(),
                 '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
             ]
         )
@@ -88,10 +91,7 @@ class DBConnectionTest extends MySQL57TestCase
             ->expectsQuestion('Log into current connection: mysql57? [Y = mysql57, n = mysql8 (default connection)]', false)
             ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]', '0');
 
-        $this->assertSame(9, DB::connection('mysql8')->table('migrations')->count());
-
-        // Clean migrations table after test.
-        Schema::connection('mysql8')->drop('migrations');
+        $this->assertSame(12, DB::connection('mysql8')->table('migrations')->count());
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)

@@ -111,16 +111,18 @@ Run `php artisan help migrate:generate` for a list of options.
 |Options|Description|
 |---|---|
 |-c, --connection[=CONNECTION]|The database connection to use|
-|-t, --tables[=TABLES]|A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments|
-|-i, --ignore[=IGNORE]|A list of Tables you wish to ignore, separated by a comma: users,posts,comments|
+|-t, --tables[=TABLES]|A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments|
+|-i, --ignore[=IGNORE]|A list of Tables or Views you wish to ignore, separated by a comma: users,posts,comments|
 |-p, --path[=PATH]|Where should the file be created?|
 |-tp, --template-path[=TEMPLATE-PATH]|The location of the template for this generator|
-|--date[=DATE]|Migrations will be created with specified date. Foreign keys will be created for specified time + 1 second. Date should be in format suitable for `Carbon::parse`|
-|--table-filename[=TABLE-FILENAME]|Define table migration filename, default pattern: [datetime_prefix]\_create_[table]_table.php|
-|--fk-filename[=FK-FILENAME]|Define foreign key migration filename, default pattern: [datetime_prefix]\_add_foreign_keys_to_[table]_table.php|
+|--date[=DATE]|Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format suitable for `Carbon::parse`|
+|--table-filename[=TABLE-FILENAME]|Define table migration filename, default pattern: `[datetime_prefix]\_create_[table]_table.php`|
+|--view-filename[=VIEW-FILENAME]|Define view migration filename, default pattern: `[datetime_prefix]\_create_[table]_view.php`|
+|--fk-filename[=FK-FILENAME]|Define foreign key migration filename, default pattern: `[datetime_prefix]\_add_foreign_keys_to_[table]_table.php`|
 |--default-index-names|Don\'t use db index names for migrations|
 |--default-fk-names|Don\'t use db foreign key names for migrations|
 |--use-db-collation|Follow db collations for migrations|
+|--skip-views|Don\'t generate views|
 |--squash|Generate all migrations into a single file|
 
 ## Thank You

@@ -3,9 +3,9 @@
 namespace MigrationsGenerator;
 
 use Carbon\Carbon;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\Connection;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use MigrationsGenerator\DBAL\Platform;
 
@@ -13,6 +13,9 @@ class MigrationsGeneratorSetting
 {
     /** @var Connection */
     private $connection;
+
+    /** @var AbstractPlatform */
+    private $databasePlatform;
 
     /** @var string */
     private $platform;
@@ -45,6 +48,9 @@ class MigrationsGeneratorSetting
     private $tableFilename;
 
     /** @var string */
+    private $viewFilename;
+
+    /** @var string */
     private $fkFilename;
 
     /**
@@ -63,10 +69,11 @@ class MigrationsGeneratorSetting
     {
         $this->connection = DB::connection($connection);
 
-        $doctConn     = $this->connection->getDoctrineConnection();
-        $this->schema = $doctConn->getSchemaManager();
-        $classPath    = explode('\\', get_class($doctConn->getDatabasePlatform()));
-        $platform     = end($classPath);
+        $doctConn               = $this->connection->getDoctrineConnection();
+        $this->schema           = $doctConn->getSchemaManager();
+        $this->databasePlatform = $doctConn->getDatabasePlatform();
+        $classPath              = explode('\\', get_class($this->databasePlatform));
+        $platform               = end($classPath);
 
         switch (true) {
             case preg_match('/mysql/i', $platform) > 0:
@@ -85,6 +92,14 @@ class MigrationsGeneratorSetting
                 $this->platform = Platform::OTHERS;
                 break;
         }
+    }
+
+    /**
+     * @return AbstractPlatform
+     */
+    public function getDatabasePlatform(): AbstractPlatform
+    {
+        return $this->databasePlatform;
     }
 
     /**
@@ -180,14 +195,7 @@ class MigrationsGeneratorSetting
      */
     public function setStubPath(string $stubPath): void
     {
-        // Use user defined stub path.
-        if ($stubPath !== Config::get('generators.config.migration_template_path')) {
-            $this->stubPath = $stubPath;
-            return;
-        }
-
-        // Use default stub path.
-        $this->stubPath = Config::get('generators.config.migration_template_path');
+        $this->stubPath = $stubPath;
     }
 
     /**
@@ -220,6 +228,22 @@ class MigrationsGeneratorSetting
     public function setTableFilename(string $tableFilename): void
     {
         $this->tableFilename = $tableFilename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewFilename(): string
+    {
+        return $this->viewFilename;
+    }
+
+    /**
+     * @param  string  $viewFilename
+     */
+    public function setViewFilename(string $viewFilename): void
+    {
+        $this->viewFilename = $viewFilename;
     }
 
     /**
