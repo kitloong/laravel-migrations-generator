@@ -108,7 +108,7 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached, pdo_sqlsrv
           tools: composer:v2
-          coverage: none
+          coverage: xdebug
 
       - name: Install dependencies
         run: |
@@ -120,4 +120,17 @@ jobs:
         run: composer run action-env-setup
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload coverage file
+        if: ${{ matrix.php == '8.0' && matrix.laravel == '8.*' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: PHP-${{ matrix.php }}.coverage
+          path: coverage.xml
+
+      - name: Upload to codecov
+        if: ${{ matrix.php == '8.0' && matrix.laravel == '8.*' }}
+        uses: codecov/codecov-action@v1
+        with:
+          files: coverage.xml
