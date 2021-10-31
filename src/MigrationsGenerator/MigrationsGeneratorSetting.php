@@ -73,7 +73,9 @@ class MigrationsGeneratorSetting
         if (method_exists($doctrineConnection, 'createSchemaManager')) {
             $this->schema = $doctrineConnection->createSchemaManager();
         } else {
+            // @codeCoverageIgnoreStart
             $this->schema = $doctrineConnection->getSchemaManager();
+            // @codeCoverageIgnoreEnd
         }
         $this->databasePlatform = $doctrineConnection->getDatabasePlatform();
 
@@ -87,11 +89,13 @@ class MigrationsGeneratorSetting
             case 'mssql':
                 $this->platform = Platform::SQLSERVER;
                 break;
+            // @codeCoverageIgnoreStart
             case 'sqlite':
                 $this->platform = Platform::SQLITE;
                 break;
             default:
                 $this->platform = Platform::OTHERS;
+            // @codeCoverageIgnoreEnd
         }
     }
 
