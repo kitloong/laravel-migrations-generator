@@ -65,13 +65,17 @@ class MigrationsGeneratorSetting
      * @param  string  $connection
      * @throws \Doctrine\DBAL\Exception
      */
-    public function setConnection(string $connection): void
+    public function setup(string $connection): void
     {
         $this->connection = DB::connection($connection);
 
-        $doctConn               = $this->connection->getDoctrineConnection();
-        $this->schema           = $doctConn->getSchemaManager();
-        $this->databasePlatform = $doctConn->getDatabasePlatform();
+        $doctrineConnection = $this->connection->getDoctrineConnection();
+        if (method_exists($doctrineConnection, 'createSchemaManager')) {
+            $this->schema = $doctrineConnection->createSchemaManager();
+        } else {
+            $this->schema = $doctrineConnection->getSchemaManager();
+        }
+        $this->databasePlatform = $doctrineConnection->getDatabasePlatform();
 
         switch ($this->databasePlatform->getName()) {
             case 'mysql':
