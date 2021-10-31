@@ -28,6 +28,9 @@ class CommandTest extends MySQL57TestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testDown()
     {
         $this->migrateGeneral('mysql57');
@@ -38,8 +41,11 @@ class CommandTest extends MySQL57TestCase
 
         $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $tables = DB::select('SHOW TABLES');
+        $tables = $this->getTableNames();
+        $views  = $this->getViewNames();
+
         $this->assertCount(1, $tables);
+        $this->assertCount(0, $views);
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
@@ -69,6 +75,9 @@ class CommandTest extends MySQL57TestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testSquashDown()
     {
         $this->migrateGeneral('mysql57');
@@ -79,11 +88,17 @@ class CommandTest extends MySQL57TestCase
 
         $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $tables = DB::select('SHOW TABLES');
+        $tables = $this->getTableNames();
+        $views  = $this->getViewNames();
+
         $this->assertCount(1, $tables);
+        $this->assertCount(0, $views);
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testTables()
     {
         $this->migrateGeneral('mysql57');
@@ -93,7 +108,8 @@ class CommandTest extends MySQL57TestCase
         $this->generateMigrations([
             '--tables' => implode(',', [
                 'all_columns_mysql57',
-                'users_mysql57'
+                'users_mysql57',
+                'users_mysql57_view'
             ])
         ]);
 
@@ -101,13 +117,21 @@ class CommandTest extends MySQL57TestCase
 
         $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $tables = DB::select('SHOW TABLES');
+        $tables = $this->getTableNames();
+        $views  = $this->getViewNames();
+
         $this->assertCount(3, $tables);
-        $this->assertTrue(Schema::hasTable('all_columns_mysql57'));
-        $this->assertTrue(Schema::hasTable('migrations'));
-        $this->assertTrue(Schema::hasTable('users_mysql57'));
+        $this->assertCount(1, $views);
+
+        $this->assertContains('all_columns_mysql57', $tables);
+        $this->assertContains('migrations', $tables);
+        $this->assertContains('users_mysql57', $tables);
+        $this->assertContains('users_mysql57_view', $views);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testIgnore()
     {
         $this->migrateGeneral('mysql57');
@@ -127,11 +151,10 @@ class CommandTest extends MySQL57TestCase
 
         $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $tables = collect(DB::select('SHOW TABLES'))->map(function ($table) {
-            return $table->{'Tables_in_'.config('database.connections.mysql57.database')};
-        })->values();
+        $tables = $this->getTableNames();
+        $views  = $this->getViewNames();
 
-        $this->assertCount(8, $tables);
+        $this->assertCount(7, $tables);
         $this->assertContains('migrations', $tables);
         $this->assertContains('all_columns_mysql57', $tables);
         $this->assertContains('composite_primary_mysql57', $tables);
@@ -139,7 +162,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertContains('test_index_mysql57', $tables);
         $this->assertContains('user_profile_mysql57', $tables);
         $this->assertContains('users_mysql57', $tables);
-        $this->assertContains('name-with-hyphen-mysql57_view', $tables);
+        $this->assertContains('name-with-hyphen-mysql57_view', $views);
     }
 
     /**

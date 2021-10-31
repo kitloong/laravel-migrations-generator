@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\SQLSrv;
 
+use Illuminate\Support\Facades\DB;
+
 /**
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
@@ -22,6 +24,27 @@ class CommandTest extends SQLSrvTestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testDown()
+    {
+        $this->migrateGeneral('sqlsrv');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations();
+
+        $this->rollbackMigrationsFrom('sqlsrv', $this->storageMigrations());
+
+        $tables = $this->getTableNames();
+        $views = $this->getViewNames();
+
+        $this->assertCount(1, $tables);
+        $this->assertCount(0, $views);
+        $this->assertSame(0, DB::table('migrations')->count());
     }
 
     /**
