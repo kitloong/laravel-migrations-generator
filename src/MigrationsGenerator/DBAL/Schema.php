@@ -6,6 +6,7 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\View as DBALView;
 use Doctrine\DBAL\Types\Type;
 use MigrationsGenerator\DBAL\Mapper\ViewMapper;
+use MigrationsGenerator\DBAL\Support\FilterTables;
 use MigrationsGenerator\DBAL\Support\FilterViews;
 use MigrationsGenerator\DBAL\Types\DBALTypes;
 use MigrationsGenerator\DBAL\Types\DoubleType;
@@ -36,6 +37,7 @@ use MigrationsGenerator\Models\View;
 
 class Schema
 {
+    use FilterTables;
     use FilterViews;
 
     private $schema;
@@ -112,7 +114,11 @@ class Schema
      */
     public function getTableNames(): array
     {
-        return $this->schema->listTableNames();
+        return collect($this->schema->listTables())
+            ->filter(call_user_func([$this, 'filterTableCallback']))
+            ->map(function (Table $table) {
+                return $table->getName();
+            })->toArray();
     }
 
     /**
@@ -172,7 +178,7 @@ class Schema
     public function getViewNames(): array
     {
         return collect($this->getViews())->map(function (View $view) {
-            return $view->getName();
+            return $view->getUnquotedName();
         })->toArray();
     }
 

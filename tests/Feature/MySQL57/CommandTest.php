@@ -11,6 +11,7 @@ use MigrationsGenerator\DBAL\Schema as DBALSchema;
 
 /**
  * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 class CommandTest extends MySQL57TestCase
 {
@@ -126,8 +127,8 @@ class CommandTest extends MySQL57TestCase
 
         $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $tables = collect(DB::select('SHOW TABLES'))->map(function ($view) {
-            return $view->{'Tables_in_'.config('database.connections.mysql57.database')};
+        $tables = collect(DB::select('SHOW TABLES'))->map(function ($table) {
+            return $table->{'Tables_in_'.config('database.connections.mysql57.database')};
         })->values();
 
         $this->assertCount(8, $tables);

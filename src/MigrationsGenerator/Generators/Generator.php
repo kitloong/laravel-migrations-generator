@@ -93,7 +93,7 @@ class Generator
         $this->viewWriter->writeTo(
             $path = $this->filenameGenerator->makeViewPath($view->getUnquotedName()),
             $this->setting->getStubPath(),
-            $this->filenameGenerator->makeViewClassName($view->getName()),
+            $this->filenameGenerator->makeViewClassName($view->getUnquotedName()),
             $up,
             $down
         );

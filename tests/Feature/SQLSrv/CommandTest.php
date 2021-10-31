@@ -2,6 +2,10 @@
 
 namespace Tests\Feature\SQLSrv;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ */
 class CommandTest extends SQLSrvTestCase
 {
     /**

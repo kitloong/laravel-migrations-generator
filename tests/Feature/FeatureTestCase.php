@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\View;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
@@ -169,6 +171,36 @@ abstract class FeatureTestCase extends TestCase
     protected function isMaria(): bool
     {
         return env('IS_MARIA_CLIENT') === true;
+    }
+
+    /**
+     * Get a list of table names.
+     *
+     * @return string[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function getTableNames(): array
+    {
+        return collect(DB::connection()->getDoctrineSchemaManager()->listTables())
+            ->map(function (Table $table) {
+                return $table->getName();
+            })
+            ->toArray();
+    }
+
+    /**
+     * Get a list of view names.
+     *
+     * @return string[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function getViewNames(): array
+    {
+        return collect(DB::connection()->getDoctrineSchemaManager()->listViews())
+            ->map(function (View $view) {
+                return $view->getName();
+            })
+            ->toArray();
     }
 
     protected function setDefaultConnection(string $name): void
