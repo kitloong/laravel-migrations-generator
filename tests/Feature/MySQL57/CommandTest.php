@@ -39,7 +39,7 @@ class CommandTest extends MySQL57TestCase
         $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
 
         $tables = DB::select('SHOW TABLES');
-        $this->assertSame(1, count($tables));
+        $this->assertCount(1, $tables);
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
@@ -80,7 +80,7 @@ class CommandTest extends MySQL57TestCase
         $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
 
         $tables = DB::select('SHOW TABLES');
-        $this->assertSame(1, count($tables));
+        $this->assertCount(1, $tables);
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
@@ -102,7 +102,7 @@ class CommandTest extends MySQL57TestCase
         $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
         $tables = DB::select('SHOW TABLES');
-        $this->assertSame(3, count($tables));
+        $this->assertCount(3, $tables);
         $this->assertTrue(Schema::hasTable('all_columns_mysql57'));
         $this->assertTrue(Schema::hasTable('migrations'));
         $this->assertTrue(Schema::hasTable('users_mysql57'));
