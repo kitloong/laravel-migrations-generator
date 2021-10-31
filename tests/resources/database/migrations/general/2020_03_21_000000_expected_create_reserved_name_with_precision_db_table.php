@@ -31,6 +31,6 @@ class ExpectedCreateReservedNameWithPrecision_DB_Table extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('v[db]');
+        Schema::dropIfExists('reserved_name_with_precision_[db]');
     }
 }
