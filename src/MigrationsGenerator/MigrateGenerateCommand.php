@@ -139,15 +139,9 @@ class MigrateGenerateCommand extends Command
      */
     protected function filterTables(): array
     {
-        if ($tableArg = (string) $this->argument('tables')) {
-            $tables = explode(',', $tableArg);
-        } elseif ($tableOpt = (string) $this->option('tables')) {
-            $tables = explode(',', $tableOpt);
-        } else {
-            $tables = $this->schema->getTableNames();
-        }
+        $allTables = $this->schema->getTableNames();
 
-        return array_diff($tables, $this->getExcludedTables());
+        return $this->filterAndExcludeAsset($allTables);
     }
 
     /**
@@ -164,15 +158,30 @@ class MigrateGenerateCommand extends Command
             return [];
         }
 
+        $allViews = $this->schema->getViewNames();
+
+        return $this->filterAndExcludeAsset($allViews);
+    }
+
+    /**
+     * Filter and exclude tables in --ignore option if any.
+     *
+     * @param  string[]  $allAssets
+     * @return array
+     */
+    protected function filterAndExcludeAsset(array $allAssets): array
+    {
         if ($tableArg = (string) $this->argument('tables')) {
-            $views = explode(',', $tableArg);
+            $tables = explode(',', $tableArg);
         } elseif ($tableOpt = (string) $this->option('tables')) {
-            $views = explode(',', $tableOpt);
+            $tables = explode(',', $tableOpt);
         } else {
-            $views = $this->schema->getViewNames();
+            $tables = $allAssets;
         }
 
-        return array_diff($views, $this->getExcludedTables());
+        $tables = array_intersect($tables, $allAssets);
+
+        return array_diff($tables, $this->getExcludedTables());
     }
 
     /**
