@@ -44,9 +44,7 @@ class Schema
 
     public function __construct()
     {
-        $this->schema = app(MigrationsGeneratorSetting::class)->getConnection()
-            ->getDoctrineConnection()
-            ->getSchemaManager();
+        $this->schema = app(MigrationsGeneratorSetting::class)->getSchema();
     }
 
     /**
