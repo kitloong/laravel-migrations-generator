@@ -72,25 +72,22 @@ class MigrationsGeneratorSetting
         $doctConn               = $this->connection->getDoctrineConnection();
         $this->schema           = $doctConn->getSchemaManager();
         $this->databasePlatform = $doctConn->getDatabasePlatform();
-        $classPath              = explode('\\', get_class($this->databasePlatform));
-        $platform               = end($classPath);
 
-        switch (true) {
-            case preg_match('/mysql/i', $platform) > 0:
+        switch ($this->databasePlatform->getName()) {
+            case 'mysql':
                 $this->platform = Platform::MYSQL;
                 break;
-            case preg_match('/postgresql/i', $platform) > 0:
+            case 'postgresql':
                 $this->platform = Platform::POSTGRESQL;
                 break;
-            case preg_match('/sqlserver/i', $platform) > 0:
+            case 'mssql':
                 $this->platform = Platform::SQLSERVER;
                 break;
-            case preg_match('/sqlite/i', $platform) > 0:
+            case 'sqlite':
                 $this->platform = Platform::SQLITE;
                 break;
             default:
                 $this->platform = Platform::OTHERS;
-                break;
         }
     }
 
