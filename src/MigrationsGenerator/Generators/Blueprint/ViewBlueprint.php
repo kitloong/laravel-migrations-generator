@@ -44,7 +44,7 @@ class ViewBlueprint implements WritableBlueprint
         if ($this->createViewSql !== '') {
             $query = $this->escapeDoubleQuote($this->createViewSql);
         } else {
-            $query = $this->escapeDoubleQuote("DROP VIEW $this->view");
+            $query = $this->escapeDoubleQuote("DROP VIEW IF EXISTS $this->view");
         }
 
         return "$dbStatement(\"$query\");";
