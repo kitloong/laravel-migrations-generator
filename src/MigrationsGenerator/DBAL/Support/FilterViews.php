@@ -5,7 +5,6 @@ namespace MigrationsGenerator\DBAL\Support;
 use Closure;
 use Doctrine\DBAL\Schema\View;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use MigrationsGenerator\DBAL\Platform;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 
@@ -40,6 +39,6 @@ trait FilterViews
             return false;
         }
 
-        return Str::startsWith($view->getName(), DB::connection()->getConfig('schema').'.');
+        return $view->getNamespaceName() === DB::connection()->getConfig('schema');
     }
 }

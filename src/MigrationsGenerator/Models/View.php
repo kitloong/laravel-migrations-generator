@@ -6,19 +6,17 @@ class View extends Model
 {
     private $name;
     private $quotedName;
-    private $unquotedName;
     private $createViewSql;
 
-    public function __construct(string $name, string $quotedName, string $unquotedName, string $sql)
+    public function __construct(string $name, string $quotedName, string $sql)
     {
         $this->name          = $name;
         $this->quotedName    = $quotedName;
-        $this->unquotedName  = $unquotedName;
         $this->createViewSql = $sql;
     }
 
     /**
-     * Get view name, sometime is quoted.
+     * Get view name, always unquoted.
      *
      * @return string
      */
@@ -38,14 +36,8 @@ class View extends Model
     }
 
     /**
-     * @return string
-     */
-    public function getUnquotedName(): string
-    {
-        return $this->unquotedName;
-    }
-
-    /**
+     * Get full create view SQL.
+     *
      * @return string
      */
     public function getCreateViewSql(): string
