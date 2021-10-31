@@ -178,7 +178,7 @@ class Schema
     public function getViewNames(): array
     {
         return collect($this->getViews())->map(function (View $view) {
-            return $view->getUnquotedName();
+            return $view->getName();
         })->toArray();
     }
 

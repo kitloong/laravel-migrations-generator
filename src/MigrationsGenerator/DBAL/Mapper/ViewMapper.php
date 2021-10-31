@@ -16,6 +16,7 @@ class ViewMapper
      *
      * @param  \Doctrine\DBAL\Schema\View  $from
      * @return \MigrationsGenerator\Models\View
+     * @throws \Doctrine\DBAL\Exception
      */
     public static function toModel(DBALView $from): View
     {
@@ -34,6 +35,7 @@ class ViewMapper
      *
      * @param  \Doctrine\DBAL\Schema\View  $from
      * @return \MigrationsGenerator\Models\View
+     * @throws \Doctrine\DBAL\Exception
      */
     private static function makePgSQLView(DBALView $from): View
     {
@@ -50,6 +52,7 @@ class ViewMapper
      *
      * @param  \Doctrine\DBAL\Schema\View  $from
      * @return \MigrationsGenerator\Models\View
+     * @throws \Doctrine\DBAL\Exception
      */
     private static function makeSQLSrvView(DBALView $from): View
     {
@@ -68,6 +71,9 @@ class ViewMapper
         return self::makeView($from->getName(), '');
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     private static function makeView(string $name, string $sql): View
     {
         // trim quotes
@@ -79,15 +85,20 @@ class ViewMapper
 
         $createViewSql = self::getCreateViewSql($quotedName, $sql);
 
-        return new View($name, $quotedName, $unquotedName, $createViewSql);
+        return new View($unquotedName, $quotedName, $createViewSql);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     private static function getCreateViewSql(string $name, string $sql): string
     {
         if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::SQLSERVER) {
             return $sql;
         } else {
-            return "CREATE VIEW $name AS $sql";
+            return app(MigrationsGeneratorSetting::class)
+                ->getDatabasePlatform()
+                ->getCreateViewSQL($name, $sql);
         }
     }
 }

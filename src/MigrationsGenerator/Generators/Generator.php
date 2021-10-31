@@ -91,9 +91,9 @@ class Generator
         $down = $this->viewMigration->down($view);
 
         $this->viewWriter->writeTo(
-            $path = $this->filenameGenerator->makeViewPath($view->getUnquotedName()),
+            $path = $this->filenameGenerator->makeViewPath($view->getName()),
             $this->setting->getStubPath(),
-            $this->filenameGenerator->makeViewClassName($view->getUnquotedName()),
+            $this->filenameGenerator->makeViewClassName($view->getName()),
             $up,
             $down
         );

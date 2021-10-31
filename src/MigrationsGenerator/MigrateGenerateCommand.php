@@ -325,11 +325,11 @@ class MigrateGenerateCommand extends Command
     {
         $schemaViews = $this->schema->getViews();
         foreach ($schemaViews as $view) {
-            if (!in_array($view->getUnquotedName(), $views)) {
+            if (!in_array($view->getName(), $views)) {
                 continue;
             }
             $this->writeMigration(
-                $view->getUnquotedName(),
+                $view->getName(),
                 function () use ($view) {
                     $this->generator->writeViewToTemp($view);
                 },
