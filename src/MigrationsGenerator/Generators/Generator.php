@@ -3,33 +3,40 @@
 namespace MigrationsGenerator\Generators;
 
 use Doctrine\DBAL\Schema\Table;
-use MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 use MigrationsGenerator\Generators\Writer\MigrationWriter;
 use MigrationsGenerator\Generators\Writer\SquashWriter;
+use MigrationsGenerator\Generators\Writer\ViewWriter;
 use MigrationsGenerator\MigrationsGeneratorSetting;
+use MigrationsGenerator\Models\View;
 
 class Generator
 {
     private $migrationWriter;
+    private $viewWriter;
     private $squashWriter;
     private $filenameGenerator;
     private $foreignKeyMigration;
     private $tableMigration;
+    private $viewMigration;
     private $setting;
 
     public function __construct(
         MigrationWriter $migrationWriter,
+        ViewWriter $viewWriter,
         SquashWriter $squashWriter,
         FilenameGenerator $filenameGenerator,
         ForeignKeyMigration $foreignKeyMigration,
         TableMigration $tableMigration,
+        ViewMigration $viewMigration,
         MigrationsGeneratorSetting $setting
     ) {
         $this->migrationWriter     = $migrationWriter;
+        $this->viewWriter          = $viewWriter;
         $this->squashWriter        = $squashWriter;
         $this->filenameGenerator   = $filenameGenerator;
         $this->foreignKeyMigration = $foreignKeyMigration;
         $this->tableMigration      = $tableMigration;
+        $this->viewMigration       = $viewMigration;
         $this->setting             = $setting;
     }
 
@@ -46,12 +53,15 @@ class Generator
         $up   = $this->tableMigration->up($table, $columns, $indexes);
         $down = $this->tableMigration->down($table);
 
-        return $this->writeMigration(
-            $this->filenameGenerator->makeTablePath($table->getName()),
+        $this->migrationWriter->writeTo(
+            $path = $this->filenameGenerator->makeTablePath($table->getName()),
+            $this->setting->getStubPath(),
             $this->filenameGenerator->makeTableClassName($table->getName()),
             $up,
             $down
         );
+
+        return $path;
     }
 
     /**
@@ -70,6 +80,41 @@ class Generator
     }
 
     /**
+     * Creates view migration.
+     *
+     * @param  \MigrationsGenerator\Models\View  $view
+     * @return string Generated file path.
+     */
+    public function writeViewToMigrationFile(View $view): string
+    {
+        $up   = $this->viewMigration->up($view);
+        $down = $this->viewMigration->down($view);
+
+        $this->viewWriter->writeTo(
+            $path = $this->filenameGenerator->makeViewPath($view->getName()),
+            $this->setting->getStubPath(),
+            $this->filenameGenerator->makeViewClassName($view->getName()),
+            $up,
+            $down
+        );
+
+        return $path;
+    }
+
+    /**
+     * Writes view into temp files.
+     *
+     * @param  \MigrationsGenerator\Models\View  $view
+     */
+    public function writeViewToTemp(View $view)
+    {
+        $up   = $this->viewMigration->up($view);
+        $down = $this->viewMigration->down($view);
+
+        $this->squashWriter->writeToTemp($up, $down);
+    }
+
+    /**
      * Creates foreign key migration.
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
@@ -81,12 +126,15 @@ class Generator
         $up   = $this->foreignKeyMigration->up($table, $foreignKeys);
         $down = $this->foreignKeyMigration->down($table, $foreignKeys);
 
-        return $this->writeMigration(
-            $this->filenameGenerator->makeForeignKeyPath($table->getName()),
+        $this->migrationWriter->writeTo(
+            $path = $this->filenameGenerator->makeForeignKeyPath($table->getName()),
+            $this->setting->getStubPath(),
             $this->filenameGenerator->makeForeignKeyClassName($table->getName()),
             $up,
             $down
         );
+
+        return $path;
     }
 
     /**
@@ -123,28 +171,6 @@ class Generator
         $path      = $this->filenameGenerator->makeTablePath($database);
         $className = $this->filenameGenerator->makeTableClassName($database);
         $this->squashWriter->squashMigrations($path, $this->setting->getStubPath(), $className);
-        return $path;
-    }
-
-    /**
-     * Writes migration files.
-     *
-     * @param  string  $path  Migration file destination path.
-     * @param  string  $className
-     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $up  Blueprint of migration `up`.
-     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $down  Blueprint of migration `down`.
-     * @return string Generated migration file path.
-     */
-    private function writeMigration(string $path, string $className, SchemaBlueprint $up, SchemaBlueprint $down): string
-    {
-        $this->migrationWriter->writeTo(
-            $path,
-            $this->setting->getStubPath(),
-            $className,
-            $up,
-            $down
-        );
-
         return $path;
     }
 }

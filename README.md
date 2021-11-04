@@ -1,6 +1,7 @@
 # Laravel Migrations Generator
 
 ![Style check CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/check.yml/badge.svg?branch=5.x)
+[![codecov](https://codecov.io/gh/kitloong/laravel-migrations-generator/branch/5.x/graph/badge.svg?token=U6ZRDPY6QZ)](https://codecov.io/gh/kitloong/laravel-migrations-generator)
 ![Tests CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/tests.yml/badge.svg?branch=5.x)
 [![Latest Stable Version](https://poser.pugx.org/kitloong/laravel-migrations-generator/v/stable.png)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 [![Total Downloads](http://poser.pugx.org/kitloong/laravel-migrations-generator/downloads)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
@@ -44,11 +45,11 @@ Laravel will automatically register service provider for you.
 
 ### Lumen Setup
 
-Auto discovery is not available in Lumen, you need some modification on `bootstrap/app.php`
+Auto-discovery is not available in Lumen, you need some modification on `bootstrap/app.php`.
 
 #### Enable facade
 
-Uncomment the following line
+Uncomment the following line.
 
 ```
 $app->withFacades();
@@ -56,7 +57,7 @@ $app->withFacades();
 
 #### Register provider
 
-Add following line
+Add following line into the `Register Service Providers` section.
 
 ```
 $app->register(\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
@@ -96,7 +97,9 @@ php artisan migrate:generate --connection="connection_name"
 
 ### Squash migrations
 
-By default, Generator will generate multiple migration files for each table. You can squash all migrations into single file with `--squash`.
+By default, Generator will generate multiple migration files for each table. 
+
+You can squash all migrations into a single file with:
 
 ```bash
 php artisan migrate:generate --squash
@@ -109,16 +112,18 @@ Run `php artisan help migrate:generate` for a list of options.
 |Options|Description|
 |---|---|
 |-c, --connection[=CONNECTION]|The database connection to use|
-|-t, --tables[=TABLES]|A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments|
-|-i, --ignore[=IGNORE]|A list of Tables you wish to ignore, separated by a comma: users,posts,comments|
+|-t, --tables[=TABLES]|A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments|
+|-i, --ignore[=IGNORE]|A list of Tables or Views you wish to ignore, separated by a comma: users,posts,comments|
 |-p, --path[=PATH]|Where should the file be created?|
 |-tp, --template-path[=TEMPLATE-PATH]|The location of the template for this generator|
-|--date=[DATE]|Migrations will be created with specified date. Foreign keys will be crated for specified time + 1 second. Date should be in format suitable for Carbon::parse|
-|--table-filename[=TABLE-FILENAME]|Define table migration filename, default pattern: [datetime_prefix]\_create_[table]_table.php|
-|--fk-filename[=FK-FILENAME]|Define foreign key migration filename, default pattern: [datetime_prefix]\_add_foreign_keys_to_[table]_table.php|
+|--date[=DATE]|Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format suitable for `Carbon::parse`|
+|--table-filename[=TABLE-FILENAME]|Define table migration filename, default pattern: `[datetime_prefix]\_create_[table]_table.php`|
+|--view-filename[=VIEW-FILENAME]|Define view migration filename, default pattern: `[datetime_prefix]\_create_[table]_view.php`|
+|--fk-filename[=FK-FILENAME]|Define foreign key migration filename, default pattern: `[datetime_prefix]\_add_foreign_keys_to_[table]_table.php`|
 |--default-index-names|Don\'t use db index names for migrations|
 |--default-fk-names|Don\'t use db foreign key names for migrations|
 |--use-db-collation|Follow db collations for migrations|
+|--skip-views|Don\'t generate views|
 |--squash|Generate all migrations into a single file|
 
 ## Thank You

@@ -5,10 +5,17 @@ namespace MigrationsGenerator\Repositories;
 use Illuminate\Support\Collection;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 use MigrationsGenerator\Schema\SQLSrv\Column;
+use stdClass;
 
 class SQLSrvRepository extends Repository
 {
     public const INDEX_TYPE_SPATIAL = 4;
+    private $setting;
+
+    public function __construct(MigrationsGeneratorSetting $setting)
+    {
+        $this->setting = $setting;
+    }
 
     /**
      * Get a list of spatial indexes.
@@ -18,8 +25,7 @@ class SQLSrvRepository extends Repository
      */
     public function getSpatialIndexNames(string $table): Collection
     {
-        $setting     = app(MigrationsGeneratorSetting::class);
-        $columns     = $setting->getConnection()
+        $columns     = $this->setting->getConnection()
             ->select("
                 SELECT idx.name AS indexname
                 FROM sys.tables AS tbl
@@ -48,8 +54,7 @@ class SQLSrvRepository extends Repository
      */
     public function getColumnDefinition(string $table, string $column): ?Column
     {
-        $setting = app(MigrationsGeneratorSetting::class);
-        $columns = $setting->getConnection()
+        $columns = $this->setting->getConnection()
             ->select("
                 SELECT col.name,
                        type.name AS type,
@@ -93,6 +98,31 @@ class SQLSrvRepository extends Repository
                 $column->collation,
                 $column->comment
             );
+        }
+        return null;
+    }
+
+    /**
+     * Get single view name with definition.
+     *
+     * @param  string  $view  View name.
+     * @return \stdClass{name: string, definition: string}|null
+     */
+    public function getView(string $view): ?stdClass
+    {
+        $dbView = $this->setting->getConnection()
+            ->selectOne("
+                SELECT name, definition
+                FROM sys.sysobjects
+                    INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
+                WHERE type = 'V'
+                    AND object_id = object_id(
+                        '$view'
+                    )
+                ORDER BY name
+            ");
+        if ($dbView !== null) {
+            return $dbView;
         }
         return null;
     }

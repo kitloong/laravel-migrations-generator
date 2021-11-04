@@ -3,7 +3,11 @@
 namespace MigrationsGenerator\DBAL;
 
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\View as DBALView;
 use Doctrine\DBAL\Types\Type;
+use MigrationsGenerator\DBAL\Mapper\ViewMapper;
+use MigrationsGenerator\DBAL\Support\FilterTables;
+use MigrationsGenerator\DBAL\Support\FilterViews;
 use MigrationsGenerator\DBAL\Types\DBALTypes;
 use MigrationsGenerator\DBAL\Types\DoubleType;
 use MigrationsGenerator\DBAL\Types\EnumType;
@@ -29,16 +33,18 @@ use MigrationsGenerator\DBAL\Types\TinyIntegerType;
 use MigrationsGenerator\DBAL\Types\UUIDType;
 use MigrationsGenerator\DBAL\Types\YearType;
 use MigrationsGenerator\MigrationsGeneratorSetting;
+use MigrationsGenerator\Models\View;
 
 class Schema
 {
+    use FilterTables;
+    use FilterViews;
+
     private $schema;
 
     public function __construct()
     {
-        $this->schema = app(MigrationsGeneratorSetting::class)->getConnection()
-            ->getDoctrineConnection()
-            ->getSchemaManager();
+        $this->schema = app(MigrationsGeneratorSetting::class)->getSchema();
     }
 
     /**
@@ -106,7 +112,11 @@ class Schema
      */
     public function getTableNames(): array
     {
-        return $this->schema->listTableNames();
+        return collect($this->schema->listTables())
+            ->filter(call_user_func([$this, 'filterTableCallback']))
+            ->map(function (Table $table) {
+                return $table->getName();
+            })->toArray();
     }
 
     /**
@@ -155,6 +165,34 @@ class Schema
     public function getForeignKeys(string $table): array
     {
         return $this->schema->listTableForeignKeys($table);
+    }
+
+    /**
+     * Get a list of view names.
+     *
+     * @return string[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getViewNames(): array
+    {
+        return collect($this->getViews())->map(function (View $view) {
+            return $view->getName();
+        })->toArray();
+    }
+
+    /**
+     * Get a list of views.
+     *
+     * @return \MigrationsGenerator\Models\View[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getViews(): array
+    {
+        return collect($this->schema->listViews())
+            ->filter(call_user_func([$this, 'filterViewCallback']))
+            ->map(function (DBALView $view) {
+                return ViewMapper::toModel($view);
+            })->toArray();
     }
 
     /**

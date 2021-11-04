@@ -5,7 +5,7 @@ namespace MigrationsGenerator\Generators\Writer;
 use Illuminate\Support\Facades\File;
 use MigrationsGenerator\Generators\Blueprint\WritableBlueprint;
 
-class MigrationWriter
+class ViewWriter
 {
     private $migrationStub;
 
@@ -33,8 +33,7 @@ class MigrationWriter
         $stub = $this->migrationStub->getStub($stubPath);
         $use = implode(WriterConstant::LINE_BREAK, [
             'use Illuminate\Database\Migrations\Migration;',
-            'use Illuminate\Database\Schema\Blueprint;',
-            'use Illuminate\Support\Facades\Schema;',
+            'use Illuminate\Support\Facades\DB;',
         ]);
         File::put(
             $path,

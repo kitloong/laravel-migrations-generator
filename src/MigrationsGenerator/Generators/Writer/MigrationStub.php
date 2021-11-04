@@ -21,15 +21,17 @@ class MigrationStub
      * Populates the place-holders in the migration stub.
      *
      * @param  string  $stub  File content.
+     * @param  string  $use
      * @param  string  $className
      * @param  string  $upContent  Content for migration `up`.
      * @param  string  $downContent  Content for migration `down`.
      * @return string Migration content.
      */
-    public function populateStub(string $stub, string $className, string $upContent, string $downContent): string
+    public function populateStub(string $stub, string $use, string $className, string $upContent, string $downContent): string
     {
         $content = $stub;
         $replace = [
+            '{{ use }}'   => $use,
             '{{ class }}' => $className,
             '{{ up }}'    => $upContent,
             '{{ down }}'  => $downContent,

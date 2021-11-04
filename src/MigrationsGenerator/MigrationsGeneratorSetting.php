@@ -3,9 +3,9 @@
 namespace MigrationsGenerator;
 
 use Carbon\Carbon;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Database\Connection;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use MigrationsGenerator\DBAL\Platform;
 
@@ -13,6 +13,9 @@ class MigrationsGeneratorSetting
 {
     /** @var Connection */
     private $connection;
+
+    /** @var AbstractPlatform */
+    private $databasePlatform;
 
     /** @var string */
     private $platform;
@@ -45,6 +48,9 @@ class MigrationsGeneratorSetting
     private $tableFilename;
 
     /** @var string */
+    private $viewFilename;
+
+    /** @var string */
     private $fkFilename;
 
     /**
@@ -59,32 +65,46 @@ class MigrationsGeneratorSetting
      * @param  string  $connection
      * @throws \Doctrine\DBAL\Exception
      */
-    public function setConnection(string $connection): void
+    public function setup(string $connection): void
     {
         $this->connection = DB::connection($connection);
 
-        $doctConn     = $this->connection->getDoctrineConnection();
-        $this->schema = $doctConn->getSchemaManager();
-        $classPath    = explode('\\', get_class($doctConn->getDatabasePlatform()));
-        $platform     = end($classPath);
+        $doctrineConnection = $this->connection->getDoctrineConnection();
+        if (method_exists($doctrineConnection, 'createSchemaManager')) {
+            $this->schema = $doctrineConnection->createSchemaManager();
+        } else {
+            // @codeCoverageIgnoreStart
+            $this->schema = $doctrineConnection->getSchemaManager();
+            // @codeCoverageIgnoreEnd
+        }
+        $this->databasePlatform = $doctrineConnection->getDatabasePlatform();
 
-        switch (true) {
-            case preg_match('/mysql/i', $platform) > 0:
+        switch ($this->databasePlatform->getName()) {
+            case 'mysql':
                 $this->platform = Platform::MYSQL;
                 break;
-            case preg_match('/postgresql/i', $platform) > 0:
+            case 'postgresql':
                 $this->platform = Platform::POSTGRESQL;
                 break;
-            case preg_match('/sqlserver/i', $platform) > 0:
+            case 'mssql':
                 $this->platform = Platform::SQLSERVER;
                 break;
-            case preg_match('/sqlite/i', $platform) > 0:
+            // @codeCoverageIgnoreStart
+            case 'sqlite':
                 $this->platform = Platform::SQLITE;
                 break;
             default:
                 $this->platform = Platform::OTHERS;
-                break;
+            // @codeCoverageIgnoreEnd
         }
+    }
+
+    /**
+     * @return AbstractPlatform
+     */
+    public function getDatabasePlatform(): AbstractPlatform
+    {
+        return $this->databasePlatform;
     }
 
     /**
@@ -180,14 +200,7 @@ class MigrationsGeneratorSetting
      */
     public function setStubPath(string $stubPath): void
     {
-        // Use user defined stub path.
-        if ($stubPath !== Config::get('generators.config.migration_template_path')) {
-            $this->stubPath = $stubPath;
-            return;
-        }
-
-        // Use default stub path.
-        $this->stubPath = Config::get('generators.config.migration_template_path');
+        $this->stubPath = $stubPath;
     }
 
     /**
@@ -220,6 +233,22 @@ class MigrationsGeneratorSetting
     public function setTableFilename(string $tableFilename): void
     {
         $this->tableFilename = $tableFilename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewFilename(): string
+    {
+        return $this->viewFilename;
+    }
+
+    /**
+     * @param  string  $viewFilename
+     */
+    public function setViewFilename(string $viewFilename): void
+    {
+        $this->viewFilename = $viewFilename;
     }
 
     /**

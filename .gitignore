@@ -12,3 +12,4 @@
 .phpunit.result.cache
 docker-compose.yml
 composer.lock
+coverage.xml

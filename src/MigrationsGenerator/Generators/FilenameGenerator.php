@@ -46,6 +46,36 @@ class FilenameGenerator
     }
 
     /**
+     * Makes class name for view migration.
+     *
+     * @param  string  $view  View name.
+     * @return string
+     */
+    public function makeViewClassName(string $view): string
+    {
+        $className = $this->makeClassName(
+            app(MigrationsGeneratorSetting::class)->getViewFilename(),
+            $view
+        );
+        return Str::studly($className);
+    }
+
+    /**
+     * Makes file path for view migration.
+     *
+     * @param  string  $view  View name.
+     * @return string
+     */
+    public function makeViewPath(string $view): string
+    {
+        return $this->makeFilename(
+            app(MigrationsGeneratorSetting::class)->getViewFilename(),
+            Carbon::parse(app(MigrationsGeneratorSetting::class)->getDate())->addSecond()->format('Y_m_d_His'),
+            $view
+        );
+    }
+
+    /**
      * Makes class name for foreign key migration.
      *
      * @param  string  $table  Table name.
