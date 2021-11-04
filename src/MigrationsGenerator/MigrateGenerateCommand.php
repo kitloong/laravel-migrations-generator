@@ -98,7 +98,7 @@ class MigrateGenerateCommand extends Command
     protected function setup(string $connection): void
     {
         $setting = app(MigrationsGeneratorSetting::class);
-        $setting->setConnection($connection);
+        $setting->setup($connection);
         $setting->setUseDBCollation($this->option('use-db-collation'));
         $setting->setIgnoreIndexNames($this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));
