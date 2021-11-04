@@ -4,10 +4,16 @@ namespace Tests\Feature\PgSQL;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ */
 class CommandTest extends PgSQLTestCase
 {
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testRun()
     {
         $migrateTemplates = function () {
@@ -36,6 +42,9 @@ class CommandTest extends PgSQLTestCase
         $this->verify($migrateTemplates, $generateMigrations, $beforeVerify);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function testCollation()
     {
         $migrateTemplates = function () {
@@ -49,6 +58,36 @@ class CommandTest extends PgSQLTestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testIgnore()
+    {
+        $this->migrateGeneral('pgsql');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations([
+            '--ignore' => implode(',', [
+                'name-with-hyphen-pgsql',
+                'name-with-hyphen-pgsql_view',
+            ])
+        ]);
+
+        $this->dropAllTables();
+
+        $this->runMigrationsFrom('pgsql', $this->storageMigrations());
+
+        $tables = $this->getTableNames();
+        $views  = $this->getViewNames();
+
+        $this->assertNotContains('name-with-hyphen-pgsql', $tables);
+        $this->assertNotContains('public."name-with-hyphen-pgsql_view"', $views);
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function verify(callable $migrateTemplates, callable $generateMigrations, callable $beforeVerify = null)
     {
         $migrateTemplates();
@@ -59,16 +98,6 @@ class CommandTest extends PgSQLTestCase
         $generateMigrations();
 
         $this->assertMigrations();
-
-        foreach (File::files($this->storageMigrations()) as $file) {
-            if (Str::contains($file->getBasename(), 'tiger')) {
-                File::delete($file);
-            }
-
-            if (Str::contains($file->getBasename(), 'topology')) {
-                File::delete($file);
-            }
-        }
 
         $this->dropAllTables();
 

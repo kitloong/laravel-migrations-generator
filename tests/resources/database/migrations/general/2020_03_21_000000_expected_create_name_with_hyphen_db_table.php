@@ -7,7 +7,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ExpectedCreateReservedNameWithPrecision_DB_Table extends Migration
+class ExpectedCreateNameWithHyphen_DB_Table extends Migration
 {
     /**
      * Run the migrations.
@@ -16,11 +16,10 @@ class ExpectedCreateReservedNameWithPrecision_DB_Table extends Migration
      */
     public function up()
     {
-        Schema::create('reserved_name_with_precision_[db]', function (Blueprint $table) {
-            $table->increments('id');
-            $table->softDeletes('deleted_at', 2);
-            $table->string('remember_token', 120);
-            $table->timestamps(2);
+        Schema::create('name-with-hyphen-[db]', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('with-hyphen');
+            $table->timestamp('updated_at');
         });
     }
 
@@ -31,6 +30,6 @@ class ExpectedCreateReservedNameWithPrecision_DB_Table extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reserved_name_with_precision_[db]');
+        Schema::dropIfExists('name-with-hyphen-[db]');
     }
 }

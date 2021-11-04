@@ -16,18 +16,20 @@ class MigrateGenerateCommand extends Command
      * @var string
      */
     protected $signature = 'migrate:generate
-                            {tables? : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
+                            {tables? : A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments}
                             {--c|connection= : The database connection to use}
-                            {--t|tables= : A list of Tables you wish to Generate Migrations for separated by a comma: users,posts,comments}
-                            {--i|ignore= : A list of Tables you wish to ignore, separated by a comma: users,posts,comments}
+                            {--t|tables= : A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments}
+                            {--i|ignore= : A list of Tables or Views you wish to ignore, separated by a comma: users,posts,comments}
                             {--p|path= : Where should the file be created?}
                             {--tp|template-path= : The location of the template for this generator}
-                            {--date= : Migrations will be created with specified date. Foreign keys will be created with + 1 second. Date should be in format suitable for Carbon::parse}
+                            {--date= : Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format suitable for Carbon::parse}
                             {--table-filename= : Define table migration filename, default pattern: [datetime_prefix]_create_[table]_table.php}
+                            {--view-filename= : Define view migration filename, default pattern: [datetime_prefix]_create_[table]_view.php}
                             {--fk-filename= : Define foreign key migration filename, default pattern: [datetime_prefix]_add_foreign_keys_to_[table]_table.php}
                             {--default-index-names : Don\'t use db index names for migrations}
                             {--default-fk-names : Don\'t use db foreign key names for migrations}
                             {--use-db-collation : Follow db collations for migrations}
+                            {--skip-views : Don\'t generate views}
                             {--squash : Generate all migrations into a single file}';
 
     /**
@@ -78,12 +80,14 @@ class MigrateGenerateCommand extends Command
 
         $this->info('Using connection: '.$this->connection."\n");
 
-        $tables = $this->filterTables();
-        $this->info('Generating migrations for: '.implode(', ', $tables). "\n");
+        $tables       = $this->filterTables();
+        $views        = $this->filterViews();
+        $generateList = array_unique(array_merge($tables, $views));
+        $this->info('Generating migrations for: '.implode(', ', $generateList)."\n");
 
         $this->askIfLogMigrationTable();
 
-        $this->generateMigrationFiles($tables);
+        $this->generateMigrationFiles($tables, $views);
 
         $this->info("\nFinished!\n");
     }
@@ -94,7 +98,7 @@ class MigrateGenerateCommand extends Command
     protected function setup(string $connection): void
     {
         $setting = app(MigrationsGeneratorSetting::class);
-        $setting->setConnection($connection);
+        $setting->setup($connection);
         $setting->setUseDBCollation($this->option('use-db-collation'));
         $setting->setIgnoreIndexNames($this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));
@@ -116,6 +120,10 @@ class MigrateGenerateCommand extends Command
             $this->option('table-filename') ?? Config::get('generators.config.filename_pattern.table')
         );
 
+        $setting->setViewFilename(
+            $this->option('view-filename') ?? Config::get('generators.config.filename_pattern.view')
+        );
+
         $setting->setFkFilename(
             $this->option('fk-filename') ?? Config::get('generators.config.filename_pattern.foreign_key')
         );
@@ -131,13 +139,47 @@ class MigrateGenerateCommand extends Command
      */
     protected function filterTables(): array
     {
+        $allTables = $this->schema->getTableNames();
+
+        return $this->filterAndExcludeAsset($allTables);
+    }
+
+    /**
+     * Get all views from schema or return table list provided in option.
+     * Then filter and exclude tables in --ignore option if any.
+     * Return empty if --skip-views
+     *
+     * @return string[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function filterViews(): array
+    {
+        if ($this->option('skip-views')) {
+            return [];
+        }
+
+        $allViews = $this->schema->getViewNames();
+
+        return $this->filterAndExcludeAsset($allViews);
+    }
+
+    /**
+     * Filter and exclude tables in --ignore option if any.
+     *
+     * @param  string[]  $allAssets
+     * @return array
+     */
+    protected function filterAndExcludeAsset(array $allAssets): array
+    {
         if ($tableArg = (string) $this->argument('tables')) {
             $tables = explode(',', $tableArg);
         } elseif ($tableOpt = (string) $this->option('tables')) {
             $tables = explode(',', $tableOpt);
         } else {
-            $tables = $this->schema->getTableNames();
+            $tables = $allAssets;
         }
+
+        $tables = array_intersect($tables, $allAssets);
 
         return array_diff($tables, $this->getExcludedTables());
     }
@@ -218,12 +260,13 @@ class MigrateGenerateCommand extends Command
     }
 
     /**
-     * Generates table and foreign key migrations.
+     * Generates table, view and foreign key migrations.
      *
-     * @param  string[]  $tables
+     * @param  string[]  $tables  Table names.
+     * @param  string[]  $views  View names.
      * @throws \Doctrine\DBAL\Exception
      */
-    private function generateMigrationFiles(array $tables): void
+    private function generateMigrationFiles(array $tables, array $views): void
     {
         if (app(MigrationsGeneratorSetting::class)->isSquash()) {
             $this->generator->cleanTemps();
@@ -232,6 +275,10 @@ class MigrateGenerateCommand extends Command
         $this->info("Setting up Tables and Index Migrations");
 
         $this->generateTables($tables);
+
+        $this->info("\nSetting up Views Migrations");
+
+        $this->generateViews($views);
 
         $this->info("\nSetting up Foreign Key Migrations");
 
@@ -251,7 +298,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates table migrations.
      *
-     * @param  string[]  $tables
+     * @param  string[]  $tables  Table names.
      * @throws \Doctrine\DBAL\Exception
      */
     private function generateTables(array $tables): void
@@ -272,6 +319,31 @@ class MigrateGenerateCommand extends Command
                         $this->schema->getColumns($table),
                         $this->schema->getIndexes($table)
                     );
+                }
+            );
+        }
+    }
+
+    /**
+     * Generate view migration.
+     *
+     * @param  string[]  $views  Views name.
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function generateViews(array $views): void
+    {
+        $schemaViews = $this->schema->getViews();
+        foreach ($schemaViews as $view) {
+            if (!in_array($view->getName(), $views)) {
+                continue;
+            }
+            $this->writeMigration(
+                $view->getName(),
+                function () use ($view) {
+                    $this->generator->writeViewToTemp($view);
+                },
+                function () use ($view): string {
+                    return $this->generator->writeViewToMigrationFile($view);
                 }
             );
         }

@@ -23,6 +23,7 @@ class ExpectedCreateUsers_DB_Table extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('column-with-hyphen');
             $table->softDeletes()->comment('Soft delete');
             $table->softDeletes('deleted_at2', 2)->comment('Soft delete');
             $table->rememberToken()->comment('Remember token');

@@ -3,7 +3,7 @@
 namespace MigrationsGenerator\Generators\Writer;
 
 use Illuminate\Support\Facades\File;
-use MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
+use MigrationsGenerator\Generators\Blueprint\WritableBlueprint;
 use MigrationsGenerator\Generators\FilenameGenerator;
 
 class SquashWriter
@@ -22,10 +22,10 @@ class SquashWriter
      * Append new content into `up`.
      * Prepend new content into `down`.
      *
-     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $upBlueprint
-     * @param  \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint  $downBlueprint
+     * @param  \MigrationsGenerator\Generators\Blueprint\WritableBlueprint  $upBlueprint
+     * @param  \MigrationsGenerator\Generators\Blueprint\WritableBlueprint  $downBlueprint
      */
-    public function writeToTemp(SchemaBlueprint $upBlueprint, SchemaBlueprint $downBlueprint): void
+    public function writeToTemp(WritableBlueprint $upBlueprint, WritableBlueprint $downBlueprint): void
     {
         if (!File::exists($upTempPath = $this->filenameGenerator->makeUpTempPath())) {
             $prettySpace = '';
@@ -60,10 +60,18 @@ class SquashWriter
      */
     public function squashMigrations(string $path, string $stubPath, string $className): void
     {
+        $use = implode(WriterConstant::LINE_BREAK, [
+            'use Illuminate\Database\Migrations\Migration;',
+            'use Illuminate\Database\Schema\Blueprint;',
+            'use Illuminate\Support\Facades\Schema;',
+            'use Illuminate\Support\Facades\DB;',
+        ]);
+
         File::put(
             $path,
             $this->migrationStub->populateStub(
                 $this->migrationStub->getStub($stubPath),
+                $use,
                 $className,
                 File::get($upTempPath = $this->filenameGenerator->makeUpTempPath()),
                 File::get($downTempPath = $this->filenameGenerator->makeDownTempPath())

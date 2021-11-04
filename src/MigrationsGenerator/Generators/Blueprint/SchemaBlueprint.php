@@ -7,7 +7,7 @@ use MigrationsGenerator\Generators\MigrationConstants\Method\SchemaBuilder;
 use MigrationsGenerator\Generators\TableNameGenerator;
 use MigrationsGenerator\Generators\Writer\WriterConstant;
 
-class SchemaBlueprint
+class SchemaBlueprint implements WritableBlueprint
 {
     use Stringable;
 
