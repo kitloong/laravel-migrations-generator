@@ -129,13 +129,17 @@ class DatetimeColumn implements GeneratableColumn
      */
     private function getPgSQLLength(string $table, Column $column): ?int
     {
-        $rawType = ($this->pgSQLRepository->getTypeByColumnName($table, $column->getName()));
+        $rawType = $this->pgSQLRepository->getTypeByColumnName($table, $column->getName());
+        if ($rawType === null) {
+            return null;
+        }
+
         $length  = $this->regex->getTextBetween($rawType);
         if ($length !== null) {
             return (int) $length;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
