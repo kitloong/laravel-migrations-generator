@@ -37,7 +37,10 @@ class PgSQLRepository extends Repository
         if (count($columnDetail) > 0) {
             return $columnDetail[0]->datatype;
         }
+
+        // @codeCoverageIgnoreStart
         return null;
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -71,7 +74,10 @@ class PgSQLRepository extends Repository
         if (count($columnDetail) > 0) {
             return $columnDetail[0]->definition;
         }
+
+        // @codeCoverageIgnoreStart
         return null;
+        // @codeCoverageIgnoreEnd
     }
 
     /**
