@@ -221,7 +221,10 @@ class CommandTest extends MySQL57TestCase
         $foreignKeys     = new Collection($foreignKeyArray);
         $foreignKeyNames = $foreignKeys->map(function (ForeignKeyConstraint $foreignKey) {
             return $foreignKey->getName();
-        })->sort()->toArray();
+        })
+            ->sort()
+            ->values()
+            ->toArray();
 
         $this->assertSame(
             [
