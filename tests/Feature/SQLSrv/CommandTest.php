@@ -63,6 +63,20 @@ class CommandTest extends SQLSrvTestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
+    public function testGenerateXml()
+    {
+        $this->migrateGeneral('sqlsrv');
+
+        // Test xml column
+        DB::statement("alter table all_columns_sqlsrv add xml xml");
+
+        $this->truncateMigration();
+
+        $this->generateMigrations();
+
+        $this->assertTrue(true);
+    }
+
     /**
      * @param  callable  $migrateTemplates
      * @param  callable  $generateMigrations
