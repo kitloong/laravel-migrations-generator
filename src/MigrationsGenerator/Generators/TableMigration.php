@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use MigrationsGenerator\DBAL\Platform;
 use MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 use MigrationsGenerator\Generators\Blueprint\TableBlueprint;
+use MigrationsGenerator\Generators\MigrationConstants\Method\IndexType;
 use MigrationsGenerator\Generators\MigrationConstants\Method\SchemaBuilder;
 use MigrationsGenerator\Generators\MigrationConstants\Property\TableProperty;
 use MigrationsGenerator\MigrationsGeneratorSetting;
@@ -67,6 +68,19 @@ class TableMigration
             foreach ($multiColumnsIndexes as $index) {
                 $method = $this->indexGenerator->generate($table, $index);
                 $blueprint->setMethod($method);
+            }
+        }
+
+        // Generate single column spatial index with custom name.
+        if ($singleColumnIndexes->isNotEmpty()) {
+            foreach ($singleColumnIndexes as $index) {
+                /** @var \Doctrine\DBAL\Schema\Index $index */
+                $indexType = $this->indexGenerator->getIndexType($index);
+                if ($indexType === IndexType::SPATIAL_INDEX &&
+                    !$this->indexGenerator->shouldSkipName($table->getName(), $index, $indexType)) {
+                    $method = $this->indexGenerator->generate($table, $index);
+                    $blueprint->setMethod($method);
+                }
             }
         }
 

@@ -100,6 +100,9 @@ class Schema
                 $this->registerDoctrineTypeMapping('cidr', DBALTypes::STRING);
                 $this->registerDoctrineTypeMapping('oid', DBALTypes::STRING);
                 break;
+            case Platform::SQLSERVER:
+                $this->registerDoctrineTypeMapping('xml', DBALTypes::TEXT);
+                break;
             default:
         }
     }
