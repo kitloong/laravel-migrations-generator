@@ -3,7 +3,6 @@
 namespace MigrationsGenerator\DBAL\Support;
 
 use Closure;
-use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Facades\DB;
 use MigrationsGenerator\DBAL\Platform;
 use MigrationsGenerator\MigrationsGeneratorSetting;
@@ -16,9 +15,9 @@ trait FilterTables
      *
      * @return \Closure
      */
-    public function filterTableCallback(): Closure
+    public function filterTableNameCallback(): Closure
     {
-        return function (Table $table) {
+        return function (string $table) {
             if (app(MigrationsGeneratorSetting::class)->getPlatform() === Platform::POSTGRESQL) {
                 return $this->isPgSQLWantedTable($table);
             }
@@ -30,15 +29,22 @@ trait FilterTables
     /**
      * Checks if table is from user defined `schema`.
      *
-     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  string  $table
      * @return bool
      */
-    protected function isPgSQLWantedTable(Table $table): bool
+    protected function isPgSQLWantedTable(string $table): bool
     {
-        $schema = DB::connection()->getConfig('schema');
-        if ($table->isInDefaultNamespace($schema) || $table->getNamespaceName() === $schema) {
+        // If table name do not have namespace, it is using the default namespace.
+        if (strpos($table, '.') === false) {
             return true;
         }
-        return false;
+
+        // Schema name defined in Laravel framework.
+        $schema = DB::connection()->getConfig('schema');
+
+        $parts     = explode('.', $table);
+        $namespace = $parts[0];
+
+        return $namespace === $schema;
     }
 }

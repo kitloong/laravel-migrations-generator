@@ -34,13 +34,16 @@ use MigrationsGenerator\DBAL\Types\UUIDType;
 use MigrationsGenerator\DBAL\Types\YearType;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 use MigrationsGenerator\Models\View;
+use MigrationsGenerator\Support\AssetNameHelper;
 
 class Schema
 {
     use FilterTables;
     use FilterViews;
+    use AssetNameHelper;
 
     private $schema;
+    private $assetNameHelper;
 
     public function __construct()
     {
@@ -115,11 +118,16 @@ class Schema
      */
     public function getTableNames(): array
     {
-        return collect($this->schema->listTables())
-            ->filter(call_user_func([$this, 'filterTableCallback']))
-            ->map(function (Table $table) {
-                return $table->getName();
-            })->toArray();
+        return collect($this->schema->listTableNames())
+            ->map(function ($table) {
+                if ($this->isIdentifierQuoted($table)) {
+                    return $this->trimQuotes($table);
+                }
+                return $table;
+            })
+            ->filter(call_user_func([$this, 'filterTableNameCallback']))
+            ->values()
+            ->toArray();
     }
 
     /**
