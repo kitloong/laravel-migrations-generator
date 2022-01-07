@@ -34,17 +34,22 @@ use MigrationsGenerator\DBAL\Types\UUIDType;
 use MigrationsGenerator\DBAL\Types\YearType;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 use MigrationsGenerator\Models\View;
+use MigrationsGenerator\Support\AssetNameHelper;
 
 class Schema
 {
     use FilterTables;
     use FilterViews;
+    use AssetNameHelper;
 
-    private $schema;
+    private $DBALSchema;
+    private $setting;
+    private $assetNameHelper;
 
-    public function __construct()
+    public function __construct(MigrationsGeneratorSetting $setting)
     {
-        $this->schema = app(MigrationsGeneratorSetting::class)->getSchema();
+        $this->setting    = $setting;
+        $this->DBALSchema = $this->setting->getDBALSchema();
     }
 
     /**
@@ -92,7 +97,7 @@ class Schema
         $this->registerDoctrineTypeMapping('geomcollection', DBALTypes::GEOMETRY_COLLECTION);
         $this->registerDoctrineTypeMapping('geography', DBALTypes::GEOMETRY);
 
-        switch (app(MigrationsGeneratorSetting::class)->getPlatform()) {
+        switch ($this->setting->getPlatform()) {
             case Platform::POSTGRESQL:
                 $this->registerDoctrineTypeMapping('_text', DBALTypes::TEXT);
                 $this->registerDoctrineTypeMapping('_int4', DBALTypes::TEXT);
@@ -115,11 +120,16 @@ class Schema
      */
     public function getTableNames(): array
     {
-        return collect($this->schema->listTables())
-            ->filter(call_user_func([$this, 'filterTableCallback']))
-            ->map(function (Table $table) {
-                return $table->getName();
-            })->toArray();
+        return collect($this->DBALSchema->listTableNames())
+            ->map(function ($table) {
+                if ($this->isIdentifierQuoted($table)) {
+                    return $this->trimQuotes($table);
+                }
+                return $table;
+            })
+            ->filter(call_user_func([$this, 'filterTableNameCallback']))
+            ->values()
+            ->toArray();
     }
 
     /**
@@ -131,7 +141,7 @@ class Schema
      */
     public function getTable(string $table): Table
     {
-        return $this->schema->listTableDetails($table);
+        return $this->DBALSchema->listTableDetails($table);
     }
 
     /**
@@ -143,7 +153,7 @@ class Schema
      */
     public function getIndexes(string $table): array
     {
-        return $this->schema->listTableIndexes($table);
+        return $this->DBALSchema->listTableIndexes($table);
     }
 
     /**
@@ -155,7 +165,7 @@ class Schema
      */
     public function getColumns(string $table): array
     {
-        return $this->schema->listTableColumns($table);
+        return $this->DBALSchema->listTableColumns($table);
     }
 
     /**
@@ -167,7 +177,7 @@ class Schema
      */
     public function getForeignKeys(string $table): array
     {
-        return $this->schema->listTableForeignKeys($table);
+        return $this->DBALSchema->listTableForeignKeys($table);
     }
 
     /**
@@ -191,7 +201,7 @@ class Schema
      */
     public function getViews(): array
     {
-        return collect($this->schema->listViews())
+        return collect($this->DBALSchema->listViews())
             ->filter(call_user_func([$this, 'filterViewCallback']))
             ->map(function (DBALView $view) {
                 return ViewMapper::toModel($view);
@@ -226,7 +236,7 @@ class Schema
      */
     protected function registerDoctrineTypeMapping(string $dbType, string $doctrineType): void
     {
-        app(MigrationsGeneratorSetting::class)->getConnection()
+        $this->setting->getConnection()
             ->getDoctrineConnection()
             ->getDatabasePlatform()
             ->registerDoctrineTypeMapping($dbType, $doctrineType);
