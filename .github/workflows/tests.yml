@@ -127,7 +127,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          php -m
           composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal:${{ matrix.dbal }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
