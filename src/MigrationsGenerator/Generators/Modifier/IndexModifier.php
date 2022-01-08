@@ -8,6 +8,7 @@ use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\IndexGenerator;
+use MigrationsGenerator\Generators\MigrationConstants\Method\IndexType;
 
 class IndexModifier
 {
@@ -29,22 +30,34 @@ class IndexModifier
      */
     public function chainIndex(Table $table, Method $method, Collection $singleColumnIndexes, Column $column): Method
     {
-        if ($singleColumnIndexes->has($column->getName())) {
-            /** @var Index $index */
-            $index = $singleColumnIndexes->get($column->getName());
+        if (!$singleColumnIndexes->has($column->getName())) {
+            return $method;
+        }
 
-            // autoIncrement is handled in IntegerColumn
-            if ($index->isPrimary() && $column->getAutoincrement()) {
+        /** @var Index $index */
+        $index = $singleColumnIndexes->get($column->getName());
+
+        // autoIncrement is handled in \MigrationsGenerator\Generators\Columns\IntegerColumn
+        if ($index->isPrimary() && $column->getAutoincrement()) {
+            return $method;
+        }
+
+        $indexType = $this->indexGenerator->getIndexType($index);
+        if ($indexType === IndexType::SPATIAL_INDEX) {
+            if ($this->indexGenerator->shouldSkipName($table->getName(), $index, $indexType)) {
+                $method->chain($indexType);
                 return $method;
             }
 
-            $indexType = $this->indexGenerator->getIndexType($index);
-            if ($this->indexGenerator->shouldSkipName($table->getName(), $index, $indexType)) {
-                $method->chain($indexType);
-            } else {
-                $method->chain($indexType, $index->getName());
-            }
+            return $method;
         }
+
+        if ($this->indexGenerator->shouldSkipName($table->getName(), $index, $indexType)) {
+            $method->chain($indexType);
+            return $method;
+        }
+
+        $method->chain($indexType, $index->getName());
         return $method;
     }
 }

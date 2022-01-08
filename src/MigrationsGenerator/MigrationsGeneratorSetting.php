@@ -21,7 +21,7 @@ class MigrationsGeneratorSetting
     private $platform;
 
     /** @var AbstractSchemaManager */
-    private $schema;
+    private $DBALSchema;
 
     /** @var boolean */
     private $useDBCollation;
@@ -71,10 +71,10 @@ class MigrationsGeneratorSetting
 
         $doctrineConnection = $this->connection->getDoctrineConnection();
         if (method_exists($doctrineConnection, 'createSchemaManager')) {
-            $this->schema = $doctrineConnection->createSchemaManager();
+            $this->DBALSchema = $doctrineConnection->createSchemaManager();
         } else {
             // @codeCoverageIgnoreStart
-            $this->schema = $doctrineConnection->getSchemaManager();
+            $this->DBALSchema = $doctrineConnection->getSchemaManager();
             // @codeCoverageIgnoreEnd
         }
         $this->databasePlatform = $doctrineConnection->getDatabasePlatform();
@@ -166,9 +166,9 @@ class MigrationsGeneratorSetting
     /**
      * @return AbstractSchemaManager
      */
-    public function getSchema(): AbstractSchemaManager
+    public function getDBALSchema(): AbstractSchemaManager
     {
-        return $this->schema;
+        return $this->DBALSchema;
     }
 
     /**

@@ -194,6 +194,7 @@ class CommandTest extends MySQL57TestCase
                 'test_index_mysql57_code_index',
                 'test_index_mysql57_column_hyphen_index',
                 'test_index_mysql57_custom_name_index',
+                'test_index_mysql57_custom_spatial_index_spatialindex',
                 'test_index_mysql57_email_unique',
                 'test_index_mysql57_enum_code_unique',
                 'test_index_mysql57_line_string_spatialindex',
@@ -221,7 +222,10 @@ class CommandTest extends MySQL57TestCase
         $foreignKeys     = new Collection($foreignKeyArray);
         $foreignKeyNames = $foreignKeys->map(function (ForeignKeyConstraint $foreignKey) {
             return $foreignKey->getName();
-        })->sort()->toArray();
+        })
+            ->sort()
+            ->values()
+            ->toArray();
 
         $this->assertSame(
             [
