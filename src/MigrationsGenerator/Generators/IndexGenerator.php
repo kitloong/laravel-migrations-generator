@@ -98,6 +98,8 @@ class IndexGenerator
             return IndexType::UNIQUE;
         } elseif ($index->hasFlag('spatial')) {
             return IndexType::SPATIAL_INDEX;
+        } elseif ($index->hasFlag('fulltext')) {
+            return IndexType::FULLTEXT;
         } else {
             return IndexType::INDEX;
         }
