@@ -23,6 +23,7 @@ Currently, Generator support generate migrations from:
 
 |Laravel|Version|
 |---|---|
+|9.x|5.x|
 |8.x|5.x|
 |7.x|5.x|
 |6.x|5.x|
