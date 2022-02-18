@@ -20,6 +20,6 @@ class GeometryType extends Type
      */
     public function getName()
     {
-        return DBALTypes::GEOMETRY;
+        return Types::GEOMETRY;
     }
 }

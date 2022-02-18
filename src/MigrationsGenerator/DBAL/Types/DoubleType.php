@@ -20,6 +20,6 @@ class DoubleType extends Type
      */
     public function getName()
     {
-        return DBALTypes::DOUBLE;
+        return Types::DOUBLE;
     }
 }

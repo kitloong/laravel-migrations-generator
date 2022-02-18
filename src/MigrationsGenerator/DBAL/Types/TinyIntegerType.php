@@ -20,6 +20,6 @@ class TinyIntegerType extends Type
      */
     public function getName()
     {
-        return DBALTypes::TINY_INTEGER;
+        return Types::TINY_INTEGER;
     }
 }

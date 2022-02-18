@@ -20,6 +20,6 @@ class UUIDType extends Type
      */
     public function getName()
     {
-        return DBALTypes::UUID;
+        return Types::UUID;
     }
 }

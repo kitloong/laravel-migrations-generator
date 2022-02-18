@@ -20,6 +20,6 @@ class PolygonType extends Type
      */
     public function getName()
     {
-        return DBALTypes::POLYGON;
+        return Types::POLYGON;
     }
 }

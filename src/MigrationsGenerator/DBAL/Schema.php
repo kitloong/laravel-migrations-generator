@@ -4,34 +4,9 @@ namespace MigrationsGenerator\DBAL;
 
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\View as DBALView;
-use Doctrine\DBAL\Types\Type;
 use MigrationsGenerator\DBAL\Mapper\ViewMapper;
 use MigrationsGenerator\DBAL\Support\FilterTables;
 use MigrationsGenerator\DBAL\Support\FilterViews;
-use MigrationsGenerator\DBAL\Types\DBALTypes;
-use MigrationsGenerator\DBAL\Types\DoubleType;
-use MigrationsGenerator\DBAL\Types\EnumType;
-use MigrationsGenerator\DBAL\Types\GeometryCollectionType;
-use MigrationsGenerator\DBAL\Types\GeometryType;
-use MigrationsGenerator\DBAL\Types\IpAddressType;
-use MigrationsGenerator\DBAL\Types\JsonbType;
-use MigrationsGenerator\DBAL\Types\LineStringType;
-use MigrationsGenerator\DBAL\Types\LongTextType;
-use MigrationsGenerator\DBAL\Types\MacAddressType;
-use MigrationsGenerator\DBAL\Types\MediumIntegerType;
-use MigrationsGenerator\DBAL\Types\MediumTextType;
-use MigrationsGenerator\DBAL\Types\MultiLineStringType;
-use MigrationsGenerator\DBAL\Types\MultiPointType;
-use MigrationsGenerator\DBAL\Types\MultiPolygonType;
-use MigrationsGenerator\DBAL\Types\PointType;
-use MigrationsGenerator\DBAL\Types\PolygonType;
-use MigrationsGenerator\DBAL\Types\SetType;
-use MigrationsGenerator\DBAL\Types\TimestampType;
-use MigrationsGenerator\DBAL\Types\TimestampTzType;
-use MigrationsGenerator\DBAL\Types\TimeTzType;
-use MigrationsGenerator\DBAL\Types\TinyIntegerType;
-use MigrationsGenerator\DBAL\Types\UUIDType;
-use MigrationsGenerator\DBAL\Types\YearType;
 use MigrationsGenerator\MigrationsGeneratorSetting;
 use MigrationsGenerator\Models\View;
 use MigrationsGenerator\Support\AssetNameHelper;
@@ -42,14 +17,14 @@ class Schema
     use FilterViews;
     use AssetNameHelper;
 
-    private $DBALSchema;
     private $setting;
+    private $registerColumnType;
     private $assetNameHelper;
 
-    public function __construct(MigrationsGeneratorSetting $setting)
+    public function __construct(MigrationsGeneratorSetting $setting, RegisterColumnType $registerColumnType)
     {
-        $this->setting    = $setting;
-        $this->DBALSchema = $this->setting->getDBALSchema();
+        $this->setting            = $setting;
+        $this->registerColumnType = $registerColumnType;
     }
 
     /**
@@ -59,57 +34,7 @@ class Schema
      */
     public function initialize(): void
     {
-        $customTypes = [
-            // ['{dbType}', '{customTypeClass}']
-            ['double', DoubleType::class],
-            ['enum', EnumType::class],
-            ['geometry', GeometryType::class],
-            ['geometrycollection', GeometryCollectionType::class],
-            ['linestring', LineStringType::class],
-            ['longtext', LongTextType::class],
-            ['mediumint', MediumIntegerType::class],
-            ['mediumtext', MediumTextType::class],
-            ['multilinestring', MultiLineStringType::class],
-            ['multipoint', MultiPointType::class],
-            ['multipolygon', MultiPolygonType::class],
-            ['point', PointType::class],
-            ['polygon', PolygonType::class],
-            ['set', SetType::class],
-            ['timestamp', TimestampType::class],
-            ['tinyint', TinyIntegerType::class],
-            ['uuid', UUIDType::class],
-            ['year', YearType::class],
-
-            // Postgres types
-            ['inet', IpAddressType::class],
-            ['jsonb', JsonbType::class],
-            ['macaddr', MacAddressType::class],
-            ['timetz', TimeTzType::class],
-            ['timestamptz', TimestampTzType::class],
-        ];
-        foreach ($customTypes as $type) {
-            $this->registerCustomDoctrineType($type[0], $type[1]);
-        }
-
-        $this->registerDoctrineTypeMapping('bit', DBALTypes::BOOLEAN);
-        $this->registerDoctrineTypeMapping('json', DBALTypes::JSON);
-
-        $this->registerDoctrineTypeMapping('geomcollection', DBALTypes::GEOMETRY_COLLECTION);
-        $this->registerDoctrineTypeMapping('geography', DBALTypes::GEOMETRY);
-
-        switch ($this->setting->getPlatform()) {
-            case Platform::POSTGRESQL:
-                $this->registerDoctrineTypeMapping('_text', DBALTypes::TEXT);
-                $this->registerDoctrineTypeMapping('_int4', DBALTypes::TEXT);
-                $this->registerDoctrineTypeMapping('_numeric', DBALTypes::FLOAT);
-                $this->registerDoctrineTypeMapping('cidr', DBALTypes::STRING);
-                $this->registerDoctrineTypeMapping('oid', DBALTypes::STRING);
-                break;
-            case Platform::SQLSERVER:
-                $this->registerDoctrineTypeMapping('xml', DBALTypes::TEXT);
-                break;
-            default:
-        }
+        $this->registerColumnType->handle();
     }
 
     /**
@@ -120,7 +45,7 @@ class Schema
      */
     public function getTableNames(): array
     {
-        return collect($this->DBALSchema->listTableNames())
+        return collect($this->setting->getDBALSchema()->listTableNames())
             ->map(function ($table) {
                 if ($this->isIdentifierQuoted($table)) {
                     return $this->trimQuotes($table);
@@ -141,7 +66,7 @@ class Schema
      */
     public function getTable(string $table): Table
     {
-        return $this->DBALSchema->listTableDetails($table);
+        return $this->setting->getDBALSchema()->listTableDetails($table);
     }
 
     /**
@@ -153,7 +78,7 @@ class Schema
      */
     public function getIndexes(string $table): array
     {
-        return $this->DBALSchema->listTableIndexes($table);
+        return $this->setting->getDBALSchema()->listTableIndexes($table);
     }
 
     /**
@@ -165,7 +90,7 @@ class Schema
      */
     public function getColumns(string $table): array
     {
-        return $this->DBALSchema->listTableColumns($table);
+        return $this->setting->getDBALSchema()->listTableColumns($table);
     }
 
     /**
@@ -177,7 +102,7 @@ class Schema
      */
     public function getForeignKeys(string $table): array
     {
-        return $this->DBALSchema->listTableForeignKeys($table);
+        return $this->setting->getDBALSchema()->listTableForeignKeys($table);
     }
 
     /**
@@ -201,44 +126,10 @@ class Schema
      */
     public function getViews(): array
     {
-        return collect($this->DBALSchema->listViews())
+        return collect($this->setting->getDBALSchema()->listViews())
             ->filter(call_user_func([$this, 'filterViewCallback']))
             ->map(function (DBALView $view) {
                 return ViewMapper::toModel($view);
             })->toArray();
-    }
-
-    /**
-     * Register custom doctrine type, override if exists.
-     *
-     * @param  string  $dbType
-     * @param  string  $class  The class name of the custom type.
-     * @throws \Doctrine\DBAL\Exception
-     */
-    protected function registerCustomDoctrineType(string $dbType, string $class): void
-    {
-        $doctrineType = (new $class())->getName();
-        if (!Type::hasType($doctrineType)) {
-            Type::addType($doctrineType, $class);
-        } else {
-            Type::overrideType($doctrineType, $class);
-        }
-
-        $this->registerDoctrineTypeMapping($dbType, $doctrineType);
-    }
-
-    /**
-     * Registers a doctrine type to be used in conjunction with a column type of this platform.
-     *
-     * @param  string  $dbType
-     * @param  string  $doctrineType
-     * @throws \Doctrine\DBAL\Exception
-     */
-    protected function registerDoctrineTypeMapping(string $dbType, string $doctrineType): void
-    {
-        $this->setting->getConnection()
-            ->getDoctrineConnection()
-            ->getDatabasePlatform()
-            ->registerDoctrineTypeMapping($dbType, $doctrineType);
     }
 }

@@ -20,6 +20,6 @@ class GeometryCollectionType extends Type
      */
     public function getName()
     {
-        return DBALTypes::GEOMETRY_COLLECTION;
+        return Types::GEOMETRY_COLLECTION;
     }
 }

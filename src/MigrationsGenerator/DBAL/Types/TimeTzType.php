@@ -20,6 +20,6 @@ class TimeTzType extends Type
      */
     public function getName()
     {
-        return DBALTypes::TIME_TZ;
+        return Types::TIME_TZ;
     }
 }

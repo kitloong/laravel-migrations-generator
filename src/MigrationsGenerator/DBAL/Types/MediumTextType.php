@@ -20,6 +20,6 @@ class MediumTextType extends Type
      */
     public function getName()
     {
-        return DBALTypes::MEDIUM_TEXT;
+        return Types::MEDIUM_TEXT;
     }
 }

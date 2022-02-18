@@ -20,6 +20,6 @@ class IpAddressType extends Type
      */
     public function getName()
     {
-        return DBALTypes::IP_ADDRESS;
+        return Types::IP_ADDRESS;
     }
 }

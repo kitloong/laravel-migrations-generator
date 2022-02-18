@@ -20,6 +20,6 @@ class EnumType extends Type
      */
     public function getName()
     {
-        return DBALTypes::ENUM;
+        return Types::ENUM;
     }
 }

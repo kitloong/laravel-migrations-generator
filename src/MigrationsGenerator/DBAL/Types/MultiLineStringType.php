@@ -20,6 +20,6 @@ class MultiLineStringType extends Type
      */
     public function getName()
     {
-        return DBALTypes::MULTI_LINE_STRING;
+        return Types::MULTI_LINE_STRING;
     }
 }

@@ -5,7 +5,7 @@ namespace MigrationsGenerator\Generators;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
-use MigrationsGenerator\DBAL\Types\DBALTypes;
+use MigrationsGenerator\DBAL\Types\Types;
 use MigrationsGenerator\Generators\Blueprint\Method;
 use MigrationsGenerator\Generators\Columns\DatetimeColumn;
 use MigrationsGenerator\Generators\Columns\DecimalColumn;
@@ -160,18 +160,18 @@ class ColumnGenerator
     private function mapToColumnType(string $dbalType): string
     {
         $map = [
-            DBALTypes::BIGINT               => ColumnType::BIG_INTEGER,
-            DBALTypes::BLOB                 => ColumnType::BINARY,
-            DBALTypes::DATE_MUTABLE         => ColumnType::DATE,
-            DBALTypes::DATE_IMMUTABLE       => ColumnType::DATE,
-            DBALTypes::DATETIME_MUTABLE     => ColumnType::DATETIME,
-            DBALTypes::DATETIME_IMMUTABLE   => ColumnType::DATETIME,
-            DBALTypes::DATETIMETZ_MUTABLE   => ColumnType::DATETIME_TZ,
-            DBALTypes::DATETIMETZ_IMMUTABLE => ColumnType::DATETIME_TZ,
-            DBALTypes::SMALLINT             => ColumnType::SMALL_INTEGER,
-            DBALTypes::GUID                 => ColumnType::UUID,
-            DBALTypes::TIME_MUTABLE         => ColumnType::TIME,
-            DBALTypes::TIME_IMMUTABLE       => ColumnType::TIME,
+            Types::BIGINT               => ColumnType::BIG_INTEGER,
+            Types::BLOB                 => ColumnType::BINARY,
+            Types::DATE_MUTABLE         => ColumnType::DATE,
+            Types::DATE_IMMUTABLE       => ColumnType::DATE,
+            Types::DATETIME_MUTABLE     => ColumnType::DATETIME,
+            Types::DATETIME_IMMUTABLE   => ColumnType::DATETIME,
+            Types::DATETIMETZ_MUTABLE   => ColumnType::DATETIME_TZ,
+            Types::DATETIMETZ_IMMUTABLE => ColumnType::DATETIME_TZ,
+            Types::SMALLINT             => ColumnType::SMALL_INTEGER,
+            Types::GUID                 => ColumnType::UUID,
+            Types::TIME_MUTABLE         => ColumnType::TIME,
+            Types::TIME_IMMUTABLE       => ColumnType::TIME,
         ];
         return $map[$dbalType] ?? $dbalType; // $dbalType outside from the map has same name with ColumnType.
     }

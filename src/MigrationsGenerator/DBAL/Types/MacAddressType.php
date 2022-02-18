@@ -20,6 +20,6 @@ class MacAddressType extends Type
      */
     public function getName()
     {
-        return DBALTypes::MAC_ADDRESS;
+        return Types::MAC_ADDRESS;
     }
 }

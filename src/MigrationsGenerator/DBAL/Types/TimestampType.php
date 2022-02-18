@@ -20,6 +20,6 @@ class TimestampType extends Type
      */
     public function getName()
     {
-        return DBALTypes::TIMESTAMP;
+        return Types::TIMESTAMP;
     }
 }
