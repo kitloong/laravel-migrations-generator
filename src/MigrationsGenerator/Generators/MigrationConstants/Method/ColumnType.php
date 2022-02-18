@@ -2,6 +2,10 @@
 
 namespace MigrationsGenerator\Generators\MigrationConstants\Method;
 
+/**
+ * Laravel available column types
+ * @link https://laravel.com/docs/9.x/migrations#available-column-types
+ */
 final class ColumnType
 {
     public const BIG_INTEGER             = 'bigInteger';

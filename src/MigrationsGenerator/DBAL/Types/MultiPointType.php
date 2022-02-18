@@ -20,6 +20,6 @@ class MultiPointType extends Type
      */
     public function getName()
     {
-        return DBALTypes::MULTI_POINT;
+        return Types::MULTI_POINT;
     }
 }

@@ -20,6 +20,6 @@ class PointType extends Type
      */
     public function getName()
     {
-        return DBALTypes::POINT;
+        return Types::POINT;
     }
 }

@@ -20,6 +20,6 @@ class MediumIntegerType extends Type
      */
     public function getName()
     {
-        return DBALTypes::MEDIUM_INTEGER;
+        return Types::MEDIUM_INTEGER;
     }
 }

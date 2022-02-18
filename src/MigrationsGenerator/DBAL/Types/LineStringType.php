@@ -20,6 +20,6 @@ class LineStringType extends Type
      */
     public function getName()
     {
-        return DBALTypes::LINE_STRING;
+        return Types::LINE_STRING;
     }
 }

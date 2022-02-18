@@ -20,6 +20,6 @@ class LongTextType extends Type
      */
     public function getName()
     {
-        return DBALTypes::LONG_TEXT;
+        return Types::LONG_TEXT;
     }
 }

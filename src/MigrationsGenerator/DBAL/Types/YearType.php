@@ -20,6 +20,6 @@ class YearType extends Type
      */
     public function getName()
     {
-        return DBALTypes::YEAR;
+        return Types::YEAR;
     }
 }

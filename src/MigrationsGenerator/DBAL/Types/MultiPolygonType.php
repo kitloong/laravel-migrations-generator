@@ -20,6 +20,6 @@ class MultiPolygonType extends Type
      */
     public function getName()
     {
-        return DBALTypes::MULTI_POLYGON;
+        return Types::MULTI_POLYGON;
     }
 }

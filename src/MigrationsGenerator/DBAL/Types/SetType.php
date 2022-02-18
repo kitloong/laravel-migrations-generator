@@ -20,6 +20,6 @@ class SetType extends Type
      */
     public function getName()
     {
-        return DBALTypes::SET;
+        return Types::SET;
     }
 }
