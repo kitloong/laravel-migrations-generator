@@ -96,9 +96,11 @@ class RegisterColumnType
                 'oid'       => Types::STRING,
             ],
             Platform::SQLSERVER  => [
-                'geography' => Types::GEOMETRY,
-                'tinyint'   => Types::TINY_INTEGER,
-                'xml'       => Types::TEXT,
+                'geography'  => Types::GEOMETRY,
+                'money'      => Types::DECIMAL,
+                'smallmoney' => Types::DECIMAL,
+                'tinyint'    => Types::TINY_INTEGER,
+                'xml'        => Types::TEXT,
             ],
         ];
 

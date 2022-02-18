@@ -3,6 +3,7 @@
 namespace Tests\Feature\SQLSrv;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 /**
  * @runTestsInSeparateProcesses
@@ -24,6 +25,29 @@ class CommandTest extends SQLSrvTestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testUnsupportedColumns()
+    {
+        DB::statement("CREATE TABLE custom_sqlsrv (
+            money money,
+            smallmoney smallmoney
+        )");
+
+        $this->generateMigrations();
+
+        // Should generate one migration file only.
+        $migration = File::files($this->storageMigrations())[0];
+
+        $this->assertStringContainsString(
+            '$table->decimal(\'money\', 19, 4)->nullable();',
+            $migration->getContents()
+        );
+
+        $this->assertStringContainsString(
+            '$table->decimal(\'smallmoney\', 10, 4)->nullable();',
+            $migration->getContents()
+        );
     }
 
     /**
