@@ -31,7 +31,8 @@ class CommandTest extends SQLSrvTestCase
     {
         DB::statement("CREATE TABLE custom_sqlsrv (
             money money,
-            smallmoney smallmoney
+            smallmoney smallmoney,
+            [name.dot] varchar(255)
         )");
 
         $this->generateMigrations();
@@ -46,6 +47,11 @@ class CommandTest extends SQLSrvTestCase
 
         $this->assertStringContainsString(
             '$table->decimal(\'smallmoney\', 10, 4)->nullable();',
+            $migration->getContents()
+        );
+
+        $this->assertStringContainsString(
+            '$table->string(\'name.dot\')->nullable()',
             $migration->getContents()
         );
     }
