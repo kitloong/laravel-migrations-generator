@@ -44,8 +44,8 @@ class Generator
      * Creates table migration.
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
-     * @param  \Doctrine\DBAL\Schema\Column[]  $columns
-     * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
+     * @param  array<string, \Doctrine\DBAL\Schema\Column>  $columns
+     * @param  array<string, \Doctrine\DBAL\Schema\Index>  $indexes
      * @return string Generated file path.
      */
     public function writeTableToMigrationFile(Table $table, array $columns, array $indexes): string
@@ -68,8 +68,8 @@ class Generator
      * Writes table schema into temp files.
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
-     * @param  \Doctrine\DBAL\Schema\Column[]  $columns
-     * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
+     * @param  array<string, \Doctrine\DBAL\Schema\Column>  $columns
+     * @param  array<string, \Doctrine\DBAL\Schema\Index>  $indexes
      */
     public function writeTableToTemp(Table $table, array $columns, array $indexes): void
     {

@@ -105,4 +105,30 @@ class PgSQLRepository extends Repository
         }
         return $definitions;
     }
+
+    /**
+     * Get a list of fulltext indexes.
+     *
+     * @param  string  $table  Table name.
+     * @return \Illuminate\Support\Collection<string>
+     */
+    public function getFulltextIndexNames(string $table): Collection
+    {
+        $setting     = app(MigrationsGeneratorSetting::class);
+        $columns     = $setting->getConnection()
+            ->select("
+                SELECT tablename,
+                       indexname,
+                       indexdef
+                FROM pg_indexes
+                WHERE tablename = '$table'
+                    AND indexdef LIKE '%to_tsvector(%'");
+        $definitions = collect([]);
+        if (count($columns) > 0) {
+            foreach ($columns as $column) {
+                $definitions->push($column->indexname);
+            }
+        }
+        return $definitions;
+    }
 }

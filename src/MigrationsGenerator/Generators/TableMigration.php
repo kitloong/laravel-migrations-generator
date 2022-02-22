@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use MigrationsGenerator\DBAL\Platform;
 use MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
 use MigrationsGenerator\Generators\Blueprint\TableBlueprint;
-use MigrationsGenerator\Generators\MigrationConstants\Method\IndexType;
 use MigrationsGenerator\Generators\MigrationConstants\Method\SchemaBuilder;
 use MigrationsGenerator\Generators\MigrationConstants\Property\TableProperty;
 use MigrationsGenerator\MigrationsGeneratorSetting;
@@ -32,8 +31,8 @@ class TableMigration
      * Generates `up` schema for table.
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
-     * @param  \Doctrine\DBAL\Schema\Column[]  $columns
-     * @param  \Doctrine\DBAL\Schema\Index[]  $indexes
+     * @param  array<string, \Doctrine\DBAL\Schema\Column>  $columns
+     * @param  array<string, \Doctrine\DBAL\Schema\Index>  $indexes
      * @return \MigrationsGenerator\Generators\Blueprint\SchemaBlueprint
      */
     public function up(Table $table, array $columns, array $indexes): SchemaBlueprint
@@ -47,40 +46,29 @@ class TableMigration
             $blueprint->setLineBreak();
         }
 
-        // Example
+        // Use $indexes instead of $table->getIndexes()
+        // For instance:
         // $table->foreign('user_id')->references(['id'])->on('users_mysql57');
         // $table->foreign(['user_id', 'sub_id'])->references(['id', 'sub_id'])->on('users_mysql57');
         // $table->getIndexes() will return extra "IDX_*" index for column user_id
-        // Use $indexes instead.
+
         $this->indexGenerator->setSpatialFlag($indexes, $table->getName());
-        $singleColumnIndexes = $this->indexGenerator->getSingleColumnIndexes($indexes);
-        $multiColumnsIndexes = $this->indexGenerator->getCompositeIndexes($indexes);
+        $this->indexGenerator->setFulltextFlag($indexes, $table->getName());
+        $chainableIndexes    = $this->indexGenerator->getChainableIndexes($table->getName(), $indexes);
+        $nonChainableIndexes = $this->indexGenerator->getNotChainableIndexes($indexes, $chainableIndexes);
 
         foreach ($columns as $column) {
-            $method = $this->columnGenerator->generate($table, $column, $singleColumnIndexes);
+            $method = $this->columnGenerator->generate($table, $column, $chainableIndexes);
             $blueprint->setMethod($method);
         }
 
         $blueprint->mergeTimestamps();
 
-        if ($multiColumnsIndexes->isNotEmpty()) {
+        if ($nonChainableIndexes->isNotEmpty()) {
             $blueprint->setLineBreak();
-            foreach ($multiColumnsIndexes as $index) {
+            foreach ($nonChainableIndexes as $index) {
                 $method = $this->indexGenerator->generate($table, $index);
                 $blueprint->setMethod($method);
-            }
-        }
-
-        // Generate single column spatial index with custom name.
-        if ($singleColumnIndexes->isNotEmpty()) {
-            foreach ($singleColumnIndexes as $index) {
-                /** @var \Doctrine\DBAL\Schema\Index $index */
-                $indexType = $this->indexGenerator->getIndexType($index);
-                if ($indexType === IndexType::SPATIAL_INDEX &&
-                    !$this->indexGenerator->shouldSkipName($table->getName(), $index, $indexType)) {
-                    $method = $this->indexGenerator->generate($table, $index);
-                    $blueprint->setMethod($method);
-                }
             }
         }
 

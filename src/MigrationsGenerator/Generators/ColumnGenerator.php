@@ -85,10 +85,10 @@ class ColumnGenerator
      *
      * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @param  \Illuminate\Support\Collection<string, \Doctrine\DBAL\Schema\Index>  $singleColumnIndexes
+     * @param  \Illuminate\Support\Collection<string, \Doctrine\DBAL\Schema\Index>  $chainableIndexes
      * @return \MigrationsGenerator\Generators\Blueprint\Method
      */
-    public function generate(Table $table, Column $column, Collection $singleColumnIndexes): Method
+    public function generate(Table $table, Column $column, Collection $chainableIndexes): Method
     {
         $type = $this->mapToColumnType($column->getType()->getName());
 
@@ -145,7 +145,7 @@ class ColumnGenerator
         $method = $this->collationModifier->chainCollation($table, $method, $column);
         $method = $this->nullableModifier->chainNullable($method, $type, $column);
         $method = $this->defaultModifier->chainDefault($table, $method, $type, $column);
-        $method = $this->indexModifier->chainIndex($table, $method, $singleColumnIndexes, $column);
+        $method = $this->indexModifier->chainIndex($table, $method, $chainableIndexes, $column);
         $method = $this->commentModifier->chainComment($method, $column);
 
         return $method;

@@ -73,7 +73,7 @@ class Schema
      * Get a list of table indexes.
      *
      * @param  string  $table  Table name.
-     * @return \Doctrine\DBAL\Schema\Index[]
+     * @return array<string, \Doctrine\DBAL\Schema\Index>  Key is index name.
      * @throws \Doctrine\DBAL\Exception
      */
     public function getIndexes(string $table): array
@@ -85,7 +85,7 @@ class Schema
      * Get a list of table columns.
      *
      * @param  string  $table  Table name.
-     * @return \Doctrine\DBAL\Schema\Column[]
+     * @return array<string, \Doctrine\DBAL\Schema\Column>  Key is column name.
      * @throws \Doctrine\DBAL\Exception
      */
     public function getColumns(string $table): array

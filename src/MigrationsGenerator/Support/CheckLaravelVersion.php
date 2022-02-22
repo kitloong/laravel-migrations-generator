@@ -31,6 +31,11 @@ trait CheckLaravelVersion
         return $this->atLeastLaravelVersion('8.0');
     }
 
+    public function atLeastLaravel9(): bool
+    {
+        return $this->atLeastLaravelVersion('9.0');
+    }
+
     private function atLeastLaravelVersion(string $version): bool
     {
         return version_compare(App::version(), $version, '>=');

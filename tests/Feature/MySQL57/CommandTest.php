@@ -189,15 +189,20 @@ class CommandTest extends MySQL57TestCase
         $this->assertSame(
             [
                 'primary',
-                'test_index_mysql57_code_email_index',
-                'test_index_mysql57_code_enum_index',
-                'test_index_mysql57_code_index',
+                'test_index_mysql57_col_multi1_col_multi2_index',
+                'test_index_mysql57_col_multi1_col_multi2_unique',
+                'test_index_mysql57_col_multi_custom1_col_multi_custom2_index',
+                'test_index_mysql57_col_multi_custom1_col_multi_custom2_unique',
                 'test_index_mysql57_column_hyphen_index',
-                'test_index_mysql57_custom_name_index',
-                'test_index_mysql57_custom_spatial_index_spatialindex',
-                'test_index_mysql57_email_unique',
-                'test_index_mysql57_enum_code_unique',
-                'test_index_mysql57_line_string_spatialindex',
+                'test_index_mysql57_index_custom_index',
+                'test_index_mysql57_index_index',
+                'test_index_mysql57_spatial_index_custom_spatialindex',
+                'test_index_mysql57_spatial_index_spatialindex',
+                'test_index_mysql57_unique_custom_unique',
+                'test_index_mysql57_unique_unique',
+                'test_index_mysql57_fulltext_fulltext',
+                'test_index_mysql57_fulltext_custom_fulltext',
+                'test_index_mysql57_col_multi1_col_multi2_fulltext',
             ],
             $indexNames
         );
