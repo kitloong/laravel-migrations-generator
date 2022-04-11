@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Feature\SQLSrv;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\SQLSrv;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use MigrationsGenerator\Support\CheckLaravelVersion;
-use Tests\Feature\FeatureTestCase;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
+use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
 abstract class SQLSrvTestCase extends FeatureTestCase
 {
@@ -38,17 +38,18 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         $tables = Schema::connection('sqlsrv')->getConnection()->getDoctrineSchemaManager()->listTableNames();
         $sqls   = [];
         foreach ($tables as $table) {
-            $sqls[] = "EXEC sp_columns '".$table."';";
+            $sqls[] = "EXEC sp_columns '" . $table . "';";
         }
 
         $views = Schema::connection('sqlsrv')->getConnection()->getDoctrineSchemaManager()->listViews();
         foreach ($views as $view) {
-            $sqls[] = "EXEC sp_helptext '".$view->getName()."';";
+            $sqls[] = "EXEC sp_helptext '" . $view->getName() . "';";
         }
 
         $command = sprintf(
-            'sqlcmd -S %s -U %s -P \'%s\' -d %s -Q "%s" -o "%s"',
+            'sqlcmd -S tcp:%s,%s -U %s -P \'%s\' -d %s -Q "%s" -o "%s"',
             config('database.connections.sqlsrv.host'),
+            config('database.connections.sqlsrv.port'),
             config('database.connections.sqlsrv.username'),
             config('database.connections.sqlsrv.password'),
             config('database.connections.sqlsrv.database'),
@@ -69,17 +70,29 @@ abstract class SQLSrvTestCase extends FeatureTestCase
             $this->markTestSkipped();
         }
 
+        $this->dropAllViews();
+
+        Schema::connection('sqlsrv')->dropAllTables();
+    }
+
+    /**
+     * @return void
+     */
+    protected function dropAllViews(): void
+    {
         // `dropAllViews` available in Laravel >= 6.x
         if ($this->atLeastLaravel6()) {
             Schema::connection('sqlsrv')->dropAllViews();
-        } else {
-            // See https://github.com/laravel/framework/blob/6.x/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L360
-            DB::statement("DECLARE @sql NVARCHAR(MAX) = N'';
+            return;
+        }
+
+        // See https://github.com/laravel/framework/blob/6.x/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L360
+        DB::statement(
+            "DECLARE @sql NVARCHAR(MAX) = N'';
             SELECT @sql += 'DROP VIEW ' + QUOTENAME(OBJECT_SCHEMA_NAME(object_id)) + '.' + QUOTENAME(name) + ';'
             FROM sys.views;
 
-            EXEC sp_executesql @sql;");
-        }
-        Schema::connection('sqlsrv')->dropAllTables();
+            EXEC sp_executesql @sql;"
+        );
     }
 }

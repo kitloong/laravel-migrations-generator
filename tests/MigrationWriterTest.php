@@ -1,24 +1,28 @@
 <?php
 
-namespace Tests;
+namespace KitLoong\MigrationsGenerator\Tests;
 
-use MigrationsGenerator\Generators\Blueprint\SchemaBlueprint;
-use MigrationsGenerator\Generators\Blueprint\TableBlueprint;
-use MigrationsGenerator\Generators\MigrationConstants\Method\SchemaBuilder;
-use MigrationsGenerator\Generators\TableNameGenerator;
-use MigrationsGenerator\Generators\Writer\MigrationWriter;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
+use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
+use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
+use KitLoong\MigrationsGenerator\Support\TableName;
 use Mockery\MockInterface;
 
 class MigrationWriterTest extends TestCase
 {
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     public function testWrite()
     {
-        $this->mock(TableNameGenerator::class, function (MockInterface $mock) {
+        $this->mock(TableName::class, function (MockInterface $mock) {
             $mock->shouldReceive('stripPrefix')
                 ->andReturn('test');
         });
 
-        $up        = new SchemaBlueprint('mysql', 'users', SchemaBuilder::CREATE);
+        $up        = new SchemaBlueprint('mysql', 'users', SchemaBuilder::CREATE());
         $blueprint = new TableBlueprint();
         $blueprint->setProperty('collation', 'utf-8');
         $blueprint->setProperty('something', 1);
@@ -32,7 +36,7 @@ class MigrationWriterTest extends TestCase
             ->chain('default', 'Test');
         $up->setBlueprint($blueprint);
 
-        $down = new SchemaBlueprint('mysql', 'users', SchemaBuilder::DROP_IF_EXISTS);
+        $down = new SchemaBlueprint('mysql', 'users', SchemaBuilder::DROP_IF_EXISTS());
 
         $migration = app(MigrationWriter::class);
         $migration->writeTo(
@@ -40,7 +44,8 @@ class MigrationWriterTest extends TestCase
             config('generators.config.migration_template_path'),
             'Tester',
             $up,
-            $down
+            $down,
+            MigrationFileType::TABLE()
         );
 
         $this->assertFileExists(storage_path('migration.php'));

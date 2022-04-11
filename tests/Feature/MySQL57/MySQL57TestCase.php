@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Feature\MySQL57;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
 use Illuminate\Support\Facades\Schema;
+use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 use PDO;
-use Tests\Feature\FeatureTestCase;
 
 abstract class MySQL57TestCase extends FeatureTestCase
 {
@@ -37,17 +37,13 @@ abstract class MySQL57TestCase extends FeatureTestCase
     protected function dumpSchemaAs(string $destination): void
     {
         $password = (!empty(config('database.connections.mysql57.password')) ?
-            '-p\''.config('database.connections.mysql57.password').'\'' :
+            '-p\'' . config('database.connections.mysql57.password') . '\'' :
             '');
 
-        if (!$this->isMaria()) {
-            $skipColumnStatistics = '--skip-column-statistics';
-        } else {
-            $skipColumnStatistics = '';
-        }
+        $skipColumnStatistics = !$this->isMaria() ? '--skip-column-statistics' : '';
 
         $command = sprintf(
-            'mysqldump -h %s -P %s -u %s '.$password.' %s --compact --no-data '.$skipColumnStatistics.' > %s',
+            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' > %s',
             config('database.connections.mysql57.host'),
             config('database.connections.mysql57.port'),
             config('database.connections.mysql57.username'),

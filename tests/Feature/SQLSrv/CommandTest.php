@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\SQLSrv;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\SQLSrv;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -29,11 +29,13 @@ class CommandTest extends SQLSrvTestCase
 
     public function testUnsupportedColumns()
     {
-        DB::statement("CREATE TABLE custom_sqlsrv (
-            money money,
-            smallmoney smallmoney,
-            [name.dot] varchar(255)
-        )");
+        DB::statement(
+            "CREATE TABLE custom_sqlsrv (
+                money money,
+                smallmoney smallmoney,
+                [name.dot] varchar(255)
+            )"
+        );
 
         $this->generateMigrations();
 
@@ -70,7 +72,7 @@ class CommandTest extends SQLSrvTestCase
         $this->rollbackMigrationsFrom('sqlsrv', $this->storageMigrations());
 
         $tables = $this->getTableNames();
-        $views = $this->getViewNames();
+        $views  = $this->getViewNames();
 
         $this->assertCount(1, $tables);
         $this->assertCount(0, $views);
@@ -108,8 +110,8 @@ class CommandTest extends SQLSrvTestCase
     }
 
     /**
-     * @param  callable  $migrateTemplates
-     * @param  callable  $generateMigrations
+     * @param  callable $migrateTemplates
+     * @param  callable $generateMigrations
      * @throws \Doctrine\DBAL\Exception
      */
     public function verify(callable $migrateTemplates, callable $generateMigrations)

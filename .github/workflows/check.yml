@@ -30,4 +30,7 @@ jobs:
         run: vendor/bin/phpcs
 
       - name: phpstan
-        run: vendor/bin/phpstan analyse
+        run: composer run phpstan
+
+      - name: phpmd
+        run: composer run phpmd

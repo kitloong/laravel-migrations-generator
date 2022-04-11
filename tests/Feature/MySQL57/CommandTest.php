@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Feature\MySQL57;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
-use Doctrine\DBAL\Schema\ForeignKeyConstraint;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
-use MigrationsGenerator\DBAL\Schema as DBALSchema;
+use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
+use KitLoong\MigrationsGenerator\Schema\Models\Index;
+use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
 
 /**
  * @runTestsInSeparateProcesses
@@ -28,9 +28,6 @@ class CommandTest extends MySQL57TestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testDown()
     {
         $this->migrateGeneral('mysql57');
@@ -138,13 +135,21 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigration();
 
+        $allAssets = count(Schema::getAllTables()) + count(Schema::getAllViews());
+
+        $ignores = [
+            'quoted-name-foreign-mysql57',
+            'increments_mysql57',
+            'timestamps_mysql57',
+            'users_mysql57_view',
+        ];
+
+        $ignoreNotExists = [
+            'not_exists',
+        ];
+
         $this->generateMigrations([
-            '--ignore' => implode(',', [
-                'failed_jobs_mysql57',
-                'reserved_name_not_null_mysql57',
-                'reserved_name_with_precision_mysql57',
-                'users_mysql57_view'
-            ])
+            '--ignore' => implode(',', $ignores + $ignoreNotExists)
         ]);
 
         $this->dropAllTables();
@@ -154,20 +159,10 @@ class CommandTest extends MySQL57TestCase
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
 
-        $this->assertCount(7, $tables);
-        $this->assertContains('migrations', $tables);
-        $this->assertContains('all_columns_mysql57', $tables);
-        $this->assertContains('composite_primary_mysql57', $tables);
-        $this->assertContains('name-with-hyphen-mysql57', $tables);
-        $this->assertContains('test_index_mysql57', $tables);
-        $this->assertContains('user_profile_mysql57', $tables);
-        $this->assertContains('users_mysql57', $tables);
-        $this->assertContains('name-with-hyphen-mysql57_view', $views);
+        $this->assertSame(count($tables) + count($views), $allAssets - count($ignores));
+        $this->assertEmpty(array_intersect($ignores, $tables));
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testDefaultIndexNames()
     {
         $this->migrateGeneral('mysql57');
@@ -183,34 +178,40 @@ class CommandTest extends MySQL57TestCase
 
         $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $indexes    = app(DBALSchema::class)->getIndexes('test_index_mysql57');
-        $indexNames = array_keys($indexes);
+        $indexes = app(MySQLSchema::class)
+            ->getTable('test_index_mysql57')
+            ->getIndexes();
+
+        $indexNames = $indexes->map(function (Index $index) {
+            return $index->getName();
+        })->toArray();
+
         sort($indexNames);
         $this->assertSame(
             [
-                'primary',
+                'PRIMARY',
+                'test_index_mysql57_chain_fulltext',
+                'test_index_mysql57_chain_index',
+                'test_index_mysql57_chain_unique',
+                'test_index_mysql57_col_multi1_col_multi2_fulltext',
                 'test_index_mysql57_col_multi1_col_multi2_index',
                 'test_index_mysql57_col_multi1_col_multi2_unique',
                 'test_index_mysql57_col_multi_custom1_col_multi_custom2_index',
                 'test_index_mysql57_col_multi_custom1_col_multi_custom2_unique',
                 'test_index_mysql57_column_hyphen_index',
+                'test_index_mysql57_fulltext_custom_fulltext',
+                'test_index_mysql57_fulltext_fulltext',
                 'test_index_mysql57_index_custom_index',
                 'test_index_mysql57_index_index',
                 'test_index_mysql57_spatial_index_custom_spatialindex',
                 'test_index_mysql57_spatial_index_spatialindex',
                 'test_index_mysql57_unique_custom_unique',
                 'test_index_mysql57_unique_unique',
-                'test_index_mysql57_fulltext_fulltext',
-                'test_index_mysql57_fulltext_custom_fulltext',
-                'test_index_mysql57_col_multi1_col_multi2_fulltext',
             ],
             $indexNames
         );
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testDefaultFKNames()
     {
         $this->migrateGeneral('mysql57');
@@ -223,9 +224,8 @@ class CommandTest extends MySQL57TestCase
 
         $this->runMigrationsFrom('mysql57', $this->storageMigrations());
 
-        $foreignKeyArray = app(DBALSchema::class)->getForeignKeys('user_profile_mysql57');
-        $foreignKeys     = new Collection($foreignKeyArray);
-        $foreignKeyNames = $foreignKeys->map(function (ForeignKeyConstraint $foreignKey) {
+        $foreignKeys     = app(MySQLSchema::class)->getTableForeignKeys('user_profile_mysql57');
+        $foreignKeyNames = $foreignKeys->map(function (ForeignKey $foreignKey) {
             return $foreignKey->getName();
         })
             ->sort()
@@ -234,11 +234,11 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertSame(
             [
-                'user_profile_mysql57_column_hyphen_foreign',
-                'user_profile_mysql57_constraint_foreign',
-                'user_profile_mysql57_custom_name_foreign',
+                'user_profile_mysql57_user_id_fk_constraint_foreign',
+                'user_profile_mysql57_user_id_fk_custom_foreign',
                 'user_profile_mysql57_user_id_foreign',
-                'user_profile_mysql57_user_id_sub_id_foreign',
+                'user_profile_mysql57_user_id_user_sub_id_fk_custom_foreign',
+                'user_profile_mysql57_user_id_user_sub_id_foreign',
             ],
             $foreignKeyNames
         );

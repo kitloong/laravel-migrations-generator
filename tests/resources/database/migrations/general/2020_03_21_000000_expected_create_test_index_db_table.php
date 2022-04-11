@@ -1,16 +1,18 @@
 <?php
 
 /** @noinspection PhpIllegalPsrClassPathInspection */
+
 /** @noinspection PhpUnused */
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use MigrationsGenerator\Support\CheckLaravelVersion;
+use KitLoong\MigrationsGenerator\Enum\Driver;
+use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 class ExpectedCreateTestIndex_DB_Table extends Migration
 {
-    use CheckLaravelVersion;
+    use CheckMigrationMethod;
 
     /**
      * Run the migrations.
@@ -40,7 +42,11 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
             $table->unique(['col_multi_custom1', 'col_multi_custom2'], 'unique_multi_custom');
             $table->spatialIndex('spatial_index_custom', 'spatial_index_custom');
             $table->unique('chain');
-            if (config('database.default') === 'mysql57' && $this->atLeastLaravel8()) {
+
+            if (
+                in_array(DB::getDriverName(), [Driver::MYSQL()->getValue(), Driver::PGSQL()->getValue()])
+                && $this->hasFullText()
+            ) {
                 $table->string('fulltext')->fulltext();
                 $table->string('fulltext_custom')->fulltext('fulltext_custom');
                 $table->fullText(['col_multi1', 'col_multi2']);

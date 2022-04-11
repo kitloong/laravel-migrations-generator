@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Feature\PgSQL;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Tests\Feature\FeatureTestCase;
+use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
 abstract class PgSQLTestCase extends FeatureTestCase
 {
@@ -32,9 +32,10 @@ abstract class PgSQLTestCase extends FeatureTestCase
     protected function dumpSchemaAs(string $destination): void
     {
         $command = sprintf(
-            'PGPASSWORD="%s" pg_dump -h %s -U %s %s -f %s --schema-only',
+            'PGPASSWORD="%s" pg_dump -h %s -p %s -U %s %s -f %s --schema-only',
             config('database.connections.pgsql.password'),
             config('database.connections.pgsql.host'),
+            config('database.connections.pgsql.port'),
             config('database.connections.pgsql.username'),
             config('database.connections.pgsql.database'),
             $destination

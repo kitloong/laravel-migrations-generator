@@ -10,6 +10,7 @@
 .php_cs.cache
 .phpstorm.meta.php
 .phpunit.result.cache
+_ide_helper.php
 docker-compose.yml
 composer.lock
 coverage.xml
