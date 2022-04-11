@@ -42,9 +42,9 @@ class PgSQLSchema extends DBALSchema
     public function getTable(string $name): Table
     {
         return new PgSQLTable(
-            $this->DBALSchema->listTableDetails($name),
-            $this->DBALSchema->listTableColumns($name),
-            $this->DBALSchema->listTableIndexes($name)
+            $this->dbalSchema->listTableDetails($name),
+            $this->dbalSchema->listTableColumns($name),
+            $this->dbalSchema->listTableIndexes($name)
         );
     }
 
@@ -66,7 +66,7 @@ class PgSQLSchema extends DBALSchema
      */
     public function getViews(): Collection
     {
-        return (new Collection($this->DBALSchema->listViews()))
+        return (new Collection($this->dbalSchema->listViews()))
             ->filter(function (DoctrineDBALView $view) {
                 if (in_array($view->getName(), ['public.geography_columns', 'public.geometry_columns'])) {
                     return false;
@@ -86,7 +86,7 @@ class PgSQLSchema extends DBALSchema
      */
     public function getTableForeignKeys(string $table): Collection
     {
-        return (new Collection($this->DBALSchema->listTableForeignKeys($table)))
+        return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
             ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
                 return new PgSQLForeignKey($table, $foreignKeyConstraint);
             });

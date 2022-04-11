@@ -20,9 +20,9 @@ class SQLSrvSchema extends DBALSchema
     public function getTable(string $name): Table
     {
         return new SQLSrvTable(
-            $this->DBALSchema->listTableDetails($name),
-            $this->DBALSchema->listTableColumns($name),
-            $this->DBALSchema->listTableIndexes($name)
+            $this->dbalSchema->listTableDetails($name),
+            $this->dbalSchema->listTableColumns($name),
+            $this->dbalSchema->listTableIndexes($name)
         );
     }
 
@@ -43,7 +43,7 @@ class SQLSrvSchema extends DBALSchema
      */
     public function getViews(): Collection
     {
-        return (new Collection($this->DBALSchema->listViews()))
+        return (new Collection($this->dbalSchema->listViews()))
             ->map(function (DoctrineDBALView $view) {
                 return new SQLSrvView($view);
             });
@@ -55,7 +55,7 @@ class SQLSrvSchema extends DBALSchema
      */
     public function getTableForeignKeys(string $table): Collection
     {
-        return (new Collection($this->DBALSchema->listTableForeignKeys($table)))
+        return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
             ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
                 return new SQLSrvForeignKey($table, $foreignKeyConstraint);
             });

@@ -12,14 +12,14 @@ abstract class DBALSchema implements Schema
 {
     use AssetNameQuote;
 
-    protected $DBALSchema;
+    protected $dbalSchema;
 
     /**
      * @throws \Doctrine\DBAL\Exception
      */
     public function __construct(RegisterColumnType $registerColumnType)
     {
-        $this->DBALSchema = $this->makeSchemaManager();
+        $this->dbalSchema = $this->makeSchemaManager();
         $registerColumnType->handle();
     }
 
@@ -29,7 +29,7 @@ abstract class DBALSchema implements Schema
      */
     public function getTableNames(): Collection
     {
-        return (new Collection($this->DBALSchema->listTableNames()))
+        return (new Collection($this->dbalSchema->listTableNames()))
             ->map(function ($table) {
                 // The table name may contain quotes.
                 // Always trim quotes before set into list.
