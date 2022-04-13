@@ -117,6 +117,7 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->timestamp('timestamp_2', 2)->nullable();
             $table->timestamp('timestamp_default')->default('2020-10-08 10:20:30');
             $table->timestampTz('timestampTz')->nullable();
+            $table->timestampTz('timestampTz_useCurrent')->useCurrent();
             $table->timestampTz('timestampTz_0', 0)->nullable();
             $table->timestampTz('timestampTz_2', 2)->nullable();
             $table->timestampTz('timestampTz_default')->default('2020-10-08 10:20:30');
@@ -165,5 +166,3 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
         Schema::dropIfExists('all_columns_[db]');
     }
 }
-
-;

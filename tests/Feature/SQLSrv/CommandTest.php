@@ -58,9 +58,6 @@ class CommandTest extends SQLSrvTestCase
         );
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testDown()
     {
         $this->migrateGeneral('sqlsrv');

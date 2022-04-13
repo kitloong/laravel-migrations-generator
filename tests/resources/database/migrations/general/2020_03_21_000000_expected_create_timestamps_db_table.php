@@ -61,6 +61,31 @@ class ExpectedCreateTimestamps_DB_Table extends Migration
             $table->timestamp('created_at')->nullable();
             $table->timestamp('update_at')->nullable()->useCurrent()->useCurrentOnUpdate();
         });
+
+        Schema::create('not_timestamps_tz_[db]', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestampTz('created_at')->nullable();
+            $table->timestampTz('deleted_at')->nullable();
+            $table->timestampTz('update_at')->nullable();
+        });
+
+        Schema::create('not_timestamps_tz2_[db]', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestampTz('created_at');
+            $table->timestampTz('update_at')->nullable();
+        });
+
+        Schema::create('not_timestamps_tz3_[db]', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestampTz('created_at')->nullable()->comment('Created at');
+            $table->timestampTz('update_at')->nullable();
+        });
+
+        Schema::create('not_timestamps_tz4_[db]', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestampTz('created_at')->nullable();
+            $table->timestampTz('update_at')->nullable()->useCurrent()->useCurrentOnUpdate();
+        });
     }
 
     /**

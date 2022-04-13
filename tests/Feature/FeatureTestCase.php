@@ -2,17 +2,19 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature;
 
-use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\View;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 use KitLoong\MigrationsGenerator\Tests\TestCase;
 
 abstract class FeatureTestCase extends TestCase
 {
+    use AssetNameQuote;
+
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
@@ -187,13 +189,17 @@ abstract class FeatureTestCase extends TestCase
      * Get a list of table names.
      *
      * @return string[]
-     * @throws \Doctrine\DBAL\Exception
      */
     protected function getTableNames(): array
     {
-        return collect(DB::connection()->getDoctrineSchemaManager()->listTables())
-            ->map(function (Table $table) {
-                return $table->getName();
+        return collect(DB::connection()->getDoctrineSchemaManager()->listTableNames())
+            ->map(function ($table) {
+                // The table name may contain quotes.
+                // Always trim quotes before set into list.
+                if ($this->isIdentifierQuoted($table)) {
+                    return $this->trimQuotes($table);
+                }
+                return $table;
             })
             ->toArray();
     }
@@ -202,7 +208,6 @@ abstract class FeatureTestCase extends TestCase
      * Get a list of view names.
      *
      * @return string[]
-     * @throws \Doctrine\DBAL\Exception
      */
     protected function getViewNames(): array
     {

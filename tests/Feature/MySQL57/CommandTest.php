@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
+use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 /**
  * @runTestsInSeparateProcesses
@@ -15,6 +16,8 @@ use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
  */
 class CommandTest extends MySQL57TestCase
 {
+    use CheckMigrationMethod;
+
     public function testRun()
     {
         $migrateTemplates = function () {
@@ -72,9 +75,6 @@ class CommandTest extends MySQL57TestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testSquashDown()
     {
         $this->migrateGeneral('mysql57');
@@ -93,9 +93,6 @@ class CommandTest extends MySQL57TestCase
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testTables()
     {
         $this->migrateGeneral('mysql57');
@@ -126,16 +123,13 @@ class CommandTest extends MySQL57TestCase
         $this->assertContains('users_mysql57_view', $views);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testIgnore()
     {
         $this->migrateGeneral('mysql57');
 
         $this->truncateMigration();
 
-        $allAssets = count(Schema::getAllTables()) + count(Schema::getAllViews());
+        $allAssets = count($this->getTableNames()) + count($this->getViewNames());
 
         $ignores = [
             'quoted-name-foreign-mysql57',
@@ -182,33 +176,42 @@ class CommandTest extends MySQL57TestCase
             ->getTable('test_index_mysql57')
             ->getIndexes();
 
-        $indexNames = $indexes->map(function (Index $index) {
+        $actualIndexes = $indexes->map(function (Index $index) {
             return $index->getName();
         })->toArray();
 
-        sort($indexNames);
-        $this->assertSame(
-            [
-                'PRIMARY',
+        $expectedIndexes = [
+            'PRIMARY',
+            'test_index_mysql57_chain_index',
+            'test_index_mysql57_chain_unique',
+            'test_index_mysql57_col_multi1_col_multi2_index',
+            'test_index_mysql57_col_multi1_col_multi2_unique',
+            'test_index_mysql57_col_multi_custom1_col_multi_custom2_index',
+            'test_index_mysql57_col_multi_custom1_col_multi_custom2_unique',
+            'test_index_mysql57_column_hyphen_index',
+            'test_index_mysql57_index_custom_index',
+            'test_index_mysql57_index_index',
+            'test_index_mysql57_spatial_index_custom_spatialindex',
+            'test_index_mysql57_spatial_index_spatialindex',
+            'test_index_mysql57_unique_custom_unique',
+            'test_index_mysql57_unique_unique',
+        ];
+
+        if ($this->hasFullText()) {
+            $expectedIndexes = array_merge($expectedIndexes, [
                 'test_index_mysql57_chain_fulltext',
-                'test_index_mysql57_chain_index',
-                'test_index_mysql57_chain_unique',
                 'test_index_mysql57_col_multi1_col_multi2_fulltext',
-                'test_index_mysql57_col_multi1_col_multi2_index',
-                'test_index_mysql57_col_multi1_col_multi2_unique',
-                'test_index_mysql57_col_multi_custom1_col_multi_custom2_index',
-                'test_index_mysql57_col_multi_custom1_col_multi_custom2_unique',
-                'test_index_mysql57_column_hyphen_index',
                 'test_index_mysql57_fulltext_custom_fulltext',
                 'test_index_mysql57_fulltext_fulltext',
-                'test_index_mysql57_index_custom_index',
-                'test_index_mysql57_index_index',
-                'test_index_mysql57_spatial_index_custom_spatialindex',
-                'test_index_mysql57_spatial_index_spatialindex',
-                'test_index_mysql57_unique_custom_unique',
-                'test_index_mysql57_unique_unique',
-            ],
-            $indexNames
+            ]);
+        }
+
+        sort($actualIndexes);
+        sort($expectedIndexes);
+
+        $this->assertSame(
+            $expectedIndexes,
+            $actualIndexes
         );
     }
 

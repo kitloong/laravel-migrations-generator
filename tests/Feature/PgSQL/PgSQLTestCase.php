@@ -43,9 +43,6 @@ abstract class PgSQLTestCase extends FeatureTestCase
         exec($command);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     protected function dropAllTables(): void
     {
         $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();

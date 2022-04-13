@@ -30,9 +30,6 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         ]);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     protected function dumpSchemaAs(string $destination): void
     {
         $tables = Schema::connection('sqlsrv')->getConnection()->getDoctrineSchemaManager()->listTableNames();
