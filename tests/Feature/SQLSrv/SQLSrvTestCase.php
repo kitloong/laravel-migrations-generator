@@ -58,15 +58,6 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
     protected function dropAllTables(): void
     {
-        // Method `typeDateTime` is using different implementation since v5.8
-        // It is hard to create unified UT across Laravel <= v5.7 and >= v5.8
-        // To simplify, dropping UT check for version <= 5.7.
-        // https://github.com/laravel/framework/blob/5.7/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L523
-        // https://github.com/laravel/framework/blob/5.8/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L538
-        if (!$this->atLeastLaravel5Dot8()) {
-            $this->markTestSkipped();
-        }
-
         $this->dropAllViews();
 
         Schema::connection('sqlsrv')->dropAllTables();
