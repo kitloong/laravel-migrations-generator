@@ -28,7 +28,7 @@ class SoftDeleteColumn implements ColumnTypeGenerator
     /**
      * Create a Method instance.
      *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column $column
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     private function makeMethod(Column $column): Method

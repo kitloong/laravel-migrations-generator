@@ -19,7 +19,7 @@ class TableBlueprint implements WritableBlueprint
     }
 
     /**
-     * @param  string $name Property name.
+     * @param  string  $name  Property name.
      * @param  mixed  $value
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Property
      */
@@ -31,8 +31,8 @@ class TableBlueprint implements WritableBlueprint
     }
 
     /**
-     * @param  string $name Method name.
-     * @param  mixed  ...$values Method arguments.
+     * @param  string  $name  Method name.
+     * @param  mixed  ...$values  Method arguments.
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     public function setMethodByName(string $name, ...$values): Method
@@ -43,7 +43,7 @@ class TableBlueprint implements WritableBlueprint
     }
 
     /**
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method $method
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     public function setMethod(Method $method): Method
@@ -113,7 +113,7 @@ class TableBlueprint implements WritableBlueprint
      * $table->test = null;
      * $table->test = [1, 'abc', true];
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Property $property
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Property  $property
      * @return string
      */
     private function propertyToString(Property $property): string
@@ -127,7 +127,7 @@ class TableBlueprint implements WritableBlueprint
      *
      * $table->string('name', 100)->comment('Hello')->default('Test');
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method $method
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
      * @return string
      */
     private function methodToString(Method $method): string
@@ -148,7 +148,7 @@ class TableBlueprint implements WritableBlueprint
      * comment('Hello')
      * default('Test')
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method $method
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
      * @return string
      */
     private function flattenMethod(Method $method): string

@@ -107,8 +107,8 @@ class CommandTest extends SQLSrvTestCase
     }
 
     /**
-     * @param  callable $migrateTemplates
-     * @param  callable $generateMigrations
+     * @param  callable  $migrateTemplates
+     * @param  callable  $generateMigrations
      * @throws \Doctrine\DBAL\Exception
      */
     public function verify(callable $migrateTemplates, callable $generateMigrations)

@@ -9,7 +9,7 @@ trait TableName
     /**
      * Strips prefix from table name.
      *
-     * @param  string $table Table name.
+     * @param  string  $table  Table name.
      * @return string
      */
     public function stripPrefix(string $table): string

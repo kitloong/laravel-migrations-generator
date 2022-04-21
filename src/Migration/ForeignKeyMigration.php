@@ -22,8 +22,8 @@ class ForeignKeyMigration
     /**
      * Generates `up` schema for foreign key.
      *
-     * @param  string                                                                                 $table
-     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey> $foreignKeys
+     * @param  string  $table
+     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
     public function up(string $table, Collection $foreignKeys): SchemaBlueprint
@@ -42,8 +42,8 @@ class ForeignKeyMigration
     /**
      * Generates `down` schema for foreign key.
      *
-     * @param  string                                                                                 $table
-     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey> $foreignKeys
+     * @param  string  $table
+     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
     public function down(string $table, Collection $foreignKeys): SchemaBlueprint
@@ -60,7 +60,7 @@ class ForeignKeyMigration
     }
 
     /**
-     * @param  string $table
+     * @param  string  $table
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
     private function getSchemaBlueprint(string $table): SchemaBlueprint

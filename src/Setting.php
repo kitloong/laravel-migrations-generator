@@ -45,7 +45,7 @@ class Setting
     }
 
     /**
-     * @param  bool $useDBCollation
+     * @param  bool  $useDBCollation
      */
     public function setUseDBCollation(bool $useDBCollation): void
     {
@@ -61,7 +61,7 @@ class Setting
     }
 
     /**
-     * @param  bool $ignoreIndexNames
+     * @param  bool  $ignoreIndexNames
      */
     public function setIgnoreIndexNames(bool $ignoreIndexNames): void
     {
@@ -77,7 +77,7 @@ class Setting
     }
 
     /**
-     * @param  bool $ignoreForeignKeyNames
+     * @param  bool  $ignoreForeignKeyNames
      */
     public function setIgnoreForeignKeyNames(bool $ignoreForeignKeyNames): void
     {
@@ -93,7 +93,7 @@ class Setting
     }
 
     /**
-     * @param  string $path
+     * @param  string  $path
      */
     public function setPath(string $path): void
     {
@@ -109,7 +109,7 @@ class Setting
     }
 
     /**
-     * @param  string $stubPath
+     * @param  string  $stubPath
      */
     public function setStubPath(string $stubPath): void
     {
@@ -125,7 +125,7 @@ class Setting
     }
 
     /**
-     * @param  bool $squash
+     * @param  bool  $squash
      */
     public function setSquash(bool $squash): void
     {
@@ -141,7 +141,7 @@ class Setting
     }
 
     /**
-     * @param  string $tableFilename
+     * @param  string  $tableFilename
      */
     public function setTableFilename(string $tableFilename): void
     {
@@ -157,7 +157,7 @@ class Setting
     }
 
     /**
-     * @param  string $viewFilename
+     * @param  string  $viewFilename
      */
     public function setViewFilename(string $viewFilename): void
     {
@@ -173,7 +173,7 @@ class Setting
     }
 
     /**
-     * @param  string $fkFilename
+     * @param  string  $fkFilename
      */
     public function setFkFilename(string $fkFilename): void
     {
@@ -189,7 +189,7 @@ class Setting
     }
 
     /**
-     * @param  \Carbon\Carbon $date
+     * @param  \Carbon\Carbon  $date
      */
     public function setDate(Carbon $date): void
     {

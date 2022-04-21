@@ -37,7 +37,7 @@ class FloatColumn implements ColumnTypeGenerator
      * Return empty if both precision and scale are 0.
      * Also, return empty if precision = 8 and scale = 2.
      *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column $column
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
      * @return int[] "[]|[precision]|[precision, scale]"
      */
     private function getPrecisions(Column $column): array

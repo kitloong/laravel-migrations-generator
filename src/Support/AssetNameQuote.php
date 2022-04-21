@@ -7,7 +7,7 @@ trait AssetNameQuote
     /**
      * Checks if this identifier is quoted.
      *
-     * @param  string $identifier
+     * @param  string  $identifier
      * @return bool
      * @see \Doctrine\DBAL\Schema\AbstractAsset::isIdentifierQuoted()
      */
@@ -19,7 +19,7 @@ trait AssetNameQuote
     /**
      * Trim quotes from the identifier.
      *
-     * @param  string $identifier
+     * @param  string  $identifier
      * @return string
      * @see \Doctrine\DBAL\Schema\AbstractAsset::trimQuotes()
      */

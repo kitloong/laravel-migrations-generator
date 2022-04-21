@@ -23,8 +23,8 @@ class SquashWriter
      * Append new content into `up`.
      * Prepend new content into `down`.
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint $upBlueprint
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint $downBlueprint
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint  $upBlueprint
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint  $downBlueprint
      */
     public function writeToTemp(WritableBlueprint $upBlueprint, WritableBlueprint $downBlueprint): void
     {
@@ -49,9 +49,9 @@ class SquashWriter
     /**
      * Squash temporary paths into single migration file.
      *
-     * @param  string $path Migration file destination path.
-     * @param  string $stubPath Migration stub file path.
-     * @param  string $className
+     * @param  string  $path  Migration file destination path.
+     * @param  string  $stubPath  Migration stub file path.
+     * @param  string  $className
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function squashMigrations(string $path, string $stubPath, string $className): void

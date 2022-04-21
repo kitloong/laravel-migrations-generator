@@ -16,8 +16,8 @@ class Method
     /**
      * Method constructor.
      *
-     * @param  string $name Method name.
-     * @param  mixed  ...$values Method arguments.
+     * @param  string  $name  Method name.
+     * @param  mixed  ...$values  Method arguments.
      */
     public function __construct(string $name, ...$values)
     {
@@ -45,8 +45,8 @@ class Method
     /**
      * Chain method.
      *
-     * @param  string $name Method name.
-     * @param  mixed  ...$values Method arguments.
+     * @param  string  $name  Method name.
+     * @param  mixed  ...$values  Method arguments.
      * @return $this
      */
     public function chain(string $name, ...$values): Method
@@ -58,7 +58,7 @@ class Method
     /**
      * Checks if chain name exists.
      *
-     * @param  string $name Method name.
+     * @param  string  $name  Method name.
      * @return bool
      */
     public function hasChain(string $name): bool

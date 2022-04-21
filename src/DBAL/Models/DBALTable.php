@@ -20,9 +20,9 @@ abstract class DBALTable implements Table
     /**
      * Create a new instance.
      *
-     * @param  \Doctrine\DBAL\Schema\Table                 $table
-     * @param  array<string, \Doctrine\DBAL\Schema\Column> $columns Key is quoted name.
-     * @param  array<string, \Doctrine\DBAL\Schema\Index>  $indexes Key is name.
+     * @param  \Doctrine\DBAL\Schema\Table  $table
+     * @param  array<string, \Doctrine\DBAL\Schema\Column>  $columns  Key is quoted name.
+     * @param  array<string, \Doctrine\DBAL\Schema\Index>  $indexes  Key is name.
      */
     public function __construct(DoctrineDBALTable $table, array $columns, array $indexes)
     {
@@ -48,8 +48,8 @@ abstract class DBALTable implements Table
     /**
      * Make a Column instance.
      *
-     * @param  string                       $table
-     * @param  \Doctrine\DBAL\Schema\Column $column
+     * @param  string  $table
+     * @param  \Doctrine\DBAL\Schema\Column  $column
      * @return \KitLoong\MigrationsGenerator\Schema\Models\Column
      */
     abstract protected function makeColumn(string $table, DoctrineDBALColumn $column): Column;
@@ -57,8 +57,8 @@ abstract class DBALTable implements Table
     /**
      * Make an Index instance.
      *
-     * @param  string                      $table
-     * @param  \Doctrine\DBAL\Schema\Index $index
+     * @param  string  $table
+     * @param  \Doctrine\DBAL\Schema\Index  $index
      * @return \KitLoong\MigrationsGenerator\Schema\Models\Index
      */
     abstract protected function makeIndex(string $table, DoctrineDBALIndex $index): Index;

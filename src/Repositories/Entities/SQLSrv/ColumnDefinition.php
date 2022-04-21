@@ -37,16 +37,16 @@ class ColumnDefinition
     /**
      * Column constructor.
      *
-     * @param  string      $name
-     * @param  string      $type
-     * @param  int         $length
-     * @param  bool        $notnull
-     * @param  int         $scale
-     * @param  int         $precision
-     * @param  bool        $autoincrement
-     * @param  string|null $default
-     * @param  string|null $collation
-     * @param  string|null $comment
+     * @param  string  $name
+     * @param  string  $type
+     * @param  int  $length
+     * @param  bool  $notnull
+     * @param  int  $scale
+     * @param  int  $precision
+     * @param  bool  $autoincrement
+     * @param  string|null  $default
+     * @param  string|null  $collation
+     * @param  string|null  $comment
      */
     public function __construct(
         string $name,

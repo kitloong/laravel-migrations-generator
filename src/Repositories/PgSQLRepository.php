@@ -11,8 +11,8 @@ class PgSQLRepository extends Repository
     /**
      * Get column type by table and column name.
      *
-     * @param  string $table Table name.
-     * @param  string $column Column name.
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
      * @return string|null
      */
     public function getTypeByColumnName(string $table, string $column): ?string
@@ -45,8 +45,8 @@ class PgSQLRepository extends Repository
     /**
      * Get constraint by table and column name.
      *
-     * @param  string $table Table name.
-     * @param  string $column Column name.
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
      * @return string|null
      */
     public function getCheckConstraintDefinition(string $table, string $column): ?string
@@ -80,7 +80,7 @@ class PgSQLRepository extends Repository
     /**
      * Get a list of spatial indexes.
      *
-     * @param  string $table Table name.
+     * @param  string  $table  Table name.
      * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition>
      */
     public function getSpatialIndexes(string $table): Collection
@@ -111,7 +111,7 @@ class PgSQLRepository extends Repository
     /**
      * Get a list of fulltext indexes.
      *
-     * @param  string $table Table name.
+     * @param  string  $table  Table name.
      * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition>
      */
     public function getFulltextIndexes(string $table): Collection

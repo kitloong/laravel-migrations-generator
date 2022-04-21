@@ -15,8 +15,8 @@ class ViewBlueprint implements WritableBlueprint
     /**
      * ViewBlueprint constructor.
      *
-     * @param  string $connection Connection name.
-     * @param  string $view View name.
+     * @param  string  $connection  Connection name.
+     * @param  string  $view  View name.
      */
     public function __construct(string $connection, string $view)
     {
@@ -26,7 +26,7 @@ class ViewBlueprint implements WritableBlueprint
     }
 
     /**
-     * @param  string $createViewSql
+     * @param  string  $createViewSql
      */
     public function setCreateViewSql(string $createViewSql): void
     {

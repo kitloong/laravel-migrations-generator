@@ -63,7 +63,7 @@ class PgSQLColumn extends DBALColumn
             return null;
         }
 
-        return (int)$length;
+        return (int) $length;
     }
 
     /**

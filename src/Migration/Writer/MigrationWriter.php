@@ -19,12 +19,12 @@ class MigrationWriter
     /**
      * Writes migration to destination.
      *
-     * @param  string                                                              $path Migration file destination path.
-     * @param  string                                                              $stubPath Migration stub file path.
-     * @param  string                                                              $className
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint $up Blueprint of migration `up`.
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint $down Blueprint of migration `down`.
-     * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType      $migrationFileType
+     * @param  string  $path  Migration file destination path.
+     * @param  string  $stubPath  Migration stub file path.
+     * @param  string  $className
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint  $up  Blueprint of migration `up`.
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint  $down  Blueprint of migration `down`.
+     * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType  $migrationFileType
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function writeTo(
@@ -44,7 +44,7 @@ class MigrationWriter
     }
 
     /**
-     * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType $migrationFileType
+     * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType  $migrationFileType
      * @return string[]
      */
     private function getImports(MigrationFileType $migrationFileType): array

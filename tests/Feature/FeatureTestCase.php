@@ -142,7 +142,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan(
             'migrate:generate',
             array_merge([
-                '--path' => $this->storageMigrations(),
+                '--path'          => $this->storageMigrations(),
                 '--template-path' => base_path('resources/stub/migration.stub'),
             ], $options)
         )

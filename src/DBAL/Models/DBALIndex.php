@@ -19,8 +19,8 @@ abstract class DBALIndex implements Index
     /**
      * Create an index instance.
      *
-     * @param  string                      $table
-     * @param  \Doctrine\DBAL\Schema\Index $index
+     * @param  string  $table
+     * @param  \Doctrine\DBAL\Schema\Index  $index
      */
     public function __construct(string $table, DoctrineDBALIndex $index)
     {
@@ -74,7 +74,7 @@ abstract class DBALIndex implements Index
     /**
      * Get the index type.
      *
-     * @param  \Doctrine\DBAL\Schema\Index $index
+     * @param  \Doctrine\DBAL\Schema\Index  $index
      * @return \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType
      */
     private function getIndexType(DoctrineDBALIndex $index): IndexType

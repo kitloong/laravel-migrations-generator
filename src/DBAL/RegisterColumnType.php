@@ -106,8 +106,8 @@ class RegisterColumnType
     /**
      * Register custom doctrine type, override if exists.
      *
-     * @param  string $dbType
-     * @param  string $class The class name of the custom type.
+     * @param  string  $dbType
+     * @param  string  $class  The class name of the custom type.
      * @throws \Doctrine\DBAL\Exception
      */
     private function registerCustomDoctrineType(string $dbType, string $class): void
@@ -119,8 +119,8 @@ class RegisterColumnType
     /**
      * Add or override doctrine type.
      *
-     * @param  string $dbType
-     * @param  string $class The class name of the custom type.
+     * @param  string  $dbType
+     * @param  string  $class  The class name of the custom type.
      * @throws \Doctrine\DBAL\Exception
      */
     private function addOrOverrideType(string $dbType, string $class): void
@@ -136,8 +136,8 @@ class RegisterColumnType
     /**
      * Registers a doctrine type to be used in conjunction with a column type of this platform.
      *
-     * @param  string $dbType
-     * @param  string $doctrineType
+     * @param  string  $dbType
+     * @param  string  $doctrineType
      * @throws \Doctrine\DBAL\Exception
      */
     private function registerDoctrineTypeMapping(string $dbType, string $doctrineType): void

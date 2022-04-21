@@ -30,8 +30,8 @@ abstract class DBALColumn implements Column
     private const REMEMBER_TOKEN_LENGTH = 100;
 
     /**
-     * @param  string                       $table
-     * @param  \Doctrine\DBAL\Schema\Column $column
+     * @param  string  $table
+     * @param  \Doctrine\DBAL\Schema\Column  $column
      */
     public function __construct(string $table, DoctrineDBALColumn $column)
     {
@@ -200,7 +200,7 @@ abstract class DBALColumn implements Column
     /**
      * Converts built-in DBALTypes to ColumnType (Laravel column).
      *
-     * @param  string $dbalType
+     * @param  string  $dbalType
      * @return \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType
      */
     private function mapToColumnType(string $dbalType): ColumnType

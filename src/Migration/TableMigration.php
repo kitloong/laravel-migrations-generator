@@ -33,7 +33,7 @@ class TableMigration
     /**
      * Generates `up` schema for table.
      *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table $table
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
     public function up(Table $table): SchemaBlueprint
@@ -73,7 +73,7 @@ class TableMigration
     /**
      * Generates `down` schema for table.
      *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table $table
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
     public function down(Table $table): SchemaBlueprint
@@ -96,8 +96,8 @@ class TableMigration
     }
 
     /**
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint $blueprint
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table                $table
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint  $blueprint
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint
      */
     private function setTableCharset(TableBlueprint $blueprint, Table $table): TableBlueprint
@@ -114,8 +114,8 @@ class TableMigration
     }
 
     /**
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table                  $table
-     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder $schemaBuilder
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder  $schemaBuilder
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
     private function getSchemaBlueprint(Table $table, SchemaBuilder $schemaBuilder): SchemaBlueprint

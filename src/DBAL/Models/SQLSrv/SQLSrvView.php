@@ -10,7 +10,6 @@ class SQLSrvView extends DBALView
 {
     /**
      * @inheritDoc
-     * @throws \Doctrine\DBAL\Exception
      */
     protected function handle(DoctrineDBALView $view): void
     {

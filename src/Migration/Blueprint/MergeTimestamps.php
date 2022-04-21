@@ -13,8 +13,8 @@ trait MergeTimestamps
     /**
      * Merges created_at and updated_at into timestamps or timestampsTz.
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[] $lines TableBlueprint lines.
-     * @param  bool                                                                                                                             $tz Is timezone.
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[]  $lines  TableBlueprint lines.
+     * @param  bool  $tz  Is timezone.
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[]  TableBlueprint lines after merged.
      */
     public function merge(array $lines, bool $tz): array
@@ -64,9 +64,9 @@ trait MergeTimestamps
     /**
      * Check if column name (created_at or updated_at) is possible a timestamps.
      *
-     * @param  string                                                   $name Column name, created_at or updated_at.
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method $method
-     * @param  bool                                                     $tz Is timezone.
+     * @param  string  $name  Column name, created_at or updated_at.
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
+     * @param  bool  $tz  Is timezone.
      * @return bool
      */
     private function checkTimestamps(string $name, Method $method, bool $tz): bool
@@ -90,8 +90,8 @@ trait MergeTimestamps
     /**
      * Check if column type is possible a timestamps.
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method $method
-     * @param  bool                                                     $tz Is timezone.
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
+     * @param  bool  $tz  Is timezone.
      * @return bool
      */
     private function isPossibleTimestampsColumn(Method $method, bool $tz): bool
@@ -107,7 +107,7 @@ trait MergeTimestamps
      * SQL server uses datetime.
      * Only datetime or datetimeTz can be merged into timestamps.
      *
-     * @param  bool $tz Is timezone.
+     * @param  bool  $tz  Is timezone.
      * @return \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType Column type.
      */
     private function sqlSrvTimestampsColumnType(bool $tz): ColumnType
@@ -122,7 +122,7 @@ trait MergeTimestamps
     /**
      * Only timestamp or timestampTz can be merged into timestamps.
      *
-     * @param  bool $tz Is timezone.
+     * @param  bool  $tz  Is timezone.
      * @return \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType Column type.
      */
     private function timestampsColumnType(bool $tz): ColumnType
@@ -137,7 +137,7 @@ trait MergeTimestamps
     /**
      * Could merge into timestamps or timestampsTz.
      *
-     * @param  bool $tz Is timezone.
+     * @param  bool  $tz  Is timezone.
      * @return string
      */
     private function timestamps(bool $tz): string
@@ -151,7 +151,7 @@ trait MergeTimestamps
 
     /**
      * @param  int  $length
-     * @param  bool $tz
+     * @param  bool  $tz
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     private function makeMethod(int $length, bool $tz): Method

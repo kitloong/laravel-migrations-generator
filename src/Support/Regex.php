@@ -7,9 +7,9 @@ class Regex
     /**
      * Get first string between 2 tags.
      *
-     * @param  string $text Subject.
-     * @param  string $left Left tag.
-     * @param  string $right Right tag.
+     * @param  string  $text  Subject.
+     * @param  string  $left  Left tag.
+     * @param  string  $right  Right tag.
      * @return string|null
      */
     public static function getTextBetween(string $text, string $left = '\(', string $right = '\)'): ?string
@@ -24,9 +24,9 @@ class Regex
     /**
      * Get all strings between 2 tags.
      *
-     * @param  string $text Subject.
-     * @param  string $left Left tag.
-     * @param  string $right Right tag.
+     * @param  string  $text  Subject.
+     * @param  string  $left  Left tag.
+     * @param  string  $right  Right tag.
      * @return string[]|null
      */
     public static function getTextBetweenAll(string $text, string $left = '\(', string $right = '\)'): ?array

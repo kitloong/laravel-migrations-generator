@@ -22,9 +22,9 @@ class SchemaBlueprint implements WritableBlueprint
     /**
      * SchemaBlueprint constructor.
      *
-     * @param  string                                                             $connection Connection name.
-     * @param  string                                                             $table Table name.
-     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder $schemaBuilder SchemaBuilder name.
+     * @param  string  $connection  Connection name.
+     * @param  string  $table  Table name.
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder  $schemaBuilder  SchemaBuilder name.
      */
     public function __construct(string $connection, string $table, SchemaBuilder $schemaBuilder)
     {
@@ -35,7 +35,7 @@ class SchemaBlueprint implements WritableBlueprint
     }
 
     /**
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint $blueprint
+     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint  $blueprint
      */
     public function setBlueprint(TableBlueprint $blueprint): void
     {

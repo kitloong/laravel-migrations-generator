@@ -13,7 +13,7 @@ use PHPUnit\Framework\Constraint\IsEqual;
 abstract class TestCase extends Testbench
 {
     /**
-     * @param  string $name
+     * @param  string  $name
      * @param  array  $arguments
      * @return object
      * @throws \Exception
@@ -48,9 +48,9 @@ abstract class TestCase extends Testbench
      * Asserts that the contents of one file is equal to the contents of another file, ignore the ordering.
      *
      *
-     * @param  string $expected
-     * @param  string $actual
-     * @param  string $message
+     * @param  string  $expected
+     * @param  string  $actual
+     * @param  string  $message
      */
     public static function assertFileEqualsIgnoringOrder(string $expected, string $actual, string $message = ''): void
     {

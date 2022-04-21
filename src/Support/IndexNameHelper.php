@@ -21,8 +21,8 @@ class IndexNameHelper
      * 2. Argument `--default-index-names` is true.
      * 3. Index name is identical with framework's default naming practice.
      *
-     * @param  string                                            $table
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Index $index
+     * @param  string  $table
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Index  $index
      * @return bool
      */
     public function shouldSkipName(string $table, Index $index): bool
@@ -36,7 +36,7 @@ class IndexNameHelper
         }
 
         $indexName = strtolower($table . '_' . implode('_', $index->getColumns()) . '_' . $index->getType());
-        $indexName = (string)str_replace(['-', '.'], '_', $indexName);
+        $indexName = (string) str_replace(['-', '.'], '_', $indexName);
         return $indexName === $index->getName();
     }
 }

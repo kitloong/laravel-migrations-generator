@@ -11,8 +11,8 @@ class MySQLRepository extends Repository
     /**
      * Show column by table and column name.
      *
-     * @param  string $table Table name.
-     * @param  string $column Column name.
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
      * @return \KitLoong\MigrationsGenerator\Repositories\Entities\MySQL\ShowColumn|null
      */
     public function showColumn(string $table, string $column): ?ShowColumn
@@ -27,8 +27,8 @@ class MySQLRepository extends Repository
     /**
      * Get enum values.
      *
-     * @param  string $table Table name.
-     * @param  string $column Column name.
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
      * @return \Illuminate\Support\Collection<string>
      */
     public function getEnumPresetValues(string $table, string $column): Collection
@@ -49,8 +49,8 @@ class MySQLRepository extends Repository
     /**
      * Get set values.
      *
-     * @param  string $table Table name.
-     * @param  string $column Column name.
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
      * @return \Illuminate\Support\Collection<string>
      */
     public function getSetPresetValues(string $table, string $column): Collection
@@ -72,8 +72,8 @@ class MySQLRepository extends Repository
     /**
      * Checks if column has `on update CURRENT_TIMESTAMP`
      *
-     * @param  string $table Table name.
-     * @param  string $column Column name.
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
      * @return bool
      */
     public function isOnUpdateCurrentTimestamp(string $table, string $column): bool

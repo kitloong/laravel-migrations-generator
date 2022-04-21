@@ -20,7 +20,7 @@ class FilenameHelper
     /**
      * Makes class name for table migration.
      *
-     * @param  string $table Table name.
+     * @param  string  $table  Table name.
      * @return string
      */
     public function makeTableClassName(string $table): string
@@ -35,7 +35,7 @@ class FilenameHelper
     /**
      * Makes file path for table migration.
      *
-     * @param  string $table Table name.
+     * @param  string  $table  Table name.
      * @return string
      */
     public function makeTablePath(string $table): string
@@ -50,7 +50,7 @@ class FilenameHelper
     /**
      * Makes class name for view migration.
      *
-     * @param  string $view View name.
+     * @param  string  $view  View name.
      * @return string
      */
     public function makeViewClassName(string $view): string
@@ -65,7 +65,7 @@ class FilenameHelper
     /**
      * Makes file path for view migration.
      *
-     * @param  string $view View name.
+     * @param  string  $view  View name.
      * @return string
      */
     public function makeViewPath(string $view): string
@@ -80,7 +80,7 @@ class FilenameHelper
     /**
      * Makes class name for foreign key migration.
      *
-     * @param  string $table Table name.
+     * @param  string  $table  Table name.
      * @return string
      */
     public function makeForeignKeyClassName(string $table): string
@@ -95,7 +95,7 @@ class FilenameHelper
     /**
      * Makes file path for foreign key migration.
      *
-     * @param  string $table
+     * @param  string  $table
      * @return string
      */
     public function makeForeignKeyPath(string $table): string
@@ -132,9 +132,9 @@ class FilenameHelper
     /**
      * Makes migration filename by given naming pattern.
      *
-     * @param  string $pattern Naming pattern for migration filename.
-     * @param  string $datetimePrefix Current datetime for filename prefix.
-     * @param  string $table Table name.
+     * @param  string  $pattern  Naming pattern for migration filename.
+     * @param  string  $datetimePrefix  Current datetime for filename prefix.
+     * @param  string  $table  Table name.
      * @return string
      */
     private function makeFilename(string $pattern, string $datetimePrefix, string $table): string
@@ -152,8 +152,8 @@ class FilenameHelper
     /**
      * Makes migration class name by given naming pattern.
      *
-     * @param  string $pattern Naming pattern for class.
-     * @param  string $table Table name.
+     * @param  string  $pattern  Naming pattern for class.
+     * @param  string  $table  Table name.
      * @return string
      */
     private function makeClassName(string $pattern, string $table): string
@@ -170,12 +170,12 @@ class FilenameHelper
     /**
      * Strips prefix from table name.
      *
-     * @param  string $table Table name.
+     * @param  string  $table  Table name.
      * @return string Table name without prefix.
      */
     private function stripTablePrefix(string $table): string
     {
-        $tableNameEscaped = (string)preg_replace('/[^a-zA-Z0-9_]/', '_', $table);
+        $tableNameEscaped = (string) preg_replace('/[^a-zA-Z0-9_]/', '_', $table);
         return $this->stripPrefix($tableNameEscaped);
     }
 }

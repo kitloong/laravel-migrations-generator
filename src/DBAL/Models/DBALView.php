@@ -27,7 +27,7 @@ abstract class DBALView implements View
     /**
      * Instance extend this abstract may run special handling.
      *
-     * @param  \Doctrine\DBAL\Schema\View $view
+     * @param  \Doctrine\DBAL\Schema\View  $view
      * @return void
      */
     abstract protected function handle(DoctrineDBALView $view): void;
@@ -35,18 +35,18 @@ abstract class DBALView implements View
     /**
      * Trim quotes and set name.
      *
-     * @param  string $name
+     * @param  string  $name
      * @return string
      */
     protected function makeName(string $name): string
     {
-        return (string)str_replace(['`', '"', '[', ']'], '', $name);
+        return (string) str_replace(['`', '"', '[', ']'], '', $name);
     }
 
     /**
      * Set quoted name.
      *
-     * @param  string $name
+     * @param  string  $name
      * @return string
      */
     protected function makeQuotedName(string $name): string
@@ -57,8 +57,8 @@ abstract class DBALView implements View
     /**
      * Set create view SQL.
      *
-     * @param  string $quotedName
-     * @param  string $sql
+     * @param  string  $quotedName
+     * @param  string  $sql
      * @return string
      * @throws \Doctrine\DBAL\Exception
      */

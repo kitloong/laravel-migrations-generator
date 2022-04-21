@@ -116,7 +116,7 @@ class MigrateGenerateCommand extends Command
         $setting->setUseDBCollation($this->option('use-db-collation'));
         $setting->setIgnoreIndexNames($this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));
-        $setting->setSquash((bool)$this->option('squash'));
+        $setting->setSquash((bool) $this->option('squash'));
 
         $setting->setPath(
             $this->option('path') ?? Config::get('generators.config.migration_target_path')
@@ -178,20 +178,20 @@ class MigrateGenerateCommand extends Command
     /**
      * Filter and exclude tables in --ignore option if any.
      *
-     * @param  \Illuminate\Support\Collection<string> $allAssets Names before filter.
+     * @param  \Illuminate\Support\Collection<string>  $allAssets  Names before filter.
      * @return \Illuminate\Support\Collection<string> Filtered names.
      */
     protected function filterAndExcludeAsset(Collection $allAssets): Collection
     {
         $tables = $allAssets;
 
-        $tableArg = (string)$this->argument('tables');
+        $tableArg = (string) $this->argument('tables');
         if ($tableArg !== '') {
             $tables = $allAssets->intersect(explode(',', $tableArg));
             return $tables->diff($this->getExcludedTables());
         }
 
-        $tableOpt = (string)$this->option('tables');
+        $tableOpt = (string) $this->option('tables');
         if ($tableOpt !== '') {
             $tables = $allAssets->intersect(explode(',', $tableOpt));
             return $tables->diff($this->getExcludedTables());
@@ -211,7 +211,7 @@ class MigrateGenerateCommand extends Command
         $migrationTable = $prefix . Config::get('database.migrations');
 
         $excludes = [$migrationTable];
-        $ignore   = (string)$this->option('ignore');
+        $ignore   = (string) $this->option('ignore');
         if (!empty($ignore)) {
             return array_merge([$migrationTable], explode(',', $ignore));
         }
@@ -222,7 +222,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Asks user for log migration permission.
      *
-     * @param  string $defaultConnection
+     * @param  string  $defaultConnection
      * @return void
      */
     protected function askIfLogMigrationTable(string $defaultConnection): void
@@ -236,8 +236,7 @@ class MigrateGenerateCommand extends Command
             if ($defaultConnection !== DB::getName()) {
                 if (
                     !$this->confirm(
-                        'Log into current connection: ' . DB::getName() . '? [Y = ' . DB::getName(
-                        ) . ', n = ' . $defaultConnection . ' (default connection)]',
+                        'Log into current connection: ' . DB::getName() . '? [Y = ' . DB::getName() . ', n = ' . $defaultConnection . ' (default connection)]',
                         true
                     )
                 ) {
@@ -250,8 +249,7 @@ class MigrateGenerateCommand extends Command
             }
 
             $this->nextBatchNumber = $this->askInt(
-                'Next Batch Number is: ' . $this->repository->getNextBatchNumber(
-                ) . '. We recommend using Batch Number 0 so that it becomes the "first" migration',
+                'Next Batch Number is: ' . $this->repository->getNextBatchNumber() . '. We recommend using Batch Number 0 so that it becomes the "first" migration',
                 0
             );
         }
@@ -260,8 +258,8 @@ class MigrateGenerateCommand extends Command
     /**
      * Ask user for a Numeric Value, or blank for default.
      *
-     * @param  string   $question Question to ask
-     * @param  int|null $default Default Value (optional)
+     * @param  string  $question  Question to ask
+     * @param  int|null  $default  Default Value (optional)
      * @return int Answer
      */
     protected function askInt(string $question, int $default = null): int
@@ -273,23 +271,23 @@ class MigrateGenerateCommand extends Command
             $ask      .= ' or blank for default. [Default: ' . $default . ']';
         }
 
-        $answer = $this->ask($question, (string)$default);
+        $answer = $this->ask($question, (string) $default);
         while (!ctype_digit($answer) && !($answer === '' && !is_null($default))) {
-            $answer = $this->ask($ask, (string)$default);
+            $answer = $this->ask($ask, (string) $default);
         }
 
         if ($answer === '') {
             $answer = $default;
         }
 
-        return (int)$answer;
+        return (int) $answer;
     }
 
     /**
      * Generates table, view and foreign key migrations.
      *
-     * @param  \Illuminate\Support\Collection<string> $tables Table names.
-     * @param  \Illuminate\Support\Collection<string> $views View names.
+     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
+     * @param  \Illuminate\Support\Collection<string>  $views  View names.
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generate(Collection $tables, Collection $views): void
@@ -305,8 +303,8 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates table, view and foreign key migrations.
      *
-     * @param  \Illuminate\Support\Collection<string> $tables Table names.
-     * @param  \Illuminate\Support\Collection<string> $views View names.
+     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
+     * @param  \Illuminate\Support\Collection<string>  $views  View names.
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateMigrations(Collection $tables, Collection $views): void
@@ -350,7 +348,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates table migrations.
      *
-     * @param  \Illuminate\Support\Collection<string> $tables Table names.
+     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateTables(Collection $tables): void
@@ -371,7 +369,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates table migrations.
      *
-     * @param  \Illuminate\Support\Collection<string> $tables Table names.
+     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
      */
     protected function generateTablesToTemp(Collection $tables): void
     {
@@ -387,7 +385,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generate view migrations.
      *
-     * @param  \Illuminate\Support\Collection<string> $views View names.
+     * @param  \Illuminate\Support\Collection<string>  $views  View names.
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateViews(Collection $views): void
@@ -411,7 +409,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generate view migrations.
      *
-     * @param  \Illuminate\Support\Collection<string> $views View names.
+     * @param  \Illuminate\Support\Collection<string>  $views  View names.
      */
     protected function generateViewsToTemp(Collection $views): void
     {
@@ -430,7 +428,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates foreign key migrations.
      *
-     * @param  \Illuminate\Support\Collection<string> $tables Table names.
+     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateForeignKeys(Collection $tables): void
@@ -455,7 +453,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates foreign key migrations.
      *
-     * @param  \Illuminate\Support\Collection<string> $tables Table names.
+     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
      */
     protected function generateForeignKeysToTemp(Collection $tables): void
     {
@@ -475,7 +473,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Logs migration repository.
      *
-     * @param  string $migrationFilepath
+     * @param  string  $migrationFilepath
      */
     protected function logMigration(string $migrationFilepath): void
     {

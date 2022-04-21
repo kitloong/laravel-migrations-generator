@@ -13,7 +13,7 @@ class Property
     /**
      * Property constructor.
      *
-     * @param  string $name
+     * @param  string  $name
      * @param  mixed  $value
      */
     public function __construct(string $name, $value)
