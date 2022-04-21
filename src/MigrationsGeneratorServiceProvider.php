@@ -31,13 +31,6 @@ use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
 class MigrationsGeneratorServiceProvider extends ServiceProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var boolean
-     */
-    protected $defer = true;
-
-    /**
      * All of the container singletons that should be registered.
      *
      * @var array
@@ -83,20 +76,6 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
                 MigrateGenerateCommand::class,
             ]);
         }
-    }
-
-    /**
-     * All of the container singletons that should be registered.
-     *
-     * @return array
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public function provides()
-    {
-        return array_merge(
-            array_keys($this->singletons),
-            [MigrationRepositoryInterface::class]
-        );
     }
 
     /**
