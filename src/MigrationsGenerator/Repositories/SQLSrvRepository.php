@@ -110,6 +110,9 @@ class SQLSrvRepository extends Repository
      */
     public function getView(string $view): ?stdClass
     {
+        // The definition is NULL if encrypted
+        // Filter NULL value to always return view definition.
+        // https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-sql-modules-transact-sql?view=sql-server-ver15
         $dbView = $this->setting->getConnection()
             ->selectOne("
                 SELECT name, definition
@@ -119,6 +122,7 @@ class SQLSrvRepository extends Repository
                     AND object_id = object_id(
                         '$view'
                     )
+                    AND definition IS NOT NULL
                 ORDER BY name
             ");
         if ($dbView !== null) {
