@@ -8,20 +8,6 @@ use MigrationsGenerator\Schema\MySQL\ShowColumn;
 class MySQLRepository extends Repository
 {
     /**
-     * Get database charset and collation.
-     *
-     * @return array{charset: string, collation: string}
-     */
-    public function getDatabaseCollation(): array
-    {
-        $setting = app(MigrationsGeneratorSetting::class);
-        $columns = $setting->getConnection()->select("SELECT @@character_set_database, @@collation_database");
-        return [
-            'charset' => $columns[0]->{'@@character_set_database'}, 'collation' => $columns[0]->{'@@collation_database'}
-        ];
-    }
-
-    /**
      * Show column by table and column name.
      *
      * @param  string  $table  Table name.
