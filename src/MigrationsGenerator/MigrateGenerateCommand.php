@@ -281,9 +281,11 @@ class MigrateGenerateCommand extends Command
 
         $this->generateTables($tables);
 
-        $this->info("\nSetting up Views Migrations");
+        if (!$this->option('skip-views')) {
+            $this->info("\nSetting up Views Migrations");
 
-        $this->generateViews($views);
+            $this->generateViews($views);
+        }
 
         $this->info("\nSetting up Foreign Key Migrations");
 

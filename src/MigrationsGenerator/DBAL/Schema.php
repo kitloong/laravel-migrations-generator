@@ -130,6 +130,10 @@ class Schema
             ->filter(call_user_func([$this, 'filterViewCallback']))
             ->map(function (DBALView $view) {
                 return ViewMapper::toModel($view);
-            })->toArray();
+            })
+            ->filter(function (View $view) {
+                return $view->getCreateViewSql() !== '';
+            })
+            ->toArray();
     }
 }

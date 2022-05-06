@@ -56,7 +56,7 @@ class ViewMapper
      */
     private static function makeSQLSrvView(DBALView $from): View
     {
-        if ($from->getSql() !== '') {
+        if ($from->getSql() !== null && $from->getSql() !== '') {
             return self::makeView($from->getName(), $from->getSql());
         }
 
