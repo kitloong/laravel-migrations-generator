@@ -40,7 +40,7 @@ trait FilterTables
         }
 
         // Schema name defined in Laravel framework.
-        $schema = DB::connection()->getConfig('schema');
+        $schema = $this->setting->getConnection()->getConfig('schema');
 
         $parts     = explode('.', $table);
         $namespace = $parts[0];
