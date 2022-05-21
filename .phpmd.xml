@@ -16,6 +16,7 @@
     </rule>
     <rule ref="rulesets/codesize.xml">
         <exclude name="CyclomaticComplexity"/>
+        <exclude name="ExcessiveClassComplexity"/>
         <exclude name="ExcessiveParameterList"/>
         <exclude name="TooManyFields"/>
         <exclude name="TooManyPublicMethods"/>
@@ -23,6 +24,11 @@
     <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
         <properties>
             <property name="reportLevel" value="15"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
+        <properties>
+            <property name="maximum" value="60"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/ExcessiveParameterList">

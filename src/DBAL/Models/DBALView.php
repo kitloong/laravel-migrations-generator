@@ -12,14 +12,10 @@ abstract class DBALView implements View
     protected $quotedName;
     protected $createViewSQL;
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function __construct(DoctrineDBALView $view)
     {
         $this->name          = $this->makeName($view->getName());
         $this->quotedName    = $this->makeQuotedName($this->name);
-        $this->createViewSQL = $this->makeCreateViewSQL($this->quotedName, $view->getSql());
 
         $this->handle($view);
     }
