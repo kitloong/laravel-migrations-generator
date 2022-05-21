@@ -31,21 +31,6 @@ use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
 class MigrationsGeneratorServiceProvider extends ServiceProvider
 {
     /**
-     * All of the container singletons that should be registered.
-     *
-     * @var array
-     */
-    public $singletons = [
-        Setting::class          => Setting::class,
-        MySQLRepository::class  => MySQLRepository::class,
-        MySQLSchema::class      => DBALMySQLSchema::class,
-        PgSQLRepository::class  => PgSQLRepository::class,
-        PgSQLSchema::class      => DBALPgSQLSchema::class,
-        SQLSrvRepository::class => SQLSrvRepository::class,
-        SQLSrvSchema::class     => DBALSQLSrvSchema::class,
-    ];
-
-    /**
      * Register the service provider.
      *
      * @return void
@@ -55,6 +40,22 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig();
+
+        // All of the container singletons that should be registered.
+        // Use $this->app->singleton instead of $singletons property to support lumen.
+        foreach (
+            [
+                Setting::class          => Setting::class,
+                MySQLRepository::class  => MySQLRepository::class,
+                MySQLSchema::class      => DBALMySQLSchema::class,
+                PgSQLRepository::class  => PgSQLRepository::class,
+                PgSQLSchema::class      => DBALPgSQLSchema::class,
+                SQLSrvRepository::class => SQLSrvRepository::class,
+                SQLSrvSchema::class     => DBALSQLSrvSchema::class,
+            ] as $abstract => $concrete
+        ) {
+            $this->app->singleton($abstract, $concrete);
+        }
 
         // Bind the Repository Interface to $app['migrations.repository']
         $this->app->bind(
