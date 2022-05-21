@@ -46,6 +46,10 @@ class SQLSrvSchema extends DBALSchema
         return (new Collection($this->dbalSchema->listViews()))
             ->map(function (DoctrineDBALView $view) {
                 return new SQLSrvView($view);
+            })
+            ->filter(function (SQLSrvView $view) {
+                // $view->getCreateViewSql() is empty string if the view definition is encrypted.
+                return $view->getCreateViewSql() !== '';
             });
     }
 

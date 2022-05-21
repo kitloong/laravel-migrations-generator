@@ -14,6 +14,8 @@ class PgSQLView extends DBALView
      */
     protected function handle(DoctrineDBALView $view): void
     {
+        $this->createViewSQL = $this->makeCreateViewSQL($this->quotedName, $view->getSql());
+
         if ($view->getNamespaceName() === DB::connection()->getConfig('schema')) {
             // Strip namespace from name.
             $name                = $view->getShortestName($view->getNamespaceName());

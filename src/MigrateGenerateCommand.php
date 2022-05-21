@@ -312,14 +312,18 @@ class MigrateGenerateCommand extends Command
         $this->info('Setting up Tables and Index Migrations');
         $this->generateTables($tables);
 
-        $this->info("\nSetting up Views Migrations");
-        $this->generateViews($views);
+        if (!$this->option('skip-views')) {
+            $this->info("\nSetting up Views Migrations");
+            $this->generateViews($views);
+        }
 
         $this->info("\nSetting up Foreign Key Migrations");
         $this->generateForeignKeys($tables);
     }
 
     /**
+     * Generate all migrations in a single file.
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateSquashedMigrations(Collection $tables, Collection $views): void
