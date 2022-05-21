@@ -14,6 +14,9 @@ use KitLoong\MigrationsGenerator\Schema\Models\View;
 
 class PgSQLSchema extends DBALSchema
 {
+    /**
+     * @inheritDoc
+     */
     public function getTableNames(): Collection
     {
         return parent::getTableNames()
