@@ -2,7 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
-use DB;
+use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\ViewBlueprint;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 
