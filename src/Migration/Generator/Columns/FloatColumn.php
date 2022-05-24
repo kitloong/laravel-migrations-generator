@@ -13,9 +13,6 @@ class FloatColumn implements ColumnTypeGenerator
     private const DEFAULT_PRECISION = 8;
     private const DEFAULT_SCALE     = 2;
 
-    private const EMPTY_PRECISION = 0;
-    private const EMPTY_SCALE     = 0;
-
     /**
      * @inheritDoc
      */
@@ -34,21 +31,13 @@ class FloatColumn implements ColumnTypeGenerator
 
     /**
      * Get precision and scale.
-     * Return empty if both precision and scale are 0.
-     * Also, return empty if precision = 8 and scale = 2.
+     * Return empty if precision = 8 and scale = 2.
      *
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
      * @return int[] "[]|[precision]|[precision, scale]"
      */
     private function getPrecisions(Column $column): array
     {
-        if (
-            $column->getPrecision() === self::EMPTY_PRECISION
-            && $column->getScale() === self::EMPTY_SCALE
-        ) {
-            return [];
-        }
-
         if (
             $column->getPrecision() === self::DEFAULT_PRECISION
             && $column->getScale() === self::DEFAULT_SCALE
