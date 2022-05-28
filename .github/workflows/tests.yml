@@ -139,14 +139,14 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload coverage file
-        if: ${{ matrix.php == '8.0' && matrix.laravel == '8.*' }}
+        if: ${{ matrix.php == '8.1' && matrix.laravel == '9.*' }}
         uses: actions/upload-artifact@v2
         with:
           name: PHP-${{ matrix.php }}.coverage
           path: coverage.xml
 
       - name: Upload to codecov
-        if: ${{ matrix.php == '8.0' && matrix.laravel == '8.*' }}
+        if: ${{ matrix.php == '8.1' && matrix.laravel == '9.*' }}
         uses: codecov/codecov-action@v1
         with:
           files: coverage.xml
