@@ -2,7 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL\Models\MySQL;
 
-use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\DBAL\Models\DBALColumn;
@@ -10,6 +9,7 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Repositories\MariaDBRepository;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
+use PDO;
 
 class MySQLColumn extends DBALColumn
 {
@@ -27,7 +27,7 @@ class MySQLColumn extends DBALColumn
 
     protected function handle(): void
     {
-        $this->repository = app(MySQLRepository::class);
+        $this->repository        = app(MySQLRepository::class);
         $this->mariaDBRepository = app(MariaDBRepository::class);
 
         switch ($this->type) {
@@ -52,7 +52,7 @@ class MySQLColumn extends DBALColumn
             default:
         }
 
-        if (DB::connection() instanceof MySqlConnection && DB::connection()->isMaria()) {
+        if ($this->isMaria()) {
             switch ($this->type) {
                 case ColumnType::LONG_TEXT():
                     if ($this->isJson()) {
@@ -62,6 +62,16 @@ class MySQLColumn extends DBALColumn
                 default:
             }
         }
+    }
+
+    /**
+     * Determine if the connected database is a MariaDB database.
+     *
+     * @return bool
+     */
+    private function isMaria(): bool
+    {
+        return str_contains(DB::connection()->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), 'MariaDB');
     }
 
     /**
