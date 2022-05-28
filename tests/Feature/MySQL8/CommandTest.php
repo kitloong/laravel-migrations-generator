@@ -2,6 +2,12 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL8;
 
+use Illuminate\Support\Facades\DB;
+
+/**
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ */
 class CommandTest extends MySQL8TestCase
 {
     public function testRun()
@@ -15,6 +21,24 @@ class CommandTest extends MySQL8TestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testDown()
+    {
+        $this->migrateGeneral('mysql8');
+
+        $this->truncateMigration();
+
+        $this->generateMigrations();
+
+        $this->rollbackMigrationsFrom('mysql8', $this->storageMigrations());
+
+        $tables = $this->getTableNames();
+        $views  = $this->getViewNames();
+
+        $this->assertCount(1, $tables);
+        $this->assertCount(0, $views);
+        $this->assertSame(0, DB::table('migrations')->count());
     }
 
     public function testCollation()
