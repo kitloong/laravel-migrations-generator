@@ -34,6 +34,16 @@ class SQLiteColumn extends DBALColumn
                     $this->type = ColumnType::ENUM();
                 }
                 break;
+            case ColumnType::DATETIME():
+                if ($this->default === 'CURRENT_TIMESTAMP') {
+                    $this->type = ColumnType::TIMESTAMP();
+                }
+                break;
+            case ColumnType::DATETIME_TZ():
+                if ($this->default === 'CURRENT_TIMESTAMP') {
+                    $this->type = ColumnType::TIMESTAMP_TZ();
+                }
+                break;
             default:
         }
     }
