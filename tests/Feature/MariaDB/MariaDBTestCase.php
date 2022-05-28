@@ -41,7 +41,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
             '');
 
         $command = sprintf(
-            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data > %s',
+            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data --skip-column-statistics > %s',
             config('database.connections.mariadb.host'),
             config('database.connections.mariadb.port'),
             config('database.connections.mariadb.username'),
