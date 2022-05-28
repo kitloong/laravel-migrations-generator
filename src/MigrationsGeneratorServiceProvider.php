@@ -22,6 +22,7 @@ use KitLoong\MigrationsGenerator\Migration\Generator\Columns\SoftDeleteColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\StringColumn;
 use KitLoong\MigrationsGenerator\Migration\Migration;
 use KitLoong\MigrationsGenerator\Migration\MigrationInterface;
+use KitLoong\MigrationsGenerator\Repositories\MariaDBRepository;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 use KitLoong\MigrationsGenerator\Repositories\SQLiteRepository;
@@ -48,15 +49,16 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         // Use $this->app->singleton instead of $singletons property to support lumen.
         foreach (
             [
-                Setting::class          => Setting::class,
-                MySQLRepository::class  => MySQLRepository::class,
-                MySQLSchema::class      => DBALMySQLSchema::class,
-                PgSQLRepository::class  => PgSQLRepository::class,
-                PgSQLSchema::class      => DBALPgSQLSchema::class,
-                SQLiteRepository::class => SQLiteRepository::class,
-                SQLiteSchema::class     => DBALSQLiteSchema::class,
-                SQLSrvRepository::class => SQLSrvRepository::class,
-                SQLSrvSchema::class     => DBALSQLSrvSchema::class,
+                Setting::class           => Setting::class,
+                MySQLRepository::class   => MySQLRepository::class,
+                MySQLSchema::class       => DBALMySQLSchema::class,
+                PgSQLRepository::class   => PgSQLRepository::class,
+                PgSQLSchema::class       => DBALPgSQLSchema::class,
+                SQLiteRepository::class  => SQLiteRepository::class,
+                SQLiteSchema::class      => DBALSQLiteSchema::class,
+                SQLSrvRepository::class  => SQLSrvRepository::class,
+                SQLSrvSchema::class      => DBALSQLSrvSchema::class,
+                MariaDBRepository::class => MariaDBRepository::class,
             ] as $abstract => $concrete
         ) {
             $this->app->singleton($abstract, $concrete);
