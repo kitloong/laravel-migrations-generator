@@ -89,6 +89,7 @@ class RegisterColumnType
                 'macaddr'   => Types::MAC_ADDRESS,
                 'oid'       => Types::STRING,
             ],
+            Driver::SQLITE()->getValue() => [],
             Driver::SQLSRV()->getValue() => [
                 'geography'  => Types::GEOMETRY,
                 'money'      => Types::DECIMAL,

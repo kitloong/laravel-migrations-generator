@@ -32,8 +32,6 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
             $table->string('col_multi_custom2');
             $table->string('unique')->unique();
             $table->string('unique_custom')->unique('unique_custom');
-            $table->lineString('spatial_index')->spatialIndex();
-            $table->lineString('spatial_index_custom');
             $table->string('column-hyphen')->index();
             $table->string('chain')->index();
 
@@ -41,8 +39,14 @@ class ExpectedCreateTestIndex_DB_Table extends Migration
             $table->index(['col_multi_custom1', 'col_multi_custom2'], 'index_multi_custom');
             $table->unique(['col_multi1', 'col_multi2']);
             $table->unique(['col_multi_custom1', 'col_multi_custom2'], 'unique_multi_custom');
-            $table->spatialIndex('spatial_index_custom', 'spatial_index_custom');
             $table->unique('chain');
+
+            // SQLite does not support spatial index.
+            if (DB::getDriverName() !== Driver::SQLITE()->getValue()) {
+                $table->lineString('spatial_index')->spatialIndex();
+                $table->lineString('spatial_index_custom');
+                $table->spatialIndex('spatial_index_custom', 'spatial_index_custom');
+            }
 
             if (
                 in_array(DB::getDriverName(), [Driver::MYSQL()->getValue(), Driver::PGSQL()->getValue()])

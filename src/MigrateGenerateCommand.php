@@ -15,6 +15,7 @@ use KitLoong\MigrationsGenerator\Schema\Models\View;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
 use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
 use KitLoong\MigrationsGenerator\Schema\Schema;
+use KitLoong\MigrationsGenerator\Schema\SQLiteSchema;
 use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
 
 class MigrateGenerateCommand extends Command
@@ -101,6 +102,12 @@ class MigrateGenerateCommand extends Command
             $this->generate($tables, $views);
 
             $this->info("\nFinished!\n");
+
+            if (DB::getDriverName() === Driver::SQLITE()->getValue()) {
+                $this->warn('SQLite only supports foreign keys upon creation of the table and not when tables are altered.');
+                $this->warn('See https://www.sqlite.org/omitted.html');
+                $this->warn('*_add_foreign_keys_* migrations were generated, however will get omitted if migrate to SQLite type database.');
+            }
         } finally {
             DB::setDefaultConnection($previousConnection);
         }
@@ -504,6 +511,8 @@ class MigrateGenerateCommand extends Command
                 return $this->schema = app(MySQLSchema::class);
             case Driver::PGSQL():
                 return $this->schema = app(PgSQLSchema::class);
+            case Driver::SQLITE():
+                return $this->schema = app(SQLiteSchema::class);
             case Driver::SQLSRV():
                 return $this->schema = app(SQLSrvSchema::class);
             default:
