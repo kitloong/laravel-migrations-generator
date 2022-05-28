@@ -65,8 +65,8 @@ jobs:
       mariadb:
         image: mariadb:10
         env:
-          MARIADB_ALLOW_EMPTY_PASSWORD: yes
-          MARIADB_DATABASE: migration
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: "migration"
         ports:
           - 3307:3306
         options: >-
