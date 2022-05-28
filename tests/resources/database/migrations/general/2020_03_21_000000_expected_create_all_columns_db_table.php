@@ -107,13 +107,11 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->timeTz('timeTz_default')->default('10:20:30');
             $table->timestamp('timestamp');
             $table->timestamp('timestamp_useCurrent')->useCurrent();
-            if ($this->hasUseCurrentOnUpdate()) {
-                $table->timestamp('timestamp_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
-                $table->timestamp('timestamp_default_useCurrentOnUpdate')->default(
-                    '2020-10-08 10:20:30'
-                )->useCurrentOnUpdate();
-                $table->timestampTz('timestampTz_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
-            }
+            $table->timestamp('timestamp_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamp('timestamp_default_useCurrentOnUpdate')->default(
+                '2020-10-08 10:20:30'
+            )->useCurrentOnUpdate();
+            $table->timestampTz('timestampTz_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
             $table->timestamp('timestamp_0', 0)->nullable();
             $table->timestamp('timestamp_2', 2)->nullable();
             $table->timestamp('timestamp_default')->default('2020-10-08 10:20:30');
