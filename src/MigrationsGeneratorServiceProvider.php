@@ -6,6 +6,7 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use KitLoong\MigrationsGenerator\DBAL\MySQLSchema as DBALMySQLSchema;
 use KitLoong\MigrationsGenerator\DBAL\PgSQLSchema as DBALPgSQLSchema;
+use KitLoong\MigrationsGenerator\DBAL\SQLiteSchema as DBALSQLiteSchema;
 use KitLoong\MigrationsGenerator\DBAL\SQLSrvSchema as DBALSQLSrvSchema;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\BooleanColumn;
@@ -23,9 +24,11 @@ use KitLoong\MigrationsGenerator\Migration\Migration;
 use KitLoong\MigrationsGenerator\Migration\MigrationInterface;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
+use KitLoong\MigrationsGenerator\Repositories\SQLiteRepository;
 use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
 use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
+use KitLoong\MigrationsGenerator\Schema\SQLiteSchema;
 use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
 
 class MigrationsGeneratorServiceProvider extends ServiceProvider
@@ -50,6 +53,8 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
                 MySQLSchema::class      => DBALMySQLSchema::class,
                 PgSQLRepository::class  => PgSQLRepository::class,
                 PgSQLSchema::class      => DBALPgSQLSchema::class,
+                SQLiteRepository::class => SQLiteRepository::class,
+                SQLiteSchema::class     => DBALSQLiteSchema::class,
                 SQLSrvRepository::class => SQLSrvRepository::class,
                 SQLSrvSchema::class     => DBALSQLSrvSchema::class,
             ] as $abstract => $concrete

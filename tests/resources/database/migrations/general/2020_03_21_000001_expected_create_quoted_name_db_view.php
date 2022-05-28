@@ -19,7 +19,7 @@ class ExpectedCreateQuotedName_DB_View extends Migration
     {
         DB::statement(
             "CREATE VIEW " . $this->quoteIdentifier('quoted-name-[db]-view')
-            . " AS (SELECT * from " . $this->quoteIdentifier('quoted-name-[db]') . ")"
+            . " AS SELECT * from " . $this->quoteIdentifier('quoted-name-[db]')
         );
     }
 
@@ -37,6 +37,7 @@ class ExpectedCreateQuotedName_DB_View extends Migration
     {
         switch (DB::getDriverName()) {
             case Driver::MYSQL():
+            case Driver::SQLITE():
                 return '`' . $string . '`';
             case Driver::PGSQL():
                 return '"' . $string . '"';

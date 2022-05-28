@@ -6,7 +6,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use KitLoong\MigrationsGenerator\Enum\Driver;
 
 class ExpectedCreateUserProfile_DB_Table extends Migration
 {
@@ -29,15 +31,19 @@ class ExpectedCreateUserProfile_DB_Table extends Migration
             $table->string('phone');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users_[db]');
-            $table->foreign('user_id_fk_custom', 'users_[db]_foreign_custom')->references('id')->on('users_[db]');
-            $table->foreign('user_id_fk_constraint', 'users_[db]_foreign_constraint')->references('id')->on(
-                'users_[db]'
-            )->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign(['user_id', 'user_sub_id'])->references(['id', 'sub_id'])->on('users_[db]');
-            $table->foreign(['user_id', 'user_sub_id_fk_custom'], 'users_[db]_composite_foreign_custom')->references(
-                ['id', 'sub_id']
-            )->on('users_[db]');
+            // SQLite does not support alter add foreign key.
+            // https://www.sqlite.org/omitted.html
+            if (DB::getDriverName() !== Driver::SQLITE()->getValue()) {
+                $table->foreign('user_id')->references('id')->on('users_[db]');
+                $table->foreign('user_id_fk_custom', 'users_[db]_foreign_custom')->references('id')->on('users_[db]');
+                $table->foreign('user_id_fk_constraint', 'users_[db]_foreign_constraint')->references('id')->on(
+                    'users_[db]'
+                )->onDelete('cascade')->onUpdate('cascade');
+                $table->foreign(['user_id', 'user_sub_id'])->references(['id', 'sub_id'])->on('users_[db]');
+                $table->foreign(['user_id', 'user_sub_id_fk_custom'], 'users_[db]_composite_foreign_custom')
+                    ->references(['id', 'sub_id'])
+                    ->on('users_[db]');
+            }
         });
     }
 

@@ -4,9 +4,11 @@
 
 /** @noinspection PhpUnused */
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use KitLoong\MigrationsGenerator\Enum\Driver;
 
 class ExpectedCreateQuotedNameForeign_DB_Table extends Migration
 {
@@ -21,7 +23,11 @@ class ExpectedCreateQuotedNameForeign_DB_Table extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('quoted-name-id');
 
-            $table->foreign('quoted-name-id')->references('id')->on('quoted-name-[db]');
+            // SQLite does not support alter add foreign key.
+            // https://www.sqlite.org/omitted.html
+            if (DB::getDriverName() !== Driver::SQLITE()->getValue()) {
+                $table->foreign('quoted-name-id')->references('id')->on('quoted-name-[db]');
+            }
         });
     }
 

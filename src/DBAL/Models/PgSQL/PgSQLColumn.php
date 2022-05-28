@@ -58,7 +58,7 @@ class PgSQLColumn extends DBALColumn
             return null;
         }
 
-        $length = Regex::getTextBetween($dataType);
+        $length = Regex::getTextBetweenFirst($dataType);
         if ($length === null) {
             return null;
         }

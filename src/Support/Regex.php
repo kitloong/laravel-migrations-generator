@@ -5,7 +5,28 @@ namespace KitLoong\MigrationsGenerator\Support;
 class Regex
 {
     /**
-     * Get first string between 2 tags.
+     * Get first occurred string between 2 tags.
+     * Given: Hello, (this is (hot) chocolate).
+     * Return: this is (hot
+     *
+     * @param  string  $text  Subject.
+     * @param  string  $left  Left tag.
+     * @param  string  $right  Right tag.
+     * @return string|null
+     */
+    public static function getTextBetweenFirst(string $text, string $left = '\(', string $right = '\)'): ?string
+    {
+        $matched = preg_match('/' . $left . '(.*?)' . $right . '/', $text, $output);
+        if ($matched === 1) {
+            return $output[1];
+        }
+        return null;
+    }
+
+    /**
+     * Get string between 2 tags.
+     * Given: Hello, (this is (hot) chocolate).
+     * Return: this is (hot) chocolate
      *
      * @param  string  $text  Subject.
      * @param  string  $left  Left tag.
@@ -14,7 +35,7 @@ class Regex
      */
     public static function getTextBetween(string $text, string $left = '\(', string $right = '\)'): ?string
     {
-        $matched = preg_match('/' . $left . '(.*?)' . $right . '/', $text, $output);
+        $matched = preg_match('/' . $left . '(.*)' . $right . '/', $text, $output);
         if ($matched === 1) {
             return $output[1];
         }
