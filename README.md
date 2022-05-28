@@ -18,6 +18,7 @@ Currently, Generator support generate migrations from:
 - [x] MySQL
 - [x] PostgreSQL
 - [x] SQL Server
+- [x] SQLite
 
 ## Version Compatibility
 
@@ -126,6 +127,12 @@ Run `php artisan help migrate:generate` for a list of options.
 |--use-db-collation|Follow db collations for migrations|
 |--skip-views|Don\'t generate views|
 |--squash|Generate all migrations into a single file|
+
+## SQLite alter foreign key
+
+The generator first generates all tables and then adds foreign keys to existing tables.
+However, SQLite only supports foreign keys upon creation of the table and not when tables are altered.
+*_add_foreign_keys_* migrations will still be generated, however will get omitted if migrate to SQLite type database.
 
 ## Thank You
 
