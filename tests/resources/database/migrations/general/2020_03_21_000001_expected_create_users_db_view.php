@@ -1,6 +1,7 @@
 <?php
 
 /** @noinspection PhpIllegalPsrClassPathInspection */
+
 /** @noinspection PhpUnused */
 
 use Illuminate\Database\Migrations\Migration;
@@ -15,7 +16,7 @@ class ExpectedCreateUsers_DB_View extends Migration
      */
     public function up()
     {
-        DB::statement("CREATE VIEW users_[db]_view AS (SELECT * from users_[db])");
+        DB::statement("CREATE VIEW users_[db]_view AS SELECT * from users_[db]");
     }
 
     /**

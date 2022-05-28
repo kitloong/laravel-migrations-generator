@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\MySQL8;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL8;
 
 class CommandTest extends MySQL8TestCase
 {

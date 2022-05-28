@@ -71,6 +71,11 @@ jobs:
         sqlsrv_extension: [ pdo_sqlsrv ]
         include:
           - php: 8.0
+            laravel: 9.*
+            dbal: 3.*
+            stability: prefer-stable
+            sqlsrv_extension: pdo_sqlsrv
+          - php: 8.0
             laravel: 8.*
             dbal: 3.*
             stability: prefer-stable
@@ -85,6 +90,11 @@ jobs:
             dbal: 2.*
             stability: prefer-stable
             sqlsrv_extension: pdo_sqlsrv
+          - php: 8.1
+            laravel: 9.*
+            dbal: 3.*
+            stability: prefer-stable
+            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
           - php: 8.1
             laravel: 8.*
             dbal: 3.*
@@ -117,12 +127,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          php -m
           composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal:${{ matrix.dbal }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
       - name: Setup .env
-        run: composer run action-env-setup
+        run: |
+          mkdir ./database
+          composer run action-env-setup
 
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover=coverage.xml

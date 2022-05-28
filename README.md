@@ -1,8 +1,8 @@
 # Laravel Migrations Generator
 
-![Style check CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/check.yml/badge.svg?branch=5.x)
-[![codecov](https://codecov.io/gh/kitloong/laravel-migrations-generator/branch/5.x/graph/badge.svg?token=U6ZRDPY6QZ)](https://codecov.io/gh/kitloong/laravel-migrations-generator)
-![Tests CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/tests.yml/badge.svg?branch=5.x)
+![Style check CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/check.yml/badge.svg?branch=6.x)
+[![codecov](https://codecov.io/gh/kitloong/laravel-migrations-generator/branch/6.x/graph/badge.svg?token=U6ZRDPY6QZ)](https://codecov.io/gh/kitloong/laravel-migrations-generator)
+![Tests CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/tests.yml/badge.svg?branch=6.x)
 [![Latest Stable Version](https://poser.pugx.org/kitloong/laravel-migrations-generator/v/stable.png)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 [![Total Downloads](http://poser.pugx.org/kitloong/laravel-migrations-generator/downloads)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 [![License](https://poser.pugx.org/kitloong/laravel-migrations-generator/license.png)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
@@ -18,17 +18,19 @@ Currently, Generator support generate migrations from:
 - [x] MySQL
 - [x] PostgreSQL
 - [x] SQL Server
+- [x] SQLite
 
 ## Version Compatibility
 
 |Laravel|Version|
 |---|---|
-|8.x|5.x|
-|7.x|5.x|
-|6.x|5.x|
-|5.8.x|5.x|
-|5.7.x|5.x|
-|5.6.x|5.x|
+|9.x|6.x|
+|8.x|6.x|
+|7.x|6.x|
+|6.x|6.x|
+|5.8.x|6.x|
+|5.7.x|6.x|
+|5.6.x|6.x|
 |5.5 and below|https://github.com/Xethron/migrations-generator|
 
 ## Install
@@ -60,7 +62,7 @@ $app->withFacades();
 Add following line into the `Register Service Providers` section.
 
 ```
-$app->register(\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+$app->register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
 ```
 
 ## Usage
@@ -125,6 +127,12 @@ Run `php artisan help migrate:generate` for a list of options.
 |--use-db-collation|Follow db collations for migrations|
 |--skip-views|Don\'t generate views|
 |--squash|Generate all migrations into a single file|
+
+## SQLite alter foreign key
+
+The generator first generates all tables and then adds foreign keys to existing tables.
+However, SQLite only supports foreign keys upon creation of the table and not when tables are altered.
+*_add_foreign_keys_* migrations will still be generated, however will get omitted if migrate to SQLite type database.
 
 ## Thank You
 

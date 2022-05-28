@@ -1,16 +1,19 @@
 <?php
 
 /** @noinspection PhpIllegalPsrClassPathInspection */
+
 /** @noinspection PhpUnused */
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use MigrationsGenerator\Support\CheckLaravelVersion;
+use KitLoong\MigrationsGenerator\Enum\Driver;
+use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 class ExpectedCreateAllColumns_DB_Table extends Migration
 {
-    use CheckLaravelVersion;
+    use CheckMigrationMethod;
 
     /**
      * Run the migrations.
@@ -68,13 +71,8 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->float('float_92', 9, 2);
             $table->float('float_53', 5, 3);
             $table->float('float_default')->default(10.8);
-
-            if ((config('database.default') === 'pgsql' && $this->atLeastLaravel5Dot7())
-                || config('database.default') !== 'pgsql') {
-                $table->geometry('geometry');
-                $table->geometryCollection('geometryCollection');
-            }
-
+            $table->geometry('geometry');
+            $table->geometryCollection('geometryCollection');
             $table->integer('integer');
             $table->integer('integer_default')->default(1080);
             $table->ipAddress('ipAddress');
@@ -96,13 +94,6 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->string('string');
             $table->string('string_255', 255);
             $table->string('string_100', 100);
-            if (config('database.default') === 'pgsql' || config('database.default') === 'sqlsrv') {
-                $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ quotes');
-                $table->string('comment_double_quote')->comment("string with ' quotes");
-            } else {
-                $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ \\\' quotes');
-                $table->string('comment_double_quote')->comment("string with \" ' quotes");
-            }
             $table->string('string_default_empty')->default('');
             $table->string('string_default_null')->default(null);
             $table->text('text');
@@ -116,13 +107,16 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->timeTz('timeTz_default')->default('10:20:30');
             $table->timestamp('timestamp');
             $table->timestamp('timestamp_useCurrent')->useCurrent();
-            if ($this->atLeastLaravel8()) {
-                $table->timestamp('timestamp_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
-            }
+            $table->timestamp('timestamp_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamp('timestamp_default_useCurrentOnUpdate')->default(
+                '2020-10-08 10:20:30'
+            )->useCurrentOnUpdate();
+            $table->timestampTz('timestampTz_useCurrentOnUpdate')->useCurrent()->useCurrentOnUpdate();
             $table->timestamp('timestamp_0', 0)->nullable();
             $table->timestamp('timestamp_2', 2)->nullable();
             $table->timestamp('timestamp_default')->default('2020-10-08 10:20:30');
             $table->timestampTz('timestampTz')->nullable();
+            $table->timestampTz('timestampTz_useCurrent')->useCurrent();
             $table->timestampTz('timestampTz_0', 0)->nullable();
             $table->timestampTz('timestampTz_2', 2)->nullable();
             $table->timestampTz('timestampTz_default')->default('2020-10-08 10:20:30');
@@ -137,16 +131,27 @@ class ExpectedCreateAllColumns_DB_Table extends Migration
             $table->unsignedSmallInteger('unsignedSmallInteger');
             $table->unsignedTinyInteger('unsignedTinyInteger');
             $table->year('year')->default(2020);
-
-            if (config('database.default') === 'mysql57') {
-                if ($this->atLeastLaravel5Dot8()) {
-                    $table->set('set', ['strawberry', 'vanilla']);
-                }
-            }
             $table->macAddress('macAddress');
             $table->macAddress('macAddress_default')->default('00:0a:95:9d:68:16');
             $table->uuid('uuid');
             $table->uuid('uuid_default')->default('f6a16ff7-4a31-11eb-be7b-8344edc8f36b');
+            $table->string('name space');
+
+            switch (DB::getDriverName()) {
+                case Driver::MYSQL():
+                    if ($this->hasSet()) {
+                        $table->set('set', ['strawberry', 'vanilla']);
+                    }
+                    $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ \\\' quotes');
+                    $table->string('comment_double_quote')->comment("string with \" ' quotes");
+                    break;
+                case Driver::PGSQL():
+                case Driver::SQLSRV():
+                    $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ quotes');
+                    $table->string('comment_double_quote')->comment("string with ' quotes");
+                    break;
+                default:
+            }
         });
     }
 

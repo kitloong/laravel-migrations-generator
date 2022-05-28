@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\MySQL57;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -39,7 +39,7 @@ class DBConnectionTest extends MySQL57TestCase
 
     public function tearDown(): void
     {
-        // Clean migrations table after test.
+        // Clean "migrations" table after test.
         Schema::connection('mysql8')->dropIfExists('migrations');
 
         // Switch back to mysql57, to drop mysql57 tables in tearDown.
@@ -62,12 +62,20 @@ class DBConnectionTest extends MySQL57TestCase
                 [
                     '--connection'    => 'mysql57',
                     '--path'          => $this->storageMigrations(),
-                    '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
+                    '--template-path' => base_path('resources/stub/migration.stub'),
                 ]
             )
                 ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
-                ->expectsQuestion('Log into current connection: mysql57? [Y = mysql57, n = mysql8 (default connection)]', true)
-                ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]', '0');
+                ->expectsQuestion(
+                    'Log into current connection: mysql57? [Y = mysql57, n = mysql8 (default connection)]',
+                    true
+                )
+                ->expectsQuestion(
+                    'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                    '0'
+                );
+
+            $this->assertSame(33, DB::connection('mysql57')->table('migrations')->count());
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
@@ -84,14 +92,20 @@ class DBConnectionTest extends MySQL57TestCase
             [
                 '--connection'    => 'mysql57',
                 '--path'          => $this->storageMigrations(),
-                '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
+                '--template-path' => base_path('resources/stub/migration.stub'),
             ]
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
-            ->expectsQuestion('Log into current connection: mysql57? [Y = mysql57, n = mysql8 (default connection)]', false)
-            ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]', '0');
+            ->expectsQuestion(
+                'Log into current connection: mysql57? [Y = mysql57, n = mysql8 (default connection)]',
+                false
+            )
+            ->expectsQuestion(
+                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                '0'
+            );
 
-        $this->assertSame(12, DB::connection('mysql8')->table('migrations')->count());
+        $this->assertSame(33, DB::connection('mysql8')->table('migrations')->count());
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)

@@ -1,9 +1,11 @@
 <?php
 
-namespace Tests;
+namespace KitLoong\MigrationsGenerator\Tests;
 
 use Exception;
-use MigrationsGenerator\MigrationsGeneratorServiceProvider;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 use Mockery;
 use Orchestra\Testbench\TestCase as Testbench;
 use PHPUnit\Framework\Constraint\IsEqual;
@@ -24,7 +26,7 @@ abstract class TestCase extends Testbench
             case 'partialMock':
                 return $this->instance($arguments[0], Mockery::mock(...array_filter($arguments))->makePartial());
             default:
-                throw new Exception('Call to undefined method '.get_called_class().'::'.$name.'()');
+                throw new Exception('Call to undefined method ' . get_called_class() . '::' . $name . '()');
         }
     }
 
@@ -39,12 +41,12 @@ abstract class TestCase extends Testbench
     {
         parent::getEnvironmentSetUp($app);
 
-        app()->setBasePath(__DIR__.'/../');
+        app()->setBasePath(__DIR__ . '/../');
     }
 
     /**
-     * Asserts that the contents of one file is equal to the contents of another
-     * file.
+     * Asserts that the contents of one file is equal to the contents of another file, ignore the ordering.
+     *
      *
      * @param  string  $expected
      * @param  string  $actual
@@ -55,14 +57,20 @@ abstract class TestCase extends Testbench
         static::assertFileExists($expected, $message);
         static::assertFileExists($actual, $message);
 
-        $expectedContent = file($expected);
-        sort($expectedContent);
+        $removeLastComma = function (string $line): string {
+            return Str::endsWith($line, ',' . PHP_EOL)
+                ? Str::replaceLast(',' . PHP_EOL, PHP_EOL, $line)
+                : $line;
+        };
 
-        $constraint = new IsEqual($expectedContent);
+        $expectedContent = new Collection(file($expected));
+        $expectedContent = $expectedContent->map($removeLastComma)->sort();
 
-        $actualContent = file($actual);
-        sort($actualContent);
+        $constraint = new IsEqual($expectedContent->values());
 
-        static::assertThat($actualContent, $constraint, $message);
+        $actualContent = new Collection(file($actual));
+        $actualContent = $actualContent->map($removeLastComma)->sort();
+
+        static::assertThat($actualContent->values(), $constraint, $message);
     }
 }

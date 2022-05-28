@@ -1,6 +1,7 @@
 <?php
 
 /** @noinspection PhpIllegalPsrClassPathInspection */
+
 /** @noinspection PhpUnused */
 
 use Illuminate\Database\Migrations\Migration;
@@ -19,6 +20,7 @@ class ExpectedCreateReservedNameWithPrecision_DB_Table extends Migration
         Schema::create('reserved_name_with_precision_[db]', function (Blueprint $table) {
             $table->increments('id');
             $table->softDeletes('deleted_at', 2);
+            $table->softDeletesTz('deleted_at_tz', 2);
             $table->string('remember_token', 120);
             $table->timestamps(2);
         });

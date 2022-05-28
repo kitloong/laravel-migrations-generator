@@ -1,18 +1,20 @@
 <?php
 
-namespace Tests\Feature;
+namespace KitLoong\MigrationsGenerator\Tests\Feature;
 
-use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\View;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Tests\TestCase;
+use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
+use KitLoong\MigrationsGenerator\Tests\TestCase;
 
 abstract class FeatureTestCase extends TestCase
 {
+    use AssetNameQuote;
+
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
@@ -43,13 +45,17 @@ abstract class FeatureTestCase extends TestCase
     {
         if (method_exists(Dotenv::class, 'createImmutable')) {
             $dotenv = Dotenv::createImmutable(base_path());
+            $dotenv->load();
+            return;
         } elseif (method_exists(Dotenv::class, 'create')) {
             /** @noinspection PhpParamsInspection */
             $dotenv = Dotenv::create(base_path());
-        } else {
-            /** @noinspection PhpParamsInspection */
-            $dotenv = new Dotenv(base_path());
+            $dotenv->load();
+            return;
         }
+
+        /** @noinspection PhpParamsInspection */
+        $dotenv = new Dotenv(base_path());
         $dotenv->load();
     }
 
@@ -63,17 +69,17 @@ abstract class FeatureTestCase extends TestCase
 
     protected function storageMigrations(string $path = ''): string
     {
-        return storage_path('migrations').($path ? DIRECTORY_SEPARATOR.$path : $path);
+        return storage_path('migrations') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
     protected function storageFrom(string $path = ''): string
     {
-        return storage_path('from').($path ? DIRECTORY_SEPARATOR.$path : $path);
+        return storage_path('from') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
     protected function storageSql(string $path = ''): string
     {
-        return storage_path('sql').($path ? DIRECTORY_SEPARATOR.$path : $path);
+        return storage_path('sql') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
     protected function migrateGeneral(string $connection): void
@@ -91,9 +97,11 @@ abstract class FeatureTestCase extends TestCase
         File::copyDirectory($templatePath, $this->storageFrom());
         foreach (File::files($this->storageFrom()) as $file) {
             $content = str_replace([
-                '[db]', '_DB_'
+                '[db]',
+                '_DB_'
             ], [
-                $connection, ucfirst("$connection")
+                $connection,
+                ucfirst("$connection")
             ], $file->getContents());
 
             file_put_contents($this->storageFrom($file->getBasename()), $content);
@@ -126,7 +134,8 @@ abstract class FeatureTestCase extends TestCase
 
     /**
      * Generate migration files to $this->storageMigrations()
-     * @see \Tests\Feature\FeatureTestCase::getEnvironmentSetUp()
+     *
+     * @see \KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase::getEnvironmentSetUp()
      */
     protected function generateMigrations(array $options = []): void
     {
@@ -134,11 +143,14 @@ abstract class FeatureTestCase extends TestCase
             'migrate:generate',
             array_merge([
                 '--path'          => $this->storageMigrations(),
-                '--template-path' => base_path('src/MigrationsGenerator/stub/migration.stub'),
+                '--template-path' => base_path('resources/stub/migration.stub'),
             ], $options)
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
-            ->expectsQuestion('Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]', '0');
+            ->expectsQuestion(
+                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                '0'
+            );
     }
 
     protected function assertMigrations(): void
@@ -177,13 +189,17 @@ abstract class FeatureTestCase extends TestCase
      * Get a list of table names.
      *
      * @return string[]
-     * @throws \Doctrine\DBAL\Exception
      */
     protected function getTableNames(): array
     {
-        return collect(DB::connection()->getDoctrineSchemaManager()->listTables())
-            ->map(function (Table $table) {
-                return $table->getName();
+        return collect(DB::connection()->getDoctrineSchemaManager()->listTableNames())
+            ->map(function ($table) {
+                // The table name may contain quotes.
+                // Always trim quotes before set into list.
+                if ($this->isIdentifierQuoted($table)) {
+                    return $this->trimQuotes($table);
+                }
+                return $table;
             })
             ->toArray();
     }
@@ -192,7 +208,6 @@ abstract class FeatureTestCase extends TestCase
      * Get a list of view names.
      *
      * @return string[]
-     * @throws \Doctrine\DBAL\Exception
      */
     protected function getViewNames(): array
     {

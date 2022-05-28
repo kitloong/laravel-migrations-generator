@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Support;
+namespace KitLoong\MigrationsGenerator\Tests\Support;
 
 use Illuminate\Support\Facades\App;
-use MigrationsGenerator\Support\CheckLaravelVersion;
-use Tests\TestCase;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
+use KitLoong\MigrationsGenerator\Tests\TestCase;
 
 class CheckLaravelVersionTest extends TestCase
 {
@@ -70,7 +70,7 @@ class CheckLaravelVersionTest extends TestCase
 
     private function stubInstance()
     {
-        return new class() {
+        return new class () {
             use CheckLaravelVersion;
         };
     }

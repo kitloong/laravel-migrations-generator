@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\PgSQL;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -20,7 +20,9 @@ class CommandTest extends PgSQLTestCase
             $this->migrateGeneral('pgsql');
 
             // Test timestamp default now()
-            DB::statement("ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL");
+            DB::statement(
+                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL"
+            );
         };
 
         $generateMigrations = function () {
@@ -116,15 +118,20 @@ class CommandTest extends PgSQLTestCase
 
     private function assertLineExistsThenReplace(string $file, string $line)
     {
-        $this->assertTrue(str_contains(
-            file_get_contents($file),
-            $line
-        ));
+        $this->assertTrue(
+            str_contains(
+                file_get_contents($file),
+                $line
+            )
+        );
 
-        File::put($file, str_replace(
-            $line,
-            'replaced',
-            file_get_contents($file)
-        ));
+        File::put(
+            $file,
+            str_replace(
+                $line,
+                'replaced',
+                file_get_contents($file)
+            )
+        );
     }
 }
