@@ -131,7 +131,9 @@ jobs:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
 
       - name: Setup .env
-        run: composer run action-env-setup
+        run: |
+          mkdir ./database
+          composer run action-env-setup
 
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
