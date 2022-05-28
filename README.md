@@ -15,6 +15,7 @@ This package is cloned from https://github.com/Xethron/migrations-generator and 
 
 Currently, Generator support generate migrations from:
 
+- [x] MariaDB
 - [x] MySQL
 - [x] PostgreSQL
 - [x] SQL Server
