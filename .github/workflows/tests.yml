@@ -62,6 +62,19 @@ jobs:
         options: >-
           --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P '!QAZ2wsx'"
 
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: "migration"
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     strategy:
       matrix:
         php: [ 7.3, 7.4 ]

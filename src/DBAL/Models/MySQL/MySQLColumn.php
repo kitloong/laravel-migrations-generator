@@ -2,11 +2,14 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL\Models\MySQL;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\DBAL\Models\DBALColumn;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
+use KitLoong\MigrationsGenerator\Repositories\MariaDBRepository;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
+use PDO;
 
 class MySQLColumn extends DBALColumn
 {
@@ -17,9 +20,15 @@ class MySQLColumn extends DBALColumn
      */
     private $repository;
 
+    /**
+     * @var \KitLoong\MigrationsGenerator\Repositories\MariaDBRepository
+     */
+    private $mariaDBRepository;
+
     protected function handle(): void
     {
-        $this->repository = app(MySQLRepository::class);
+        $this->repository        = app(MySQLRepository::class);
+        $this->mariaDBRepository = app(MariaDBRepository::class);
 
         switch ($this->type) {
             case ColumnType::UNSIGNED_TINY_INTEGER():
@@ -42,6 +51,27 @@ class MySQLColumn extends DBALColumn
                 break;
             default:
         }
+
+        if ($this->isMaria()) {
+            switch ($this->type) {
+                case ColumnType::LONG_TEXT():
+                    if ($this->isJson()) {
+                        $this->type = ColumnType::JSON();
+                    }
+                    break;
+                default:
+            }
+        }
+    }
+
+    /**
+     * Determine if the connected database is a MariaDB database.
+     *
+     * @return bool
+     */
+    private function isMaria(): bool
+    {
+        return str_contains(DB::connection()->getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), 'MariaDB');
     }
 
     /**
@@ -114,5 +144,21 @@ class MySQLColumn extends DBALColumn
     private function hasOnUpdateCurrentTimestamp(): bool
     {
         return $this->repository->isOnUpdateCurrentTimestamp($this->tableName, $this->name);
+    }
+
+    /**
+     * MariaDB return `longText` instead of `json` column.
+     * Check the check constraint of this column to check if type is `json`.
+     * Return true if check constraint contains `json_valid` keyword.
+     *
+     * @return bool
+     */
+    private function isJson(): bool
+    {
+        $checkConstraint = $this->mariaDBRepository->getCheckConstraintForJson($this->tableName, $this->name);
+        if ($checkConstraint === null) {
+            return false;
+        }
+        return true;
     }
 }

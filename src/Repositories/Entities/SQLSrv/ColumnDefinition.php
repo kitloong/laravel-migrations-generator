@@ -2,6 +2,9 @@
 
 namespace KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv;
 
+use Illuminate\Support\Collection;
+use stdClass;
+
 class ColumnDefinition
 {
     /** @var string */
@@ -34,42 +37,23 @@ class ColumnDefinition
     /** @var string|null */
     private $comment;
 
-    /**
-     * Column constructor.
-     *
-     * @param  string  $name
-     * @param  string  $type
-     * @param  int  $length
-     * @param  bool  $notnull
-     * @param  int  $scale
-     * @param  int  $precision
-     * @param  bool  $autoincrement
-     * @param  string|null  $default
-     * @param  string|null  $collation
-     * @param  string|null  $comment
-     */
-    public function __construct(
-        string $name,
-        string $type,
-        int $length,
-        bool $notnull,
-        int $scale,
-        int $precision,
-        bool $autoincrement,
-        ?string $default,
-        ?string $collation,
-        ?string $comment
-    ) {
-        $this->name          = $name;
-        $this->type          = $type;
-        $this->length        = $length;
-        $this->notnull       = $notnull;
-        $this->default       = $default;
-        $this->scale         = $scale;
-        $this->precision     = $precision;
-        $this->autoincrement = $autoincrement;
-        $this->collation     = $collation;
-        $this->comment       = $comment;
+    public function __construct(stdClass $column)
+    {
+        // Convert column property to case-insensitive
+        $lowerKey = (new Collection($column))->mapWithKeys(function ($item, $key) {
+            return [strtolower($key) => $item];
+        });
+
+        $this->name          = $lowerKey['name'];
+        $this->type          = $lowerKey['type'];
+        $this->length        = $lowerKey['length'];
+        $this->notnull       = $lowerKey['notnull'];
+        $this->default       = $lowerKey['default'];
+        $this->scale         = $lowerKey['scale'];
+        $this->precision     = $lowerKey['precision'];
+        $this->autoincrement = $lowerKey['autoincrement'];
+        $this->collation     = $lowerKey['collation'];
+        $this->comment       = $lowerKey['comment'];
     }
 
     /**

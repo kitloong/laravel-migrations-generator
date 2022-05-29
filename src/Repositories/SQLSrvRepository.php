@@ -52,7 +52,7 @@ class SQLSrvRepository extends Repository
      */
     public function getColumnDefinition(string $table, string $column): ?ColumnDefinition
     {
-        $columns = DB::select(
+        $result = DB::selectOne(
             "SELECT col.name,
                        type.name AS type,
                        col.max_length AS length,
@@ -81,22 +81,7 @@ class SQLSrvRepository extends Repository
                     AND " . $this->getTableWhereClause($table, 'scm.name', 'obj.name') . "
                     AND col.name = " . $this->quoteStringLiteral($column)
         );
-        if (count($columns) > 0) {
-            $column = $columns[0];
-            return new ColumnDefinition(
-                $column->name,
-                $column->type,
-                $column->length,
-                $column->notnull,
-                $column->scale,
-                $column->precision,
-                $column->autoincrement,
-                $column->default,
-                $column->collation,
-                $column->comment
-            );
-        }
-        return null;
+        return $result === null ? null : new ColumnDefinition($result);
     }
 
     /**
@@ -121,10 +106,7 @@ class SQLSrvRepository extends Repository
                     AND definition IS NOT NULL
                 ORDER BY name"
         );
-        if ($view !== null) {
-            return new ViewDefinition($view->name, $view->definition);
-        }
-        return null;
+        return $view === null ? null : new ViewDefinition($view->name, $view->definition);
     }
 
     /**
