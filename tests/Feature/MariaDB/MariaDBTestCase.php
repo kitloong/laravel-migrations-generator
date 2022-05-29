@@ -40,8 +40,13 @@ abstract class MariaDBTestCase extends FeatureTestCase
             '-p\'' . config('database.connections.mariadb.password') . '\'' :
             '');
 
+        $skipColumnStatistics = '';
+        if (env('MYSQLDUMP_HAS_OPTION_SKIP_COLUMN_STATISTICS')) {
+            $skipColumnStatistics = '--skip-column-statistics';
+        }
+
         $command = sprintf(
-            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data --skip-column-statistics > %s',
+            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' > %s',
             config('database.connections.mariadb.host'),
             config('database.connections.mariadb.port'),
             config('database.connections.mariadb.username'),
