@@ -23,9 +23,6 @@ class MariaDBRepository extends Repository
                 AND LEVEL = 'Column'
                 AND CHECK_CLAUSE LIKE '%json_valid(`$column`)%'"
         );
-        if ($column === null) {
-            return null;
-        }
-        return new CheckConstraint($column);
+        return $column === null ? null : new CheckConstraint($column);
     }
 }
