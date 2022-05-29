@@ -17,11 +17,8 @@ class MySQLRepository extends Repository
      */
     public function showColumn(string $table, string $column): ?ShowColumn
     {
-        $column = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column'");
-        if ($column !== null) {
-            return new ShowColumn($column);
-        }
-        return null;
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column'");
+        return $result === null ? null : new ShowColumn($result);
     }
 
     /**
@@ -33,17 +30,18 @@ class MySQLRepository extends Repository
      */
     public function getEnumPresetValues(string $table, string $column): Collection
     {
-        $columns = DB::select("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'enum(%'");
-        if (count($columns) > 0) {
-            $showColumn = new ShowColumn($columns[0]);
-            $value      = substr(
-                str_replace('enum(\'', '', $showColumn->getType()),
-                0,
-                -2
-            );
-            return new Collection(explode("','", $value));
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'enum(%'");
+        if ($result === null) {
+            return new Collection();
         }
-        return new Collection();
+
+        $showColumn = new ShowColumn($result);
+        $value      = substr(
+            str_replace('enum(\'', '', $showColumn->getType()),
+            0,
+            -2
+        );
+        return new Collection(explode("','", $value));
     }
 
     /**
@@ -55,18 +53,18 @@ class MySQLRepository extends Repository
      */
     public function getSetPresetValues(string $table, string $column): Collection
     {
-        $columns = DB::select("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'set(%'");
-        if (count($columns) > 0) {
-            $showColumn = new ShowColumn($columns[0]);
-            $value      = substr(
-                str_replace('set(\'', '', $showColumn->getType()),
-                0,
-                -2
-            );
-            return new Collection(explode("','", $value));
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'set(%'");
+        if ($result === null) {
+            return new Collection();
         }
 
-        return new Collection();
+        $showColumn = new ShowColumn($result);
+        $value      = substr(
+            str_replace('set(\'', '', $showColumn->getType()),
+            0,
+            -2
+        );
+        return new Collection(explode("','", $value));
     }
 
     /**
@@ -80,16 +78,12 @@ class MySQLRepository extends Repository
     {
         // MySQL5.7 shows "on update CURRENT_TIMESTAMP"
         // MySQL8 shows "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
-        $showColumn = DB::select(
+        $result = DB::selectOne(
             "SHOW COLUMNS FROM `$table`
                 WHERE Field = '$column'
                     AND Type = 'timestamp'
                     AND EXTRA LIKE '%on update CURRENT_TIMESTAMP%'"
         );
-        if (count($showColumn) > 0) {
-            return true;
-        }
-
-        return false;
+        return !($result === null);
     }
 }
