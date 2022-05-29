@@ -176,16 +176,6 @@ abstract class FeatureTestCase extends TestCase
     }
 
     /**
-     * Determine if the connected database is a MariaDB database.
-     *
-     * @return bool
-     */
-    protected function isMaria(): bool
-    {
-        return env('IS_MARIA_CLIENT') === true;
-    }
-
-    /**
      * Get a list of table names.
      *
      * @return string[]

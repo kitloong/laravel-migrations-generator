@@ -40,9 +40,13 @@ abstract class MySQL57TestCase extends FeatureTestCase
             '-p\'' . config('database.connections.mysql57.password') . '\'' :
             '');
 
-        $skipColumnStatistics = !$this->isMaria() ? '--skip-column-statistics' : '';
+        $skipColumnStatistics = '';
+        if (env('MYSQLDUMP_HAS_OPTION_SKIP_COLUMN_STATISTICS')) {
+            $skipColumnStatistics = '--skip-column-statistics';
+        }
 
         $command = sprintf(
+        // Disable column-statistics to dump MySQL 5.7
             'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' > %s',
             config('database.connections.mysql57.host'),
             config('database.connections.mysql57.port'),

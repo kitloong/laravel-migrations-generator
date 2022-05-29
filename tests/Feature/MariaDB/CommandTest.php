@@ -1,19 +1,22 @@
 <?php
 
-namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL8;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\MariaDB;
 
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 /**
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  */
-class CommandTest extends MySQL8TestCase
+class CommandTest extends MariaDBTestCase
 {
+    use CheckMigrationMethod;
+
     public function testRun()
     {
         $migrateTemplates = function () {
-            $this->migrateGeneral('mysql8');
+            $this->migrateGeneral('mariadb');
         };
 
         $generateMigrations = function () {
@@ -25,13 +28,13 @@ class CommandTest extends MySQL8TestCase
 
     public function testDown()
     {
-        $this->migrateGeneral('mysql8');
+        $this->migrateGeneral('mariadb');
 
         $this->truncateMigration();
 
         $this->generateMigrations();
 
-        $this->rollbackMigrationsFrom('mysql8', $this->storageMigrations());
+        $this->rollbackMigrationsFrom('mariadb', $this->storageMigrations());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -44,7 +47,7 @@ class CommandTest extends MySQL8TestCase
     public function testCollation()
     {
         $migrateTemplates = function () {
-            $this->migrateCollation('mysql8');
+            $this->migrateCollation('mariadb');
         };
 
         $generateMigrations = function () {
@@ -67,7 +70,7 @@ class CommandTest extends MySQL8TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql8', $this->storageMigrations());
+        $this->runMigrationsFrom('mariadb', $this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));

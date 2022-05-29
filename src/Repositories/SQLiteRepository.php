@@ -16,9 +16,6 @@ class SQLiteRepository extends Repository
     {
         $sql = DB::selectOne('SELECT sql FROM sqlite_master WHERE tbl_name="' . $table . '"');
         // null if the condition not met.
-        if ($sql !== null) {
-            return $sql->sql;
-        }
-        return '';
+        return $sql === null ? '' : $sql->sql;
     }
 }

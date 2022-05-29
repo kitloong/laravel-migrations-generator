@@ -17,7 +17,7 @@ class PgSQLRepository extends Repository
      */
     public function getTypeByColumnName(string $table, string $column): ?string
     {
-        $columnDetail = DB::select(
+        $result = DB::selectOne(
             "SELECT pg_catalog.format_type(a.atttypid, a.atttypmod) as datatype
                 FROM
                     pg_catalog.pg_attribute a
@@ -33,13 +33,7 @@ class PgSQLRepository extends Repository
                     )
                     AND a.attname='$column'"
         );
-        if (count($columnDetail) > 0) {
-            return $columnDetail[0]->datatype;
-        }
-
-        // @codeCoverageIgnoreStart
-        return null;
-        // @codeCoverageIgnoreEnd
+        return $result === null ? null : $result->datatype;
     }
 
     /**
@@ -51,7 +45,7 @@ class PgSQLRepository extends Repository
      */
     public function getCheckConstraintDefinition(string $table, string $column): ?string
     {
-        $columnDetail = DB::select(
+        $result = DB::selectOne(
             "SELECT pgc.conname AS constraint_name,
                        pgc.contype,
                        ccu.table_schema AS table_schema,
@@ -68,13 +62,7 @@ class PgSQLRepository extends Repository
                     AND ccu.table_name='$table'
                     AND ccu.column_name='$column'"
         );
-        if (count($columnDetail) > 0) {
-            return $columnDetail[0]->definition;
-        }
-
-        // @codeCoverageIgnoreStart
-        return null;
-        // @codeCoverageIgnoreEnd
+        return $result === null ? null : $result->definition;
     }
 
     /**
