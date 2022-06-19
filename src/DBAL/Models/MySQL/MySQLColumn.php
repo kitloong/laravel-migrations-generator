@@ -30,6 +30,9 @@ class MySQLColumn extends DBALColumn
         $this->repository        = app(MySQLRepository::class);
         $this->mariaDBRepository = app(MariaDBRepository::class);
 
+        $this->setTypeToIncrements(true);
+        $this->setTypeToUnsigned();
+
         switch ($this->type) {
             case ColumnType::UNSIGNED_TINY_INTEGER():
             case ColumnType::TINY_INTEGER():

@@ -37,6 +37,10 @@ class ExpectedCreateIncrements_DB_Table extends Migration
             $table->tinyIncrements('id')->comment('Increments');
         });
 
+        Schema::create('signed_increments_[db]', function (Blueprint $table) {
+            $table->integer('id', true)->comment('Increments');
+        });
+
 //        Schema::create('increments_not_primary_[db]', function (Blueprint $table) {
 //            $table->increments('id');
 //            $table->unique('id');
@@ -56,5 +60,6 @@ class ExpectedCreateIncrements_DB_Table extends Migration
         Schema::dropIfExists('medium_increments_[db]');
         Schema::dropIfExists('small_increments_[db]');
         Schema::dropIfExists('tiny_increments_[db]');
+        Schema::dropIfExists('signed_increments_[db]');
     }
 }
