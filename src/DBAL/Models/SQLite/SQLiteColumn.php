@@ -26,6 +26,7 @@ class SQLiteColumn extends DBALColumn
         $this->repository = app(SQLiteRepository::class);
 
         $this->setAutoincrement();
+        $this->setTypeToIncrements(false);
 
         switch ($this->type) {
             case ColumnType::STRING():
