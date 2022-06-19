@@ -27,6 +27,11 @@ class ExpectedCreatePrimary_DB_Table extends Migration
             $table->primary('name', 'primary_custom');
         });
 
+        Schema::create('signed_primary_id_[db]', function (Blueprint $table) {
+            $table->integer('id');
+            $table->primary('id');
+        });
+
         Schema::create('composite_primary_[db]', function (Blueprint $table) {
             $table->unsignedInteger('id');
             $table->unsignedInteger('sub_id');
@@ -43,6 +48,7 @@ class ExpectedCreatePrimary_DB_Table extends Migration
     {
         Schema::dropIfExists('primary_id_[db]');
         Schema::dropIfExists('primary_name_[db]');
+        Schema::dropIfExists('signed_primary_id_[db]');
         Schema::dropIfExists('composite_primary_[db]');
     }
 }

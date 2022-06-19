@@ -18,6 +18,8 @@ class PgSQLColumn extends DBALColumn
     {
         $this->repository = app(PgSQLRepository::class);
 
+        $this->setTypeToIncrements(false);
+
         switch ($this->type) {
             case ColumnType::DATE():
             case ColumnType::DATETIME():

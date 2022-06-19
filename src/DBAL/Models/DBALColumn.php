@@ -52,8 +52,6 @@ abstract class DBALColumn implements Column
         $this->presetValues             = [];
         $this->onUpdateCurrentTimestamp = false;
 
-        $this->setTypeToIncrements();
-        $this->setTypeToUnsigned();
         $this->setTypeToSoftDeletes();
         $this->setTypeToRememberToken();
         $this->setTypeToChar();
@@ -225,30 +223,40 @@ abstract class DBALColumn implements Column
     }
 
     /**
-     * Set the column type to "increments" or "*Increments" if the column is auto increment and unsigned.
+     * Set the column type to "increments" or "*Increments" if the column is auto increment.
+     * If the DB supports unsigned, should check if the column is unsigned.
      *
+     * @param  bool  $supportUnsigned  DB support unsigned integer.
      * @return void
      */
-    private function setTypeToIncrements(): void
+    protected function setTypeToIncrements(bool $supportUnsigned): void
     {
         if (
-            in_array($this->type, [
+            !in_array($this->type, [
                 ColumnType::BIG_INTEGER(),
                 ColumnType::INTEGER(),
                 ColumnType::MEDIUM_INTEGER(),
                 ColumnType::SMALL_INTEGER(),
                 ColumnType::TINY_INTEGER(),
             ])
-            && $this->autoincrement
-            && $this->unsigned
         ) {
-            if ($this->type->equals(ColumnType::INTEGER())) {
-                $this->type = ColumnType::INCREMENTS();
-                return;
-            }
-
-            $this->type = ColumnType::from(str_replace('Integer', 'Increments', $this->type));
+            return;
         }
+
+        if (!$this->autoincrement) {
+            return;
+        }
+
+        if ($supportUnsigned && !$this->unsigned) {
+            return;
+        }
+
+        if ($this->type->equals(ColumnType::INTEGER())) {
+            $this->type = ColumnType::INCREMENTS();
+            return;
+        }
+
+        $this->type = ColumnType::from(str_replace('Integer', 'Increments', $this->type));
     }
 
     /**
@@ -256,7 +264,7 @@ abstract class DBALColumn implements Column
      *
      * @return void
      */
-    private function setTypeToUnsigned(): void
+    protected function setTypeToUnsigned(): void
     {
         if (
             in_array($this->type, [
