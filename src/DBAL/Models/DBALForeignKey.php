@@ -7,12 +7,39 @@ use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
 
 abstract class DBALForeignKey implements ForeignKey
 {
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var string
+     */
     protected $tableName;
+
+    /**
+     * @var string[]
+     */
     protected $localColumns;
+
+    /**
+     * @var string[]
+     */
     protected $foreignColumns;
+
+    /**
+     * @var string
+     */
     protected $foreignTableName;
+
+    /**
+     * @var string|null
+     */
     protected $onUpdate;
+
+    /**
+     * @var string|null
+     */
     protected $onDelete;
 
     public function __construct(string $table, ForeignKeyConstraint $foreignKeyConstraint)

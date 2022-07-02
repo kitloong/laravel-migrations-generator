@@ -11,9 +11,24 @@ abstract class DBALIndex implements Index
 {
     use CheckMigrationMethod;
 
+    /**
+     * @var string[]
+     */
     protected $columns;
+
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var string
+     */
     protected $tableName;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType
+     */
     protected $type;
 
     /**

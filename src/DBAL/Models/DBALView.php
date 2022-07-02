@@ -8,8 +8,19 @@ use KitLoong\MigrationsGenerator\Schema\Models\View;
 
 abstract class DBALView implements View
 {
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var string
+     */
     protected $quotedName;
+
+    /**
+     * @var string
+     */
     protected $createViewSQL;
 
     public function __construct(DoctrineDBALView $view)

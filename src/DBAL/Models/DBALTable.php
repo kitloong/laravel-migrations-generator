@@ -12,9 +12,24 @@ use KitLoong\MigrationsGenerator\Schema\Models\Table;
 
 abstract class DBALTable implements Table
 {
+    /**
+     * @var string|null
+     */
     protected $collation;
+
+    /**
+     * @var \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Column>
+     */
     protected $columns;
+
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Index>
+     */
     protected $indexes;
 
     /**
