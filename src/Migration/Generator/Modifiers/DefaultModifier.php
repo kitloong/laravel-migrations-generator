@@ -140,8 +140,8 @@ class DefaultModifier implements Modifier
             case 'now()':
             case 'CURRENT_TIMESTAMP':
                 // By default, `timestamp()` and `timestampTz()` will generate column as:
-                //  `DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
-                // Due to previous Laravel does not have `useCurrentOnUpdate()`,
+                // `DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`, migration translated to `useCurrent()` and `useCurrentOnUpdate()`.
+                // Due to old Laravel version does not have `useCurrentOnUpdate()`,
                 // if column has both `DEFAULT CURRENT_TIMESTAMP` and `ON UPDATE CURRENT_TIMESTAMP`,
                 // we need to generate column without chain.
                 // New laravel is okay to chain `useCurrent()` and `useCurrentOnUpdate()`.
