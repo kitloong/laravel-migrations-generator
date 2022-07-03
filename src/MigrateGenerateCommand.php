@@ -81,7 +81,7 @@ class MigrateGenerateCommand extends Command
     {
         $previousConnection = DB::getDefaultConnection();
         try {
-            $this->setup();
+            $this->setup($previousConnection);
 
             $connection = $this->option('connection') ?: $previousConnection;
 
@@ -116,10 +116,13 @@ class MigrateGenerateCommand extends Command
     /**
      * Setup by setting configuration + command options into Setting.
      * Setting is a singleton and will be used as generator configuration.
+     *
+     * @param  string  $connection  The default DB connection name.
      */
-    protected function setup(): void
+    protected function setup(string $connection): void
     {
         $setting = app(Setting::class);
+        $setting->setDefaultConnection($connection);
         $setting->setUseDBCollation($this->option('use-db-collation'));
         $setting->setIgnoreIndexNames($this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));

@@ -6,6 +6,14 @@ use Carbon\Carbon;
 
 class Setting
 {
+    /**
+     * The default DB connection name, also known as "previous" connection name if migration is called
+     * with `--connection=other` option.
+     *
+     * @var string
+     */
+    private $defaultConnection;
+
     /** @var boolean */
     private $useDBCollation;
 
@@ -35,6 +43,22 @@ class Setting
 
     /** @var string */
     private $fkFilename;
+
+    /**
+     * @return string
+     */
+    public function getDefaultConnection(): string
+    {
+        return $this->defaultConnection;
+    }
+
+    /**
+     * @param  string  $defaultConnection
+     */
+    public function setDefaultConnection(string $defaultConnection): void
+    {
+        $this->defaultConnection = $defaultConnection;
+    }
 
     /**
      * @return bool

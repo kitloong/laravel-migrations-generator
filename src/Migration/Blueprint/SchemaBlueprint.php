@@ -2,9 +2,9 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
-use Illuminate\Support\Facades\Config;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
+use KitLoong\MigrationsGenerator\Setting;
 use KitLoong\MigrationsGenerator\Support\TableName;
 
 class SchemaBlueprint implements WritableBlueprint
@@ -56,8 +56,10 @@ class SchemaBlueprint implements WritableBlueprint
      */
     private function getLines(): array
     {
+        $setting = app(Setting::class);
+
         $schema = "Schema::$this->schemaBuilder";
-        if ($this->connection !== Config::get('database.default')) {
+        if ($this->connection !== $setting->getDefaultConnection()) {
             $schema = "Schema::" . SchemaBuilder::CONNECTION() . "('$this->connection')->$this->schemaBuilder";
         }
 
