@@ -38,11 +38,6 @@ trait Stringable
      */
     public function convertFromAnyTypeToString($value): string
     {
-        // TODO Remove this line
-        if ($value === Space::LINE_BREAK()->getValue()) {
-            return $value;
-        }
-
         switch (gettype($value)) {
             case 'string':
                 return "'" . $this->escapeSingleQuote($value) . "'";
