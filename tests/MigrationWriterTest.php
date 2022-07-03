@@ -2,11 +2,13 @@
 
 namespace KitLoong\MigrationsGenerator\Tests;
 
+use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
 use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
+use KitLoong\MigrationsGenerator\Setting;
 use KitLoong\MigrationsGenerator\Support\TableName;
 use Mockery\MockInterface;
 
@@ -17,6 +19,9 @@ class MigrationWriterTest extends TestCase
      */
     public function testWrite()
     {
+        $setting = app(Setting::class);
+        $setting->setDefaultConnection(DB::getDefaultConnection());
+
         $this->mock(TableName::class, function (MockInterface $mock) {
             $mock->shouldReceive('stripPrefix')
                 ->andReturn('test');
