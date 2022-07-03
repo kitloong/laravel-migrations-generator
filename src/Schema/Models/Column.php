@@ -119,4 +119,12 @@ interface Column extends Model
      * @return bool
      */
     public function isOnUpdateCurrentTimestamp(): bool;
+
+    /**
+     * Check if default should set as raw.
+     * Raw default will be generated with DB::raw().
+     *
+     * @return bool
+     */
+    public function isRawDefault(): bool;
 }

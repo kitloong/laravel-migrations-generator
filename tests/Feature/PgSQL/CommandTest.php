@@ -23,6 +23,10 @@ class CommandTest extends PgSQLTestCase
             DB::statement(
                 "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL"
             );
+
+            DB::statement(
+                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL"
+            );
         };
 
         $generateMigrations = function () {

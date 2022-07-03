@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Migration\Writer;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
@@ -36,35 +37,45 @@ class MigrationWriter
         MigrationFileType $migrationFileType
     ): void {
         $stub = $this->migrationStub->getStub($stubPath);
-        $use  = implode(Space::LINE_BREAK(), $this->getImports($migrationFileType));
+
+        $useDBFacade = false;
+        $upString    = $up->toString();
+        if (Str::contains($upString, 'DB::')) {
+            $useDBFacade = true;
+        }
+
+        $use = implode(Space::LINE_BREAK(), $this->getImports($migrationFileType, $useDBFacade));
+
         File::put(
             $path,
-            $this->migrationStub->populateStub($stub, $use, $className, $up->toString(), $down->toString())
+            $this->migrationStub->populateStub($stub, $use, $className, $upString, $down->toString())
         );
     }
 
     /**
      * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType  $migrationFileType
+     * @param  bool  $useDBFacade
      * @return string[]
      */
-    private function getImports(MigrationFileType $migrationFileType): array
+    private function getImports(MigrationFileType $migrationFileType, bool $useDBFacade): array
     {
-        $map = [
-            MigrationFileType::TABLE()->getValue()       => [
-                'use Illuminate\Database\Migrations\Migration;',
-                'use Illuminate\Database\Schema\Blueprint;',
-                'use Illuminate\Support\Facades\Schema;',
-            ],
-            MigrationFileType::FOREIGN_KEY()->getValue() => [
-                'use Illuminate\Database\Migrations\Migration;',
-                'use Illuminate\Database\Schema\Blueprint;',
-                'use Illuminate\Support\Facades\Schema;',
-            ],
-            MigrationFileType::VIEW()->getValue()        => [
+        if ($migrationFileType->equals(MigrationFileType::VIEW())) {
+            return [
                 'use Illuminate\Database\Migrations\Migration;',
                 'use Illuminate\Support\Facades\DB;',
-            ],
+            ];
+        }
+
+        $imports = [
+            'use Illuminate\Database\Migrations\Migration;',
+            'use Illuminate\Database\Schema\Blueprint;',
+            'use Illuminate\Support\Facades\Schema;',
         ];
-        return $map[$migrationFileType->getValue()];
+
+        if ($useDBFacade) {
+            $imports[] = 'use Illuminate\Support\Facades\DB;';
+        }
+
+        return $imports;
     }
 }
