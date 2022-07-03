@@ -10,21 +10,88 @@ use KitLoong\MigrationsGenerator\Schema\Models\Column;
 
 abstract class DBALColumn implements Column
 {
+    /**
+     * @var bool
+     */
     protected $autoincrement;
+
+    /**
+     * @var string|null
+     */
     protected $charset;
+
+    /**
+     * @var string|null
+     */
     protected $collation;
+
+    /**
+     * @var string|null
+     */
     protected $comment;
+
+    /**
+     * @var string|null
+     */
     protected $default;
+
+    /**
+     * @var bool
+     */
     protected $fixed;
+
+    /**
+     * @var int|null
+     */
     protected $length;
+
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var bool
+     */
     protected $notNull;
+
+    /**
+     * @var bool
+     */
     protected $onUpdateCurrentTimestamp;
+
+    /**
+     * @var int
+     */
     protected $precision;
+
+    /**
+     * @var string[]
+     */
     protected $presetValues;
+    /**
+     * @var bool
+     */
+    protected $rawDefault;
+
+    /**
+     * @var int
+     */
     protected $scale;
+
+    /**
+     * @var string
+     */
     protected $tableName;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType
+     */
     protected $type;
+
+    /**
+     * @var bool
+     */
     protected $unsigned;
 
     private const REMEMBER_TOKEN_LENGTH = 100;
@@ -51,6 +118,7 @@ abstract class DBALColumn implements Column
         $this->autoincrement            = $column->getAutoincrement();
         $this->presetValues             = [];
         $this->onUpdateCurrentTimestamp = false;
+        $this->rawDefault               = false;
 
         $this->setTypeToSoftDeletes();
         $this->setTypeToRememberToken();
@@ -193,6 +261,14 @@ abstract class DBALColumn implements Column
     public function isOnUpdateCurrentTimestamp(): bool
     {
         return $this->onUpdateCurrentTimestamp;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isRawDefault(): bool
+    {
+        return $this->rawDefault;
     }
 
     /**

@@ -31,6 +31,7 @@ class PgSQLColumn extends DBALColumn
             case ColumnType::SOFT_DELETES():
             case ColumnType::SOFT_DELETES_TZ():
                 $this->length = $this->getDataTypeLength();
+                $this->setRawDefault();
                 break;
             case ColumnType::FLOAT():
                 $this->fixFloatLength();
@@ -66,6 +67,31 @@ class PgSQLColumn extends DBALColumn
         }
 
         return (int) $length;
+    }
+
+    /**
+     * Check and set to use raw default.
+     * Raw default will be generated with DB::raw().
+     *
+     * @return void
+     */
+    private function setRawDefault(): void
+    {
+        // Reserve now() to generate as `useCurrent`.
+        if ($this->default === 'now()') {
+            return;
+        }
+
+        $default = $this->repository->getDefaultByColumnName($this->tableName, $this->name);
+        if ($default == null) {
+            return;
+        }
+
+        // If default value is expression, eg: timezone('Europe/Rome'::text, now())
+        if (preg_match('/\((.?)\)/', $default)) {
+            $this->default    = $default;
+            $this->rawDefault = true;
+        }
     }
 
     /**

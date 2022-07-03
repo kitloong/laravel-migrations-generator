@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Generator\Modifiers;
 
+use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnModifier;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
@@ -155,7 +156,13 @@ class DefaultModifier implements Modifier
                 $method->chain(ColumnModifier::USE_CURRENT());
                 break;
             default:
-                $method->chain(ColumnModifier::DEFAULT(), $column->getDefault());
+                $default = $column->getDefault();
+                if ($column->isRawDefault()) {
+                    // Set default with DB::raw(), which will return an instance of \Illuminate\Database\Query\Expression.
+                    // Writer will check for Expression instance and generate as DB::raw().
+                    $default = DB::raw($default);
+                }
+                $method->chain(ColumnModifier::DEFAULT(), $default);
         }
 
         return $method;
