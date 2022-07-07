@@ -31,7 +31,6 @@ abstract class FeatureTestCase extends TestCase
         parent::setUp();
 
         $this->prepareStorage();
-        $this->dropAllTables();
     }
 
     protected function tearDown(): void
