@@ -28,12 +28,12 @@ class PgSQLSchema extends DBALSchema
                 }
 
                 // Schema name defined in the framework configuration.
-                $schema = DB::connection()->getConfig('schema');
+                $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
 
                 $parts     = explode('.', $table);
                 $namespace = $parts[0];
 
-                return $namespace === $schema;
+                return $namespace === $searchPath;
             })
             ->values();
     }
@@ -77,7 +77,7 @@ class PgSQLSchema extends DBALSchema
 
                 // Start from Laravel 9, the `schema` configuration option used to configure Postgres connection search paths renamed to `search_path`.
                 // Fallback to `schema` if Laravel version is older than 9.
-                $searchPath = DB::connection()->getConfig('search_path') ?? DB::connection()->getConfig('schema');
+                $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
 
                 return $view->getNamespaceName() === $searchPath;
             })
