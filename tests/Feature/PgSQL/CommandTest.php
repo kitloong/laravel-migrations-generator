@@ -2,8 +2,10 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
 /**
  * @runTestsInSeparateProcesses
@@ -11,9 +13,8 @@ use Illuminate\Support\Facades\File;
  */
 class CommandTest extends PgSQLTestCase
 {
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
+    use CheckLaravelVersion;
+
     public function testRun()
     {
         $migrateTemplates = function () {
@@ -48,9 +49,6 @@ class CommandTest extends PgSQLTestCase
         $this->verify($migrateTemplates, $generateMigrations, $beforeVerify);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testCollation()
     {
         $migrateTemplates = function () {
@@ -64,9 +62,6 @@ class CommandTest extends PgSQLTestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testIgnore()
     {
         $this->migrateGeneral('pgsql');
@@ -92,9 +87,36 @@ class CommandTest extends PgSQLTestCase
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * Start from Laravel 9, the `schema` configuration option used to configure Postgres connection search paths renamed to `search_path`.
+     * @see https://laravel.com/docs/9.x/upgrade#postgres-schema-configuration
+     *
+     * @return void
      */
-    public function verify(callable $migrateTemplates, callable $generateMigrations, callable $beforeVerify = null)
+    public function testRunWithSearchPath()
+    {
+        if (!$this->atLeastLaravel9()) {
+            $this->markTestSkipped();
+        }
+
+        // Unset `schema`
+        Config::set('database.connections.pgsql.schema');
+        $this->assertNull(Config::get('database.connections.pgsql.schema'));
+
+        // Use `search_path`
+        Config::set('database.connections.pgsql.search_path', 'public');
+
+        $migrateTemplates = function () {
+            $this->migrateGeneral('pgsql');
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations();
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    private function verify(callable $migrateTemplates, callable $generateMigrations, callable $beforeVerify = null)
     {
         $migrateTemplates();
 
