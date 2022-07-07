@@ -125,7 +125,7 @@ class CommandTest extends SQLSrvTestCase
      * @param  callable  $generateMigrations
      * @throws \Doctrine\DBAL\Exception
      */
-    public function verify(callable $migrateTemplates, callable $generateMigrations)
+    private function verify(callable $migrateTemplates, callable $generateMigrations)
     {
         $migrateTemplates();
 
