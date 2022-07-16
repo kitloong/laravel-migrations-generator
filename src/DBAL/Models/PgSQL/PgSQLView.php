@@ -16,7 +16,9 @@ class PgSQLView extends DBALView
     {
         $this->createViewSQL = $this->makeCreateViewSQL($this->quotedName, $view->getSql());
 
-        if ($view->getNamespaceName() === DB::connection()->getConfig('schema')) {
+        $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
+
+        if ($view->getNamespaceName() === $searchPath) {
             // Strip namespace from name.
             $name                = $view->getShortestName($view->getNamespaceName());
             $this->name          = $this->makeName($name);

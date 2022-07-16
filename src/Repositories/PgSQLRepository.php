@@ -37,6 +37,36 @@ class PgSQLRepository extends Repository
     }
 
     /**
+     * Get column default value by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string|null
+     */
+    public function getDefaultByColumnName(string $table, string $column): ?string
+    {
+        $result = DB::selectOne(
+            "SELECT pg_get_expr(d.adbin, d.adrelid) AS default_value
+                FROM
+                    pg_catalog.pg_attribute a
+                LEFT JOIN
+                    pg_catalog.pg_attrdef d ON (a.attrelid, a.attnum) = (d.adrelid, d.adnum)
+                WHERE
+                    a.attnum > 0
+                    AND NOT a.attisdropped
+                    AND a.attrelid = (
+                        SELECT c.oid
+                        FROM pg_catalog.pg_class c
+                            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+                        WHERE c.relname ~ '^($table)$'
+                            AND pg_catalog.pg_table_is_visible(c.oid)
+                    )
+                    AND a.attname='$column'"
+        );
+        return $result === null ? null : $result->default_value;
+    }
+
+    /**
      * Get constraint by table and column name.
      *
      * @param  string  $table  Table name.

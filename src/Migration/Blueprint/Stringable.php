@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
 
@@ -37,20 +38,24 @@ trait Stringable
      */
     public function convertFromAnyTypeToString($value): string
     {
-        if ($value === Space::LINE_BREAK()->getValue()) {
-            return $value;
-        }
-
         switch (gettype($value)) {
-            case 'array':
-                return '[' . implode(', ', $this->mapArrayItemsToString($value)) . ']';
+            case 'string':
+                return "'" . $this->escapeSingleQuote($value) . "'";
+            case 'integer':
+            case 'double':
+                return $value;
             case 'boolean':
                 return $value ? 'true' : 'false';
             case 'NULL':
                 return 'null';
-            case 'string':
-                return "'" . $this->escapeSingleQuote($value) . "'";
+            case 'array':
+                return '[' . implode(', ', $this->mapArrayItemsToString($value)) . ']';
             default:
+                // Wrap with DB::raw();
+                if ($value instanceof Expression) {
+                    return 'DB::raw("' . $this->escapeDoubleQuote($value) . '")';
+                }
+
                 return $value;
         }
     }

@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use PDO;
 
@@ -80,6 +81,11 @@ class DBConnectionTest extends MySQL57TestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+
+        $this->assertStringContainsString(
+            'Schema::connection',
+            File::files($this->storageMigrations())[0]->getContents()
+        );
     }
 
     public function testLogMigrationToAnotherSource()

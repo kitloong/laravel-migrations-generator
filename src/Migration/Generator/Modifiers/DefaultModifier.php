@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Generator\Modifiers;
 
+use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnModifier;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
@@ -140,8 +141,8 @@ class DefaultModifier implements Modifier
             case 'now()':
             case 'CURRENT_TIMESTAMP':
                 // By default, `timestamp()` and `timestampTz()` will generate column as:
-                //  `DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`
-                // Due to previous Laravel does not have `useCurrentOnUpdate()`,
+                // `DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`, migration translated to `useCurrent()` and `useCurrentOnUpdate()`.
+                // Due to old Laravel version does not have `useCurrentOnUpdate()`,
                 // if column has both `DEFAULT CURRENT_TIMESTAMP` and `ON UPDATE CURRENT_TIMESTAMP`,
                 // we need to generate column without chain.
                 // New laravel is okay to chain `useCurrent()` and `useCurrentOnUpdate()`.
@@ -155,7 +156,13 @@ class DefaultModifier implements Modifier
                 $method->chain(ColumnModifier::USE_CURRENT());
                 break;
             default:
-                $method->chain(ColumnModifier::DEFAULT(), $column->getDefault());
+                $default = $column->getDefault();
+                if ($column->isRawDefault()) {
+                    // Set default with DB::raw(), which will return an instance of \Illuminate\Database\Query\Expression.
+                    // Writer will check for Expression instance and generate as DB::raw().
+                    $default = DB::raw($default);
+                }
+                $method->chain(ColumnModifier::DEFAULT(), $default);
         }
 
         return $method;
