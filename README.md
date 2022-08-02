@@ -122,7 +122,9 @@ php artisan migrate:generate --template-path=resources/stub/anonymous-class-migr
 
 ### Migration like Laravel 9+ (anonymous class)
 
-By default, Generator will generate all migrations using the template before Laravel 9.
+In Laravel 9 migrations using **anonymous classes** were introduced.
+
+By default the Generator still creates the files using the syntax of versions prior to Laravel 9+.
 
 If you want to generate a Laravel 9+ migration version, just set the param `--anonymous` or `-A`.
 
@@ -131,9 +133,14 @@ php artisan migrate:generate --anonymous
 php artisan migrate:generate -A
 ```
 
+```diff
+-class CreateUserTable extends Migration
++return new class extends Migration
+```
+
 > ! **Note**
 > `--template-path` take precedence hover `--anonymous`.
-> To use `--anonymous`, you can't  use `--tp|template-path`
+> That is, if you want to use `--anonymous`, you can't  use `--tp|template-path`.
 
 
 ### Options
