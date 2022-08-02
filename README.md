@@ -100,13 +100,41 @@ php artisan migrate:generate --connection="connection_name"
 
 ### Squash migrations
 
-By default, Generator will generate multiple migration files for each table. 
+By default, Generator will generate multiple migration files for each table.
 
 You can squash all migrations into a single file with:
 
 ```bash
 php artisan migrate:generate --squash
 ```
+
+
+### Migration templates (stub)
+
+You can publish the stubs, just run:
+
+```bash
+php artisan vendor:publish --provider="KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider" --tag="templates"
+
+## To use a specific template runing:
+php artisan migrate:generate --template-path=resources/stub/anonymous-class-migration.stub
+```
+
+### Migration like Laravel 9+ (anonymous class)
+
+By default, Generator will generate all migrations using the template before Laravel 9.
+
+If you want to generate a Laravel 9+ migration version, just set the param `--anonymous` or `-A`.
+
+```bash
+php artisan migrate:generate --anonymous
+php artisan migrate:generate -A
+```
+
+> ! **Note**
+> `--template-path` take precedence hover `--anonymous`.
+> To use `--anonymous`, you can't  use `--tp|template-path`
+
 
 ### Options
 

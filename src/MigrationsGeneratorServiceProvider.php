@@ -75,6 +75,13 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         $this->app->bind(MigrationInterface::class, Migration::class);
 
         $this->registerColumnTypeGenerator();
+
+        $stubPath = "{$this->app->resourcePath()}/stub";
+
+        $this->publishes([
+            __DIR__ . '/../resources/stub/migration.stub' => "{$stubPath}/migration.stub",
+            __DIR__ . '/../resources/stub/anonymous-class-migration.stub' => "{$stubPath}/anonymous-class-migration.stub",
+        ], 'templates');
     }
 
     public function boot()

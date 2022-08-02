@@ -40,7 +40,8 @@ class MigrateGenerateCommand extends Command
                             {--default-fk-names : Don\'t use db foreign key names for migrations}
                             {--use-db-collation : Follow db collations for migrations}
                             {--skip-views : Don\'t generate views}
-                            {--squash : Generate all migrations into a single file}';
+                            {--squash : Generate all migrations into a single file}
+                            {--A|anonymous : Generate all migrations as anonymous class like Laravel 9+}';
 
     /**
      * The console command description.
@@ -121,19 +122,22 @@ class MigrateGenerateCommand extends Command
      */
     protected function setup(string $connection): void
     {
+        ///** @var \KitLoong\MigrationsGenerator\Setting $setting */
         $setting = app(Setting::class);
+
         $setting->setDefaultConnection($connection);
         $setting->setUseDBCollation($this->option('use-db-collation'));
         $setting->setIgnoreIndexNames($this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));
         $setting->setSquash((bool) $this->option('squash'));
+        $setting->setAnonymous((bool) $this->option('anonymous'));
 
         $setting->setPath(
             $this->option('path') ?? Config::get('generators.config.migration_target_path')
         );
 
         $setting->setStubPath(
-            $this->option('template-path') ?? Config::get('generators.config.migration_template_path')
+            $this->getTemplatePath()
         );
 
         $setting->setDate(
@@ -151,6 +155,28 @@ class MigrateGenerateCommand extends Command
         $setting->setFkFilename(
             $this->option('fk-filename') ?? Config::get('generators.config.filename_pattern.foreign_key')
         );
+    }
+
+    /**
+     * Get the template path
+     *
+     * @return string
+     */
+    protected function getTemplatePath(): string
+    {
+        if ($this->option('template-path')) {
+            return $this->option('template-path');
+        }
+
+        if (app(Setting::class)->asAnonymousClass()) {
+            return Config::get('generators.config.anonymous_class_migration.template_path');
+        }
+
+        if (Config::get('generators.config.anonymous_class_migration.enabled')) {
+            return Config::get('generators.config.anonymous_class_migration.template_path');
+        }
+
+        return Config::get('generators.config.migration_template_path');
     }
 
     /**

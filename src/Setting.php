@@ -44,6 +44,9 @@ class Setting
     /** @var string */
     private $fkFilename;
 
+    /** @var boolean */
+    private $anonymous;
+
     /**
      * @return string
      */
@@ -218,5 +221,21 @@ class Setting
     public function setDate(Carbon $date): void
     {
         $this->date = $date;
+    }
+
+    /**
+     * @param  bool  $anonymous
+     */
+    public function setAnonymous(bool $anonymous): void
+    {
+        $this->anonymous = $anonymous;
+    }
+
+    /**
+     * @return bool
+     */
+    public function asAnonymousClass(): bool
+    {
+        return $this->anonymous;
     }
 }
