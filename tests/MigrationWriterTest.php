@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
@@ -48,8 +49,8 @@ class MigrationWriterTest extends TestCase
             storage_path('migration.php'),
             config('generators.config.migration_template_path'),
             'Tester',
-            $up,
-            $down,
+            new Collection([$up]),
+            new Collection([$down]),
             MigrationFileType::TABLE()
         );
 

@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Writer;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint;
@@ -23,8 +24,8 @@ class MigrationWriter
      * @param  string  $path  Migration file destination path.
      * @param  string  $stubPath  Migration stub file path.
      * @param  string  $className
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint  $up  Blueprint of migration `up`.
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint  $down  Blueprint of migration `down`.
+     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $up  Blueprint of migration `up`.
+     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $down  Blueprint of migration `down`.
      * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType  $migrationFileType
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
@@ -32,15 +33,27 @@ class MigrationWriter
         string $path,
         string $stubPath,
         string $className,
-        WritableBlueprint $up,
-        WritableBlueprint $down,
+        Collection $up,
+        Collection $down,
         MigrationFileType $migrationFileType
     ): void {
         $stub = $this->migrationStub->getStub($stubPath);
 
         $useDBFacade = false;
-        $upString    = $up->toString();
+
+        $upString = $up->map(function (WritableBlueprint $up) {
+            return $up->toString();
+        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+
         if (Str::contains($upString, 'DB::')) {
+            $useDBFacade = true;
+        }
+
+        $downString = $down->map(function (WritableBlueprint $down) {
+            return $down->toString();
+        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+
+        if (Str::contains($downString, 'DB::')) {
             $useDBFacade = true;
         }
 
@@ -48,7 +61,7 @@ class MigrationWriter
 
         File::put(
             $path,
-            $this->migrationStub->populateStub($stub, $use, $className, $upString, $down->toString())
+            $this->migrationStub->populateStub($stub, $use, $className, $upString, $downString)
         );
     }
 

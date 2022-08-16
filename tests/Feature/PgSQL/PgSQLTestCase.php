@@ -29,6 +29,21 @@ abstract class PgSQLTestCase extends FeatureTestCase
         ]);
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create for custom column type test.
+        DB::statement("CREATE TYPE my_status AS enum ('PENDING', 'ACTIVE', 'SUSPENDED')");
+    }
+
+    protected function tearDown(): void
+    {
+        DB::statement("DROP TYPE IF EXISTS my_status CASCADE");
+
+        parent::tearDown();
+    }
+
     protected function dumpSchemaAs(string $destination): void
     {
         $command = sprintf(

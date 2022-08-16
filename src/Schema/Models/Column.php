@@ -4,6 +4,10 @@ namespace KitLoong\MigrationsGenerator\Schema\Models;
 
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 
+/**
+ * Table column. Column type supported by the framework.
+ * See https://laravel.com/docs/9.x/migrations#available-column-types
+ */
 interface Column extends Model
 {
     /**

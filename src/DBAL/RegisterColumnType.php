@@ -2,8 +2,11 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\DBAL\Types\CustomType;
 use KitLoong\MigrationsGenerator\DBAL\Types\DoubleType;
 use KitLoong\MigrationsGenerator\DBAL\Types\EnumType;
 use KitLoong\MigrationsGenerator\DBAL\Types\GeometryCollectionType;
@@ -29,47 +32,24 @@ use KitLoong\MigrationsGenerator\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\DBAL\Types\UUIDType;
 use KitLoong\MigrationsGenerator\DBAL\Types\YearType;
 use KitLoong\MigrationsGenerator\Enum\Driver;
+use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 
 class RegisterColumnType
 {
+    private $pgSQLRepository;
+
+    public function __construct(PgSQLRepository $pgSQLRepository)
+    {
+        $this->pgSQLRepository = $pgSQLRepository;
+    }
+
     /**
      * @throws \Doctrine\DBAL\Exception
      */
     public function handle(): void
     {
-        /**
-         * The map of supported doctrine mapping types.
-         */
-        $customTypeMap = [
-            // [$name => $className]
-            Types::DOUBLE              => DoubleType::class,
-            Types::ENUM                => EnumType::class,
-            Types::GEOMETRY            => GeometryType::class,
-            Types::GEOMETRY_COLLECTION => GeometryCollectionType::class,
-            Types::IP_ADDRESS          => IpAddressType::class,
-            Types::JSONB               => JsonbType::class,
-            Types::LINE_STRING         => LineStringType::class,
-            Types::LONG_TEXT           => LongTextType::class,
-            Types::MAC_ADDRESS         => MacAddressType::class,
-            Types::MEDIUM_INTEGER      => MediumIntegerType::class,
-            Types::MEDIUM_TEXT         => MediumTextType::class,
-            Types::MULTI_LINE_STRING   => MultiLineStringType::class,
-            Types::MULTI_POINT         => MultiPointType::class,
-            Types::MULTI_POLYGON       => MultiPolygonType::class,
-            Types::POINT               => PointType::class,
-            Types::POLYGON             => PolygonType::class,
-            Types::SET                 => SetType::class,
-            Types::TIMESTAMP           => TimestampType::class,
-            Types::TIMESTAMP_TZ        => TimestampTzType::class,
-            Types::TIME_TZ             => TimeTzType::class,
-            Types::TINY_INTEGER        => TinyIntegerType::class,
-            Types::UUID                => UUIDType::class,
-            Types::YEAR                => YearType::class,
-        ];
-
-        foreach ($customTypeMap as $dbType => $class) {
-            $this->registerCustomDoctrineType($dbType, $class);
-        }
+        $this->registerLaravelColumnType();
+        $this->registerLaravelCustomType();
 
         $doctrineTypes = [
             Driver::MYSQL()->getValue()  => [
@@ -99,9 +79,100 @@ class RegisterColumnType
             ],
         ];
 
+        // Register DB specific type, and fallback to Laravel column types.
         foreach ($doctrineTypes[DB::getDriverName()] as $dbType => $doctrineType) {
             $this->registerDoctrineTypeMapping($dbType, $doctrineType);
         }
+    }
+
+    /**
+     * Register additional column types which are supported by the framework.
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function registerLaravelColumnType(): void
+    {
+        /**
+         * The map of supported doctrine mapping types.
+         */
+        $typeMap = [
+            // [$name => $className]
+            Types::DOUBLE              => DoubleType::class,
+            Types::ENUM                => EnumType::class,
+            Types::GEOMETRY            => GeometryType::class,
+            Types::GEOMETRY_COLLECTION => GeometryCollectionType::class,
+            Types::IP_ADDRESS          => IpAddressType::class,
+            Types::JSONB               => JsonbType::class,
+            Types::LINE_STRING         => LineStringType::class,
+            Types::LONG_TEXT           => LongTextType::class,
+            Types::MAC_ADDRESS         => MacAddressType::class,
+            Types::MEDIUM_INTEGER      => MediumIntegerType::class,
+            Types::MEDIUM_TEXT         => MediumTextType::class,
+            Types::MULTI_LINE_STRING   => MultiLineStringType::class,
+            Types::MULTI_POINT         => MultiPointType::class,
+            Types::MULTI_POLYGON       => MultiPolygonType::class,
+            Types::POINT               => PointType::class,
+            Types::POLYGON             => PolygonType::class,
+            Types::SET                 => SetType::class,
+            Types::TIMESTAMP           => TimestampType::class,
+            Types::TIMESTAMP_TZ        => TimestampTzType::class,
+            Types::TIME_TZ             => TimeTzType::class,
+            Types::TINY_INTEGER        => TinyIntegerType::class,
+            Types::UUID                => UUIDType::class,
+            Types::YEAR                => YearType::class,
+        ];
+
+        foreach ($typeMap as $dbType => $class) {
+            $this->overrideDoctrineType($dbType, $class);
+        }
+    }
+
+    /**
+     * Register additional column types which are not supported by the framework.
+     *
+     * @note Uses {@see \Doctrine\DBAL\Types\Type::__construct} instead of {@see \Doctrine\DBAL\Types\Type::addType} here as workaround.
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) to suppress `getSQLDeclaration` warning.
+     */
+    private function registerLaravelCustomType(): void
+    {
+        foreach ($this->getCustomTypes() as $type) {
+            $customType       = new class () extends CustomType {
+                public $type = '';
+
+                public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+                {
+                    return $this->type;
+                }
+
+                public function getName()
+                {
+                    return $this->type;
+                }
+            };
+            $customType->type = $type;
+
+            if (!Type::hasType($type)) {
+                Type::getTypeRegistry()->register($type, $customType);
+                $this->registerDoctrineTypeMapping($type, $type);
+            }
+        }
+    }
+
+    /**
+     * Get a list of custom type names from DB.
+     *
+     * @return \Illuminate\Support\Collection<string>
+     */
+    private function getCustomTypes(): Collection
+    {
+        if (DB::getDriverName() === Driver::PGSQL()->getValue()) {
+            return $this->pgSQLRepository->getCustomDataTypes();
+        }
+
+        return new Collection();
     }
 
     /**
@@ -111,7 +182,7 @@ class RegisterColumnType
      * @param  string  $class  The class name of the custom type.
      * @throws \Doctrine\DBAL\Exception
      */
-    private function registerCustomDoctrineType(string $dbType, string $class): void
+    private function overrideDoctrineType(string $dbType, string $class): void
     {
         $this->addOrOverrideType($dbType, $class);
         $this->registerDoctrineTypeMapping($dbType, $dbType);

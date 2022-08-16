@@ -1,20 +1,26 @@
 <?php
 
-namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
+namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
-class TablePrefixTest extends MySQL57TestCase
+use Illuminate\Support\Facades\DB;
+
+class TablePrefixTest extends PgSQLTestCase
 {
     protected function getEnvironmentSetUp($app)
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('database.connections.mysql57.prefix', 'kit_');
+        $app['config']->set('database.connections.pgsql.prefix', 'kit_');
     }
 
     public function testTablePrefix()
     {
         $migrateTemplates = function () {
-            $this->migrateGeneral('mysql57');
+            $this->migrateGeneral('pgsql');
+
+            DB::statement(
+                "ALTER TABLE kit_all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+            );
         };
 
         $generateMigrations = function () {
@@ -37,7 +43,7 @@ class TablePrefixTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->runMigrationsFrom('pgsql', $this->storageMigrations());
 
         $this->truncateMigration();
         $this->dumpSchemaAs($this->storageSql('actual.sql'));

@@ -26,6 +26,10 @@ class CommandTest extends PgSQLTestCase
             );
 
             DB::statement(
+                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+            );
+
+            DB::statement(
                 "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL"
             );
         };
@@ -47,6 +51,23 @@ class CommandTest extends PgSQLTestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations, $beforeVerify);
+    }
+
+    public function testSquashUp()
+    {
+        $migrateTemplates = function () {
+            $this->migrateGeneral('pgsql');
+
+            DB::statement(
+                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+            );
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations(['--squash' => true]);
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
     }
 
     public function testCollation()

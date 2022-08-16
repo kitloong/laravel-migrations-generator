@@ -46,15 +46,23 @@ class Migration implements MigrationInterface
      */
     public function writeTable(Table $table): string
     {
-        $up   = $this->tableMigration->up($table);
+        $upList = new Collection();
+        $upList->push($this->tableMigration->up($table));
+
+        if ($table->getCustomColumns()->isNotEmpty()) {
+            foreach ($this->tableMigration->upAdditionalStatements($table) as $statement) {
+                $upList->push($statement);
+            }
+        }
+
         $down = $this->tableMigration->down($table);
 
         $this->migrationWriter->writeTo(
             $path = $this->filenameHelper->makeTablePath($table->getName()),
             $this->setting->getStubPath(),
             $this->filenameHelper->makeTableClassName($table->getName()),
-            $up,
-            $down,
+            $upList,
+            new Collection([$down]),
             MigrationFileType::TABLE()
         );
 
@@ -66,10 +74,17 @@ class Migration implements MigrationInterface
      */
     public function writeTableToTemp(Table $table): void
     {
-        $up   = $this->tableMigration->up($table);
+        $upList = new Collection();
+        $upList->push($this->tableMigration->up($table));
+        if ($table->getCustomColumns()->isNotEmpty()) {
+            foreach ($this->tableMigration->upAdditionalStatements($table) as $statement) {
+                $upList->push($statement);
+            }
+        }
+
         $down = $this->tableMigration->down($table);
 
-        $this->squashWriter->writeToTemp($up, $down);
+        $this->squashWriter->writeToTemp($upList, new Collection([$down]));
     }
 
     /**
@@ -86,8 +101,8 @@ class Migration implements MigrationInterface
             $path = $this->filenameHelper->makeViewPath($view->getName()),
             $this->setting->getStubPath(),
             $this->filenameHelper->makeViewClassName($view->getName()),
-            $up,
-            $down,
+            new Collection([$up]),
+            new Collection([$down]),
             MigrationFileType::VIEW()
         );
 
@@ -102,7 +117,7 @@ class Migration implements MigrationInterface
         $up   = $this->viewMigration->up($view);
         $down = $this->viewMigration->down($view);
 
-        $this->squashWriter->writeToTemp($up, $down);
+        $this->squashWriter->writeToTemp(new Collection([$up]), new Collection([$down]));
     }
 
     /**
@@ -118,8 +133,8 @@ class Migration implements MigrationInterface
             $path = $this->filenameHelper->makeForeignKeyPath($table),
             $this->setting->getStubPath(),
             $this->filenameHelper->makeForeignKeyClassName($table),
-            $up,
-            $down,
+            new Collection([$up]),
+            new Collection([$down]),
             MigrationFileType::FOREIGN_KEY()
         );
 
@@ -134,7 +149,7 @@ class Migration implements MigrationInterface
         $up   = $this->foreignKeyMigration->up($table, $foreignKeys);
         $down = $this->foreignKeyMigration->down($table, $foreignKeys);
 
-        $this->squashWriter->writeToTemp($up, $down);
+        $this->squashWriter->writeToTemp(new Collection([$up]), new Collection([$down]));
     }
 
     /**

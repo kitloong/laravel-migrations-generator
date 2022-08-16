@@ -18,8 +18,8 @@ class ExpectedCreateQuotedName_DB_View extends Migration
     public function up()
     {
         DB::statement(
-            "CREATE VIEW " . $this->quoteIdentifier('quoted-name-[db]-view')
-            . " AS SELECT * from " . $this->quoteIdentifier('quoted-name-[db]')
+            "CREATE VIEW " . $this->quoteIdentifier(DB::getTablePrefix() . 'quoted-name-[db]-view')
+            . " AS SELECT * from " . $this->quoteIdentifier(DB::getTablePrefix() . 'quoted-name-[db]')
         );
     }
 
