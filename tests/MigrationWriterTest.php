@@ -28,7 +28,7 @@ class MigrationWriterTest extends TestCase
                 ->andReturn('test');
         });
 
-        $up        = new SchemaBlueprint('mysql', 'users', SchemaBuilder::CREATE());
+        $up        = new SchemaBlueprint('users', SchemaBuilder::CREATE());
         $blueprint = new TableBlueprint();
         $blueprint->setProperty('collation', 'utf-8');
         $blueprint->setProperty('something', 1);
@@ -42,7 +42,7 @@ class MigrationWriterTest extends TestCase
             ->chain('default', 'Test');
         $up->setBlueprint($blueprint);
 
-        $down = new SchemaBlueprint('mysql', 'users', SchemaBuilder::DROP_IF_EXISTS());
+        $down = new SchemaBlueprint('users', SchemaBuilder::DROP_IF_EXISTS());
 
         $migration = app(MigrationWriter::class);
         $migration->writeTo(

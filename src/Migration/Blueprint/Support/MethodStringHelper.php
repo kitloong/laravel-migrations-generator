@@ -21,6 +21,6 @@ trait MethodStringHelper
             return "$class::$method";
         }
 
-        return "$class::" . SchemaBuilder::CONNECTION() . "->$method";
+        return "$class::" . SchemaBuilder::CONNECTION() . "('" . DB::getName() . "')->$method";
     }
 }

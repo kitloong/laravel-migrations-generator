@@ -3,7 +3,6 @@
 namespace KitLoong\MigrationsGenerator\Migration;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
@@ -66,7 +65,6 @@ class ForeignKeyMigration
     private function getSchemaBlueprint(string $table): SchemaBlueprint
     {
         return new SchemaBlueprint(
-            DB::getName(),
             $table,
             SchemaBuilder::TABLE()
         );

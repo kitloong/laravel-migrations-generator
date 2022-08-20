@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\MethodStringHelper;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 
 class CustomBlueprint implements WritableBlueprint
 {

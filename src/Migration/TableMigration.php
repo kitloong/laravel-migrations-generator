@@ -139,7 +139,6 @@ class TableMigration
     private function getSchemaBlueprint(Table $table, SchemaBuilder $schemaBuilder): SchemaBlueprint
     {
         return new SchemaBlueprint(
-            DB::getName(),
             $table->getName(),
             $schemaBuilder
         );
