@@ -34,16 +34,25 @@ abstract class DBALCustomColumn implements CustomColumn
         $this->sqls      = DB::getDoctrineSchemaManager()->getDatabasePlatform()->getAlterTableSQL(new TableDiff($this->tableName, [$column]));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getTableName(): string
     {
         return $this->tableName;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSqls(): array
     {
         return $this->sqls;
