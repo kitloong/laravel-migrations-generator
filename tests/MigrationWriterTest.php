@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
@@ -27,7 +28,7 @@ class MigrationWriterTest extends TestCase
                 ->andReturn('test');
         });
 
-        $up        = new SchemaBlueprint('mysql', 'users', SchemaBuilder::CREATE());
+        $up        = new SchemaBlueprint('users', SchemaBuilder::CREATE());
         $blueprint = new TableBlueprint();
         $blueprint->setProperty('collation', 'utf-8');
         $blueprint->setProperty('something', 1);
@@ -41,15 +42,15 @@ class MigrationWriterTest extends TestCase
             ->chain('default', 'Test');
         $up->setBlueprint($blueprint);
 
-        $down = new SchemaBlueprint('mysql', 'users', SchemaBuilder::DROP_IF_EXISTS());
+        $down = new SchemaBlueprint('users', SchemaBuilder::DROP_IF_EXISTS());
 
         $migration = app(MigrationWriter::class);
         $migration->writeTo(
             storage_path('migration.php'),
             config('generators.config.migration_template_path'),
             'Tester',
-            $up,
-            $down,
+            new Collection([$up]),
+            new Collection([$down]),
             MigrationFileType::TABLE()
         );
 

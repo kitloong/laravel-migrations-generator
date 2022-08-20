@@ -1,6 +1,6 @@
 <?php
 
-namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
+namespace KitLoong\MigrationsGenerator\Migration\Blueprint\Support;
 
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;

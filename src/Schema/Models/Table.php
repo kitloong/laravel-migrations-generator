@@ -21,6 +21,13 @@ interface Table extends Model
     public function getColumns(): Collection;
 
     /**
+     * Get a list of custom columns.
+     *
+     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\CustomColumn>
+     */
+    public function getCustomColumns(): Collection;
+
+    /**
      * Get a list of indexes.
      *
      * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Index>

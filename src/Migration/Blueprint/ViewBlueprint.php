@@ -2,25 +2,31 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
-use Illuminate\Support\Facades\Config;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\MethodStringHelper;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 
 class ViewBlueprint implements WritableBlueprint
 {
     use Stringable;
+    use MethodStringHelper;
 
-    private $connection;
+    /**
+     * @var string
+     */
     private $view;
+
+    /**
+     * @var string
+     */
     private $createViewSql;
 
     /**
      * ViewBlueprint constructor.
      *
-     * @param  string  $connection  Connection name.
      * @param  string  $view  View name.
      */
-    public function __construct(string $connection, string $view)
+    public function __construct(string $view)
     {
-        $this->connection    = $connection;
         $this->view          = $view;
         $this->createViewSql = '';
     }
@@ -38,10 +44,7 @@ class ViewBlueprint implements WritableBlueprint
      */
     public function toString(): string
     {
-        $dbStatement = 'DB::statement';
-        if ($this->connection !== Config::get('database.default')) {
-            $dbStatement = "DB::connection('" . $this->connection . "')->statement";
-        }
+        $dbStatement = $this->connection('DB', 'statement');
 
         $query = $this->escapeDoubleQuote("DROP VIEW IF EXISTS $this->view");
         if ($this->createViewSql !== '') {

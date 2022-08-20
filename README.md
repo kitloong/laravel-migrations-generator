@@ -50,19 +50,19 @@ Laravel will automatically register service provider for you.
 
 Auto-discovery is not available in Lumen, you need some modification on `bootstrap/app.php`.
 
-#### Enable facade
+#### Enable Facade
 
 Uncomment the following line.
 
-```
+```php
 $app->withFacades();
 ```
 
-#### Register provider
+#### Register Provider
 
 Add following line into the `Register Service Providers` section.
 
-```
+```php
 $app->register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
 ```
 
@@ -98,7 +98,7 @@ You can also specify the connection name if you are not using your default conne
 php artisan migrate:generate --connection="connection_name"
 ```
 
-### Squash migrations
+### Squash Migrations
 
 By default, Generator will generate multiple migration files for each table. 
 
@@ -112,28 +112,45 @@ php artisan migrate:generate --squash
 
 Run `php artisan help migrate:generate` for a list of options.
 
-|Options|Description|
-|---|---|
-|-c, --connection[=CONNECTION]|The database connection to use|
-|-t, --tables[=TABLES]|A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments|
-|-i, --ignore[=IGNORE]|A list of Tables or Views you wish to ignore, separated by a comma: users,posts,comments|
-|-p, --path[=PATH]|Where should the file be created?|
-|-tp, --template-path[=TEMPLATE-PATH]|The location of the template for this generator|
-|--date[=DATE]|Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format suitable for `Carbon::parse`|
-|--table-filename[=TABLE-FILENAME]|Define table migration filename, default pattern: `[datetime_prefix]\_create_[table]_table.php`|
-|--view-filename[=VIEW-FILENAME]|Define view migration filename, default pattern: `[datetime_prefix]\_create_[table]_view.php`|
-|--fk-filename[=FK-FILENAME]|Define foreign key migration filename, default pattern: `[datetime_prefix]\_add_foreign_keys_to_[table]_table.php`|
-|--default-index-names|Don\'t use db index names for migrations|
-|--default-fk-names|Don\'t use db foreign key names for migrations|
-|--use-db-collation|Follow db collations for migrations|
-|--skip-views|Don\'t generate views|
-|--squash|Generate all migrations into a single file|
+| Options                              | Description                                                                                                                                                   |
+|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -c, --connection[=CONNECTION]        | The database connection to use                                                                                                                                |
+| -t, --tables[=TABLES]                | A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments                                                      |
+| -i, --ignore[=IGNORE]                | A list of Tables or Views you wish to ignore, separated by a comma: users,posts,comments                                                                      |
+| -p, --path[=PATH]                    | Where should the file be created?                                                                                                                             |
+| -tp, --template-path[=TEMPLATE-PATH] | The location of the template for this generator                                                                                                               |
+| --date[=DATE]                        | Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format supported by `Carbon::parse` |
+| --table-filename[=TABLE-FILENAME]    | Define table migration filename, default pattern: `[datetime_prefix]\_create_[table]_table.php`                                                               |
+| --view-filename[=VIEW-FILENAME]      | Define view migration filename, default pattern: `[datetime_prefix]\_create_[table]_view.php`                                                                 |
+| --fk-filename[=FK-FILENAME]          | Define foreign key migration filename, default pattern: `[datetime_prefix]\_add_foreign_keys_to_[table]_table.php`                                            |
+| --default-index-names                | Don\'t use DB index names for migrations                                                                                                                      |
+| --default-fk-names                   | Don\'t use DB foreign key names for migrations                                                                                                                |
+| --use-db-collation                   | Generate migrations with existing DB collation                                                                                                                |
+| --skip-views                         | Don\'t generate views                                                                                                                                         |
+| --squash                             | Generate all migrations into a single file                                                                                                                    |
 
-## SQLite alter foreign key
+## SQLite Alter Foreign Key
 
 The generator first generates all tables and then adds foreign keys to existing tables.
+
 However, SQLite only supports foreign keys upon creation of the table and not when tables are altered.
 *_add_foreign_keys_* migrations will still be generated, however will get omitted if migrate to SQLite type database.
+
+## PostgreSQL Custom Column Type
+
+The generator will register custom data type from `pg_type`, then generate migration as
+
+```php
+public function up()
+{
+    Schema::create('table', function (Blueprint $table) {
+        ...
+    });
+    DB::statement("ALTER TABLE table ADD column custom_type NOT NULL");
+}
+```
+
+Note that the new `column` is always added at the end of the created `table` which means the ordering of the column generated in migration will differ from what we have from the schema.
 
 ## Thank You
 

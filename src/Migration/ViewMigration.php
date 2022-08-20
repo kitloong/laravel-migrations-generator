@@ -2,7 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
-use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\ViewBlueprint;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 
@@ -16,7 +15,7 @@ class ViewMigration
      */
     public function up(View $view): ViewBlueprint
     {
-        $viewBlueprint = new ViewBlueprint(DB::getName(), $view->getQuotedName());
+        $viewBlueprint = new ViewBlueprint($view->getQuotedName());
         $viewBlueprint->setCreateViewSql($view->getCreateViewSql());
         return $viewBlueprint;
     }
@@ -29,6 +28,6 @@ class ViewMigration
      */
     public function down(View $view): ViewBlueprint
     {
-        return new ViewBlueprint(DB::getName(), $view->getQuotedName());
+        return new ViewBlueprint($view->getQuotedName());
     }
 }

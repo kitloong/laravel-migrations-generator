@@ -3,17 +3,25 @@
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\MethodStringHelper;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
-use KitLoong\MigrationsGenerator\Setting;
 use KitLoong\MigrationsGenerator\Support\TableName;
 
 class SchemaBlueprint implements WritableBlueprint
 {
     use Stringable;
+    use MethodStringHelper;
     use TableName;
 
+    /**
+     * @var string
+     */
     private $table;
-    private $connection;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder
+     */
     private $schemaBuilder;
 
     /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint|null */
@@ -22,13 +30,11 @@ class SchemaBlueprint implements WritableBlueprint
     /**
      * SchemaBlueprint constructor.
      *
-     * @param  string  $connection  Connection name.
      * @param  string  $table  Table name.
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder  $schemaBuilder  SchemaBuilder name.
      */
-    public function __construct(string $connection, string $table, SchemaBuilder $schemaBuilder)
+    public function __construct(string $table, SchemaBuilder $schemaBuilder)
     {
-        $this->connection    = $connection;
         $this->table         = $table;
         $this->schemaBuilder = $schemaBuilder;
         $this->blueprint     = null;
@@ -56,12 +62,7 @@ class SchemaBlueprint implements WritableBlueprint
      */
     private function getLines(): array
     {
-        $setting = app(Setting::class);
-
-        $schema = "Schema::$this->schemaBuilder";
-        if ($this->connection !== $setting->getDefaultConnection()) {
-            $schema = "Schema::" . SchemaBuilder::CONNECTION() . "('$this->connection')->$this->schemaBuilder";
-        }
+        $schema = $this->connection('Schema', $this->schemaBuilder);
 
         $tableWithoutPrefix = $this->stripPrefix($this->table);
 

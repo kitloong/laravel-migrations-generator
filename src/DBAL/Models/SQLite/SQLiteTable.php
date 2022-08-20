@@ -6,6 +6,7 @@ use Doctrine\DBAL\Schema\Column as DoctrineDBALColumn;
 use Doctrine\DBAL\Schema\Index as DoctrineDBALIndex;
 use KitLoong\MigrationsGenerator\DBAL\Models\DBALTable;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
+use KitLoong\MigrationsGenerator\Schema\Models\CustomColumn;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
 
 class SQLiteTable extends DBALTable
@@ -23,6 +24,15 @@ class SQLiteTable extends DBALTable
     protected function makeColumn(string $table, DoctrineDBALColumn $column): Column
     {
         return new SQLiteColumn($table, $column);
+    }
+
+    /**
+     * @inheritDoc
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function makeCustomColumn(string $table, DoctrineDBALColumn $column): CustomColumn
+    {
+        return new SQLiteCustomColumn($table, $column);
     }
 
     /**
