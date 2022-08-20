@@ -49,7 +49,7 @@ class RegisterColumnType
     public function handle(): void
     {
         $this->registerLaravelColumnType();
-        $this->registerLaravelCustomType();
+        $this->registerLaravelCustomColumnType();
 
         $doctrineTypes = [
             Driver::MYSQL()->getValue()  => [
@@ -136,7 +136,7 @@ class RegisterColumnType
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter) to suppress `getSQLDeclaration` warning.
      */
-    private function registerLaravelCustomType(): void
+    private function registerLaravelCustomColumnType(): void
     {
         foreach ($this->getCustomTypes() as $type) {
             $customType       = new class () extends CustomType {
