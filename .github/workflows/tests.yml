@@ -80,38 +80,31 @@ jobs:
         php: [ 7.3, 7.4 ]
         laravel: [ 8.*, 7.*, 6.*, 5.8.*, 5.7.* ]
         dbal: [ 2.* ]
-        stability: [ prefer-stable ]
         sqlsrv_extension: [ pdo_sqlsrv ]
         include:
           - php: 8.0
             laravel: 9.*
             dbal: 3.*
-            stability: prefer-stable
             sqlsrv_extension: pdo_sqlsrv
           - php: 8.0
             laravel: 8.*
             dbal: 3.*
-            stability: prefer-stable
             sqlsrv_extension: pdo_sqlsrv
           - php: 8.0
             laravel: 7.*
             dbal: 2.*
-            stability: prefer-stable
             sqlsrv_extension: pdo_sqlsrv
           - php: 8.0
             laravel: 6.*
             dbal: 2.*
-            stability: prefer-stable
             sqlsrv_extension: pdo_sqlsrv
           - php: 8.1
             laravel: 9.*
             dbal: 3.*
-            stability: prefer-stable
             sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
           - php: 8.1
             laravel: 8.*
             dbal: 3.*
-            stability: prefer-stable
             sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
@@ -142,7 +135,7 @@ jobs:
         run: |
           composer config --no-plugins allow-plugins.kylekatarnls/update-helper true
           composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal:${{ matrix.dbal }}" --no-interaction --no-update
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+          composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Setup .env
         run: |
@@ -150,17 +143,14 @@ jobs:
           composer run action-env-setup
 
       - name: Execute tests
+        if: ${{ matrix.laravel == '5.7.*' || matrix.laravel == '5.8.*' }}
+        run: vendor/bin/phpunit -c ./phpunit8.xml --coverage-clover=coverage.xml
+
+      - name: Execute tests
+        if: ${{ matrix.laravel != '5.7.*' && matrix.laravel != '5.8.*' }}
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
-      - name: Upload coverage file
-        if: ${{ matrix.php == '8.1' && matrix.laravel == '9.*' }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: PHP-${{ matrix.php }}.coverage
-          path: coverage.xml
-
       - name: Upload to codecov
-        if: ${{ matrix.php == '8.1' && matrix.laravel == '9.*' }}
         uses: codecov/codecov-action@v1
         with:
           files: coverage.xml
