@@ -61,6 +61,7 @@ class RegisterColumnType
             ],
             Driver::PGSQL()->getValue()  => [
                 '_int4'     => Types::TEXT,
+                '_int8'     => Types::TEXT,
                 '_numeric'  => Types::FLOAT,
                 '_text'     => Types::TEXT,
                 'cidr'      => Types::STRING,
