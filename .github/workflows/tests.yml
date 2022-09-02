@@ -153,4 +153,5 @@ jobs:
       - name: Upload to codecov
         uses: codecov/codecov-action@v1
         with:
+          name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
           files: coverage.xml
