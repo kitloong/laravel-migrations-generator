@@ -8,6 +8,7 @@ use KitLoong\MigrationsGenerator\DBAL\Models\DBALTable;
 use KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
+use KitLoong\MigrationsGenerator\Schema\Models\CustomColumn;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
 
 class PgSQLTable extends DBALTable
@@ -31,6 +32,15 @@ class PgSQLTable extends DBALTable
     protected function makeColumn(string $table, DoctrineDBALColumn $column): Column
     {
         return new PgSQLColumn($table, $column);
+    }
+
+    /**
+     * @inheritDoc
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function makeCustomColumn(string $table, DoctrineDBALColumn $column): CustomColumn
+    {
+        return new PgSQLCustomColumn($table, $column);
     }
 
     /**

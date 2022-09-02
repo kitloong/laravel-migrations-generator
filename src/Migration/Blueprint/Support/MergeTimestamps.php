@@ -1,12 +1,13 @@
 <?php
 
-namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
+namespace KitLoong\MigrationsGenerator\Migration\Blueprint\Support;
 
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Enum\Migrations\ColumnName;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnModifier;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 
 trait MergeTimestamps
 {

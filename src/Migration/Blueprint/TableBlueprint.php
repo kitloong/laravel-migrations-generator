@@ -3,6 +3,8 @@
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
 use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\MergeTimestamps;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
 
 class TableBlueprint implements WritableBlueprint

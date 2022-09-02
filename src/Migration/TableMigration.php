@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Property\TableProperty;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\CustomBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Generator\ColumnGenerator;
@@ -71,6 +72,23 @@ class TableMigration
     }
 
     /**
+     * Generate custom statements.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
+     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\CustomBlueprint[]
+     */
+    public function upAdditionalStatements(Table $table): array
+    {
+        $statements = [];
+        foreach ($table->getCustomColumns() as $column) {
+            foreach ($column->getSqls() as $sql) {
+                $statements[] = new CustomBlueprint($sql);
+            }
+        }
+        return $statements;
+    }
+
+    /**
      * Generates `down` schema for table.
      *
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
@@ -121,7 +139,6 @@ class TableMigration
     private function getSchemaBlueprint(Table $table, SchemaBuilder $schemaBuilder): SchemaBlueprint
     {
         return new SchemaBlueprint(
-            DB::getName(),
             $table->getName(),
             $schemaBuilder
         );

@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Writer;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
@@ -23,18 +24,24 @@ class SquashWriter
      * Append new content into `up`.
      * Prepend new content into `down`.
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint  $upBlueprint
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint  $downBlueprint
+     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $upBlueprints
+     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $downBlueprints
      */
-    public function writeToTemp(WritableBlueprint $upBlueprint, WritableBlueprint $downBlueprint): void
+    public function writeToTemp(Collection $upBlueprints, Collection $downBlueprints): void
     {
         $upTempPath  = $this->filenameHelper->makeUpTempPath();
         $prettySpace = $this->getSpaceIfFileExists($upTempPath);
-        File::append($upTempPath, $prettySpace . $upBlueprint->toString());
+        $upString    = $upBlueprints->map(function (WritableBlueprint $up) {
+            return $up->toString();
+        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+        File::append($upTempPath, $prettySpace . $upString);
 
         $downTempPath = $this->filenameHelper->makeDownTempPath();
         $prettySpace  = $this->getSpaceIfFileExists($downTempPath);
-        File::prepend($downTempPath, $downBlueprint->toString() . $prettySpace);
+        $downString   = $downBlueprints->map(function (WritableBlueprint $down) {
+            return $down->toString();
+        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+        File::prepend($downTempPath, $downString . $prettySpace);
     }
 
     /**

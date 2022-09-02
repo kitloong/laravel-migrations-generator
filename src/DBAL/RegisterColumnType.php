@@ -2,8 +2,11 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\DBAL\Types\CustomType;
 use KitLoong\MigrationsGenerator\DBAL\Types\DoubleType;
 use KitLoong\MigrationsGenerator\DBAL\Types\EnumType;
 use KitLoong\MigrationsGenerator\DBAL\Types\GeometryCollectionType;
@@ -29,18 +32,71 @@ use KitLoong\MigrationsGenerator\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\DBAL\Types\UUIDType;
 use KitLoong\MigrationsGenerator\DBAL\Types\YearType;
 use KitLoong\MigrationsGenerator\Enum\Driver;
+use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 
 class RegisterColumnType
 {
+    private $pgSQLRepository;
+
+    public function __construct(PgSQLRepository $pgSQLRepository)
+    {
+        $this->pgSQLRepository = $pgSQLRepository;
+    }
+
     /**
      * @throws \Doctrine\DBAL\Exception
      */
     public function handle(): void
     {
+        $this->registerLaravelColumnType();
+        $this->registerLaravelCustomColumnType();
+
+        $doctrineTypes = [
+            Driver::MYSQL()->getValue()  => [
+                'bit'            => Types::BOOLEAN,
+                'geomcollection' => Types::GEOMETRY_COLLECTION,
+                'json'           => Types::JSON,
+                'mediumint'      => Types::MEDIUM_INTEGER,
+                'tinyint'        => Types::TINY_INTEGER,
+            ],
+            Driver::PGSQL()->getValue()  => [
+                '_int4'     => Types::TEXT,
+                '_int8'     => Types::TEXT,
+                '_numeric'  => Types::FLOAT,
+                '_text'     => Types::TEXT,
+                'cidr'      => Types::STRING,
+                'geography' => Types::GEOMETRY,
+                'inet'      => Types::IP_ADDRESS,
+                'macaddr'   => Types::MAC_ADDRESS,
+                'oid'       => Types::STRING,
+            ],
+            Driver::SQLITE()->getValue() => [],
+            Driver::SQLSRV()->getValue() => [
+                'geography'  => Types::GEOMETRY,
+                'money'      => Types::DECIMAL,
+                'smallmoney' => Types::DECIMAL,
+                'tinyint'    => Types::TINY_INTEGER,
+                'xml'        => Types::TEXT,
+            ],
+        ];
+
+        // Register DB specific type, and fallback to Laravel column types.
+        foreach ($doctrineTypes[DB::getDriverName()] as $dbType => $doctrineType) {
+            $this->registerDoctrineTypeMapping($dbType, $doctrineType);
+        }
+    }
+
+    /**
+     * Register additional column types which are supported by the framework.
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function registerLaravelColumnType(): void
+    {
         /**
          * The map of supported doctrine mapping types.
          */
-        $customTypeMap = [
+        $typeMap = [
             // [$name => $className]
             Types::DOUBLE              => DoubleType::class,
             Types::ENUM                => EnumType::class,
@@ -67,41 +123,57 @@ class RegisterColumnType
             Types::YEAR                => YearType::class,
         ];
 
-        foreach ($customTypeMap as $dbType => $class) {
-            $this->registerCustomDoctrineType($dbType, $class);
+        foreach ($typeMap as $dbType => $class) {
+            $this->overrideDoctrineType($dbType, $class);
+        }
+    }
+
+    /**
+     * Register additional column types which are not supported by the framework.
+     *
+     * @note Uses {@see \Doctrine\DBAL\Types\Type::__construct} instead of {@see \Doctrine\DBAL\Types\Type::addType} here as workaround.
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) to suppress `getSQLDeclaration` warning.
+     */
+    private function registerLaravelCustomColumnType(): void
+    {
+        foreach ($this->getCustomTypes() as $type) {
+            $customType       = new class () extends CustomType {
+                public $type = '';
+
+                public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+                {
+                    return $this->type;
+                }
+
+                public function getName()
+                {
+                    return $this->type;
+                }
+            };
+            $customType->type = $type;
+
+            if (!Type::hasType($type)) {
+                Type::getTypeRegistry()->register($type, $customType);
+                $this->registerDoctrineTypeMapping($type, $type);
+            }
+        }
+    }
+
+    /**
+     * Get a list of custom type names from DB.
+     *
+     * @return \Illuminate\Support\Collection<string>
+     */
+    private function getCustomTypes(): Collection
+    {
+        if (DB::getDriverName() === Driver::PGSQL()->getValue()) {
+            return $this->pgSQLRepository->getCustomDataTypes();
         }
 
-        $doctrineTypes = [
-            Driver::MYSQL()->getValue()  => [
-                'bit'            => Types::BOOLEAN,
-                'geomcollection' => Types::GEOMETRY_COLLECTION,
-                'json'           => Types::JSON,
-                'mediumint'      => Types::MEDIUM_INTEGER,
-                'tinyint'        => Types::TINY_INTEGER,
-            ],
-            Driver::PGSQL()->getValue()  => [
-                '_int4'     => Types::TEXT,
-                '_numeric'  => Types::FLOAT,
-                '_text'     => Types::TEXT,
-                'cidr'      => Types::STRING,
-                'geography' => Types::GEOMETRY,
-                'inet'      => Types::IP_ADDRESS,
-                'macaddr'   => Types::MAC_ADDRESS,
-                'oid'       => Types::STRING,
-            ],
-            Driver::SQLITE()->getValue() => [],
-            Driver::SQLSRV()->getValue() => [
-                'geography'  => Types::GEOMETRY,
-                'money'      => Types::DECIMAL,
-                'smallmoney' => Types::DECIMAL,
-                'tinyint'    => Types::TINY_INTEGER,
-                'xml'        => Types::TEXT,
-            ],
-        ];
-
-        foreach ($doctrineTypes[DB::getDriverName()] as $dbType => $doctrineType) {
-            $this->registerDoctrineTypeMapping($dbType, $doctrineType);
-        }
+        return new Collection();
     }
 
     /**
@@ -111,7 +183,7 @@ class RegisterColumnType
      * @param  string  $class  The class name of the custom type.
      * @throws \Doctrine\DBAL\Exception
      */
-    private function registerCustomDoctrineType(string $dbType, string $class): void
+    private function overrideDoctrineType(string $dbType, string $class): void
     {
         $this->addOrOverrideType($dbType, $class);
         $this->registerDoctrineTypeMapping($dbType, $dbType);
