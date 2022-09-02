@@ -43,7 +43,7 @@ trait Stringable
                 return "'" . $this->escapeSingleQuote($value) . "'";
             case 'integer':
             case 'double':
-                return $value;
+                return (string) $value;
             case 'boolean':
                 return $value ? 'true' : 'false';
             case 'NULL':
@@ -56,7 +56,7 @@ trait Stringable
                     return 'DB::raw("' . $this->escapeDoubleQuote($value) . '")';
                 }
 
-                return $value;
+                return (string) $value;
         }
     }
 
