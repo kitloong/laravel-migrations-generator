@@ -32,13 +32,13 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
     protected function dumpSchemaAs(string $destination): void
     {
-        $tables = Schema::connection('sqlsrv')->getConnection()->getDoctrineSchemaManager()->listTableNames();
+        $tables = DB::getDoctrineSchemaManager()->listTableNames();
         $sqls   = [];
         foreach ($tables as $table) {
             $sqls[] = "EXEC sp_columns '" . $table . "';";
         }
 
-        $views = Schema::connection('sqlsrv')->getConnection()->getDoctrineSchemaManager()->listViews();
+        $views = DB::getDoctrineSchemaManager()->listViews();
         foreach ($views as $view) {
             $sqls[] = "EXEC sp_helptext '" . $view->getName() . "';";
         }
@@ -60,7 +60,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
     {
         $this->dropAllViews();
 
-        Schema::connection('sqlsrv')->dropAllTables();
+        Schema::dropAllTables();
     }
 
     /**
@@ -70,7 +70,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
     {
         // `dropAllViews` available in Laravel >= 6.x
         if ($this->atLeastLaravel6()) {
-            Schema::connection('sqlsrv')->dropAllViews();
+            Schema::dropAllViews();
             return;
         }
 

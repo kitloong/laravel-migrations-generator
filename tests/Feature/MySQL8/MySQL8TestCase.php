@@ -58,7 +58,7 @@ abstract class MySQL8TestCase extends FeatureTestCase
 
     protected function dropAllTables(): void
     {
-        Schema::connection('mysql8')->dropAllViews();
-        Schema::connection('mysql8')->dropAllTables();
+        Schema::dropAllViews();
+        Schema::dropAllTables();
     }
 }

@@ -47,7 +47,6 @@ abstract class TestCase extends Testbench
     /**
      * Asserts that the contents of one file is equal to the contents of another file, ignore the ordering.
      *
-     *
      * @param  string  $expected
      * @param  string  $actual
      * @param  string  $message

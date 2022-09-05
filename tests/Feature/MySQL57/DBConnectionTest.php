@@ -63,7 +63,7 @@ class DBConnectionTest extends MySQL57TestCase
                 'migrate:generate',
                 [
                     '--connection'    => 'mysql57',
-                    '--path'          => $this->storageMigrations(),
+                    '--path'          => $this->getStorageMigrationsPath(),
                     '--template-path' => base_path('resources/stub/migration.stub'),
                 ]
             )
@@ -84,7 +84,7 @@ class DBConnectionTest extends MySQL57TestCase
 
         $this->assertStringContainsString(
             'Schema::connection',
-            File::files($this->storageMigrations())[0]->getContents()
+            File::files($this->getStorageMigrationsPath())[0]->getContents()
         );
     }
 
@@ -98,7 +98,7 @@ class DBConnectionTest extends MySQL57TestCase
             'migrate:generate',
             [
                 '--connection'    => 'mysql57',
-                '--path'          => $this->storageMigrations(),
+                '--path'          => $this->getStorageMigrationsPath(),
                 '--template-path' => base_path('resources/stub/migration.stub'),
             ]
         )
@@ -120,7 +120,7 @@ class DBConnectionTest extends MySQL57TestCase
         $migrateTemplates();
 
         DB::connection('mysql57')->table('migrations')->truncate();
-        $this->dumpSchemaAs($this->storageSql('expected.sql'));
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
         $generateMigrations();
 
@@ -128,14 +128,14 @@ class DBConnectionTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
         DB::connection('mysql57')->table('migrations')->truncate();
-        $this->dumpSchemaAs($this->storageSql('actual.sql'));
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->storageSql('expected.sql'),
-            $this->storageSql('actual.sql')
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
         );
     }
 }

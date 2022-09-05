@@ -35,7 +35,7 @@ abstract class SQLiteTestCase extends FeatureTestCase
 
     protected function dropAllTables(): void
     {
-        Schema::connection('sqlite')->dropAllViews();
-        Schema::connection('sqlite')->dropAllTables();
+        Schema::dropAllViews();
+        Schema::dropAllTables();
     }
 }

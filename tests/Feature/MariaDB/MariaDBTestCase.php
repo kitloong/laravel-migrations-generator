@@ -58,7 +58,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
 
     protected function dropAllTables(): void
     {
-        Schema::connection('mariadb')->dropAllViews();
-        Schema::connection('mariadb')->dropAllTables();
+        Schema::dropAllViews();
+        Schema::dropAllTables();
     }
 }

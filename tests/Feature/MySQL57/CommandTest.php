@@ -35,11 +35,11 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations();
 
-        $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->rollbackMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -79,11 +79,11 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations(['--squash' => true]);
 
-        $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->rollbackMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -97,7 +97,7 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations([
             '--tables' => implode(',', [
@@ -109,7 +109,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -127,7 +127,7 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $allAssets = count($this->getTableNames()) + count($this->getViewNames());
 
@@ -148,7 +148,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -161,7 +161,7 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations([
             '--tables'              => 'test_index_mysql57',
@@ -170,7 +170,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
         $indexes = app(MySQLSchema::class)
             ->getTable('test_index_mysql57')
@@ -219,13 +219,13 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations(['--default-fk-names' => true]);
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
         $foreignKeys     = app(MySQLSchema::class)->getTableForeignKeys('user_profile_mysql57');
         $foreignKeyNames = $foreignKeys->map(function (ForeignKey $foreignKey) {
@@ -246,7 +246,7 @@ class CommandTest extends MySQL57TestCase
             $foreignKeyNames
         );
 
-        $this->rollbackMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->rollbackMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
     }
 
     public function testDate()
@@ -268,7 +268,7 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations([
             '--table-filename' => '[datetime_prefix]_custom_[table]_table.php',
@@ -276,7 +276,7 @@ class CommandTest extends MySQL57TestCase
         ]);
 
         $migrations = [];
-        foreach (File::files($this->storageMigrations()) as $migration) {
+        foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
@@ -288,12 +288,12 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations(['--fk-filename' => '[datetime_prefix]_custom_[table]_table.php']);
 
         $migrations = [];
-        foreach (File::files($this->storageMigrations()) as $migration) {
+        foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
@@ -304,14 +304,14 @@ class CommandTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations([
             '--skip-views' => true,
         ]);
 
         $migrations = [];
-        foreach (File::files($this->storageMigrations()) as $migration) {
+        foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
@@ -333,8 +333,8 @@ class CommandTest extends MySQL57TestCase
     {
         $migrateTemplates();
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('expected.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
         $generateMigrations();
 
@@ -342,14 +342,14 @@ class CommandTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('actual.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->storageSql('expected.sql'),
-            $this->storageSql('actual.sql')
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
         );
     }
 }
