@@ -30,11 +30,11 @@ class CommandTest extends MariaDBTestCase
     {
         $this->migrateGeneral('mariadb');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations();
 
-        $this->rollbackMigrationsFrom('mariadb', $this->storageMigrations());
+        $this->rollbackMigrationsFrom('mariadb', $this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -61,8 +61,8 @@ class CommandTest extends MariaDBTestCase
     {
         $migrateTemplates();
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('expected.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
         $generateMigrations();
 
@@ -70,14 +70,14 @@ class CommandTest extends MariaDBTestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mariadb', $this->storageMigrations());
+        $this->runMigrationsFrom('mariadb', $this->getStorageMigrationsPath());
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('actual.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->storageSql('expected.sql'),
-            $this->storageSql('actual.sql')
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
         );
     }
 }

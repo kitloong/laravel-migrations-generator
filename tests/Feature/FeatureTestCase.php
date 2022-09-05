@@ -30,7 +30,7 @@ abstract class FeatureTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->prepareStorage();
+        $this->prepareStoragePath();
     }
 
     protected function tearDown(): void
@@ -58,25 +58,25 @@ abstract class FeatureTestCase extends TestCase
         $dotenv->load();
     }
 
-    protected function prepareStorage()
+    protected function prepareStoragePath(): void
     {
         File::deleteDirectory(storage_path());
-        File::makeDirectory($this->storageMigrations(), 0775, true);
-        File::makeDirectory($this->storageFrom());
-        File::makeDirectory($this->storageSql());
+        File::makeDirectory($this->getStorageMigrationsPath(), 0775, true);
+        File::makeDirectory($this->getStorageFromPath());
+        File::makeDirectory($this->getStorageSqlPath());
     }
 
-    protected function storageMigrations(string $path = ''): string
+    protected function getStorageMigrationsPath(string $path = ''): string
     {
         return storage_path('migrations') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
-    protected function storageFrom(string $path = ''): string
+    protected function getStorageFromPath(string $path = ''): string
     {
         return storage_path('from') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
-    protected function storageSql(string $path = ''): string
+    protected function getStorageSqlPath(string $path = ''): string
     {
         return storage_path('sql') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
@@ -93,8 +93,8 @@ abstract class FeatureTestCase extends TestCase
 
     protected function migrateFromTemplate(string $connection, string $templatePath): void
     {
-        File::copyDirectory($templatePath, $this->storageFrom());
-        foreach (File::files($this->storageFrom()) as $file) {
+        File::copyDirectory($templatePath, $this->getStorageFromPath());
+        foreach (File::files($this->getStorageFromPath()) as $file) {
             $content = str_replace([
                 '[db]',
                 '_DB_'
@@ -103,14 +103,14 @@ abstract class FeatureTestCase extends TestCase
                 ucfirst("$connection")
             ], $file->getContents());
 
-            file_put_contents($this->storageFrom($file->getBasename()), $content);
+            file_put_contents($this->getStorageFromPath($file->getBasename()), $content);
             File::move(
-                $this->storageFrom($file->getBasename()),
-                $this->storageFrom(str_replace('_db_', "_${connection}_", $file->getBasename()))
+                $this->getStorageFromPath($file->getBasename()),
+                $this->getStorageFromPath(str_replace('_db_', "_${connection}_", $file->getBasename()))
             );
         }
 
-        $this->runMigrationsFrom($connection, $this->storageFrom());
+        $this->runMigrationsFrom($connection, $this->getStorageFromPath());
     }
 
     protected function runMigrationsFrom(string $connection, string $path): void
@@ -141,7 +141,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan(
             'migrate:generate',
             array_merge([
-                '--path'          => $this->storageMigrations(),
+                '--path'          => $this->getStorageMigrationsPath(),
                 '--template-path' => base_path('resources/stub/migration.stub'),
             ], $options)
         )
@@ -155,7 +155,7 @@ abstract class FeatureTestCase extends TestCase
     protected function assertMigrations(): void
     {
         $migrations = [];
-        foreach (File::files($this->storageMigrations()) as $migration) {
+        foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = $migration->getFilenameWithoutExtension();
         }
 
@@ -169,7 +169,7 @@ abstract class FeatureTestCase extends TestCase
         $this->assertSame($migrations, $dbMigrations);
     }
 
-    protected function truncateMigration()
+    protected function truncateMigrationsTable()
     {
         DB::table('migrations')->truncate();
     }
@@ -181,7 +181,7 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function getTableNames(): array
     {
-        return collect(DB::connection()->getDoctrineSchemaManager()->listTableNames())
+        return collect(DB::getDoctrineSchemaManager()->listTableNames())
             ->map(function ($table) {
                 // The table name may contain quotes.
                 // Always trim quotes before set into list.
@@ -200,7 +200,7 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function getViewNames(): array
     {
-        return collect(DB::connection()->getDoctrineSchemaManager()->listViews())
+        return collect(DB::getDoctrineSchemaManager()->listViews())
             ->map(function (View $view) {
                 return $view->getName();
             })
