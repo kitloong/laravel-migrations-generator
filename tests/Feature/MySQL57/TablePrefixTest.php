@@ -28,8 +28,8 @@ class TablePrefixTest extends MySQL57TestCase
     {
         $migrateTemplates();
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('expected.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
         $generateMigrations();
 
@@ -37,14 +37,14 @@ class TablePrefixTest extends MySQL57TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql57', $this->storageMigrations());
+        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('actual.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->storageSql('expected.sql'),
-            $this->storageSql('actual.sql')
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
         );
     }
 }

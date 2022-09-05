@@ -54,7 +54,7 @@ class CommandTest extends SQLSrvTestCase
         $this->generateMigrations();
 
         // Should generate one migration file only.
-        $migration = File::files($this->storageMigrations())[0];
+        $migration = File::files($this->getStorageMigrationsPath())[0];
 
         $this->assertStringContainsString(
             '$table->decimal(\'money\', 19, 4)->nullable();',
@@ -76,11 +76,11 @@ class CommandTest extends SQLSrvTestCase
     {
         $this->migrateGeneral('sqlsrv');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations();
 
-        $this->rollbackMigrationsFrom('sqlsrv', $this->storageMigrations());
+        $this->rollbackMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -113,7 +113,7 @@ class CommandTest extends SQLSrvTestCase
         // Test xml column
         DB::statement("alter table all_columns_sqlsrv add xml xml");
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations();
 
@@ -129,8 +129,8 @@ class CommandTest extends SQLSrvTestCase
     {
         $migrateTemplates();
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('expected.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
         $generateMigrations();
 
@@ -138,14 +138,14 @@ class CommandTest extends SQLSrvTestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('sqlsrv', $this->storageMigrations());
+        $this->runMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('actual.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->storageSql('expected.sql'),
-            $this->storageSql('actual.sql')
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
         );
     }
 }

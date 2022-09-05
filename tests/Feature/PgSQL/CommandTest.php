@@ -40,12 +40,12 @@ class CommandTest extends PgSQLTestCase
 
         $beforeVerify = function () {
             $this->assertLineExistsThenReplace(
-                $this->storageSql('actual.sql'),
+                $this->getStorageSqlPath('actual.sql'),
                 'timestamp_defaultnow timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL'
             );
 
             $this->assertLineExistsThenReplace(
-                $this->storageSql('expected.sql'),
+                $this->getStorageSqlPath('expected.sql'),
                 'timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL'
             );
         };
@@ -87,7 +87,7 @@ class CommandTest extends PgSQLTestCase
     {
         $this->migrateGeneral('pgsql');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations([
             '--ignore' => implode(',', [
@@ -98,7 +98,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('pgsql', $this->storageMigrations());
+        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -141,8 +141,8 @@ class CommandTest extends PgSQLTestCase
     {
         $migrateTemplates();
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('expected.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
         $generateMigrations();
 
@@ -150,16 +150,16 @@ class CommandTest extends PgSQLTestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('pgsql', $this->storageMigrations());
+        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('actual.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $beforeVerify === null ?: $beforeVerify();
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->storageSql('expected.sql'),
-            $this->storageSql('actual.sql')
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
         );
     }
 

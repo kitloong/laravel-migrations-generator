@@ -34,8 +34,8 @@ class TablePrefixTest extends PgSQLTestCase
     {
         $migrateTemplates();
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('expected.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
         $generateMigrations();
 
@@ -43,14 +43,14 @@ class TablePrefixTest extends PgSQLTestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('pgsql', $this->storageMigrations());
+        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('actual.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->storageSql('expected.sql'),
-            $this->storageSql('actual.sql')
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
         );
     }
 }

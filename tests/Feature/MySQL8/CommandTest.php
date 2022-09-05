@@ -27,11 +27,11 @@ class CommandTest extends MySQL8TestCase
     {
         $this->migrateGeneral('mysql8');
 
-        $this->truncateMigration();
+        $this->truncateMigrationsTable();
 
         $this->generateMigrations();
 
-        $this->rollbackMigrationsFrom('mysql8', $this->storageMigrations());
+        $this->rollbackMigrationsFrom('mysql8', $this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
@@ -58,8 +58,8 @@ class CommandTest extends MySQL8TestCase
     {
         $migrateTemplates();
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('expected.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
         $generateMigrations();
 
@@ -67,14 +67,14 @@ class CommandTest extends MySQL8TestCase
 
         $this->dropAllTables();
 
-        $this->runMigrationsFrom('mysql8', $this->storageMigrations());
+        $this->runMigrationsFrom('mysql8', $this->getStorageMigrationsPath());
 
-        $this->truncateMigration();
-        $this->dumpSchemaAs($this->storageSql('actual.sql'));
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
-            $this->storageSql('expected.sql'),
-            $this->storageSql('actual.sql')
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
         );
     }
 }

@@ -59,7 +59,7 @@ abstract class MySQL57TestCase extends FeatureTestCase
 
     protected function dropAllTables(): void
     {
-        Schema::connection('mysql57')->dropAllViews();
-        Schema::connection('mysql57')->dropAllTables();
+        Schema::dropAllViews();
+        Schema::dropAllTables();
     }
 }
