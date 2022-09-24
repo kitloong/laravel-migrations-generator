@@ -15,7 +15,7 @@ interface MigrationInterface
      * @return string Generated file path.
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function writeTable(Table $table): string;
+    public function writeTable(Table $table, $makeModel): string;
 
     /**
      * Write table schema into temp files.

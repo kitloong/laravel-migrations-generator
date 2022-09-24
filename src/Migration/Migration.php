@@ -11,6 +11,7 @@ use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 use KitLoong\MigrationsGenerator\Setting;
 use KitLoong\MigrationsGenerator\Support\FilenameHelper;
+use Illuminate\Support\Facades\File;
 
 class Migration implements MigrationInterface
 {
@@ -44,7 +45,7 @@ class Migration implements MigrationInterface
      * @inheritDoc
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function writeTable(Table $table): string
+    public function writeTable(Table $table, $makeModel): string
     {
         $upList = new Collection();
         $upList->push($this->tableMigration->up($table));
@@ -65,7 +66,9 @@ class Migration implements MigrationInterface
             new Collection([$down]),
             MigrationFileType::TABLE()
         );
-
+        if($makeModel){
+            $this->makeModel($table->getName());
+        }
         return $path;
     }
 
@@ -170,5 +173,30 @@ class Migration implements MigrationInterface
         $className = $this->filenameHelper->makeTableClassName($database);
         $this->squashWriter->squashMigrations($path, $this->setting->getStubPath(), $className);
         return $path;
+    }
+
+    public function makeModel(string $table)
+    {
+        $tableName = explode('_',ucfirst($table)); 
+        $finalName = '';
+        if( count($tableName)>1){
+            foreach($tableName as $name ){
+                $finalName = $finalName.ucfirst($name);
+            }
+        }else{
+            $finalName = $table;
+        }
+        File::put('app/Models/'.$finalName.'.php', '<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class '.$finalName.' extends Model
+{
+    use HasFactory;
+}');
+    
     }
 }

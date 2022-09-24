@@ -51,6 +51,8 @@ class MigrateGenerateCommand extends Command
 
     protected $shouldLog = false;
 
+    protected $makeModel = false;
+
     protected $nextBatchNumber = 0;
 
     /**
@@ -239,6 +241,7 @@ class MigrateGenerateCommand extends Command
     {
         if (!$this->option('no-interaction')) {
             $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table?', true);
+            $this->makeModel = $this->confirm('Do you want create model for the tables?', true);
         }
 
         if ($this->shouldLog) {
@@ -369,7 +372,7 @@ class MigrateGenerateCommand extends Command
     {
         $tables->each(function (string $table) {
             $path = $this->migration->writeTable(
-                $this->schema->getTable($table)
+                $this->schema->getTable($table), $this->makeModel
             );
 
             $this->info("Created: $path");
