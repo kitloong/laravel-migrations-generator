@@ -184,7 +184,7 @@ class Migration implements MigrationInterface
                 $finalName = $finalName.ucfirst($name);
             }
         }else{
-            $finalName = $table;
+            $finalName = ucfirst($table);
         }
         File::put('app/Models/'.$finalName.'.php', '<?php
 
