@@ -26,7 +26,7 @@ class CheckConstraint
     /** @var string */
     private $constraintName;
 
-    /** @var string */
+    /** @var string|null */
     private $level;
 
     /** @var string */
@@ -44,8 +44,11 @@ class CheckConstraint
         $this->constraintSchema  = $lowerKey['constraint_schema'];
         $this->tableName         = $lowerKey['table_name'];
         $this->constraintName    = $lowerKey['constraint_name'];
-        $this->level             = $lowerKey['level'];
-        $this->checkClause       = $lowerKey['check_clause'];
+        $this->level             = null;
+        if (isset($lowerKey['level'])) {
+            $this->level = $lowerKey['level'];
+        }
+        $this->checkClause = $lowerKey['check_clause'];
     }
 
     /**
@@ -91,9 +94,9 @@ class CheckConstraint
     /**
      * Type of the constraint ('Column' or 'Table'). From MariaDB 10.5.10
      *
-     * @return string
+     * @return string|null NULL if MariaDB < 10.5.10
      */
-    public function getLevel(): string
+    public function getLevel(): ?string
     {
         return $this->level;
     }
