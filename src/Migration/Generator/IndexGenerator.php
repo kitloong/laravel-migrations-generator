@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Migration\Generator;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
@@ -25,11 +26,13 @@ class IndexGenerator
      */
     public function generate(Table $table, Index $index): Method
     {
+        $columns = $this->getColumns($index);
+
         if ($this->indexNameHelper->shouldSkipName($table->getName(), $index)) {
-            return new Method($index->getType(), $index->getColumns());
+            return new Method($index->getType(), $columns);
         }
 
-        return new Method($index->getType(), $index->getColumns(), $index->getName());
+        return new Method($index->getType(), $columns, $index->getName());
     }
 
     /**
@@ -114,5 +117,24 @@ class IndexGenerator
             // Hence, we keep only indexes not set in $chainableIndexes, by comparing the index name.
             return $cIndex->getName() !== $index->getName();
         });
+    }
+
+    /**
+     * Get column names with length.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Index  $index
+     * @return array<string|\Illuminate\Database\Query\Expression>
+     */
+    private function getColumns(Index $index): array
+    {
+        $cols = [];
+        foreach ($index->getColumns() as $i => $column) {
+            if ($index->getLengths()[$i] !== null) {
+                $cols[] = DB::raw($column . '(' . $index->getLengths()[$i] . ')');
+                continue;
+            }
+            $cols[] = $column;
+        }
+        return $cols;
     }
 }
