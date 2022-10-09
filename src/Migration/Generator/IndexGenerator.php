@@ -98,7 +98,7 @@ class IndexGenerator
         });
 
         return $indexes->filter(function (Index $index) use ($chainableNames) {
-            return $chainableNames->doesntContain($index->getName());
+            return !$chainableNames->contains($index->getName());
         });
     }
 
