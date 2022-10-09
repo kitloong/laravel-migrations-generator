@@ -37,7 +37,7 @@ class IndexGenerator
 
     /**
      * Get a list of chainable indexes.
-     * Chainable indexes are index with single column, and able chained in migration.
+     * Chainable indexes are index with single column, and able be chained in column declaration.
      * eg:
      * $table->string('email')->index('chainable_index');
      * $table->integer('id')->primary();
@@ -54,10 +54,14 @@ class IndexGenerator
                 return $carry;
             }
 
+            if ($index->getLengths()[0] !== null) {
+                return $carry;
+            }
+
             $columnName = $index->getColumns()[0];
 
-            // Check if index is using framework style naming.
-            // In old framework version "spatialIndex" modifier does not receive index name as argument.
+            // Check if index is using framework default naming.
+            // The older version "spatialIndex" modifier does not accept index name as argument.
             if (
                 $index->getType()->equals(IndexType::SPATIAL_INDEX())
                 && !$this->indexNameHelper->shouldSkipName($name, $index)
@@ -89,33 +93,12 @@ class IndexGenerator
      */
     public function getNotChainableIndexes(Collection $indexes, Collection $chainableIndexes): Collection
     {
-        return $indexes->filter(function (Index $index) use ($chainableIndexes) {
-            // Composite index is not chainable.
-            if (count($index->getColumns()) > 1) {
-                return true;
-            }
+        $chainableNames = $chainableIndexes->map(function (Index $index) {
+            return $index->getName();
+        });
 
-            // Single column primary will be handled by $chainableIndexes
-            if ($index->getType()->equals(IndexType::PRIMARY())) {
-                return false;
-            }
-
-            // Start from here, we need to handle single column index.
-            $columnName = $index->getColumns()[0];
-
-            // Set if the column is not set in $chainableIndexes
-            if (!$chainableIndexes->has($columnName)) {
-                return true;
-            }
-
-            /** @var \KitLoong\MigrationsGenerator\Schema\Models\Index $cIndex */
-            $cIndex = $chainableIndexes->get($columnName);
-
-            // $chainableIndexes contains list of indexes which chainable in the "column" migration.
-            // A column may have multiple indexes., and we can only chain one index at a time.
-            // If the same column has other indexes, we need to declare explicitly.
-            // Hence, we keep only indexes not set in $chainableIndexes, by comparing the index name.
-            return $cIndex->getName() !== $index->getName();
+        return $indexes->filter(function (Index $index) use ($chainableNames) {
+            return $chainableNames->doesntContain($index->getName());
         });
     }
 
