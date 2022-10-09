@@ -17,6 +17,11 @@ abstract class DBALIndex implements Index
     protected $columns;
 
     /**
+     * @var array<int|null>
+     */
+    protected $lengths;
+
+    /**
      * @var string
      */
     protected $name;
@@ -43,6 +48,7 @@ abstract class DBALIndex implements Index
         $this->name      = $index->getName();
         $this->columns   = $index->getUnquotedColumns();
         $this->type      = $this->getIndexType($index);
+        $this->lengths   = $index->getOptions()['lengths'] ?? array_fill(0, count($this->columns), null);
 
         $this->handle();
     }
@@ -76,6 +82,14 @@ abstract class DBALIndex implements Index
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getLengths(): array
+    {
+        return $this->lengths;
     }
 
     /**
