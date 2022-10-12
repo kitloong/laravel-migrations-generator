@@ -126,7 +126,7 @@ class DBConnectionTest extends MySQL57TestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 

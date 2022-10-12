@@ -57,7 +57,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
         exec($command);
     }
 
-    protected function dropAllTables(): void
+    protected function refreshDatabase(): void
     {
         Schema::dropAllViews();
         Schema::dropAllTables();

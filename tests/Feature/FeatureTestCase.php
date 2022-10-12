@@ -35,7 +35,7 @@ abstract class FeatureTestCase extends TestCase
 
     protected function tearDown(): void
     {
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         parent::tearDown();
     }
@@ -213,5 +213,5 @@ abstract class FeatureTestCase extends TestCase
         DB::setDefaultConnection($name);
     }
 
-    abstract protected function dropAllTables(): void;
+    abstract protected function refreshDatabase(): void;
 }

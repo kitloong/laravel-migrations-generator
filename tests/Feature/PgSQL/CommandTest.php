@@ -96,7 +96,7 @@ class CommandTest extends PgSQLTestCase
             ])
         ]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
 
@@ -148,7 +148,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
 

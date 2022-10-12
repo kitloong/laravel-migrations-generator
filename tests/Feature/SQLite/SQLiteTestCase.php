@@ -33,7 +33,7 @@ abstract class SQLiteTestCase extends FeatureTestCase
         exec($command);
     }
 
-    protected function dropAllTables(): void
+    protected function refreshDatabase(): void
     {
         Schema::dropAllViews();
         Schema::dropAllTables();

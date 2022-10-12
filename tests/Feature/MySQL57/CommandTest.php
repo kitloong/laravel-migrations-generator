@@ -107,7 +107,7 @@ class CommandTest extends MySQL57TestCase
             ])
         ]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
@@ -146,7 +146,7 @@ class CommandTest extends MySQL57TestCase
             '--ignore' => implode(',', $ignores + $ignoreNotExists)
         ]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
@@ -168,7 +168,7 @@ class CommandTest extends MySQL57TestCase
             '--default-index-names' => true
         ]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
@@ -226,7 +226,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->generateMigrations(['--default-fk-names' => true]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
@@ -381,7 +381,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 

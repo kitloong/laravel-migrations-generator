@@ -68,7 +68,7 @@ class CommandTest extends SQLiteTestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('sqlite', $this->getStorageMigrationsPath());
 

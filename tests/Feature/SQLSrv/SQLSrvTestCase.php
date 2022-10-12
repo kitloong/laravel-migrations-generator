@@ -56,7 +56,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         exec($command);
     }
 
-    protected function dropAllTables(): void
+    protected function refreshDatabase(): void
     {
         $this->dropAllViews();
         Schema::dropAllTables();

@@ -57,7 +57,7 @@ abstract class MySQL8TestCase extends FeatureTestCase
         exec($command);
     }
 
-    protected function dropAllTables(): void
+    protected function refreshDatabase(): void
     {
         Schema::dropAllViews();
         Schema::dropAllTables();

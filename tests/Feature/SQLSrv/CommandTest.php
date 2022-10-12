@@ -136,7 +136,7 @@ class CommandTest extends SQLSrvTestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
 
