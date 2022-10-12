@@ -51,6 +51,16 @@ class SQLiteSchema extends DBALSchema
 
     /**
      * @inheritDoc
+     */
+    public function getProcedures(): Collection
+    {
+        // Stored procedure is not available.
+        // https://sqlite.org/forum/info/78a60bdeec7c1ee9
+        return new Collection();
+    }
+
+    /**
+     * @inheritDoc
      * @throws \Doctrine\DBAL\Exception
      */
     public function getTableForeignKeys(string $table): Collection

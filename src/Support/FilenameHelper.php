@@ -78,6 +78,36 @@ class FilenameHelper
     }
 
     /**
+     * Makes class name for stored procedure migration.
+     *
+     * @param  string  $procedure  Stored procedure name.
+     * @return string
+     */
+    public function makeProcedureClassName(string $procedure): string
+    {
+        $className = $this->makeClassName(
+            $this->setting->getProcedureFilename(),
+            $procedure
+        );
+        return Str::studly($className);
+    }
+
+    /**
+     * Makes file path for stored procedure migration.
+     *
+     * @param  string  $procedure  Stored procedure name.
+     * @return string
+     */
+    public function makeProcedurePath(string $procedure): string
+    {
+        return $this->makeFilename(
+            $this->setting->getProcedureFilename(),
+            Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
+            $procedure
+        );
+    }
+
+    /**
      * Makes class name for foreign key migration.
      *
      * @param  string  $table  Table name.

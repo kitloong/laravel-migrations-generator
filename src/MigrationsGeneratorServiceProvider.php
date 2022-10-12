@@ -45,7 +45,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
 
-        // All of the container singletons that should be registered.
+        // All the container singletons that should be registered.
         // Use $this->app->singleton instead of $singletons property to support lumen.
         foreach (
             [

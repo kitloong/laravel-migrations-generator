@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Migration\MigrationInterface;
+use KitLoong\MigrationsGenerator\Schema\Models\Procedure;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
 use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
@@ -35,11 +36,13 @@ class MigrateGenerateCommand extends Command
                             {--date= : Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format supported by Carbon::parse}
                             {--table-filename= : Define table migration filename, default pattern: [datetime_prefix]_create_[table]_table.php}
                             {--view-filename= : Define view migration filename, default pattern: [datetime_prefix]_create_[table]_view.php}
+                            {--proc-filename= : Define stored procedure migration filename, default pattern: [datetime_prefix]_create_[name]_proc.php}
                             {--fk-filename= : Define foreign key migration filename, default pattern: [datetime_prefix]_add_foreign_keys_to_[table]_table.php}
                             {--default-index-names : Don\'t use DB index names for migrations}
                             {--default-fk-names : Don\'t use DB foreign key names for migrations}
                             {--use-db-collation : Generate migrations with existing DB collation}
                             {--skip-views : Don\'t generate views}
+                            {--skip-proc : Don\'t generate stored procedures}
                             {--squash : Generate all migrations into a single file}';
 
     /**
@@ -148,6 +151,10 @@ class MigrateGenerateCommand extends Command
             $this->option('view-filename') ?? Config::get('generators.config.filename_pattern.view')
         );
 
+        $setting->setProcedureFilename(
+            $this->option('proc-filename') ?? Config::get('generators.config.filename_pattern.procedure')
+        );
+
         $setting->setFkFilename(
             $this->option('fk-filename') ?? Config::get('generators.config.filename_pattern.foreign_key')
         );
@@ -155,22 +162,22 @@ class MigrateGenerateCommand extends Command
 
     /**
      * Get all tables from schema or return table list provided in option.
-     * Then filter and exclude tables in --ignore option if any.
+     * Then filter and exclude tables in `--ignore` option if any.
      * Also exclude migrations table
      *
      * @return \Illuminate\Support\Collection<string> Filtered table names.
      */
     protected function filterTables(): Collection
     {
-        $allTables = $this->schema->getTableNames();
+        $tables = $this->schema->getTableNames();
 
-        return $this->filterAndExcludeAsset($allTables);
+        return $this->filterAndExcludeAsset($tables);
     }
 
     /**
-     * Get all views from schema or return table list provided in option.
-     * Then filter and exclude tables in --ignore option if any.
-     * Return empty if --skip-views
+     * Get all views from schema or return view list provided in option.
+     * Then filter and exclude tables in `--ignore` option if any.
+     * Return empty if `--skip-views`
      *
      * @return \Illuminate\Support\Collection<string> Filtered view names.
      */
@@ -180,13 +187,13 @@ class MigrateGenerateCommand extends Command
             return new Collection([]);
         }
 
-        $allViews = $this->schema->getViewNames();
+        $views = $this->schema->getViewNames();
 
-        return $this->filterAndExcludeAsset($allViews);
+        return $this->filterAndExcludeAsset($views);
     }
 
     /**
-     * Filter and exclude tables in --ignore option if any.
+     * Filter and exclude tables in `--ignore` option if any.
      *
      * @param  \Illuminate\Support\Collection<string>  $allAssets  Names before filter.
      * @return \Illuminate\Support\Collection<string> Filtered names.
@@ -327,6 +334,11 @@ class MigrateGenerateCommand extends Command
             $this->generateViews($views);
         }
 
+        if (!$this->option('skip-proc')) {
+            $this->info("\nSetting up Stored Procedures Migrations");
+            $this->generateProcedures();
+        }
+
         $this->info("\nSetting up Foreign Key Migrations");
         $this->generateForeignKeys($tables);
     }
@@ -346,6 +358,11 @@ class MigrateGenerateCommand extends Command
 
         $this->info("\nPreparing Views Migrations");
         $this->generateViewsToTemp($views);
+
+        if (!$this->option('skip-proc')) {
+            $this->info("\nPreparing Stored Procedure Migrations");
+            $this->generateProceduresToTemp();
+        }
 
         $this->info("\nPreparing Foreign Key Migrations");
         $this->generateForeignKeysToTemp($tables);
@@ -436,6 +453,38 @@ class MigrateGenerateCommand extends Command
             $this->migration->writeViewToTemp($view);
 
             $this->info('Prepared: ' . $view->getName());
+        });
+    }
+
+    /**
+     * Generate stored procedure migrations.
+     *
+     * @return void
+     */
+    protected function generateProcedures(): void
+    {
+        $procedures = $this->schema->getProcedures();
+        $procedures->each(function (Procedure $procedure) {
+            $path = $this->migration->writeProcedure($procedure);
+
+            $this->info("Created: $path");
+
+            if ($this->shouldLog) {
+                $this->logMigration($path);
+            }
+        });
+    }
+
+    /**
+     * Generate stored procedure migrations.
+     */
+    protected function generateProceduresToTemp(): void
+    {
+        $procedures = $this->schema->getProcedures();
+        $procedures->each(function (Procedure $procedure) {
+            $this->migration->writeProcedureToTemp($procedure);
+
+            $this->info('Prepared: ' . $procedure->getName());
         });
     }
 

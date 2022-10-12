@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MariaDB;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 use PDO;
@@ -60,5 +61,14 @@ abstract class MariaDBTestCase extends FeatureTestCase
     {
         Schema::dropAllViews();
         Schema::dropAllTables();
+        $this->dropAllProcedures();
+    }
+
+    protected function dropAllProcedures(): void
+    {
+        $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . config('database.connections.mariadb.database') . "'");
+        foreach ($procedures as $procedure) {
+            DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->Name);
+        }
     }
 }

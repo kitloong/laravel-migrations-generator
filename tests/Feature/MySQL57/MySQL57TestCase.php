@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 use PDO;
@@ -47,7 +48,7 @@ abstract class MySQL57TestCase extends FeatureTestCase
 
         $command = sprintf(
         // Disable column-statistics to dump MySQL 5.7
-            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' > %s',
+            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data --routines ' . $skipColumnStatistics . ' > %s',
             config('database.connections.mysql57.host'),
             config('database.connections.mysql57.port'),
             config('database.connections.mysql57.username'),
@@ -61,5 +62,14 @@ abstract class MySQL57TestCase extends FeatureTestCase
     {
         Schema::dropAllViews();
         Schema::dropAllTables();
+        $this->dropAllProcedures();
+    }
+
+    protected function dropAllProcedures(): void
+    {
+        $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . config('database.connections.mysql57.database') . "'");
+        foreach ($procedures as $procedure) {
+            DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->Name);
+        }
     }
 }

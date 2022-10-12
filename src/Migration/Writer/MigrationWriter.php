@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Writer;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -27,7 +28,6 @@ class MigrationWriter
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $up  Blueprint of migration `up`.
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $down  Blueprint of migration `down`.
      * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType  $migrationFileType
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function writeTo(
         string $path,
@@ -37,32 +37,36 @@ class MigrationWriter
         Collection $down,
         MigrationFileType $migrationFileType
     ): void {
-        $stub = $this->migrationStub->getStub($stubPath);
+        try {
+            $stub = $this->migrationStub->getStub($stubPath);
 
-        $useDBFacade = false;
+            $useDBFacade = false;
 
-        $upString = $up->map(function (WritableBlueprint $up) {
-            return $up->toString();
-        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+            $upString = $up->map(function (WritableBlueprint $up) {
+                return $up->toString();
+            })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
 
-        if (Str::contains($upString, 'DB::')) {
-            $useDBFacade = true;
+            if (Str::contains($upString, 'DB::')) {
+                $useDBFacade = true;
+            }
+
+            $downString = $down->map(function (WritableBlueprint $down) {
+                return $down->toString();
+            })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+
+            if (Str::contains($downString, 'DB::')) {
+                $useDBFacade = true;
+            }
+
+            $use = implode(Space::LINE_BREAK(), $this->getImports($migrationFileType, $useDBFacade));
+
+            File::put(
+                $path,
+                $this->migrationStub->populateStub($stub, $use, $className, $upString, $downString)
+            );
+        } catch (FileNotFoundException $e) {
+            // Do nothing.
         }
-
-        $downString = $down->map(function (WritableBlueprint $down) {
-            return $down->toString();
-        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
-
-        if (Str::contains($downString, 'DB::')) {
-            $useDBFacade = true;
-        }
-
-        $use = implode(Space::LINE_BREAK(), $this->getImports($migrationFileType, $useDBFacade));
-
-        File::put(
-            $path,
-            $this->migrationStub->populateStub($stub, $use, $className, $upString, $downString)
-        );
     }
 
     /**
@@ -72,7 +76,10 @@ class MigrationWriter
      */
     private function getImports(MigrationFileType $migrationFileType, bool $useDBFacade): array
     {
-        if ($migrationFileType->equals(MigrationFileType::VIEW())) {
+        if (
+            $migrationFileType->equals(MigrationFileType::VIEW()) ||
+            $migrationFileType->equals(MigrationFileType::PROCEDURE())
+        ) {
             return [
                 'use Illuminate\Database\Migrations\Migration;',
                 'use Illuminate\Support\Facades\DB;',

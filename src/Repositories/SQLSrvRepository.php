@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 use KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ColumnDefinition;
 use KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ViewDefinition;
 
@@ -130,5 +131,28 @@ class SQLSrvRepository extends Repository
         $table = $this->quoteStringLiteral($table);
 
         return sprintf('(%s = %s AND %s = %s)', $tableColumn, $table, $schemaColumn, $schema);
+    }
+
+    /**
+     * Get a list of stored procedures.
+     *
+     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     */
+    public function getProcedures(): Collection
+    {
+        $list       = new Collection();
+        $procedures = DB::select(
+            "SELECT name, definition
+            FROM sys.sysobjects
+                INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
+            WHERE type = 'P'
+                AND definition IS NOT NULL
+            ORDER BY name"
+        );
+
+        foreach ($procedures as $procedure) {
+            $list->push(new ProcedureDefinition($procedure->name, $procedure->definition));
+        }
+        return $list;
     }
 }

@@ -59,8 +59,8 @@ abstract class SQLSrvTestCase extends FeatureTestCase
     protected function dropAllTables(): void
     {
         $this->dropAllViews();
-
         Schema::dropAllTables();
+        $this->dropAllProcedures();
     }
 
     /**
@@ -82,5 +82,21 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
             EXEC sp_executesql @sql;"
         );
+    }
+
+    protected function dropAllProcedures(): void
+    {
+        $procedures = DB::select(
+            "SELECT name, definition
+            FROM sys.sysobjects
+                INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
+            WHERE type = 'P'
+                AND definition IS NOT NULL
+            ORDER BY name"
+        );
+
+        foreach ($procedures as $procedure) {
+            DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->name);
+        }
     }
 }

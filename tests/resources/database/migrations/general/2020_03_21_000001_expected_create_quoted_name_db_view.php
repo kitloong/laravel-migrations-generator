@@ -35,16 +35,6 @@ class ExpectedCreateQuotedName_DB_View extends Migration
 
     private function quoteIdentifier(string $string): string
     {
-        switch (DB::getDriverName()) {
-            case Driver::MYSQL():
-            case Driver::SQLITE():
-                return '`' . $string . '`';
-            case Driver::PGSQL():
-                return '"' . $string . '"';
-            case Driver::SQLSRV():
-                return '[' . $string . ']';
-            default:
-        }
-        return '`' . $string . '`';
+        return DB::getDoctrineConnection()->quoteIdentifier($string);
     }
 }

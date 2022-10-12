@@ -43,4 +43,11 @@ interface Schema
      * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>
      */
     public function getTableForeignKeys(string $table): Collection;
+
+    /**
+     * Get a list of store procedures.
+     *
+     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Procedure>
+     */
+    public function getProcedures(): Collection;
 }

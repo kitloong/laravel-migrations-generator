@@ -71,7 +71,32 @@ abstract class PgSQLTestCase extends FeatureTestCase
             }
 
             // CASCADE, Automatically drop objects that depend on the table (such as views).
-            DB::statement("DROP TABLE if exists $table cascade");
+            DB::statement("DROP TABLE IF EXISTS $table cascade");
         }
+
+        $this->dropAllProcedures();
+    }
+
+    protected function dropAllProcedures(): void
+    {
+        $procedures = DB::select(
+            "SELECT *, pg_get_functiondef(pg_proc.oid)
+            FROM pg_catalog.pg_proc
+                JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
+            WHERE prokind = 'p'
+                AND pg_namespace.nspname = '" . config('database.connections.pgsql.schema') . "'"
+        );
+
+        foreach ($procedures as $procedure) {
+            DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->proname);
+        }
+
+        $procedures = DB::select(
+            "SELECT *, pg_get_functiondef(pg_proc.oid)
+            FROM pg_catalog.pg_proc
+                JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
+            WHERE prokind = 'p'
+                AND pg_namespace.nspname = '" . config('database.connections.pgsql.schema') . "'"
+        );
     }
 }

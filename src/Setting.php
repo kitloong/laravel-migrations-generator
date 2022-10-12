@@ -42,6 +42,9 @@ class Setting
     private $viewFilename;
 
     /** @var string */
+    private $procedureFilename;
+
+    /** @var string */
     private $fkFilename;
 
     /**
@@ -186,6 +189,22 @@ class Setting
     public function setViewFilename(string $viewFilename): void
     {
         $this->viewFilename = $viewFilename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProcedureFilename(): string
+    {
+        return $this->procedureFilename;
+    }
+
+    /**
+     * @param  string  $procedureFilename
+     */
+    public function setProcedureFilename(string $procedureFilename): void
+    {
+        $this->procedureFilename = $procedureFilename;
     }
 
     /**

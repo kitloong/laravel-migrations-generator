@@ -5,6 +5,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition;
+use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 
 class PgSQLRepository extends Repository
 {
@@ -182,5 +183,31 @@ class PgSQLRepository extends Repository
             }
         }
         return $types;
+    }
+
+    /**
+     * Get a list of stored procedures.
+     *
+     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     */
+    public function getProcedures(): Collection
+    {
+        $list = new Collection();
+
+        $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
+
+        $procedures = DB::select(
+            "SELECT proname, pg_get_functiondef(pg_proc.oid) AS definition
+            FROM pg_catalog.pg_proc
+                JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
+            WHERE prokind = 'p'
+                AND pg_namespace.nspname = '$searchPath'"
+        );
+
+        foreach ($procedures as $procedure) {
+            $definition = str_replace('$procedure', '$', $procedure->definition);
+            $list->push(new ProcedureDefinition($procedure->proname, $definition));
+        }
+        return $list;
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
 use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
+use KitLoong\MigrationsGenerator\Schema\Models\Procedure;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 use KitLoong\MigrationsGenerator\Setting;
@@ -20,6 +21,7 @@ class Migration implements MigrationInterface
     private $foreignKeyMigration;
     private $tableMigration;
     private $viewMigration;
+    private $procedureMigration;
     private $setting;
 
     public function __construct(
@@ -29,6 +31,7 @@ class Migration implements MigrationInterface
         ForeignKeyMigration $foreignKeyMigration,
         TableMigration $tableMigration,
         ViewMigration $viewMigration,
+        ProcedureMigration $procedureMigration,
         Setting $setting
     ) {
         $this->migrationWriter     = $migrationWriter;
@@ -37,6 +40,7 @@ class Migration implements MigrationInterface
         $this->foreignKeyMigration = $foreignKeyMigration;
         $this->tableMigration      = $tableMigration;
         $this->viewMigration       = $viewMigration;
+        $this->procedureMigration  = $procedureMigration;
         $this->setting             = $setting;
     }
 
@@ -116,6 +120,36 @@ class Migration implements MigrationInterface
     {
         $up   = $this->viewMigration->up($view);
         $down = $this->viewMigration->down($view);
+
+        $this->squashWriter->writeToTemp(new Collection([$up]), new Collection([$down]));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function writeProcedure(Procedure $procedure): string
+    {
+        $up   = $this->procedureMigration->up($procedure);
+        $down = $this->procedureMigration->down($procedure);
+
+        $this->migrationWriter->writeTo(
+            $path = $this->filenameHelper->makeProcedurePath($procedure->getName()),
+            $this->setting->getStubPath(),
+            $this->filenameHelper->makeProcedureClassName($procedure->getName()),
+            new Collection([$up]),
+            new Collection([$down]),
+            MigrationFileType::PROCEDURE()
+        );
+        return $path;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function writeProcedureToTemp(Procedure $procedure): void
+    {
+        $up   = $this->procedureMigration->up($procedure);
+        $down = $this->procedureMigration->down($procedure);
 
         $this->squashWriter->writeToTemp(new Collection([$up]), new Collection([$down]));
     }

@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Migration;
 
 use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\Schema\Models\Procedure;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 
@@ -39,6 +40,21 @@ interface MigrationInterface
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\View  $view
      */
     public function writeViewToTemp(View $view): void;
+
+    /**
+     * Create stored procedure migration.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
+     * @return string Generated file path.
+     */
+    public function writeProcedure(Procedure $procedure): string;
+
+    /**
+     * Write stored procedure into temp files.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
+     */
+    public function writeProcedureToTemp(Procedure $procedure): void;
 
     /**
      * Create foreign key migration.

@@ -23,16 +23,16 @@ Laravel Migrations Generator supports all five Laravel first-party support datab
 
 ## Version Compatibility
 
-|Laravel|Version|
-|---|---|
-|9.x|6.x|
-|8.x|6.x|
-|7.x|6.x|
-|6.x|6.x|
-|5.8.x|6.x|
-|5.7.x|6.x|
-|5.6.x|6.x|
-|5.5 and below|https://github.com/Xethron/migrations-generator|
+| Laravel       | Version                                         |
+|---------------|-------------------------------------------------|
+| 9.x           | 6.x                                             |
+| 8.x           | 6.x                                             |
+| 7.x           | 6.x                                             |
+| 6.x           | 6.x                                             |
+| 5.8.x         | 6.x                                             |
+| 5.7.x         | 6.x                                             |
+| 5.6.x         | 6.x                                             |
+| 5.5 and below | https://github.com/Xethron/migrations-generator |
 
 ## Install
 
@@ -47,6 +47,9 @@ composer require --dev "kitloong/laravel-migrations-generator"
 Laravel will automatically register service provider for you.
 
 ### Lumen Setup
+
+<details>
+  <summary>Expand</summary>
 
 Auto-discovery is not available in Lumen, you need some modification on `bootstrap/app.php`.
 
@@ -65,6 +68,7 @@ Add following line into the `Register Service Providers` section.
 ```php
 $app->register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
 ```
+</details>
 
 ## Usage
 
@@ -122,11 +126,13 @@ Run `php artisan help migrate:generate` for a list of options.
 | --date[=DATE]                        | Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format supported by `Carbon::parse` |
 | --table-filename[=TABLE-FILENAME]    | Define table migration filename, default pattern: `[datetime_prefix]\_create_[table]_table.php`                                                               |
 | --view-filename[=VIEW-FILENAME]      | Define view migration filename, default pattern: `[datetime_prefix]\_create_[table]_view.php`                                                                 |
+| --proc-filename[=PROC-FILENAME]      | Define stored procedure filename, default pattern: `[datetime_prefix]\_create_[name]_proc.php`                                                                |
 | --fk-filename[=FK-FILENAME]          | Define foreign key migration filename, default pattern: `[datetime_prefix]\_add_foreign_keys_to_[table]_table.php`                                            |
 | --default-index-names                | Don\'t use DB index names for migrations                                                                                                                      |
 | --default-fk-names                   | Don\'t use DB foreign key names for migrations                                                                                                                |
 | --use-db-collation                   | Generate migrations with existing DB collation                                                                                                                |
 | --skip-views                         | Don\'t generate views                                                                                                                                         |
+| --skip-proc                          | Don\'t generate stored procedures                                                                                                                             |
 | --squash                             | Generate all migrations into a single file                                                                                                                    |
 
 ## SQLite Alter Foreign Key

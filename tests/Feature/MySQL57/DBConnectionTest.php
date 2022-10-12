@@ -77,7 +77,7 @@ class DBConnectionTest extends MySQL57TestCase
                     '0'
                 );
 
-            $this->assertSame(35, DB::connection('mysql57')->table('migrations')->count());
+            $this->assertSame(36, DB::connection('mysql57')->table('migrations')->count());
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
@@ -112,7 +112,7 @@ class DBConnectionTest extends MySQL57TestCase
                 '0'
             );
 
-        $this->assertSame(35, DB::connection('mysql8')->table('migrations')->count());
+        $this->assertSame(36, DB::connection('mysql8')->table('migrations')->count());
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)
