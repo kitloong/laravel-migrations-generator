@@ -10,7 +10,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Driver;
-use KitLoong\MigrationsGenerator\Migration\MigrationInterface;
+use KitLoong\MigrationsGenerator\Migration\ForeignKeyMigration;
+use KitLoong\MigrationsGenerator\Migration\ProcedureMigration;
+use KitLoong\MigrationsGenerator\Migration\Squash;
+use KitLoong\MigrationsGenerator\Migration\TableMigration;
+use KitLoong\MigrationsGenerator\Migration\ViewMigration;
 use KitLoong\MigrationsGenerator\Schema\Models\Procedure;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
@@ -50,27 +54,36 @@ class MigrateGenerateCommand extends Command
      */
     protected $description = 'Generate a migration from an existing table structure.';
 
-    protected $repository;
-
-    protected $shouldLog = false;
-
-    protected $nextBatchNumber = 0;
-
     /**
      * @var \KitLoong\MigrationsGenerator\Schema\Schema
      */
     protected $schema;
 
-    protected $migration;
+    protected $shouldLog       = false;
+    protected $nextBatchNumber = 0;
+    protected $repository;
+    protected $squash;
+    protected $foreignKeyMigration;
+    protected $procedureMigration;
+    protected $tableMigration;
+    protected $viewMigration;
 
     public function __construct(
         MigrationRepositoryInterface $repository,
-        MigrationInterface $migration
+        Squash $squash,
+        ForeignKeyMigration $foreignKeyMigration,
+        ProcedureMigration $procedureMigration,
+        TableMigration $tableMigration,
+        ViewMigration $viewMigration
     ) {
         parent::__construct();
 
-        $this->migration  = $migration;
-        $this->repository = $repository;
+        $this->squash              = $squash;
+        $this->repository          = $repository;
+        $this->foreignKeyMigration = $foreignKeyMigration;
+        $this->procedureMigration  = $procedureMigration;
+        $this->tableMigration      = $tableMigration;
+        $this->viewMigration       = $viewMigration;
     }
 
     /**
@@ -322,7 +335,6 @@ class MigrateGenerateCommand extends Command
      *
      * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
      * @param  \Illuminate\Support\Collection<string>  $views  View names.
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateMigrations(Collection $tables, Collection $views): void
     {
@@ -351,7 +363,7 @@ class MigrateGenerateCommand extends Command
     protected function generateSquashedMigrations(Collection $tables, Collection $views): void
     {
         $this->info('Remove old temporary files if any.');
-        $this->migration->cleanTemps();
+        $this->squash->cleanTemps();
 
         $this->info('Preparing Tables and Index Migrations');
         $this->generateTablesToTemp($tables);
@@ -367,7 +379,7 @@ class MigrateGenerateCommand extends Command
         $this->info("\nPreparing Foreign Key Migrations");
         $this->generateForeignKeysToTemp($tables);
 
-        $migrationFilepath = $this->migration->squashMigrations();
+        $migrationFilepath = $this->squash->squashMigrations();
 
         $this->info("\nAll migrations squashed.");
 
@@ -380,12 +392,11 @@ class MigrateGenerateCommand extends Command
      * Generates table migrations.
      *
      * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateTables(Collection $tables): void
     {
         $tables->each(function (string $table) {
-            $path = $this->migration->writeTable(
+            $path = $this->tableMigration->write(
                 $this->schema->getTable($table)
             );
 
@@ -405,7 +416,7 @@ class MigrateGenerateCommand extends Command
     protected function generateTablesToTemp(Collection $tables): void
     {
         $tables->each(function (string $table) {
-            $this->migration->writeTableToTemp(
+            $this->tableMigration->writeToTemp(
                 $this->schema->getTable($table)
             );
 
@@ -417,7 +428,6 @@ class MigrateGenerateCommand extends Command
      * Generate view migrations.
      *
      * @param  \Illuminate\Support\Collection<string>  $views  View names.
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateViews(Collection $views): void
     {
@@ -427,7 +437,7 @@ class MigrateGenerateCommand extends Command
                 return;
             }
 
-            $path = $this->migration->writeView($view);
+            $path = $this->viewMigration->write($view);
 
             $this->info("Created: $path");
 
@@ -450,7 +460,7 @@ class MigrateGenerateCommand extends Command
                 return;
             }
 
-            $this->migration->writeViewToTemp($view);
+            $this->viewMigration->writeToTemp($view);
 
             $this->info('Prepared: ' . $view->getName());
         });
@@ -465,7 +475,7 @@ class MigrateGenerateCommand extends Command
     {
         $procedures = $this->schema->getProcedures();
         $procedures->each(function (Procedure $procedure) {
-            $path = $this->migration->writeProcedure($procedure);
+            $path = $this->procedureMigration->write($procedure);
 
             $this->info("Created: $path");
 
@@ -482,7 +492,7 @@ class MigrateGenerateCommand extends Command
     {
         $procedures = $this->schema->getProcedures();
         $procedures->each(function (Procedure $procedure) {
-            $this->migration->writeProcedureToTemp($procedure);
+            $this->procedureMigration->writeToTemp($procedure);
 
             $this->info('Prepared: ' . $procedure->getName());
         });
@@ -492,14 +502,13 @@ class MigrateGenerateCommand extends Command
      * Generates foreign key migrations.
      *
      * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateForeignKeys(Collection $tables): void
     {
         $tables->each(function (string $table) {
             $foreignKeys = $this->schema->getTableForeignKeys($table);
             if ($foreignKeys->isNotEmpty()) {
-                $path = $this->migration->writeTableForeignKeys(
+                $path = $this->foreignKeyMigration->write(
                     $table,
                     $foreignKeys
                 );
@@ -523,7 +532,7 @@ class MigrateGenerateCommand extends Command
         $tables->each(function (string $table) {
             $foreignKeys = $this->schema->getTableForeignKeys($table);
             if ($foreignKeys->isNotEmpty()) {
-                $this->migration->writeForeignKeysToTemp(
+                $this->foreignKeyMigration->writeToTemp(
                     $table,
                     $foreignKeys
                 );

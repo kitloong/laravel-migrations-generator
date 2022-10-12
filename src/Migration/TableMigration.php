@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Enum\Driver;
@@ -10,25 +11,89 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Property\TableProperty;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\CustomBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
+use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
 use KitLoong\MigrationsGenerator\Migration\Generator\ColumnGenerator;
 use KitLoong\MigrationsGenerator\Migration\Generator\IndexGenerator;
+use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
+use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Setting;
+use KitLoong\MigrationsGenerator\Support\FilenameHelper;
 
 class TableMigration
 {
     private $columnGenerator;
+    private $filenameHelper;
     private $indexGenerator;
+    private $migrationWriter;
     private $setting;
+    private $squashWriter;
 
     public function __construct(
         ColumnGenerator $columnGenerator,
+        FilenameHelper $filenameHelper,
         IndexGenerator $indexGenerator,
-        Setting $setting
+        MigrationWriter $migrationWriter,
+        Setting $setting,
+        SquashWriter $squashWriter
     ) {
         $this->columnGenerator = $columnGenerator;
+        $this->filenameHelper  = $filenameHelper;
         $this->indexGenerator  = $indexGenerator;
+        $this->migrationWriter = $migrationWriter;
         $this->setting         = $setting;
+        $this->squashWriter    = $squashWriter;
+    }
+
+    /**
+     * Create table migration.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
+     * @return string The migration file path.
+     */
+    public function write(Table $table): string
+    {
+        $upList = new Collection();
+        $upList->push($this->up($table));
+
+        if ($table->getCustomColumns()->isNotEmpty()) {
+            foreach ($this->upAdditionalStatements($table) as $statement) {
+                $upList->push($statement);
+            }
+        }
+
+        $down = $this->down($table);
+
+        $this->migrationWriter->writeTo(
+            $path = $this->filenameHelper->makeTablePath($table->getName()),
+            $this->setting->getStubPath(),
+            $this->filenameHelper->makeTableClassName($table->getName()),
+            $upList,
+            new Collection([$down]),
+            MigrationFileType::TABLE()
+        );
+
+        return $path;
+    }
+
+    /**
+     * Write table migration into temporary file.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
+     */
+    public function writeToTemp(Table $table): void
+    {
+        $upList = new Collection();
+        $upList->push($this->up($table));
+        if ($table->getCustomColumns()->isNotEmpty()) {
+            foreach ($this->upAdditionalStatements($table) as $statement) {
+                $upList->push($statement);
+            }
+        }
+
+        $down = $this->down($table);
+
+        $this->squashWriter->writeToTemp($upList, new Collection([$down]));
     }
 
     /**
@@ -37,7 +102,7 @@ class TableMigration
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
-    public function up(Table $table): SchemaBlueprint
+    private function up(Table $table): SchemaBlueprint
     {
         $up = $this->getSchemaBlueprint($table, SchemaBuilder::CREATE());
 
@@ -77,7 +142,7 @@ class TableMigration
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\CustomBlueprint[]
      */
-    public function upAdditionalStatements(Table $table): array
+    private function upAdditionalStatements(Table $table): array
     {
         $statements = [];
         foreach ($table->getCustomColumns() as $column) {
@@ -94,7 +159,7 @@ class TableMigration
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
      * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
-    public function down(Table $table): SchemaBlueprint
+    private function down(Table $table): SchemaBlueprint
     {
         return $this->getSchemaBlueprint($table, SchemaBuilder::DROP_IF_EXISTS());
     }

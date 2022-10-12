@@ -20,8 +20,6 @@ use KitLoong\MigrationsGenerator\Migration\Generator\Columns\OmitNameColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\PresetValuesColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\SoftDeleteColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\StringColumn;
-use KitLoong\MigrationsGenerator\Migration\Migration;
-use KitLoong\MigrationsGenerator\Migration\MigrationInterface;
 use KitLoong\MigrationsGenerator\Repositories\MariaDBRepository;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
@@ -71,8 +69,6 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
                 return $app['migration.repository'];
             }
         );
-
-        $this->app->bind(MigrationInterface::class, Migration::class);
 
         $this->registerColumnTypeGenerator();
     }
