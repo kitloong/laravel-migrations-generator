@@ -12,4 +12,5 @@
 /phpcs.xml          export-ignore
 /phpstan.neon       export-ignore
 /phpunit.xml        export-ignore
+/phpunit8.xml       export-ignore
 /testbench.yaml     export-ignore
