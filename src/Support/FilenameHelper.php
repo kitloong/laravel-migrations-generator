@@ -174,8 +174,8 @@ class FilenameHelper
         $path     = $this->setting->getPath();
         $filename = $pattern;
         $replace  = [
-            '[datetime_prefix]' => $datetimePrefix,
-            '[name]'            => $this->removeSpecialCharacters($name),
+            '[datetime]' => $datetimePrefix,
+            '[name]'     => $this->removeSpecialCharacters($name),
         ];
         $filename = str_replace(array_keys($replace), $replace, $filename);
         return "$path/$filename";
@@ -192,9 +192,9 @@ class FilenameHelper
     {
         $className = $pattern;
         $replace   = [
-            '[datetime_prefix]_' => '',
-            '[name]'             => $this->removeSpecialCharacters($name),
-            '.php'               => '',
+            '[datetime]_' => '',
+            '[name]'      => $this->removeSpecialCharacters($name),
+            '.php'        => '',
         ];
         return Str::studly(str_replace(array_keys($replace), $replace, $className));
     }
