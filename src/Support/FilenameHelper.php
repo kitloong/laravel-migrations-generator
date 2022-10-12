@@ -25,11 +25,11 @@ class FilenameHelper
      */
     public function makeTableClassName(string $table): string
     {
-        $className = $this->makeClassName(
+        $withoutPrefix = $this->stripTablePrefix($table);
+        return $this->makeClassName(
             $this->setting->getTableFilename(),
-            $table
+            $this->removeSpecialCharacters($withoutPrefix)
         );
-        return Str::studly($className);
     }
 
     /**
@@ -40,10 +40,11 @@ class FilenameHelper
      */
     public function makeTablePath(string $table): string
     {
+        $withoutPrefix = $this->stripTablePrefix($table);
         return $this->makeFilename(
             $this->setting->getTableFilename(),
             $this->setting->getDate()->format('Y_m_d_His'),
-            $table
+            $this->removeSpecialCharacters($withoutPrefix)
         );
     }
 
@@ -55,11 +56,11 @@ class FilenameHelper
      */
     public function makeViewClassName(string $view): string
     {
-        $className = $this->makeClassName(
+        $withoutPrefix = $this->stripTablePrefix($view);
+        return $this->makeClassName(
             $this->setting->getViewFilename(),
-            $view
+            $this->removeSpecialCharacters($withoutPrefix)
         );
-        return Str::studly($className);
     }
 
     /**
@@ -70,10 +71,11 @@ class FilenameHelper
      */
     public function makeViewPath(string $view): string
     {
+        $withoutPrefix = $this->stripTablePrefix($view);
         return $this->makeFilename(
             $this->setting->getViewFilename(),
             Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
-            $view
+            $this->removeSpecialCharacters($withoutPrefix)
         );
     }
 
@@ -85,11 +87,10 @@ class FilenameHelper
      */
     public function makeProcedureClassName(string $procedure): string
     {
-        $className = $this->makeClassName(
+        return $this->makeClassName(
             $this->setting->getProcedureFilename(),
-            $procedure
+            $this->removeSpecialCharacters($procedure)
         );
-        return Str::studly($className);
     }
 
     /**
@@ -103,7 +104,7 @@ class FilenameHelper
         return $this->makeFilename(
             $this->setting->getProcedureFilename(),
             Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
-            $procedure
+            $this->removeSpecialCharacters($procedure)
         );
     }
 
@@ -115,11 +116,11 @@ class FilenameHelper
      */
     public function makeForeignKeyClassName(string $table): string
     {
-        $className = $this->makeClassName(
+        $withoutPrefix = $this->stripTablePrefix($table);
+        return $this->makeClassName(
             $this->setting->getFkFilename(),
-            $table
+            $this->removeSpecialCharacters($withoutPrefix)
         );
-        return Str::studly($className);
     }
 
     /**
@@ -130,10 +131,11 @@ class FilenameHelper
      */
     public function makeForeignKeyPath(string $table): string
     {
+        $withoutPrefix = $this->stripTablePrefix($table);
         return $this->makeFilename(
             $this->setting->getFkFilename(),
             Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
-            $table
+            $this->removeSpecialCharacters($withoutPrefix)
         );
     }
 
@@ -164,16 +166,16 @@ class FilenameHelper
      *
      * @param  string  $pattern  Naming pattern for migration filename.
      * @param  string  $datetimePrefix  Current datetime for filename prefix.
-     * @param  string  $table  Table name.
+     * @param  string  $name  Name.
      * @return string
      */
-    private function makeFilename(string $pattern, string $datetimePrefix, string $table): string
+    private function makeFilename(string $pattern, string $datetimePrefix, string $name): string
     {
         $path     = $this->setting->getPath();
         $filename = $pattern;
         $replace  = [
             '[datetime_prefix]' => $datetimePrefix,
-            '[table]'           => $this->stripTablePrefix($table),
+            '[name]'            => $this->removeSpecialCharacters($name),
         ];
         $filename = str_replace(array_keys($replace), $replace, $filename);
         return "$path/$filename";
@@ -183,29 +185,28 @@ class FilenameHelper
      * Makes migration class name by given naming pattern.
      *
      * @param  string  $pattern  Naming pattern for class.
-     * @param  string  $table  Table name.
+     * @param  string  $name  Name.
      * @return string
      */
-    private function makeClassName(string $pattern, string $table): string
+    private function makeClassName(string $pattern, string $name): string
     {
         $className = $pattern;
         $replace   = [
             '[datetime_prefix]_' => '',
-            '[table]'            => $this->stripTablePrefix($table),
+            '[name]'             => $this->removeSpecialCharacters($name),
             '.php'               => '',
         ];
-        return str_replace(array_keys($replace), $replace, $className);
+        return Str::studly(str_replace(array_keys($replace), $replace, $className));
     }
 
     /**
-     * Strips prefix from table name.
+     * Remove special characters except `_`.
      *
      * @param  string  $table  Table name.
      * @return string Table name without prefix.
      */
-    private function stripTablePrefix(string $table): string
+    private function removeSpecialCharacters(string $table): string
     {
-        $tableNameEscaped = (string) preg_replace('/[^a-zA-Z0-9_]/', '_', $table);
-        return $this->stripPrefix($tableNameEscaped);
+        return (string) preg_replace('/[^a-zA-Z0-9_]/', '_', $table);
     }
 }

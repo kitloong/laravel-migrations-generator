@@ -274,8 +274,8 @@ class CommandTest extends MySQL57TestCase
         $this->truncateMigrationsTable();
 
         $this->generateMigrations([
-            '--table-filename' => '[datetime_prefix]_custom_[table]_table.php',
-            '--view-filename'  => '[datetime_prefix]_custom_[table]_view.php',
+            '--table-filename' => '[datetime_prefix]_custom_[name]_table.php',
+            '--view-filename'  => '[datetime_prefix]_custom_[name]_view.php',
         ]);
 
         $migrations = [];
@@ -293,14 +293,14 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigrationsTable();
 
-        $this->generateMigrations(['--proc-filename' => '[datetime_prefix]_custom_[table]_proc.php']);
+        $this->generateMigrations(['--proc-filename' => '[datetime_prefix]_custom_[name]_proc.php']);
 
         $migrations = [];
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
-        $this->assertContains('custom_getNameWithHyphen_proc', $migrations);
+        $this->assertContains('custom_findNameWithHyphen_proc', $migrations);
     }
 
     public function testFKFilename()
@@ -309,7 +309,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigrationsTable();
 
-        $this->generateMigrations(['--fk-filename' => '[datetime_prefix]_custom_[table]_table.php']);
+        $this->generateMigrations(['--fk-filename' => '[datetime_prefix]_custom_[name]_table.php']);
 
         $migrations = [];
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {

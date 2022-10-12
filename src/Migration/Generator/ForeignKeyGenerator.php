@@ -23,7 +23,7 @@ class ForeignKeyGenerator
         $method = $this->makeMethod($foreignKey);
 
         $method->chain(Foreign::REFERENCES(), $foreignKey->getForeignColumns())
-            ->chain(Foreign::ON(), $this->stripPrefix($foreignKey->getForeignTableName()));
+            ->chain(Foreign::ON(), $this->stripTablePrefix($foreignKey->getForeignTableName()));
 
         if ($foreignKey->getOnUpdate() !== null) {
             $method->chain(Foreign::ON_UPDATE(), $foreignKey->getOnUpdate());

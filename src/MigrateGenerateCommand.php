@@ -34,10 +34,10 @@ class MigrateGenerateCommand extends Command
                             {--p|path= : Where should the file be created?}
                             {--tp|template-path= : The location of the template for this generator}
                             {--date= : Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format supported by Carbon::parse}
-                            {--table-filename= : Define table migration filename, default pattern: [datetime_prefix]_create_[table]_table.php}
-                            {--view-filename= : Define view migration filename, default pattern: [datetime_prefix]_create_[table]_view.php}
+                            {--table-filename= : Define table migration filename, default pattern: [datetime_prefix]_create_[name]_table.php}
+                            {--view-filename= : Define view migration filename, default pattern: [datetime_prefix]_create_[name]_view.php}
                             {--proc-filename= : Define stored procedure migration filename, default pattern: [datetime_prefix]_create_[name]_proc.php}
-                            {--fk-filename= : Define foreign key migration filename, default pattern: [datetime_prefix]_add_foreign_keys_to_[table]_table.php}
+                            {--fk-filename= : Define foreign key migration filename, default pattern: [datetime_prefix]_add_foreign_keys_to_[name]_table.php}
                             {--default-index-names : Don\'t use DB index names for migrations}
                             {--default-fk-names : Don\'t use DB foreign key names for migrations}
                             {--use-db-collation : Generate migrations with existing DB collation}

@@ -64,7 +64,7 @@ class SchemaBlueprint implements WritableBlueprint
     {
         $schema = $this->connection('Schema', $this->schemaBuilder);
 
-        $tableWithoutPrefix = $this->stripPrefix($this->table);
+        $tableWithoutPrefix = $this->stripTablePrefix($this->table);
 
         $lines = [];
         if ($this->blueprint !== null) {
