@@ -12,6 +12,6 @@ class SQLiteView extends DBALView
      */
     protected function handle(DoctrineDBALView $view): void
     {
-        $this->createViewSQL = $view->getSql();
+        $this->definition = $view->getSql();
     }
 }

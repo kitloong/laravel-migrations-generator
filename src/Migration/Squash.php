@@ -5,22 +5,22 @@ namespace KitLoong\MigrationsGenerator\Migration;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\FilenameHelper;
+use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class Squash
 {
     private $squashWriter;
-    private $filenameHelper;
+    private $migrationNameHelper;
     private $setting;
 
     public function __construct(
         SquashWriter $squashWriter,
-        FilenameHelper $filenameHelper,
+        MigrationNameHelper $migrationNameHelper,
         Setting $setting
     ) {
-        $this->squashWriter   = $squashWriter;
-        $this->filenameHelper = $filenameHelper;
-        $this->setting        = $setting;
+        $this->squashWriter        = $squashWriter;
+        $this->migrationNameHelper = $migrationNameHelper;
+        $this->setting             = $setting;
     }
 
     /**
@@ -40,9 +40,15 @@ class Squash
      */
     public function squashMigrations(): string
     {
-        $database  = DB::getDatabaseName();
-        $path      = $this->filenameHelper->makeTablePath($database);
-        $className = $this->filenameHelper->makeTableClassName($database);
+        $path      = $this->migrationNameHelper->makeFilename(
+            $this->setting->getTableFilename(),
+            $this->setting->getDate()->format('Y_m_d_His'),
+            DB::getDatabaseName()
+        );
+        $className = $this->migrationNameHelper->makeClassName(
+            $this->setting->getTableFilename(),
+            DB::getDatabaseName()
+        );
         $this->squashWriter->squashMigrations($path, $this->setting->getStubPath(), $className);
         return $path;
     }

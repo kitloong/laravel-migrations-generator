@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Property\TableProperty;
-use KitLoong\MigrationsGenerator\Migration\Blueprint\CustomBlueprint;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
@@ -18,12 +18,15 @@ use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\FilenameHelper;
+use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
+use KitLoong\MigrationsGenerator\Support\TableName;
 
 class TableMigration
 {
+    use TableName;
+
     private $columnGenerator;
-    private $filenameHelper;
+    private $migrationNameHelper;
     private $indexGenerator;
     private $migrationWriter;
     private $setting;
@@ -31,18 +34,18 @@ class TableMigration
 
     public function __construct(
         ColumnGenerator $columnGenerator,
-        FilenameHelper $filenameHelper,
+        MigrationNameHelper $migrationNameHelper,
         IndexGenerator $indexGenerator,
         MigrationWriter $migrationWriter,
         Setting $setting,
         SquashWriter $squashWriter
     ) {
-        $this->columnGenerator = $columnGenerator;
-        $this->filenameHelper  = $filenameHelper;
-        $this->indexGenerator  = $indexGenerator;
-        $this->migrationWriter = $migrationWriter;
-        $this->setting         = $setting;
-        $this->squashWriter    = $squashWriter;
+        $this->columnGenerator     = $columnGenerator;
+        $this->migrationNameHelper = $migrationNameHelper;
+        $this->indexGenerator      = $indexGenerator;
+        $this->migrationWriter     = $migrationWriter;
+        $this->setting             = $setting;
+        $this->squashWriter        = $squashWriter;
     }
 
     /**
@@ -65,9 +68,9 @@ class TableMigration
         $down = $this->down($table);
 
         $this->migrationWriter->writeTo(
-            $path = $this->filenameHelper->makeTablePath($table->getName()),
+            $path = $this->makeMigrationPath($table->getName()),
             $this->setting->getStubPath(),
-            $this->filenameHelper->makeTableClassName($table->getName()),
+            $this->makeMigrationClassName($table->getName()),
             $upList,
             new Collection([$down]),
             MigrationFileType::TABLE()
@@ -140,14 +143,14 @@ class TableMigration
      * Generate custom statements.
      *
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\CustomBlueprint[]
+     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint[]
      */
     private function upAdditionalStatements(Table $table): array
     {
         $statements = [];
         foreach ($table->getCustomColumns() as $column) {
             foreach ($column->getSqls() as $sql) {
-                $statements[] = new CustomBlueprint($sql);
+                $statements[] = new DBStatementBlueprint($sql);
             }
         }
         return $statements;
@@ -162,6 +165,37 @@ class TableMigration
     private function down(Table $table): SchemaBlueprint
     {
         return $this->getSchemaBlueprint($table, SchemaBuilder::DROP_IF_EXISTS());
+    }
+
+    /**
+     * Makes class name for table migration.
+     *
+     * @param  string  $table  Table name.
+     * @return string
+     */
+    private function makeMigrationClassName(string $table): string
+    {
+        $withoutPrefix = $this->stripTablePrefix($table);
+        return $this->migrationNameHelper->makeClassName(
+            $this->setting->getTableFilename(),
+            $withoutPrefix
+        );
+    }
+
+    /**
+     * Makes file path for table migration.
+     *
+     * @param  string  $table  Table name.
+     * @return string
+     */
+    private function makeMigrationPath(string $table): string
+    {
+        $withoutPrefix = $this->stripTablePrefix($table);
+        return $this->migrationNameHelper->makeFilename(
+            $this->setting->getTableFilename(),
+            $this->setting->getDate()->format('Y_m_d_His'),
+            $withoutPrefix
+        );
     }
 
     /**

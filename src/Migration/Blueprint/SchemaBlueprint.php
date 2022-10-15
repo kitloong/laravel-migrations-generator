@@ -8,6 +8,28 @@ use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
 use KitLoong\MigrationsGenerator\Support\TableName;
 
+/**
+ * Create migration lines with `Schema`.
+ *
+ * eg 1:
+ * ```
+ * Schema::table('users', function (Blueprint $table) {
+ *     // ...
+ * });
+ * ```
+ *
+ * eg 2:
+ * ```
+ * Schema::connection('sqlite')->table('users', function (Blueprint $table) {
+ *     // ...
+ * });
+ * ```
+ *
+ * eg 3:
+ * ```
+ * Schema::dropIfExists('users);
+ * ```
+ */
 class SchemaBlueprint implements WritableBlueprint
 {
     use Stringable;

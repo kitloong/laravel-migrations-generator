@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
@@ -11,25 +12,28 @@ use KitLoong\MigrationsGenerator\Migration\Generator\ForeignKeyGenerator;
 use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\FilenameHelper;
+use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
+use KitLoong\MigrationsGenerator\Support\TableName;
 
 class ForeignKeyMigration
 {
+    use TableName;
+
     private $foreignKeyGenerator;
-    private $filenameHelper;
+    private $migrationNameHelper;
     private $migrationWriter;
     private $setting;
     private $squashWriter;
 
     public function __construct(
         ForeignKeyGenerator $foreignKeyGenerator,
-        FilenameHelper $filenameHelper,
+        MigrationNameHelper $migrationNameHelper,
         MigrationWriter $migrationWriter,
         Setting $setting,
         SquashWriter $squashWriter
     ) {
         $this->foreignKeyGenerator = $foreignKeyGenerator;
-        $this->filenameHelper      = $filenameHelper;
+        $this->migrationNameHelper = $migrationNameHelper;
         $this->migrationWriter     = $migrationWriter;
         $this->setting             = $setting;
         $this->squashWriter        = $squashWriter;
@@ -48,9 +52,9 @@ class ForeignKeyMigration
         $down = $this->down($table, $foreignKeys);
 
         $this->migrationWriter->writeTo(
-            $path = $this->filenameHelper->makeForeignKeyPath($table),
+            $path = $this->makeMigrationPath($table),
             $this->setting->getStubPath(),
-            $this->filenameHelper->makeForeignKeyClassName($table),
+            $this->makeMigrationClassName($table),
             new Collection([$up]),
             new Collection([$down]),
             MigrationFileType::FOREIGN_KEY()
@@ -111,6 +115,37 @@ class ForeignKeyMigration
         $down->setBlueprint($downBlueprint);
 
         return $down;
+    }
+
+    /**
+     * Makes class name for foreign key migration.
+     *
+     * @param  string  $table  Table name.
+     * @return string
+     */
+    private function makeMigrationClassName(string $table): string
+    {
+        $withoutPrefix = $this->stripTablePrefix($table);
+        return $this->migrationNameHelper->makeClassName(
+            $this->setting->getFkFilename(),
+            $withoutPrefix
+        );
+    }
+
+    /**
+     * Makes file path for foreign key migration.
+     *
+     * @param  string  $table  Table name.
+     * @return string
+     */
+    private function makeMigrationPath(string $table): string
+    {
+        $withoutPrefix = $this->stripTablePrefix($table);
+        return $this->migrationNameHelper->makeFilename(
+            $this->setting->getFkFilename(),
+            Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
+            $withoutPrefix
+        );
     }
 
     /**

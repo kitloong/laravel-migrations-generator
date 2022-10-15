@@ -60,8 +60,8 @@ class SQLSrvSchema extends DBALSchema
                 return new SQLSrvView($view);
             })
             ->filter(function (SQLSrvView $view) {
-                // $view->getCreateViewSql() is empty string if the view definition is encrypted.
-                return $view->getCreateViewSql() !== '';
+                // `$view->getDefinition()` is empty string if the view definition is encrypted.
+                return $view->getDefinition() !== '';
             });
     }
 

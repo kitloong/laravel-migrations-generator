@@ -12,16 +12,16 @@ interface View extends Model
     public function getName(): string;
 
     /**
-     * Get the view name, always quoted.
+     * Get the view create definition.
      *
      * @return string
      */
-    public function getQuotedName(): string;
+    public function getDefinition(): string;
 
     /**
-     * Get the create view SQL.
+     * Get the view drop definition.
      *
      * @return string
      */
-    public function getCreateViewSql(): string;
+    public function getDropDefinition(): string;
 }

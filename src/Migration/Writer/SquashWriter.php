@@ -6,17 +6,17 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
-use KitLoong\MigrationsGenerator\Support\FilenameHelper;
+use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class SquashWriter
 {
-    private $filenameHelper;
+    private $migrationNameHelper;
     private $migrationStub;
 
-    public function __construct(FilenameHelper $filenameHelper, MigrationStub $migrationStub)
+    public function __construct(MigrationNameHelper $migrationNameHelper, MigrationStub $migrationStub)
     {
-        $this->filenameHelper = $filenameHelper;
-        $this->migrationStub  = $migrationStub;
+        $this->migrationNameHelper = $migrationNameHelper;
+        $this->migrationStub       = $migrationStub;
     }
 
     /**
@@ -29,14 +29,14 @@ class SquashWriter
      */
     public function writeToTemp(Collection $upBlueprints, Collection $downBlueprints): void
     {
-        $upTempPath  = $this->filenameHelper->makeUpTempPath();
+        $upTempPath  = $this->migrationNameHelper->makeUpTempPath();
         $prettySpace = $this->getSpaceIfFileExists($upTempPath);
         $upString    = $upBlueprints->map(function (WritableBlueprint $up) {
             return $up->toString();
         })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
         File::append($upTempPath, $prettySpace . $upString);
 
-        $downTempPath = $this->filenameHelper->makeDownTempPath();
+        $downTempPath = $this->migrationNameHelper->makeDownTempPath();
         $prettySpace  = $this->getSpaceIfFileExists($downTempPath);
         $downString   = $downBlueprints->map(function (WritableBlueprint $down) {
             return $down->toString();
@@ -49,8 +49,8 @@ class SquashWriter
      */
     public function cleanTemps(): void
     {
-        File::delete($this->filenameHelper->makeUpTempPath());
-        File::delete($this->filenameHelper->makeDownTempPath());
+        File::delete($this->migrationNameHelper->makeUpTempPath());
+        File::delete($this->migrationNameHelper->makeDownTempPath());
     }
 
     /**
@@ -76,8 +76,8 @@ class SquashWriter
                 $this->migrationStub->getStub($stubPath),
                 $use,
                 $className,
-                File::get($upTempPath = $this->filenameHelper->makeUpTempPath()),
-                File::get($downTempPath = $this->filenameHelper->makeDownTempPath())
+                File::get($upTempPath = $this->migrationNameHelper->makeUpTempPath()),
+                File::get($downTempPath = $this->migrationNameHelper->makeDownTempPath())
             )
         );
 

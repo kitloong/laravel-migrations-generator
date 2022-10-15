@@ -2,32 +2,33 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use KitLoong\MigrationsGenerator\Migration\Blueprint\CustomBlueprint;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
 use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
 use KitLoong\MigrationsGenerator\Schema\Models\Procedure;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\FilenameHelper;
+use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class ProcedureMigration
 {
-    private $filenameHelper;
+    private $migrationNameHelper;
     private $migrationWriter;
     private $setting;
     private $squashWriter;
 
     public function __construct(
-        FilenameHelper $filenameHelper,
+        MigrationNameHelper $migrationNameHelper,
         MigrationWriter $migrationWriter,
         Setting $setting,
         SquashWriter $squashWriter
     ) {
-        $this->filenameHelper  = $filenameHelper;
-        $this->migrationWriter = $migrationWriter;
-        $this->setting         = $setting;
-        $this->squashWriter    = $squashWriter;
+        $this->migrationNameHelper = $migrationNameHelper;
+        $this->migrationWriter     = $migrationWriter;
+        $this->setting             = $setting;
+        $this->squashWriter        = $squashWriter;
     }
 
     /**
@@ -42,9 +43,9 @@ class ProcedureMigration
         $down = $this->down($procedure);
 
         $this->migrationWriter->writeTo(
-            $path = $this->filenameHelper->makeProcedurePath($procedure->getName()),
+            $path = $this->makeMigrationPath($procedure->getName()),
             $this->setting->getStubPath(),
-            $this->filenameHelper->makeProcedureClassName($procedure->getName()),
+            $this->makeMigrationClassName($procedure->getName()),
             new Collection([$up]),
             new Collection([$down]),
             MigrationFileType::PROCEDURE()
@@ -65,13 +66,54 @@ class ProcedureMigration
         $this->squashWriter->writeToTemp(new Collection([$up]), new Collection([$down]));
     }
 
-    private function up(Procedure $procedure): CustomBlueprint
+    /**
+     * Generates `up` db statement for stored procedure.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
+     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint
+     */
+    private function up(Procedure $procedure): DBStatementBlueprint
     {
-        return new CustomBlueprint($procedure->getDefinition());
+        return new DBStatementBlueprint($procedure->getDefinition());
     }
 
-    private function down(Procedure $procedure): CustomBlueprint
+    /**
+     * Generates `down` db statement for stored procedure.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
+     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint
+     */
+    private function down(Procedure $procedure): DBStatementBlueprint
     {
-        return new CustomBlueprint($procedure->getDropDefinition());
+        return new DBStatementBlueprint($procedure->getDropDefinition());
+    }
+
+    /**
+     * Makes class name for stored procedure migration.
+     *
+     * @param  string  $procedure  Stored procedure name.
+     * @return string
+     */
+    private function makeMigrationClassName(string $procedure): string
+    {
+        return $this->migrationNameHelper->makeClassName(
+            $this->setting->getProcedureFilename(),
+            $procedure
+        );
+    }
+
+    /**
+     * Makes file path for stored procedure migration.
+     *
+     * @param  string  $procedure  Stored procedure name.
+     * @return string
+     */
+    private function makeMigrationPath(string $procedure): string
+    {
+        return $this->migrationNameHelper->makeFilename(
+            $this->setting->getProcedureFilename(),
+            Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
+            $procedure
+        );
     }
 }

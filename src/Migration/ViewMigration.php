@@ -2,32 +2,36 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use KitLoong\MigrationsGenerator\Migration\Blueprint\ViewBlueprint;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
 use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\FilenameHelper;
+use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
+use KitLoong\MigrationsGenerator\Support\TableName;
 
 class ViewMigration
 {
-    private $filenameHelper;
+    use TableName;
+
+    private $migrationNameHelper;
     private $migrationWriter;
     private $setting;
     private $squashWriter;
 
     public function __construct(
-        FilenameHelper $filenameHelper,
+        MigrationNameHelper $migrationNameHelper,
         MigrationWriter $migrationWriter,
         Setting $setting,
         SquashWriter $squashWriter
     ) {
-        $this->filenameHelper  = $filenameHelper;
-        $this->migrationWriter = $migrationWriter;
-        $this->setting         = $setting;
-        $this->squashWriter    = $squashWriter;
+        $this->migrationNameHelper = $migrationNameHelper;
+        $this->migrationWriter     = $migrationWriter;
+        $this->setting             = $setting;
+        $this->squashWriter        = $squashWriter;
     }
 
     /**
@@ -42,9 +46,9 @@ class ViewMigration
         $down = $this->down($view);
 
         $this->migrationWriter->writeTo(
-            $path = $this->filenameHelper->makeViewPath($view->getName()),
+            $path = $this->makeMigrationPath($view->getName()),
             $this->setting->getStubPath(),
-            $this->filenameHelper->makeViewClassName($view->getName()),
+            $this->makeMigrationClassName($view->getName()),
             new Collection([$up]),
             new Collection([$down]),
             MigrationFileType::VIEW()
@@ -70,23 +74,52 @@ class ViewMigration
      * Generates `up` db statement for view.
      *
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\View  $view
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\ViewBlueprint
+     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint
      */
-    private function up(View $view): ViewBlueprint
+    private function up(View $view): DBStatementBlueprint
     {
-        $viewBlueprint = new ViewBlueprint($view->getQuotedName());
-        $viewBlueprint->setCreateViewSql($view->getCreateViewSql());
-        return $viewBlueprint;
+        return new DBStatementBlueprint($view->getDefinition());
     }
 
     /**
-     * * Generates `down` db statement for view.
+     * Generates `down` db statement for view.
      *
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\View  $view
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\ViewBlueprint
+     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint
      */
-    private function down(View $view): ViewBlueprint
+    private function down(View $view): DBStatementBlueprint
     {
-        return new ViewBlueprint($view->getQuotedName());
+        return new DBStatementBlueprint($view->getDropDefinition());
+    }
+
+    /**
+     * Makes class name for view migration.
+     *
+     * @param  string  $view  View name.
+     * @return string
+     */
+    private function makeMigrationClassName(string $view): string
+    {
+        $withoutPrefix = $this->stripTablePrefix($view);
+        return $this->migrationNameHelper->makeClassName(
+            $this->setting->getViewFilename(),
+            $withoutPrefix
+        );
+    }
+
+    /**
+     * Makes file path for view migration.
+     *
+     * @param  string  $view  View name.
+     * @return string
+     */
+    private function makeMigrationPath(string $view): string
+    {
+        $withoutPrefix = $this->stripTablePrefix($view);
+        return $this->migrationNameHelper->makeFilename(
+            $this->setting->getViewFilename(),
+            Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
+            $withoutPrefix
+        );
     }
 }

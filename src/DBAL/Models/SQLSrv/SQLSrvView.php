@@ -13,15 +13,13 @@ class SQLSrvView extends DBALView
      */
     protected function handle(DoctrineDBALView $view): void
     {
-        $this->createViewSQL = '';
-
         $repository = app(SQLSrvRepository::class);
 
         // Stop if Doctrine DBAL contains CREATE VIEW SQL
         // DoctrineDBALView::getSql() may have null value
         if ($view->getSql() !== null && $view->getSql() !== '') {
             // $view->getSql() contains full view definition.
-            $this->createViewSQL = $view->getSql();
+            $this->definition = $view->getSql();
             return;
         }
 
@@ -31,6 +29,6 @@ class SQLSrvView extends DBALView
             return;
         }
 
-        $this->createViewSQL = $viewDefinition->getDefinition();
+        $this->definition = $viewDefinition->getDefinition();
     }
 }
