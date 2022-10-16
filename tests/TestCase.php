@@ -33,7 +33,7 @@ abstract class TestCase extends Testbench
     protected function getPackageProviders($app)
     {
         return [
-            MigrationsGeneratorServiceProvider::class
+            MigrationsGeneratorServiceProvider::class,
         ];
     }
 

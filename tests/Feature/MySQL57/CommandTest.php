@@ -103,8 +103,8 @@ class CommandTest extends MySQL57TestCase
             '--tables' => implode(',', [
                 'all_columns_mysql57',
                 'users_mysql57',
-                'users_mysql57_view'
-            ])
+                'users_mysql57_view',
+            ]),
         ]);
 
         $this->refreshDatabase();
@@ -138,12 +138,10 @@ class CommandTest extends MySQL57TestCase
             'users_mysql57_view',
         ];
 
-        $ignoreNotExists = [
-            'not_exists',
-        ];
+        $ignoreNotExists = ['not_exists'];
 
         $this->generateMigrations([
-            '--ignore' => implode(',', $ignores + $ignoreNotExists)
+            '--ignore' => implode(',', $ignores + $ignoreNotExists),
         ]);
 
         $this->refreshDatabase();
@@ -165,7 +163,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->generateMigrations([
             '--tables'              => 'test_index_mysql57',
-            '--default-index-names' => true
+            '--default-index-names' => true,
         ]);
 
         $this->refreshDatabase();
@@ -259,9 +257,7 @@ class CommandTest extends MySQL57TestCase
         };
 
         $generateMigrations = function () {
-            $this->generateMigrations([
-                '--date' => '2021-10-08 09:30:40',
-            ]);
+            $this->generateMigrations(['--date' => '2021-10-08 09:30:40']);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
@@ -326,9 +322,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigrationsTable();
 
-        $this->generateMigrations([
-            '--skip-views' => true,
-        ]);
+        $this->generateMigrations(['--skip-views' => true]);
 
         $migrations   = [];
         $prefixLength = 18;
@@ -346,9 +340,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigrationsTable();
 
-        $this->generateMigrations([
-            '--skip-proc' => true,
-        ]);
+        $this->generateMigrations(['--skip-proc' => true]);
 
         $migrations   = [];
         $prefixLength = 18;

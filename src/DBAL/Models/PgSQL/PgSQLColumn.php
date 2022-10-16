@@ -109,7 +109,7 @@ class PgSQLColumn extends DBALColumn
             'geography(multipoint,4326)'         => ColumnType::MULTI_POINT(),
             'geography(multipolygon,4326)'       => ColumnType::MULTI_POLYGON(),
             'geography(point,4326)'              => ColumnType::POINT(),
-            'geography(polygon,4326)'            => ColumnType::POLYGON()
+            'geography(polygon,4326)'            => ColumnType::POLYGON(),
         ];
     }
 

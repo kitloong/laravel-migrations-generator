@@ -93,7 +93,7 @@ class CommandTest extends PgSQLTestCase
             '--ignore' => implode(',', [
                 'name-with-hyphen-pgsql',
                 'name-with-hyphen-pgsql_view',
-            ])
+            ]),
         ]);
 
         $this->refreshDatabase();

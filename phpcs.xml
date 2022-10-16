@@ -10,4 +10,17 @@
     <file>tests</file>
 
     <exclude-pattern>tests/resources/database/migrations/*.php</exclude-pattern>
+
+    <!-- Align corresponding assignment statement tokens -->
+    <rule ref="Generic.Formatting.MultipleStatementAlignment">
+      <properties>
+        <property name="error" value="true"/>
+      </properties>
+    </rule>
+
+    <!-- Require comma after last element in multi-line array -->
+    <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
+
+    <!-- Align array arrow -->
+    <rule ref="Squiz.Arrays.ArrayDeclaration.DoubleArrowNotAligned"/>
 </ruleset>

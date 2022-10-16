@@ -125,7 +125,7 @@ class SQLSrvRepository extends Repository
         $schema = 'SCHEMA_NAME()';
         if (strpos($table, '.') !== false) {
             [$schema, $table] = explode('.', $table);
-            $schema = $this->quoteStringLiteral($schema);
+            $schema           = $this->quoteStringLiteral($schema);
         }
 
         $table = $this->quoteStringLiteral($table);

@@ -97,10 +97,10 @@ abstract class FeatureTestCase extends TestCase
         foreach (File::files($this->getStorageFromPath()) as $file) {
             $content = str_replace([
                 '[db]',
-                '_DB_'
+                '_DB_',
             ], [
                 $connection,
-                ucfirst("$connection")
+                ucfirst("$connection"),
             ], $file->getContents());
 
             file_put_contents($this->getStorageFromPath($file->getBasename()), $content);
@@ -118,7 +118,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan('migrate', [
             '--database' => $connection,
             '--realpath' => true,
-            '--path'     => $path
+            '--path'     => $path,
         ]);
     }
 
@@ -127,7 +127,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan('migrate:rollback', [
             '--database' => $connection,
             '--realpath' => true,
-            '--path'     => $path
+            '--path'     => $path,
         ]);
     }
 
