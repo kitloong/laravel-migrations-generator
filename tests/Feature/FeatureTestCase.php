@@ -106,7 +106,7 @@ abstract class FeatureTestCase extends TestCase
                 ucfirst("$connection"),
             ], $file->getContents());
 
-            file_put_contents($this->getStorageFromPath($file->getBasename()), $content);
+            File::put($this->getStorageFromPath($file->getBasename()), $content);
             File::move(
                 $this->getStorageFromPath($file->getBasename()),
                 $this->getStorageFromPath(str_replace('_db_', "_${connection}_", $file->getBasename()))

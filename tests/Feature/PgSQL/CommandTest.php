@@ -167,7 +167,7 @@ class CommandTest extends PgSQLTestCase
     {
         $this->assertTrue(
             str_contains(
-                file_get_contents($file),
+                File::get($file),
                 $line
             )
         );
@@ -177,7 +177,7 @@ class CommandTest extends PgSQLTestCase
             str_replace(
                 $line,
                 'replaced',
-                file_get_contents($file)
+                File::get($file)
             )
         );
     }
