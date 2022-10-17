@@ -376,8 +376,10 @@ class MigrateGenerateCommand extends Command
         $this->info('Preparing Tables and Index Migrations');
         $this->generateTablesToTemp($tables);
 
-        $this->info("\nPreparing Views Migrations");
-        $this->generateViewsToTemp($views);
+        if (!$this->option('skip-views')) {
+            $this->info("\nPreparing Views Migrations");
+            $this->generateViewsToTemp($views);
+        }
 
         if (!$this->option('skip-proc')) {
             $this->info("\nPreparing Stored Procedure Migrations");
