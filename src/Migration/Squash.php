@@ -13,11 +13,8 @@ class Squash
     private $migrationNameHelper;
     private $setting;
 
-    public function __construct(
-        SquashWriter $squashWriter,
-        MigrationNameHelper $migrationNameHelper,
-        Setting $setting
-    ) {
+    public function __construct(SquashWriter $squashWriter, MigrationNameHelper $migrationNameHelper, Setting $setting)
+    {
         $this->squashWriter        = $squashWriter;
         $this->migrationNameHelper = $migrationNameHelper;
         $this->setting             = $setting;

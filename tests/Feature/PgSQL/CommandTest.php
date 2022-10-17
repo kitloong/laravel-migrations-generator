@@ -109,8 +109,8 @@ class CommandTest extends PgSQLTestCase
 
     /**
      * Start from Laravel 9, the `schema` configuration option used to configure Postgres connection search paths renamed to `search_path`.
-     * @see https://laravel.com/docs/9.x/upgrade#postgres-schema-configuration
      *
+     * @see https://laravel.com/docs/9.x/upgrade#postgres-schema-configuration
      * @return void
      */
     public function testRunWithSearchPath()
@@ -137,7 +137,7 @@ class CommandTest extends PgSQLTestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations, callable $beforeVerify = null)
+    private function verify(callable $migrateTemplates, callable $generateMigrations, ?callable $beforeVerify = null)
     {
         $migrateTemplates();
 

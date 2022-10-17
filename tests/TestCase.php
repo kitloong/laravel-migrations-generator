@@ -23,8 +23,10 @@ abstract class TestCase extends Testbench
         switch ($name) {
             case 'mock':
                 return $this->instance($arguments[0], Mockery::mock(...array_filter($arguments)));
+
             case 'partialMock':
                 return $this->instance($arguments[0], Mockery::mock(...array_filter($arguments))->makePartial());
+
             default:
                 throw new Exception('Call to undefined method ' . get_called_class() . '::' . $name . '()');
         }

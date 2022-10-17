@@ -39,31 +39,40 @@ class MySQLColumn extends DBALColumn
                 if ($this->isBoolean()) {
                     $this->type = ColumnType::BOOLEAN();
                 }
+
                 break;
+
             case ColumnType::ENUM():
                 $this->presetValues = $this->getEnumPresetValues();
                 break;
+
             case ColumnType::SET():
                 $this->useSetOrString();
                 break;
+
             case ColumnType::SOFT_DELETES():
             case ColumnType::SOFT_DELETES_TZ():
             case ColumnType::TIMESTAMP():
             case ColumnType::TIMESTAMP_TZ():
                 $this->onUpdateCurrentTimestamp = $this->hasOnUpdateCurrentTimestamp();
                 break;
+
             default:
         }
 
-        if ($this->isMaria()) {
-            switch ($this->type) {
-                case ColumnType::LONG_TEXT():
-                    if ($this->isJson()) {
-                        $this->type = ColumnType::JSON();
-                    }
-                    break;
-                default:
-            }
+        if (!$this->isMaria()) {
+            return;
+        }
+
+        switch ($this->type) {
+            case ColumnType::LONG_TEXT():
+                if ($this->isJson()) {
+                    $this->type = ColumnType::JSON();
+                }
+
+                break;
+
+            default:
         }
     }
 
@@ -89,6 +98,7 @@ class MySQLColumn extends DBALColumn
         }
 
         $showColumn = $this->repository->showColumn($this->tableName, $this->name);
+
         if ($showColumn === null) {
             return false;
         }
@@ -159,9 +169,6 @@ class MySQLColumn extends DBALColumn
     private function isJson(): bool
     {
         $checkConstraint = $this->mariaDBRepository->getCheckConstraintForJson($this->tableName, $this->name);
-        if ($checkConstraint === null) {
-            return false;
-        }
-        return true;
+        return $checkConstraint !== null;
     }
 }

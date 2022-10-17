@@ -45,14 +45,18 @@ class SQLSrvColumn extends DBALColumn
             case ColumnType::SOFT_DELETES_TZ():
                 $this->length = $this->getDataTypeLength();
                 break;
+
             case ColumnType::FLOAT():
                 $this->fixFloatLength();
                 break;
+
             case ColumnType::STRING():
                 if ($this->isText()) {
                     $this->type = ColumnType::TEXT();
                 }
+
                 break;
+
             default:
         }
     }
@@ -67,6 +71,7 @@ class SQLSrvColumn extends DBALColumn
     private function getDataTypeLength(): ?int
     {
         $columnDef = $this->repository->getColumnDefinition($this->tableName, $this->name);
+
         switch ($this->type) {
             case ColumnType::DATETIME():
                 if (
@@ -75,7 +80,9 @@ class SQLSrvColumn extends DBALColumn
                 ) {
                     return null;
                 }
+
                 return $this->scale;
+
             case ColumnType::DATETIME_TZ():
                 if (
                     $columnDef->getScale() === self::DATETIME_TZ_EMPTY_SCALE
@@ -83,7 +90,9 @@ class SQLSrvColumn extends DBALColumn
                 ) {
                     return null;
                 }
+
                 return $this->scale;
+
             default:
                 return $this->scale;
         }
@@ -97,15 +106,12 @@ class SQLSrvColumn extends DBALColumn
     private function isText(): bool
     {
         $columnDef = $this->repository->getColumnDefinition($this->tableName, $this->name);
+
         if ($columnDef === null) {
             return false;
         }
 
-        if ($columnDef->getType() === self::TEXT_TYPE && $columnDef->getLength() === self::TEXT_LENGTH) {
-            return true;
-        }
-
-        return false;
+        return $columnDef->getType() === self::TEXT_TYPE && $columnDef->getLength() === self::TEXT_LENGTH;
     }
 
     /**
@@ -117,9 +123,11 @@ class SQLSrvColumn extends DBALColumn
      */
     private function fixFloatLength(): void
     {
-        if ($this->precision === 53 && $this->scale === 0) {
-            $this->precision = 0;
-            $this->scale     = 0;
+        if ($this->precision !== 53 || $this->scale !== 0) {
+            return;
         }
+
+        $this->precision = 0;
+        $this->scale     = 0;
     }
 }

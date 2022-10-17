@@ -32,6 +32,7 @@ class MySQLRepository extends Repository
     public function getEnumPresetValues(string $table, string $column): Collection
     {
         $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'enum(%'");
+
         if ($result === null) {
             return new Collection();
         }
@@ -55,6 +56,7 @@ class MySQLRepository extends Repository
     public function getSetPresetValues(string $table, string $column): Collection
     {
         $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'set(%'");
+
         if ($result === null) {
             return new Collection();
         }
@@ -97,6 +99,7 @@ class MySQLRepository extends Repository
     {
         $list       = new Collection();
         $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . DB::getDatabaseName() . "'");
+
         foreach ($procedures as $procedure) {
             // Change all keys to lowercase.
             $procedureArr = array_change_key_case((array) $procedure);
@@ -106,6 +109,7 @@ class MySQLRepository extends Repository
             $createProcArr = array_change_key_case((array) $createProc);
             $list->push(new ProcedureDefinition($procedureArr['name'], $createProcArr['create procedure']));
         }
+
         return $list;
     }
 

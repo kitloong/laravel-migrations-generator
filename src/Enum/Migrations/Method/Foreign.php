@@ -8,7 +8,6 @@ use MyCLabs\Enum\Enum;
  * Preserved foreign key methods of the framework.
  *
  * @see https://laravel.com/docs/master/migrations#foreign-key-constraints
- *
  * @method static self DROP_FOREIGN()
  * @method static self FOREIGN()
  * @method static self ON()

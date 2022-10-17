@@ -275,6 +275,7 @@ class CommandTest extends MySQL57TestCase
         ]);
 
         $migrations = [];
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
@@ -292,6 +293,7 @@ class CommandTest extends MySQL57TestCase
         $this->generateMigrations(['--proc-filename' => '[datetime]_custom_[name]_proc.php']);
 
         $migrations = [];
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
@@ -308,6 +310,7 @@ class CommandTest extends MySQL57TestCase
         $this->generateMigrations(['--fk-filename' => '[datetime]_custom_[name]_table.php']);
 
         $migrations = [];
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
@@ -326,6 +329,7 @@ class CommandTest extends MySQL57TestCase
 
         $migrations   = [];
         $prefixLength = 18;
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), $prefixLength);
         }
@@ -344,6 +348,7 @@ class CommandTest extends MySQL57TestCase
 
         $migrations   = [];
         $prefixLength = 18;
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), $prefixLength);
         }

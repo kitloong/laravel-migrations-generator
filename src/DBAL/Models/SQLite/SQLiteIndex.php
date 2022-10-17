@@ -8,5 +8,6 @@ class SQLiteIndex extends DBALIndex
 {
     protected function handle(): void
     {
+        // Do nothing.
     }
 }

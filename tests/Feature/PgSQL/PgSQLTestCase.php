@@ -67,6 +67,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
     protected function dropAllTablesAndViews(): void
     {
         $tables = DB::getDoctrineSchemaManager()->listTableNames();
+
         foreach ($tables as $table) {
             if (Str::startsWith($table, 'tiger.')) {
                 continue;

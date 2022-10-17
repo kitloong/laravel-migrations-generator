@@ -8,7 +8,6 @@ use MyCLabs\Enum\Enum;
  * Preserved column names used by the framework.
  *
  * @see https://laravel.com/docs/master/migrations#available-column-types
- *
  * @method static self CREATED_AT()
  * @method static self DELETED_AT()
  * @method static self REMEMBER_TOKEN()

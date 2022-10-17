@@ -8,5 +8,6 @@ class MySQLIndex extends DBALIndex
 {
     protected function handle(): void
     {
+        // Do nothing.
     }
 }

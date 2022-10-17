@@ -111,14 +111,17 @@ class TableBlueprint implements WritableBlueprint
     public function toString(): string
     {
         $lines = [];
+
         foreach ($this->lines as $line) {
             switch (true) {
                 case $line instanceof Property:
                     $lines[] = $this->propertyToString($line);
                     break;
+
                 case $line instanceof Method:
                     $lines[] = $this->methodToString($line);
                     break;
+
                 default:
                     $lines[] = $this->convertFromAnyTypeToString($line);
             }
@@ -156,11 +159,13 @@ class TableBlueprint implements WritableBlueprint
     private function methodToString(Method $method): string
     {
         $methodStrings = [$this->flattenMethod($method)];
+
         if ($method->countChain() > 0) {
             foreach ($method->getChains() as $chain) {
                 $methodStrings[] = $this->flattenMethod($chain);
             }
         }
+
         return '$table->' . implode('->', $methodStrings) . ";";
     }
 

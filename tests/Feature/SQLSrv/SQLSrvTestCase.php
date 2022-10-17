@@ -34,11 +34,13 @@ abstract class SQLSrvTestCase extends FeatureTestCase
     {
         $tables = DB::getDoctrineSchemaManager()->listTableNames();
         $sqls   = [];
+
         foreach ($tables as $table) {
             $sqls[] = "EXEC sp_columns '" . $table . "';";
         }
 
         $views = DB::getDoctrineSchemaManager()->listViews();
+
         foreach ($views as $view) {
             $sqls[] = "EXEC sp_helptext '" . $view->getName() . "';";
         }

@@ -14,16 +14,16 @@ class Setting
      */
     private $defaultConnection;
 
-    /** @var boolean */
+    /** @var bool */
     private $useDBCollation;
 
-    /** @var boolean */
+    /** @var bool */
     private $ignoreIndexNames;
 
-    /** @var boolean */
+    /** @var bool */
     private $ignoreForeignKeyNames;
 
-    /** @var boolean */
+    /** @var bool */
     private $squash;
 
     /** @var string */

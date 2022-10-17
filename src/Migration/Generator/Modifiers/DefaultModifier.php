@@ -124,7 +124,7 @@ class DefaultModifier implements Modifier
      */
     protected function chainDefaultForBoolean(Method $method, Column $column): Method
     {
-        $method->chain(ColumnModifier::DEFAULT(), ((int) $column->getDefault()) === 1);
+        $method->chain(ColumnModifier::DEFAULT(), (int) $column->getDefault() === 1);
         return $method;
     }
 
@@ -150,18 +150,22 @@ class DefaultModifier implements Modifier
                     if (!$column->isOnUpdateCurrentTimestamp()) {
                         $method->chain(ColumnModifier::USE_CURRENT());
                     }
+
                     break;
                 }
 
                 $method->chain(ColumnModifier::USE_CURRENT());
                 break;
+
             default:
                 $default = $column->getDefault();
+
                 if ($column->isRawDefault()) {
                     // Set default with DB::raw(), which will return an instance of \Illuminate\Database\Query\Expression.
                     // Writer will check for Expression instance and generate as DB::raw().
                     $default = DB::raw($default);
                 }
+
                 $method->chain(ColumnModifier::DEFAULT(), $default);
         }
 

@@ -8,7 +8,6 @@ use MyCLabs\Enum\Enum;
  * Preserved method names for migration files by the framework.
  *
  * @see https://laravel.com/docs/master/migrations#tables
- *
  * @method static self CONNECTION()
  * @method static self CREATE()
  * @method static self DROP_IF_EXISTS()

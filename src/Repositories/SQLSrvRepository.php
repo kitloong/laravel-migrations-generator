@@ -36,11 +36,13 @@ class SQLSrvRepository extends Repository
                     AND idx.type = " . self::SPATIAL_INDEX_ID
         );
         $definitions = new Collection();
+
         if (count($columns) > 0) {
             foreach ($columns as $column) {
                 $definitions->push($column->indexname);
             }
         }
+
         return $definitions;
     }
 
@@ -116,13 +118,13 @@ class SQLSrvRepository extends Repository
      * @param  string  $table  The full qualified name of the table.
      * @param  string  $schemaColumn  The name of the column to compare the schema to in the where clause.
      * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
-     *
      * @return string
      * @see https://github.com/doctrine/dbal/blob/3.1.x/src/Platforms/SQLServer2012Platform.php#L1064
      */
     private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
     {
         $schema = 'SCHEMA_NAME()';
+
         if (strpos($table, '.') !== false) {
             [$schema, $table] = explode('.', $table);
             $schema           = $this->quoteStringLiteral($schema);
@@ -153,6 +155,7 @@ class SQLSrvRepository extends Repository
         foreach ($procedures as $procedure) {
             $list->push(new ProcedureDefinition($procedure->name, $procedure->definition));
         }
+
         return $list;
     }
 }

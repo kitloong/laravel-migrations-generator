@@ -20,11 +20,13 @@ class SQLSrvView extends DBALView
         if ($view->getSql() !== null && $view->getSql() !== '') {
             // $view->getSql() contains full view definition.
             $this->definition = $view->getSql();
+
             return;
         }
 
         // Use repository to get view definition.
         $viewDefinition = $repository->getView($view->getName());
+
         if ($viewDefinition === null) {
             return;
         }

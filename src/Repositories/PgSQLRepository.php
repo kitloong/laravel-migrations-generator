@@ -113,6 +113,7 @@ class PgSQLRepository extends Repository
                     AND indexdef LIKE '% USING gist %'"
         );
         $definitions = new Collection();
+
         if (count($columns) > 0) {
             foreach ($columns as $column) {
                 $definitions->push(
@@ -124,6 +125,7 @@ class PgSQLRepository extends Repository
                 );
             }
         }
+
         return $definitions;
     }
 
@@ -144,6 +146,7 @@ class PgSQLRepository extends Repository
                     AND indexdef LIKE '%to_tsvector(%'"
         );
         $definitions = new Collection();
+
         if (count($columns) > 0) {
             foreach ($columns as $column) {
                 $definitions->push(
@@ -155,6 +158,7 @@ class PgSQLRepository extends Repository
                 );
             }
         }
+
         return $definitions;
     }
 
@@ -177,11 +181,13 @@ class PgSQLRepository extends Repository
                         AND n.nspname IN ('$searchPath');"
         );
         $types = new Collection();
+
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $types->push($row->type);
             }
         }
+
         return $types;
     }
 
@@ -208,6 +214,7 @@ class PgSQLRepository extends Repository
             $definition = str_replace('$procedure', '$', $procedure->definition);
             $list->push(new ProcedureDefinition($procedure->proname, $definition));
         }
+
         return $list;
     }
 }

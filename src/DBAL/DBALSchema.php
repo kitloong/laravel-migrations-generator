@@ -36,6 +36,7 @@ abstract class DBALSchema implements Schema
                 if ($this->isIdentifierQuoted($table)) {
                     return $this->trimQuotes($table);
                 }
+
                 return $table;
             });
     }
@@ -49,6 +50,7 @@ abstract class DBALSchema implements Schema
     private function makeSchemaManager(): AbstractSchemaManager
     {
         $doctrineConnection = DB::getDoctrineConnection();
+
         if (method_exists($doctrineConnection, 'createSchemaManager')) {
             return $doctrineConnection->createSchemaManager();
         }

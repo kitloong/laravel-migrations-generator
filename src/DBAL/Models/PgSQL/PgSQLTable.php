@@ -60,6 +60,7 @@ class PgSQLTable extends DBALTable
             // eg: CREATE INDEX fulltext_custom ON public.test_index_pgsql USING gin (to_tsvector('english'::regconfig, (fulltext_custom)::text))
             //     Get "fulltext_custom"
             preg_match_all('/to_tsvector\((.*), \((.*)\)::text/U', $indexDefinition->getIndexDef(), $matches);
+
             if (empty($matches[2])) {
                 return;
             }

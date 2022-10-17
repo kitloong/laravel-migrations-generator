@@ -88,6 +88,7 @@ class TableMigration
     {
         $upList = new Collection();
         $upList->push($this->up($table));
+
         if ($table->getCustomColumns()->isNotEmpty()) {
             foreach ($this->upAdditionalStatements($table) as $statement) {
                 $upList->push($statement);
@@ -128,6 +129,7 @@ class TableMigration
 
         if ($notChainableIndexes->isNotEmpty()) {
             $blueprint->setLineBreak();
+
             foreach ($notChainableIndexes as $index) {
                 $method = $this->indexGenerator->generate($table, $index);
                 $blueprint->setMethod($method);
@@ -148,11 +150,13 @@ class TableMigration
     private function upAdditionalStatements(Table $table): array
     {
         $statements = [];
+
         foreach ($table->getCustomColumns() as $column) {
             foreach ($column->getSqls() as $sql) {
                 $statements[] = new DBStatementBlueprint($sql);
             }
         }
+
         return $statements;
     }
 

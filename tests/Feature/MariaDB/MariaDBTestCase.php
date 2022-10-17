@@ -42,6 +42,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
             '');
 
         $skipColumnStatistics = '';
+
         if (env('MYSQLDUMP_HAS_OPTION_SKIP_COLUMN_STATISTICS')) {
             $skipColumnStatistics = '--skip-column-statistics';
         }
@@ -67,6 +68,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
     protected function dropAllProcedures(): void
     {
         $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . config('database.connections.mariadb.database') . "'");
+
         foreach ($procedures as $procedure) {
             DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->Name);
         }

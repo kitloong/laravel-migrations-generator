@@ -23,8 +23,11 @@ class SQLSrvIndex extends DBALIndex
     private function setTypeToSpatial(): void
     {
         $spatialNames = $this->repository->getSpatialIndexNames($this->tableName);
-        if ($spatialNames->contains($this->name)) {
-            $this->type = IndexType::SPATIAL_INDEX();
+
+        if (!$spatialNames->contains($this->name)) {
+            return;
         }
+
+        $this->type = IndexType::SPATIAL_INDEX();
     }
 }

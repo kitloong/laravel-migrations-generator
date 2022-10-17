@@ -42,6 +42,7 @@ abstract class MySQL57TestCase extends FeatureTestCase
             '');
 
         $skipColumnStatistics = '';
+
         if (env('MYSQLDUMP_HAS_OPTION_SKIP_COLUMN_STATISTICS')) {
             $skipColumnStatistics = '--skip-column-statistics';
         }
@@ -68,6 +69,7 @@ abstract class MySQL57TestCase extends FeatureTestCase
     protected function dropAllProcedures(): void
     {
         $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . config('database.connections.mysql57.database') . "'");
+
         foreach ($procedures as $procedure) {
             DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->Name);
         }

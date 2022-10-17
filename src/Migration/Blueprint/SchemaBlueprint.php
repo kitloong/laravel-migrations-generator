@@ -89,6 +89,7 @@ class SchemaBlueprint implements WritableBlueprint
         $tableWithoutPrefix = $this->stripTablePrefix($this->table);
 
         $lines = [];
+
         if ($this->blueprint !== null) {
             $lines[] = "$schema('$tableWithoutPrefix', function (Blueprint \$table) {";
             // Add 1 tabulation to indent(prettify) blueprint definition.

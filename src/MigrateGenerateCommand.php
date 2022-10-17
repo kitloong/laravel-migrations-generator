@@ -96,6 +96,7 @@ class MigrateGenerateCommand extends Command
     public function handle(): void
     {
         $previousConnection = DB::getDefaultConnection();
+
         try {
             $this->setup($previousConnection);
 
@@ -216,12 +217,14 @@ class MigrateGenerateCommand extends Command
         $tables = $allAssets;
 
         $tableArg = (string) $this->argument('tables');
+
         if ($tableArg !== '') {
             $tables = $allAssets->intersect(explode(',', $tableArg));
             return $tables->diff($this->getExcludedTables());
         }
 
         $tableOpt = (string) $this->option('tables');
+
         if ($tableOpt !== '') {
             $tables = $allAssets->intersect(explode(',', $tableOpt));
             return $tables->diff($this->getExcludedTables());
@@ -242,6 +245,7 @@ class MigrateGenerateCommand extends Command
 
         $excludes = [$migrationTable];
         $ignore   = (string) $this->option('ignore');
+
         if (!empty($ignore)) {
             return array_merge([$migrationTable], explode(',', $ignore));
         }
@@ -261,28 +265,31 @@ class MigrateGenerateCommand extends Command
             $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table?', true);
         }
 
-        if ($this->shouldLog) {
-            $this->repository->setSource(DB::getName());
-            if ($defaultConnection !== DB::getName()) {
-                if (
-                    !$this->confirm(
-                        'Log into current connection: ' . DB::getName() . '? [Y = ' . DB::getName() . ', n = ' . $defaultConnection . ' (default connection)]',
-                        true
-                    )
-                ) {
-                    $this->repository->setSource($defaultConnection);
-                }
-            }
-
-            if (!$this->repository->repositoryExists()) {
-                $this->repository->createRepository();
-            }
-
-            $this->nextBatchNumber = $this->askInt(
-                'Next Batch Number is: ' . $this->repository->getNextBatchNumber() . '. We recommend using Batch Number 0 so that it becomes the "first" migration',
-                0
-            );
+        if (!$this->shouldLog) {
+            return;
         }
+
+        $this->repository->setSource(DB::getName());
+
+        if ($defaultConnection !== DB::getName()) {
+            if (
+                !$this->confirm(
+                    'Log into current connection: ' . DB::getName() . '? [Y = ' . DB::getName() . ', n = ' . $defaultConnection . ' (default connection)]',
+                    true
+                )
+            ) {
+                $this->repository->setSource($defaultConnection);
+            }
+        }
+
+        if (!$this->repository->repositoryExists()) {
+            $this->repository->createRepository();
+        }
+
+        $this->nextBatchNumber = $this->askInt(
+            'Next Batch Number is: ' . $this->repository->getNextBatchNumber() . '. We recommend using Batch Number 0 so that it becomes the "first" migration',
+            0
+        );
     }
 
     /**
@@ -292,7 +299,7 @@ class MigrateGenerateCommand extends Command
      * @param  int|null  $default  Default Value (optional)
      * @return int Answer
      */
-    protected function askInt(string $question, int $default = null): int
+    protected function askInt(string $question, ?int $default = null): int
     {
         $ask = 'Your answer needs to be a numeric value';
 
@@ -302,6 +309,7 @@ class MigrateGenerateCommand extends Command
         }
 
         $answer = $this->ask($question, (string) $default);
+
         while (!ctype_digit($answer) && !($answer === '' && !is_null($default))) {
             $answer = $this->ask($ask, (string) $default);
         }
@@ -383,9 +391,11 @@ class MigrateGenerateCommand extends Command
 
         $this->info("\nAll migrations squashed.");
 
-        if ($this->shouldLog) {
-            $this->logMigration($migrationFilepath);
+        if (!$this->shouldLog) {
+            return;
         }
+
+        $this->logMigration($migrationFilepath);
     }
 
     /**
@@ -402,9 +412,11 @@ class MigrateGenerateCommand extends Command
 
             $this->info("Created: $path");
 
-            if ($this->shouldLog) {
-                $this->logMigration($path);
+            if (!$this->shouldLog) {
+                return;
             }
+
+            $this->logMigration($path);
         });
     }
 
@@ -441,9 +453,11 @@ class MigrateGenerateCommand extends Command
 
             $this->info("Created: $path");
 
-            if ($this->shouldLog) {
-                $this->logMigration($path);
+            if (!$this->shouldLog) {
+                return;
             }
+
+            $this->logMigration($path);
         });
     }
 
@@ -479,9 +493,11 @@ class MigrateGenerateCommand extends Command
 
             $this->info("Created: $path");
 
-            if ($this->shouldLog) {
-                $this->logMigration($path);
+            if (!$this->shouldLog) {
+                return;
             }
+
+            $this->logMigration($path);
         });
     }
 
@@ -507,18 +523,23 @@ class MigrateGenerateCommand extends Command
     {
         $tables->each(function (string $table) {
             $foreignKeys = $this->schema->getTableForeignKeys($table);
-            if ($foreignKeys->isNotEmpty()) {
-                $path = $this->foreignKeyMigration->write(
-                    $table,
-                    $foreignKeys
-                );
 
-                $this->info("Created: $path");
-
-                if ($this->shouldLog) {
-                    $this->logMigration($path);
-                }
+            if (!$foreignKeys->isNotEmpty()) {
+                return;
             }
+
+            $path = $this->foreignKeyMigration->write(
+                $table,
+                $foreignKeys
+            );
+
+            $this->info("Created: $path");
+
+            if (!$this->shouldLog) {
+                return;
+            }
+
+            $this->logMigration($path);
         });
     }
 
@@ -531,14 +552,17 @@ class MigrateGenerateCommand extends Command
     {
         $tables->each(function (string $table) {
             $foreignKeys = $this->schema->getTableForeignKeys($table);
-            if ($foreignKeys->isNotEmpty()) {
-                $this->foreignKeyMigration->writeToTemp(
-                    $table,
-                    $foreignKeys
-                );
 
-                $this->info('Prepared: ' . $table);
+            if (!$foreignKeys->isNotEmpty()) {
+                return;
             }
+
+            $this->foreignKeyMigration->writeToTemp(
+                $table,
+                $foreignKeys
+            );
+
+            $this->info('Prepared: ' . $table);
         });
     }
 
@@ -570,12 +594,16 @@ class MigrateGenerateCommand extends Command
         switch ($driver) {
             case Driver::MYSQL():
                 return $this->schema = app(MySQLSchema::class);
+
             case Driver::PGSQL():
                 return $this->schema = app(PgSQLSchema::class);
+
             case Driver::SQLITE():
                 return $this->schema = app(SQLiteSchema::class);
+
             case Driver::SQLSRV():
                 return $this->schema = app(SQLSrvSchema::class);
+
             default:
                 throw new Exception('The database driver in use is not supported.');
         }

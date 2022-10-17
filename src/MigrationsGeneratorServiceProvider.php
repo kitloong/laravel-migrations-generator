@@ -75,11 +75,13 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                MigrateGenerateCommand::class,
-            ]);
+        if (!$this->app->runningInConsole()) {
+            return;
         }
+
+        $this->commands([
+            MigrateGenerateCommand::class,
+        ]);
     }
 
     /**

@@ -88,10 +88,12 @@ class ForeignKeyMigration
     {
         $up          = $this->getSchemaBlueprint($table);
         $upBlueprint = new TableBlueprint();
+
         foreach ($foreignKeys as $foreignKey) {
             $method = $this->foreignKeyGenerator->generate($foreignKey);
             $upBlueprint->setMethod($method);
         }
+
         $up->setBlueprint($upBlueprint);
 
         return $up;
@@ -108,10 +110,12 @@ class ForeignKeyMigration
     {
         $down          = $this->getSchemaBlueprint($table);
         $downBlueprint = new TableBlueprint();
+
         foreach ($foreignKeys as $foreignKey) {
             $method = $this->foreignKeyGenerator->generateDrop($foreignKey);
             $downBlueprint->setMethod($method);
         }
+
         $down->setBlueprint($downBlueprint);
 
         return $down;

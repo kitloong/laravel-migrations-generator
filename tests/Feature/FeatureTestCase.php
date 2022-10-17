@@ -46,7 +46,9 @@ abstract class FeatureTestCase extends TestCase
             $dotenv = Dotenv::createImmutable(base_path());
             $dotenv->load();
             return;
-        } elseif (method_exists(Dotenv::class, 'create')) {
+        }
+
+        if (method_exists(Dotenv::class, 'create')) {
             /** @noinspection PhpParamsInspection */
             $dotenv = Dotenv::create(base_path());
             $dotenv->load();
@@ -94,6 +96,7 @@ abstract class FeatureTestCase extends TestCase
     protected function migrateFromTemplate(string $connection, string $templatePath): void
     {
         File::copyDirectory($templatePath, $this->getStorageFromPath());
+
         foreach (File::files($this->getStorageFromPath()) as $file) {
             $content = str_replace([
                 '[db]',
@@ -155,6 +158,7 @@ abstract class FeatureTestCase extends TestCase
     protected function assertMigrations(): void
     {
         $migrations = [];
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = $migration->getFilenameWithoutExtension();
         }
@@ -188,6 +192,7 @@ abstract class FeatureTestCase extends TestCase
                 if ($this->isIdentifierQuoted($table)) {
                     return $this->trimQuotes($table);
                 }
+
                 return $table;
             })
             ->toArray();

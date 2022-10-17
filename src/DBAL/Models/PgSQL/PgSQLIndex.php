@@ -30,8 +30,11 @@ class PgSQLIndex extends DBALIndex
             ->map(function (IndexDefinition $indexDefinition) {
                 return $indexDefinition->getIndexName();
             });
-        if ($spatialNames->contains($this->name)) {
-            $this->type = IndexType::SPATIAL_INDEX();
+
+        if (!$spatialNames->contains($this->name)) {
+            return;
         }
+
+        $this->type = IndexType::SPATIAL_INDEX();
     }
 }
