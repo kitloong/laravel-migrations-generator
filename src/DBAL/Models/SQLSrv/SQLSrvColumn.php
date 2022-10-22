@@ -53,6 +53,13 @@ class SQLSrvColumn extends DBALColumn
             case ColumnType::STRING():
                 if ($this->isText()) {
                     $this->type = ColumnType::TEXT();
+                    break;
+                }
+
+                $this->presetValues = $this->getEnumPresetValues();
+
+                if (count($this->presetValues) > 0) {
+                    $this->type = ColumnType::ENUM();
                 }
 
                 break;
@@ -129,5 +136,18 @@ class SQLSrvColumn extends DBALColumn
 
         $this->precision = 0;
         $this->scale     = 0;
+    }
+
+    /**
+     * Get the preset values if the column is `enum`.
+     *
+     * @return string[]
+     */
+    private function getEnumPresetValues(): array
+    {
+        return $this->repository->getEnumPresetValues(
+            $this->tableName,
+            $this->name
+        )->toArray();
     }
 }

@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 use KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ColumnDefinition;
 use KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ViewDefinition;
@@ -157,5 +158,40 @@ class SQLSrvRepository extends Repository
         }
 
         return $list;
+    }
+
+    /**
+     * Get enum values.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return \Illuminate\Support\Collection
+     */
+    public function getEnumPresetValues(string $table, string $column): Collection
+    {
+        $result = DB::selectOne(
+            "SELECT con.definition
+                FROM sys.check_constraints con
+                JOIN sys.objects t
+                    ON con.parent_object_id = t.object_id
+                JOIN sys.all_columns col
+                    ON con.parent_column_id = col.column_id
+                    AND con.parent_object_id = col.object_id
+                WHERE t.name = '$table'
+                    AND col.name = '$column'
+                    AND con.definition IS NOT NULL"
+        );
+
+        if ($result === null) {
+            return new Collection();
+        }
+
+        $separator = "[$column]=N'";
+
+        // eg: ([enum_default]=N'hard' OR [enum_default]=N'easy')
+        $value = Str::replaceFirst('(' . $separator, '', $result->definition);
+        $value = Str::substr($value, 0, -2);
+
+        return new Collection(array_reverse(explode('\' OR ' . $separator, $value)));
     }
 }
