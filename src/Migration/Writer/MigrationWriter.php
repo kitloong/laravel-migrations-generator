@@ -42,6 +42,7 @@ class MigrationWriter
 
             $useDBFacade = false;
 
+            // TODO DRY
             $upString = $up->map(function (WritableBlueprint $up) {
                 return $up->toString();
             })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
@@ -89,12 +90,14 @@ class MigrationWriter
         $imports = [
             'use Illuminate\Database\Migrations\Migration;',
             'use Illuminate\Database\Schema\Blueprint;',
-            'use Illuminate\Support\Facades\Schema;',
         ];
 
         if ($useDBFacade) {
             $imports[] = 'use Illuminate\Support\Facades\DB;';
         }
+
+        // Push at the last to maintain alphabetically sort.
+        $imports[] = 'use Illuminate\Support\Facades\Schema;';
 
         return $imports;
     }
