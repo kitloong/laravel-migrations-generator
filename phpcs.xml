@@ -28,11 +28,6 @@
   <rule ref="SlevomatCodingStandard.Classes.PropertyDeclaration"/>
   <rule ref="SlevomatCodingStandard.Classes.PropertySpacing"/>
   <rule ref="SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature"/>
-  <rule ref="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming"/>
-  <rule ref="SlevomatCodingStandard.Classes.SuperfluousErrorNaming"/>
-  <rule ref="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming"/>
-  <rule ref="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming"/>
-  <rule ref="SlevomatCodingStandard.Classes.SuperfluousTraitNaming"/>
   <rule ref="SlevomatCodingStandard.Commenting.DeprecatedAnnotationDeclaration"/>
   <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing"/>
   <rule ref="SlevomatCodingStandard.Commenting.EmptyComment"/>
