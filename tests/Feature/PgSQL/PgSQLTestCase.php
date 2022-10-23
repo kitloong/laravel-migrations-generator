@@ -85,12 +85,14 @@ abstract class PgSQLTestCase extends FeatureTestCase
 
     protected function dropAllProcedures(): void
     {
+        $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
+
         $procedures = DB::select(
             "SELECT *, pg_get_functiondef(pg_proc.oid)
             FROM pg_catalog.pg_proc
                 JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
             WHERE prokind = 'p'
-                AND pg_namespace.nspname = '" . config('database.connections.pgsql.schema') . "'"
+                AND pg_namespace.nspname = '" . $searchPath . "'"
         );
 
         foreach ($procedures as $procedure) {
