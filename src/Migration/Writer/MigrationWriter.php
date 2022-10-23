@@ -49,7 +49,7 @@ class MigrationWriter
                 $useDBFacade = true;
             }
 
-            $use = implode(Space::LINE_BREAK(), $this->getImports($migrationFileType, $useDBFacade));
+            $use = implode(Space::LINE_BREAK(), $this->getNamespaces($migrationFileType, $useDBFacade));
 
             File::put(
                 $path,
@@ -65,11 +65,11 @@ class MigrationWriter
      * @param  bool  $useDBFacade
      * @return string[]
      */
-    private function getImports(MigrationFileType $migrationFileType, bool $useDBFacade): array
+    private function getNamespaces(MigrationFileType $migrationFileType, bool $useDBFacade): array
     {
         if (
-            $migrationFileType->equals(MigrationFileType::VIEW()) ||
-            $migrationFileType->equals(MigrationFileType::PROCEDURE())
+            $migrationFileType->equals(MigrationFileType::VIEW())
+            || $migrationFileType->equals(MigrationFileType::PROCEDURE())
         ) {
             return [
                 'use Illuminate\Database\Migrations\Migration;',
