@@ -315,8 +315,7 @@ class CommandTest extends MySQL57TestCase
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
-        // TODO Fix test
-        $this->assertSame('custom_user_profile_mysql57_table', $migrations[count($migrations) - 1]);
+        $this->assertContains('custom_user_profile_mysql57_table', $migrations);
     }
 
     public function testSkipView()
