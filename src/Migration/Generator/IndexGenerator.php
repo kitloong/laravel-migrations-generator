@@ -69,6 +69,14 @@ class IndexGenerator
                 return $carry;
             }
 
+            // If name is not empty, primary name should be set explicitly.
+            if (
+                $index->getType()->equals(IndexType::PRIMARY())
+                && $index->getName() !== ''
+            ) {
+                return $carry;
+            }
+
             // A column may have multiple indexes.
             // Set only first found index as chainable.
             if ($carry->has($columnName)) {

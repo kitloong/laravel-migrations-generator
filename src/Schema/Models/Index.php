@@ -7,7 +7,8 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 interface Index extends Model
 {
     /**
-     * Get the index name.
+     * Get the index name. An index name could be empty.
+     * Empty name means the index uses the default name defined by the database platform.
      *
      * @return string
      */

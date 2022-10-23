@@ -22,6 +22,15 @@ class PgSQLIndex extends DBALIndex
         $this->repository = app(PgSQLRepository::class);
 
         $this->setTypeToSpatial();
+
+        switch ($this->type) {
+            case IndexType::PRIMARY():
+                // Reset name to empty to indicate use the database platform naming.
+                $this->name = '';
+                break;
+
+            default:
+        }
     }
 
     private function setTypeToSpatial(): void
