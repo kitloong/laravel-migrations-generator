@@ -287,7 +287,7 @@ class MigrateGenerateCommand extends Command
         }
 
         $this->nextBatchNumber = $this->askInt(
-            'Next Batch Number is: ' . $this->repository->getNextBatchNumber() . '. We recommend using Batch Number 0 so that it becomes the "first" migration',
+            'Next Batch Number is: ' . $this->repository->getNextBatchNumber() . '. We recommend using Batch Number 0 so that it becomes the "first" migration.',
             0
         );
     }
@@ -346,20 +346,20 @@ class MigrateGenerateCommand extends Command
      */
     protected function generateMigrations(Collection $tables, Collection $views): void
     {
-        $this->info('Setting up Tables and Index Migrations');
+        $this->info('Setting up Tables and Index migrations.');
         $this->generateTables($tables);
 
         if (!$this->option('skip-views')) {
-            $this->info("\nSetting up Views Migrations");
+            $this->info("\nSetting up Views migrations.");
             $this->generateViews($views);
         }
 
         if (!$this->option('skip-proc')) {
-            $this->info("\nSetting up Stored Procedures Migrations");
+            $this->info("\nSetting up Stored Procedures migrations.");
             $this->generateProcedures();
         }
 
-        $this->info("\nSetting up Foreign Key Migrations");
+        $this->info("\nSetting up Foreign Key migrations.");
         $this->generateForeignKeys($tables);
     }
 
@@ -373,20 +373,20 @@ class MigrateGenerateCommand extends Command
         $this->info('Remove old temporary files if any.');
         $this->squash->cleanTemps();
 
-        $this->info('Preparing Tables and Index Migrations');
+        $this->info('Setting up Tables and Index migrations.');
         $this->generateTablesToTemp($tables);
 
         if (!$this->option('skip-views')) {
-            $this->info("\nPreparing Views Migrations");
+            $this->info("\nSetting up Views migrations.");
             $this->generateViewsToTemp($views);
         }
 
         if (!$this->option('skip-proc')) {
-            $this->info("\nPreparing Stored Procedure Migrations");
+            $this->info("\nSetting up Stored Procedure migrations.");
             $this->generateProceduresToTemp();
         }
 
-        $this->info("\nPreparing Foreign Key Migrations");
+        $this->info("\nSetting up Foreign Key migrations.");
         $this->generateForeignKeysToTemp($tables);
 
         $migrationFilepath = $this->squash->squashMigrations();

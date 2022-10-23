@@ -150,7 +150,7 @@ abstract class FeatureTestCase extends TestCase
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
             ->expectsQuestion(
-                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
                 '0'
             );
     }

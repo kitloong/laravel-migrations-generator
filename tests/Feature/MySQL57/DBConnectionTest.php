@@ -73,11 +73,13 @@ class DBConnectionTest extends MySQL57TestCase
                     true
                 )
                 ->expectsQuestion(
-                    'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                    'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
                     '0'
                 );
 
-            $this->assertSame(36, DB::connection('mysql57')->table('migrations')->count());
+            $totalMigrations = count(File::allFiles($this->getStorageMigrationsPath()));
+
+            $this->assertSame($totalMigrations, DB::connection('mysql57')->table('migrations')->count());
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
@@ -108,11 +110,13 @@ class DBConnectionTest extends MySQL57TestCase
                 false
             )
             ->expectsQuestion(
-                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
                 '0'
             );
 
-        $this->assertSame(36, DB::connection('mysql8')->table('migrations')->count());
+        $totalMigrations = count(File::allFiles($this->getStorageMigrationsPath()));
+
+        $this->assertSame($totalMigrations, DB::connection('mysql8')->table('migrations')->count());
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)

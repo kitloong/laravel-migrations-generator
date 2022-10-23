@@ -179,7 +179,7 @@ class CommandTest extends MySQL57TestCase
         })->toArray();
 
         $expectedIndexes = [
-            'PRIMARY',
+            '', // PRIMARY
             'test_index_mysql57_chain_index',
             'test_index_mysql57_chain_unique',
             'test_index_mysql57_col_multi1_col_multi2_index',
