@@ -24,11 +24,16 @@ class SQLSrvIndex extends DBALIndex
                 break;
 
             default:
-                $this->setTypeToSpatial();
+                $this->changeTypeToSpatial();
         }
     }
 
-    private function setTypeToSpatial(): void
+    /**
+     * Change the index type to `spatial` if the name is in the spatial index name list.
+     *
+     * @return void
+     */
+    private function changeTypeToSpatial(): void
     {
         $spatialNames = $this->repository->getSpatialIndexNames($this->tableName);
 
