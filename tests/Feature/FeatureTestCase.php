@@ -212,11 +212,5 @@ abstract class FeatureTestCase extends TestCase
             ->toArray();
     }
 
-    protected function setDefaultConnection(string $name): void
-    {
-        // Set default connection, to fix Laravel < 6.x.
-        DB::setDefaultConnection($name);
-    }
-
     abstract protected function refreshDatabase(): void;
 }

@@ -45,7 +45,7 @@ class DBConnectionTest extends MySQL57TestCase
         Schema::connection('mysql8')->dropIfExists('migrations');
 
         // Switch back to mysql57, to drop mysql57 tables in tearDown.
-        $this->setDefaultConnection('mysql57');
+        DB::setDefaultConnection('mysql57');
 
         parent::tearDown();
     }
@@ -57,8 +57,6 @@ class DBConnectionTest extends MySQL57TestCase
         };
 
         $generateMigrations = function () {
-            $this->setDefaultConnection('mysql8');
-
             $this->artisan(
                 'migrate:generate',
                 [
@@ -93,8 +91,6 @@ class DBConnectionTest extends MySQL57TestCase
     public function testLogMigrationToAnotherSource()
     {
         $this->migrateGeneral('mysql57');
-
-        $this->setDefaultConnection('mysql8');
 
         $this->artisan(
             'migrate:generate',
