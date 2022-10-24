@@ -4,11 +4,11 @@
 
 /** @noinspection PhpUnused */
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreatePrimary_DB_Table extends Migration
+class ExpectedCreatePrimary_DB_Table extends TestMigration
 {
     /**
      * Run the migrations.
@@ -39,7 +39,7 @@ class ExpectedCreatePrimary_DB_Table extends Migration
         });
 
         // Test short table name
-        Schema::create('s', function (Blueprint $table) {
+        Schema::create('s[db]', function (Blueprint $table) {
             $table->bigIncrements('id');
         });
     }
@@ -55,6 +55,6 @@ class ExpectedCreatePrimary_DB_Table extends Migration
         Schema::dropIfExists('primary_name_[db]');
         Schema::dropIfExists('signed_primary_id_[db]');
         Schema::dropIfExists('composite_primary_[db]');
-        Schema::dropIfExists('s');
+        Schema::dropIfExists('s[db]');
     }
 }

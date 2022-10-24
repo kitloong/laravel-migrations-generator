@@ -4,14 +4,14 @@
 
 /** @noinspection PhpUnused */
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
+use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateAllColumns_DB_Table extends Migration
+class ExpectedCreateAllColumns_DB_Table extends TestMigration
 {
     use CheckMigrationMethod;
 
