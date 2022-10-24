@@ -298,7 +298,7 @@ class CommandTest extends MySQL57TestCase
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
-        $this->assertContains('custom_findNameWithHyphen_proc', $migrations);
+        $this->assertContains('custom_findNameWithHyphenmysql57_proc', $migrations);
     }
 
     public function testFKFilename()
