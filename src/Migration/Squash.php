@@ -33,15 +33,15 @@ class Squash
      * Squash temporary paths into single migration file.
      *
      * @return string Squashed migration file path.
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function squashMigrations(): string
     {
-        $path      = $this->migrationNameHelper->makeFilename(
+        $path = $this->migrationNameHelper->makeFilename(
             $this->setting->getTableFilename(),
             $this->setting->getDate()->format('Y_m_d_His'),
             DB::getDatabaseName()
         );
+
         $className = $this->migrationNameHelper->makeClassName(
             $this->setting->getTableFilename(),
             DB::getDatabaseName()

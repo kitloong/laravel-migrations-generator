@@ -15,9 +15,6 @@ use Mockery\MockInterface;
 
 class MigrationWriterTest extends TestCase
 {
-    /**
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
     public function testWrite()
     {
         $setting = app(Setting::class);

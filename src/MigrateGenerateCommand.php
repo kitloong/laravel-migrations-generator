@@ -90,7 +90,6 @@ class MigrateGenerateCommand extends Command
      * Execute the console command.
      *
      * @return void
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @throws \Exception
      */
     public function handle(): void
@@ -326,7 +325,6 @@ class MigrateGenerateCommand extends Command
      *
      * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
      * @param  \Illuminate\Support\Collection<string>  $views  View names.
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generate(Collection $tables, Collection $views): void
     {
@@ -365,8 +363,6 @@ class MigrateGenerateCommand extends Command
 
     /**
      * Generate all migrations in a single file.
-     *
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function generateSquashedMigrations(Collection $tables, Collection $views): void
     {

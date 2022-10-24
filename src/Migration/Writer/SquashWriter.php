@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Writer;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint;
@@ -59,7 +60,6 @@ class SquashWriter
      * @param  string  $path  Migration file destination path.
      * @param  string  $stubPath  Migration stub file path.
      * @param  string  $className
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function squashMigrations(string $path, string $stubPath, string $className): void
     {
@@ -70,19 +70,26 @@ class SquashWriter
             'use Illuminate\Support\Facades\Schema;',
         ]);
 
-        File::put(
-            $path,
-            $this->migrationStub->populateStub(
-                $this->migrationStub->getStub($stubPath),
-                $use,
-                $className,
-                File::get($upTempPath = $this->migrationNameHelper->makeUpTempPath()),
-                File::get($downTempPath = $this->migrationNameHelper->makeDownTempPath())
-            )
-        );
+        $upTempPath   = $this->migrationNameHelper->makeUpTempPath();
+        $downTempPath = $this->migrationNameHelper->makeDownTempPath();
 
-        File::delete($upTempPath);
-        File::delete($downTempPath);
+        try {
+            File::put(
+                $path,
+                $this->migrationStub->populateStub(
+                    $this->migrationStub->getStub($stubPath),
+                    $use,
+                    $className,
+                    File::get($upTempPath),
+                    File::get($downTempPath)
+                )
+            );
+        } catch (FileNotFoundException $e) {
+            // Do nothing.
+        } finally {
+            File::delete($upTempPath);
+            File::delete($downTempPath);
+        }
     }
 
     private function getSpaceIfFileExists(string $path): string
