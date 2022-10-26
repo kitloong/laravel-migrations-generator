@@ -57,7 +57,7 @@ class PgSQLSchema extends DBALSchema
     public function getTable(string $name): Table
     {
         return new PgSQLTable(
-            $this->dbalSchema->listTableDetails($name),
+            $this->introspectTable($name),
             $this->dbalSchema->listTableColumns($name),
             $this->dbalSchema->listTableIndexes($name)
         );

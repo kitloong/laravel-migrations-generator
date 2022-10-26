@@ -8,7 +8,6 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 final class Types
 {
     // Default built-in types provided by Doctrine DBAL.
-    public const ARRAY                = BuiltInTypes::ARRAY;
     public const ASCII_STRING         = BuiltInTypes::ASCII_STRING;
     public const BIGINT               = BuiltInTypes::BIGINT;
     public const BINARY               = BuiltInTypes::BINARY;
@@ -26,7 +25,6 @@ final class Types
     public const GUID                 = BuiltInTypes::GUID;
     public const INTEGER              = BuiltInTypes::INTEGER;
     public const JSON                 = BuiltInTypes::JSON;
-    public const OBJECT               = BuiltInTypes::OBJECT;
     public const SIMPLE_ARRAY         = BuiltInTypes::SIMPLE_ARRAY;
     public const SMALLINT             = BuiltInTypes::SMALLINT;
     public const STRING               = BuiltInTypes::STRING;
