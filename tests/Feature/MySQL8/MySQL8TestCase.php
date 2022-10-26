@@ -70,7 +70,7 @@ abstract class MySQL8TestCase extends FeatureTestCase
         $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . config('database.connections.mysql8.database') . "'");
 
         foreach ($procedures as $procedure) {
-            DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->Name);
+            DB::unprepared("DROP PROCEDURE IF EXISTS " . $procedure->Name);
         }
     }
 }

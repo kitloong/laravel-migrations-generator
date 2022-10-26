@@ -4,7 +4,7 @@ namespace KitLoong\MigrationsGenerator\Migration;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\DBUnpreparedBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
 use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
@@ -70,22 +70,22 @@ class ProcedureMigration
      * Generates `up` db statement for stored procedure.
      *
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint
+     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBUnpreparedBlueprint
      */
-    private function up(Procedure $procedure): DBStatementBlueprint
+    private function up(Procedure $procedure): DBUnpreparedBlueprint
     {
-        return new DBStatementBlueprint($procedure->getDefinition());
+        return new DBUnpreparedBlueprint($procedure->getDefinition());
     }
 
     /**
      * Generates `down` db statement for stored procedure.
      *
      * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint
+     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBUnpreparedBlueprint
      */
-    private function down(Procedure $procedure): DBStatementBlueprint
+    private function down(Procedure $procedure): DBUnpreparedBlueprint
     {
-        return new DBStatementBlueprint($procedure->getDropDefinition());
+        return new DBUnpreparedBlueprint($procedure->getDropDefinition());
     }
 
     /**

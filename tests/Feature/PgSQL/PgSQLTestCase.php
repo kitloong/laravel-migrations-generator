@@ -96,7 +96,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
         );
 
         foreach ($procedures as $procedure) {
-            DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->proname);
+            DB::unprepared("DROP PROCEDURE IF EXISTS " . $procedure->proname);
         }
     }
 }

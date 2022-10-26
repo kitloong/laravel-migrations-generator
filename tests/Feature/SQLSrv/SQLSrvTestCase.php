@@ -97,7 +97,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         $procedures = $this->getAllProcedures();
 
         foreach ($procedures as $procedure) {
-            DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->name);
+            DB::unprepared("DROP PROCEDURE IF EXISTS " . $procedure->name);
         }
     }
 

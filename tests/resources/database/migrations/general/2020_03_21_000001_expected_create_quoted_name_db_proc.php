@@ -19,28 +19,28 @@ class ExpectedCreateQuotedName_DB_Proc extends TestMigration
     {
         switch (DB::getDriverName()) {
             case Driver::MYSQL():
-                DB::statement(
+                DB::unprepared(
                     "CREATE PROCEDURE findNameWithHyphen[db]()
                     BEGIN
-                        SELECT * from ".$this->quoteIdentifier('name-with-hyphen-[db]').";
+                        SELECT * from " . $this->quoteIdentifier('name-with-hyphen-[db]') . ";
                     END"
                 );
                 break;
             case Driver::PGSQL():
-                DB::statement(
+                DB::unprepared(
                     "CREATE PROCEDURE findNameWithHyphen[db]()
                     language plpgsql
                     as $$
                     BEGIN
-                        SELECT * from ".$this->quoteIdentifier('name-with-hyphen-[db]').";
+                        SELECT * from " . $this->quoteIdentifier('name-with-hyphen-[db]') . ";
                     END;$$"
                 );
                 break;
             case Driver::SQLSRV():
-                DB::statement(
+                DB::unprepared(
                     "CREATE PROCEDURE findNameWithHyphen[db]
                     AS
-                    SELECT * from ".$this->quoteIdentifier('name-with-hyphen-[db]').";"
+                    SELECT * from " . $this->quoteIdentifier('name-with-hyphen-[db]') . ";"
                 );
                 break;
             default:
@@ -54,6 +54,6 @@ class ExpectedCreateQuotedName_DB_Proc extends TestMigration
      */
     public function down()
     {
-        DB::statement("DROP PROCEDURE IF EXISTS findNameWithHyphen[db]");
+        DB::unprepared("DROP PROCEDURE IF EXISTS findNameWithHyphen[db]");
     }
 }

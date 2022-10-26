@@ -70,7 +70,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
         $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . config('database.connections.mariadb.database') . "'");
 
         foreach ($procedures as $procedure) {
-            DB::statement("DROP PROCEDURE IF EXISTS " . $procedure->Name);
+            DB::unprepared("DROP PROCEDURE IF EXISTS " . $procedure->Name);
         }
     }
 }
