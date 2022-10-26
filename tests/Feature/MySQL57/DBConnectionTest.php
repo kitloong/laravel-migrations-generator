@@ -57,6 +57,9 @@ class DBConnectionTest extends MySQL57TestCase
         };
 
         $generateMigrations = function () {
+            // Needed for Laravel 6 and below.
+            DB::setDefaultConnection('mysql8');
+
             $this->artisan(
                 'migrate:generate',
                 [
@@ -91,6 +94,9 @@ class DBConnectionTest extends MySQL57TestCase
     public function testLogMigrationToAnotherSource()
     {
         $this->migrateGeneral('mysql57');
+
+        // Needed for Laravel 6 and below.
+        DB::setDefaultConnection('mysql8');
 
         $this->artisan(
             'migrate:generate',
