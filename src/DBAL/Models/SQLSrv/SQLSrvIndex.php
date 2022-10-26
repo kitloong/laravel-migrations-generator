@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\DBAL\Models\DBALIndex;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
+use KitLoong\MigrationsGenerator\Support\Regex;
 
 class SQLSrvIndex extends DBALIndex
 {
@@ -56,7 +57,7 @@ class SQLSrvIndex extends DBALIndex
 
         // Can be improved by generate exact 16 characters of sequence number instead of `\w{16}`
         // if the rules of sequence number generation is known.
-        if ($this->name !== Str::match('/' . $prefix . '\w{16}/', $this->name)) {
+        if ($this->name !== Regex::match('/' . $prefix . '\w{16}/', $this->name)) {
             return;
         }
 
