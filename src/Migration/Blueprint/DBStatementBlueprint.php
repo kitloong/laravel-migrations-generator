@@ -29,7 +29,7 @@ class DBStatementBlueprint implements WritableBlueprint
     private $sql;
 
     /**
-     * CustomBlueprint constructor.
+     * DBStatementBlueprint constructor.
      *
      * @param  string  $sql  The SQL statement.
      */
