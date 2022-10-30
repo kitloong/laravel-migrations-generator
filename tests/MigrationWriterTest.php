@@ -44,7 +44,7 @@ class MigrationWriterTest extends TestCase
         $migration = app(MigrationWriter::class);
         $migration->writeTo(
             storage_path('migration.php'),
-            config('generators.config.migration_template_path'),
+            config('migrations-generator.migration_template_path'),
             'Tester',
             new Collection([$up]),
             new Collection([$down]),
