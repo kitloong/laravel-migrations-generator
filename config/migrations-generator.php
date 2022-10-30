@@ -2,7 +2,7 @@
 
 return [
     // Where the templates for the generators are stored.
-    'migration_template_path' => __DIR__ . '/../resources/stub/migration.stub',
+    'migration_template_path' => __DIR__ . '/../stubs/migration.generate.stub',
 
     // Where the generated files will be saved.
     'migration_target_path'   => base_path('database/migrations'),
