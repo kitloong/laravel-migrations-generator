@@ -17,6 +17,7 @@ class CommentModifier implements Modifier
         if ($column->getComment() !== null) {
             $method->chain(ColumnModifier::COMMENT(), $column->getComment());
         }
+
         return $method;
     }
 }

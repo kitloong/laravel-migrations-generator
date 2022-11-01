@@ -58,9 +58,16 @@ abstract class PgSQLTestCase extends FeatureTestCase
         exec($command);
     }
 
-    protected function dropAllTables(): void
+    protected function refreshDatabase(): void
+    {
+        $this->dropAllTablesAndViews();
+        $this->dropAllProcedures();
+    }
+
+    protected function dropAllTablesAndViews(): void
     {
         $tables = DB::getDoctrineSchemaManager()->listTableNames();
+
         foreach ($tables as $table) {
             if (Str::startsWith($table, 'tiger.')) {
                 continue;
@@ -70,8 +77,26 @@ abstract class PgSQLTestCase extends FeatureTestCase
                 continue;
             }
 
-            // CASCADE, Automatically drop objects that depend on the table (such as views).
-            DB::statement("DROP TABLE if exists $table cascade");
+            // CASCADE, automatically drop objects that depend on the table.
+            // This statement will drop views which depend on the table.
+            DB::statement("DROP TABLE IF EXISTS $table cascade");
+        }
+    }
+
+    protected function dropAllProcedures(): void
+    {
+        $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
+
+        $procedures = DB::select(
+            "SELECT *, pg_get_functiondef(pg_proc.oid)
+            FROM pg_catalog.pg_proc
+                JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
+            WHERE prokind = 'p'
+                AND pg_namespace.nspname = '" . $searchPath . "'"
+        );
+
+        foreach ($procedures as $procedure) {
+            DB::unprepared("DROP PROCEDURE IF EXISTS " . $procedure->proname);
         }
     }
 }

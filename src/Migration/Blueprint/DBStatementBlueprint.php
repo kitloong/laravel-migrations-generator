@@ -5,7 +5,20 @@ namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\MethodStringHelper;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 
-class CustomBlueprint implements WritableBlueprint
+/**
+ * Create migration lines with `DB::statement`.
+ *
+ * eg 1:
+ * ```
+ * DB::statement("CREATE VIEW active_users AS select * from users where status = 1");
+ * ```
+ *
+ * eg 2:
+ * ```
+ * DB::connection('sqlite')->statement("CREATE VIEW active_users AS select * from users where status = 1");
+ * ```
+ */
+class DBStatementBlueprint implements WritableBlueprint
 {
     use Stringable;
     use MethodStringHelper;
@@ -16,7 +29,7 @@ class CustomBlueprint implements WritableBlueprint
     private $sql;
 
     /**
-     * CustomBlueprint constructor.
+     * DBStatementBlueprint constructor.
      *
      * @param  string  $sql  The SQL statement.
      */

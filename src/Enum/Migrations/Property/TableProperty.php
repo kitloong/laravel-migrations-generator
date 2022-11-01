@@ -8,7 +8,6 @@ use MyCLabs\Enum\Enum;
  * Preserved table properties of the framework.
  *
  * @see https://laravel.com/docs/master/migrations#tables
- *
  * @method static self CHARSET()
  * @method static self COLLATION()
  * @method static self ENGINE()

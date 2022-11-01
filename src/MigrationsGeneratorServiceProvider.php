@@ -20,8 +20,6 @@ use KitLoong\MigrationsGenerator\Migration\Generator\Columns\OmitNameColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\PresetValuesColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\SoftDeleteColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\StringColumn;
-use KitLoong\MigrationsGenerator\Migration\Migration;
-use KitLoong\MigrationsGenerator\Migration\MigrationInterface;
 use KitLoong\MigrationsGenerator\Repositories\MariaDBRepository;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
@@ -45,7 +43,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
 
-        // All of the container singletons that should be registered.
+        // All the container singletons that should be registered.
         // Use $this->app->singleton instead of $singletons property to support lumen.
         foreach (
             [
@@ -72,18 +70,18 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
             }
         );
 
-        $this->app->bind(MigrationInterface::class, Migration::class);
-
         $this->registerColumnTypeGenerator();
     }
 
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                MigrateGenerateCommand::class,
-            ]);
+        if (!$this->app->runningInConsole()) {
+            return;
         }
+
+        $this->commands([
+            MigrateGenerateCommand::class,
+        ]);
     }
 
     /**

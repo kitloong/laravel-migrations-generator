@@ -23,7 +23,8 @@
         "friendsofphp/php-cs-fixer": "^2.19.0|^3.1",
         "nunomaduro/larastan": "^0.4|^0.5|^0.6|^0.7|^1.0|^2.0",
 		"phpmd/phpmd": "^2.10",
-		"barryvdh/laravel-ide-helper": "^2.7"
+		"barryvdh/laravel-ide-helper": "^2.7",
+		"slevomat/coding-standard": "^6.0|^7.0|^8.5"
     },
 	"autoload": {
 		"psr-4": {
@@ -50,21 +51,13 @@
         ],
         "phpcs": ["phpcs"],
         "phpmd":  ["phpmd \"src,tests\" xml .phpmd.xml"],
-        "phpstan": ["phpstan analyse"],
-        "check-migrations": [
-            "rm -rf migrations/mysql8/* migrations/mysql57/* migrations/pgsql/* migrations/sqlsrv/* migrations/mariadb/* migrations/sqlite/*",
-            "phpunit --filter testRun tests/Feature/MySQL57/CommandTest.php && cp storage/migrations/* migrations/mysql57/ && cp storage/sql/* migrations/mysql57/",
-            "phpunit --filter testCollation tests/Feature/MySQL57/CommandTest.php && cp storage/migrations/* migrations/mysql57/",
-            "phpunit --filter testRun tests/Feature/MySQL8/CommandTest.php && cp storage/migrations/* migrations/mysql8/ && cp storage/sql/* migrations/mysql8/",
-            "phpunit --filter testCollation tests/Feature/MySQL8/CommandTest.php && cp storage/migrations/* migrations/mysql8/",
-            "phpunit --filter testRun tests/Feature/PgSQL/CommandTest.php && cp storage/migrations/* migrations/pgsql/ && cp storage/sql/* migrations/pgsql/",
-            "phpunit --filter testCollation tests/Feature/PgSQL/CommandTest.php && cp storage/migrations/* migrations/pgsql/",
-            "phpunit --filter testRun tests/Feature/SQLSrv/CommandTest.php && cp storage/migrations/* migrations/sqlsrv/ && cp storage/sql/* migrations/sqlsrv/",
-            "phpunit --filter testCollation tests/Feature/SQLSrv/CommandTest.php && cp storage/migrations/* migrations/sqlsrv/",
-            "phpunit --filter testRun tests/Feature/MariaDB/CommandTest.php && cp storage/migrations/* migrations/mariadb/ && cp storage/sql/* migrations/mariadb/",
-            "phpunit --filter testCollation tests/Feature/MariaDB/CommandTest.php && cp storage/migrations/* migrations/mariadb/",
-            "phpunit --filter testRun tests/Feature/SQLite/CommandTest.php && cp storage/migrations/* migrations/sqlite/ && cp storage/sql/* migrations/sqlite/",
-            "phpunit --filter testCollation tests/Feature/SQLite/CommandTest.php && cp storage/migrations/* migrations/sqlite/"
+        "phpstan": [
+            "phpstan analyse"
         ]
-    }
+    },
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
 }

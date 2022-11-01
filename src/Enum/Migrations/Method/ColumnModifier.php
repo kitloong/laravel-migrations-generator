@@ -8,7 +8,6 @@ use MyCLabs\Enum\Enum;
  * Preserved column modifier of the framework.
  *
  * @see https://laravel.com/docs/master/migrations#column-modifiers
- *
  * @method static self ALWAYS()
  * @method static self AUTO_INCREMENT()
  * @method static self CHARSET()

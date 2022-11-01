@@ -41,6 +41,7 @@ trait MergeTimestamps
         }
 
         $updatedAt = $lines[$updatedAtLineKey] ?? null;
+
         if (!$updatedAt instanceof Method) {
             return $lines;
         }
@@ -50,6 +51,7 @@ trait MergeTimestamps
         }
 
         $updatedAtLength = $updatedAt->getValues()[1] ?? 0; // Get length from values or default to 0.
+
         if ($length === $updatedAtLength) {
             $isTimestamps = true;
         }

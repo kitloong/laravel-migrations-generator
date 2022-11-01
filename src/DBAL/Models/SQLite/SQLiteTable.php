@@ -16,6 +16,7 @@ class SQLiteTable extends DBALTable
      */
     protected function handle(): void
     {
+        // Do nothing.
     }
 
     /**

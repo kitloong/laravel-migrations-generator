@@ -5,6 +5,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Repositories\Entities\MySQL\ShowColumn;
+use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 
 class MySQLRepository extends Repository
 {
@@ -31,6 +32,7 @@ class MySQLRepository extends Repository
     public function getEnumPresetValues(string $table, string $column): Collection
     {
         $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'enum(%'");
+
         if ($result === null) {
             return new Collection();
         }
@@ -54,6 +56,7 @@ class MySQLRepository extends Repository
     public function getSetPresetValues(string $table, string $column): Collection
     {
         $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'set(%'");
+
         if ($result === null) {
             return new Collection();
         }
@@ -85,5 +88,39 @@ class MySQLRepository extends Repository
                     AND EXTRA LIKE '%on update CURRENT_TIMESTAMP%'"
         );
         return !($result === null);
+    }
+
+    /**
+     * Get a list of stored procedures.
+     *
+     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     */
+    public function getProcedures(): Collection
+    {
+        $list       = new Collection();
+        $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . DB::getDatabaseName() . "'");
+
+        foreach ($procedures as $procedure) {
+            // Change all keys to lowercase.
+            $procedureArr = array_change_key_case((array) $procedure);
+            $createProc   = $this->getProcedure($procedureArr['name']);
+
+            // Change all keys to lowercase.
+            $createProcArr = array_change_key_case((array) $createProc);
+            $list->push(new ProcedureDefinition($procedureArr['name'], $createProcArr['create procedure']));
+        }
+
+        return $list;
+    }
+
+    /**
+     * Get single stored procedure by name.
+     *
+     * @param  string  $procedure  Procedure name.
+     * @return mixed
+     */
+    private function getProcedure(string $procedure)
+    {
+        return DB::selectOne("SHOW CREATE PROCEDURE $procedure");
     }
 }

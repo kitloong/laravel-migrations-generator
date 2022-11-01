@@ -41,7 +41,7 @@ class TablePrefixTest extends PgSQLTestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
 

@@ -4,11 +4,11 @@
 
 /** @noinspection PhpUnused */
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateTimestamps_DB_Table extends Migration
+class ExpectedCreateTimestamps_DB_Table extends TestMigration
 {
     /**
      * Run the migrations.

@@ -14,16 +14,16 @@ class Setting
      */
     private $defaultConnection;
 
-    /** @var boolean */
+    /** @var bool */
     private $useDBCollation;
 
-    /** @var boolean */
+    /** @var bool */
     private $ignoreIndexNames;
 
-    /** @var boolean */
+    /** @var bool */
     private $ignoreForeignKeyNames;
 
-    /** @var boolean */
+    /** @var bool */
     private $squash;
 
     /** @var string */
@@ -40,6 +40,9 @@ class Setting
 
     /** @var string */
     private $viewFilename;
+
+    /** @var string */
+    private $procedureFilename;
 
     /** @var string */
     private $fkFilename;
@@ -186,6 +189,22 @@ class Setting
     public function setViewFilename(string $viewFilename): void
     {
         $this->viewFilename = $viewFilename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProcedureFilename(): string
+    {
+        return $this->procedureFilename;
+    }
+
+    /**
+     * @param  string  $procedureFilename
+     */
+    public function setProcedureFilename(string $procedureFilename): void
+    {
+        $this->procedureFilename = $procedureFilename;
     }
 
     /**

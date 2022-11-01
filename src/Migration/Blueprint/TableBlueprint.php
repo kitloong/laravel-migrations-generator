@@ -7,6 +7,27 @@ use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\MergeTimestamps;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
 
+/**
+ * Create migration lines with `$table->`.
+ *
+ * eg 1 ({@see \KitLoong\MigrationsGenerator\Migration\Blueprint\Property}):
+ * ```
+ * $table->collation = 'utf8mb4';
+ * ```
+ *
+ * eg 2 ({}@see \KitLoong\MigrationsGenerator\Migration\Blueprint\Method):
+ * ```
+ * $table->string('name');
+ * $table->string('email')->unique();
+ * $table->timestamps();
+ * ```
+ *
+ * eg 3 ({}@see \KitLoong\MigrationsGenerator\Migration\Blueprint\Method):
+ * ```
+ * $table->foreign(['user_id'])->references(['id'])->on('users');
+ * $table->dropForeign('user_id_foreign');
+ * ```
+ */
 class TableBlueprint implements WritableBlueprint
 {
     use MergeTimestamps;
@@ -90,14 +111,17 @@ class TableBlueprint implements WritableBlueprint
     public function toString(): string
     {
         $lines = [];
+
         foreach ($this->lines as $line) {
             switch (true) {
                 case $line instanceof Property:
                     $lines[] = $this->propertyToString($line);
                     break;
+
                 case $line instanceof Method:
                     $lines[] = $this->methodToString($line);
                     break;
+
                 default:
                     $lines[] = $this->convertFromAnyTypeToString($line);
             }
@@ -109,7 +133,7 @@ class TableBlueprint implements WritableBlueprint
     /**
      * Generates $table property, example:
      *
-     * $table->collation = 'utf-8';
+     * $table->collation = 'utf8mb4';
      * $table->test = false;
      * $table->test = true;
      * $table->test = null;
@@ -135,11 +159,13 @@ class TableBlueprint implements WritableBlueprint
     private function methodToString(Method $method): string
     {
         $methodStrings = [$this->flattenMethod($method)];
+
         if ($method->countChain() > 0) {
             foreach ($method->getChains() as $chain) {
                 $methodStrings[] = $this->flattenMethod($chain);
             }
         }
+
         return '$table->' . implode('->', $methodStrings) . ";";
     }
 

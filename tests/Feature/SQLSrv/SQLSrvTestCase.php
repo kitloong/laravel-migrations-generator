@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Tests\Feature\SQLSrv;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
@@ -34,13 +35,21 @@ abstract class SQLSrvTestCase extends FeatureTestCase
     {
         $tables = DB::getDoctrineSchemaManager()->listTableNames();
         $sqls   = [];
+
         foreach ($tables as $table) {
-            $sqls[] = "EXEC sp_columns '" . $table . "';";
+            $sqls[] = "EXEC sp_help '" . $table . "';";
         }
 
         $views = DB::getDoctrineSchemaManager()->listViews();
+
         foreach ($views as $view) {
             $sqls[] = "EXEC sp_helptext '" . $view->getName() . "';";
+        }
+
+        $procedures = $this->getAllProcedures();
+
+        foreach ($procedures as $procedure) {
+            $sqls[] = "EXEC sp_helptext '" . $procedure->name . "';";
         }
 
         $command = sprintf(
@@ -51,21 +60,20 @@ abstract class SQLSrvTestCase extends FeatureTestCase
             config('database.connections.sqlsrv.password'),
             config('database.connections.sqlsrv.database'),
             implode('', $sqls),
-            $destination
+            $this->getStorageSqlPath('temp.sql')
         );
         exec($command);
+
+        $this->removeDynamicInformation($this->getStorageSqlPath('temp.sql'), $destination);
     }
 
-    protected function dropAllTables(): void
+    protected function refreshDatabase(): void
     {
         $this->dropAllViews();
-
         Schema::dropAllTables();
+        $this->dropAllProcedures();
     }
 
-    /**
-     * @return void
-     */
     protected function dropAllViews(): void
     {
         // `dropAllViews` available in Laravel >= 6.x
@@ -82,5 +90,54 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
             EXEC sp_executesql @sql;"
         );
+    }
+
+    protected function dropAllProcedures(): void
+    {
+        $procedures = $this->getAllProcedures();
+
+        foreach ($procedures as $procedure) {
+            DB::unprepared("DROP PROCEDURE IF EXISTS " . $procedure->name);
+        }
+    }
+
+    protected function getAllProcedures(): array
+    {
+        return DB::select(
+            "SELECT name, definition
+            FROM sys.sysobjects
+                INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
+            WHERE type = 'P'
+                AND definition IS NOT NULL
+            ORDER BY name"
+        );
+    }
+
+    /**
+     * Remove dynamic information from the SQL file.
+     *
+     * @param  string  $from  SQL source file path.
+     * @param  string  $destination  Output path.
+     * @return void
+     */
+    private function removeDynamicInformation(string $from, string $destination): void
+    {
+        $fromResource        = fopen($from, 'r');
+        $destinationResource = fopen($destination, 'w+');
+
+        if ($fromResource && $destinationResource) {
+            while (($line = fgets($fromResource)) !== false) {
+                $replaced = preg_replace('/^(.*)(user table)(.*)$/', '$1$2', $line);
+                $replaced = preg_replace('/^(.*)(PK__.*__\w{16})(.*)$/', '$1PK__replaced__xxxxxxxxxxxxxxxx$3', $replaced);
+                $replaced = preg_replace('/^(.*)(DF__.*__\w{8})(.*)$/', '$1DF__replacedreplaced__xxxxxxxx$3', $replaced);
+                $replaced = preg_replace('/^(.*)(CK__.*__\w{8})(.*)$/', '$1CK__replacedreplaced__xxxxxxxx$3', $replaced);
+                fwrite($destinationResource, $replaced);
+            }
+
+            fclose($fromResource);
+            fclose($destinationResource);
+        }
+
+        File::delete($from);
     }
 }

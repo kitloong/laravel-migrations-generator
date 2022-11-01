@@ -5,9 +5,12 @@ namespace KitLoong\MigrationsGenerator\DBAL\Models;
 use Doctrine\DBAL\Schema\View as DoctrineDBALView;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
+use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 
 abstract class DBALView implements View
 {
+    use AssetNameQuote;
+
     /**
      * @var string
      */
@@ -21,12 +24,19 @@ abstract class DBALView implements View
     /**
      * @var string
      */
-    protected $createViewSQL;
+    protected $definition;
+
+    /**
+     * @var string
+     */
+    protected $dropDefinition;
 
     public function __construct(DoctrineDBALView $view)
     {
-        $this->name          = $this->makeName($view->getName());
-        $this->quotedName    = $this->makeQuotedName($this->name);
+        $this->name           = $this->trimQuotes($view->getName());
+        $this->quotedName     = DB::getDoctrineConnection()->quoteIdentifier($this->name);
+        $this->definition     = '';
+        $this->dropDefinition = "DROP VIEW IF EXISTS $this->quotedName";
 
         $this->handle($view);
     }
@@ -40,43 +50,6 @@ abstract class DBALView implements View
     abstract protected function handle(DoctrineDBALView $view): void;
 
     /**
-     * Trim quotes and set name.
-     *
-     * @param  string  $name
-     * @return string
-     */
-    protected function makeName(string $name): string
-    {
-        return (string) str_replace(['`', '"', '[', ']'], '', $name);
-    }
-
-    /**
-     * Set quoted name.
-     *
-     * @param  string  $name
-     * @return string
-     */
-    protected function makeQuotedName(string $name): string
-    {
-        return DB::getDoctrineConnection()->quoteIdentifier($name);
-    }
-
-    /**
-     * Set create view SQL.
-     *
-     * @param  string  $quotedName
-     * @param  string  $sql
-     * @return string
-     * @throws \Doctrine\DBAL\Exception
-     */
-    protected function makeCreateViewSQL(string $quotedName, string $sql): string
-    {
-        return DB::getDoctrineConnection()
-            ->getDatabasePlatform()
-            ->getCreateViewSQL($quotedName, $sql);
-    }
-
-    /**
      * @inheritDoc
      */
     public function getName(): string
@@ -87,16 +60,16 @@ abstract class DBALView implements View
     /**
      * @inheritDoc
      */
-    public function getQuotedName(): string
+    public function getDefinition(): string
     {
-        return $this->quotedName;
+        return $this->definition;
     }
 
     /**
      * @inheritDoc
      */
-    public function getCreateViewSql(): string
+    public function getDropDefinition(): string
     {
-        return $this->createViewSQL;
+        return $this->dropDefinition;
     }
 }

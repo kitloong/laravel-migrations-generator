@@ -2,38 +2,18 @@
 
 namespace KitLoong\MigrationsGenerator\Tests;
 
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider;
-use Mockery;
 use Orchestra\Testbench\TestCase as Testbench;
 use PHPUnit\Framework\Constraint\IsEqual;
 
 abstract class TestCase extends Testbench
 {
-    /**
-     * @param  string  $name
-     * @param  array  $arguments
-     * @return object
-     * @throws \Exception
-     */
-    public function __call(string $name, array $arguments)
-    {
-        switch ($name) {
-            case 'mock':
-                return $this->instance($arguments[0], Mockery::mock(...array_filter($arguments)));
-            case 'partialMock':
-                return $this->instance($arguments[0], Mockery::mock(...array_filter($arguments))->makePartial());
-            default:
-                throw new Exception('Call to undefined method ' . get_called_class() . '::' . $name . '()');
-        }
-    }
-
     protected function getPackageProviders($app)
     {
         return [
-            MigrationsGeneratorServiceProvider::class
+            MigrationsGeneratorServiceProvider::class,
         ];
     }
 
@@ -46,6 +26,7 @@ abstract class TestCase extends Testbench
 
     /**
      * Asserts that the contents of one file is equal to the contents of another file, ignore the ordering.
+     * Also, strip all end of line commas.
      *
      * @param  string  $expected
      * @param  string  $actual

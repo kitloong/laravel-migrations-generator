@@ -20,7 +20,7 @@ class SQLiteSchema extends DBALSchema
     public function getTable(string $name): Table
     {
         return new SQLiteTable(
-            $this->dbalSchema->listTableDetails($name),
+            $this->introspectTable($name),
             $this->dbalSchema->listTableColumns($name),
             $this->dbalSchema->listTableIndexes($name)
         );
@@ -47,6 +47,16 @@ class SQLiteSchema extends DBALSchema
             ->map(function (DoctrineDBALView $view) {
                 return new SQLiteView($view);
             });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getProcedures(): Collection
+    {
+        // Stored procedure is not available.
+        // https://sqlite.org/forum/info/78a60bdeec7c1ee9
+        return new Collection();
     }
 
     /**

@@ -45,7 +45,7 @@ class NullableModifier implements Modifier
                 ColumnType::SOFT_DELETES(),
                 ColumnType::SOFT_DELETES_TZ(),
                 ColumnType::REMEMBER_TOKEN(),
-                ColumnType::TIMESTAMPS()
+                ColumnType::TIMESTAMPS(),
             ]
         );
     }

@@ -20,9 +20,11 @@ class CommandTest extends SQLSrvTestCase
         // To simplify, dropping UT check for version <= 5.7.
         // https://github.com/laravel/framework/blob/5.7/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L523
         // https://github.com/laravel/framework/blob/5.8/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L538
-        if (!$this->atLeastLaravel5Dot8()) {
-            $this->markTestSkipped();
+        if ($this->atLeastLaravel5Dot8()) {
+            return;
         }
+
+        $this->markTestSkipped();
     }
 
     /**
@@ -136,7 +138,7 @@ class CommandTest extends SQLSrvTestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
 

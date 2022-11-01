@@ -134,7 +134,6 @@ class RegisterColumnType
      * @note Uses {@see \Doctrine\DBAL\Types\Type::__construct} instead of {@see \Doctrine\DBAL\Types\Type::addType} here as workaround.
      * @return void
      * @throws \Doctrine\DBAL\Exception
-     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter) to suppress `getSQLDeclaration` warning.
      */
     private function registerLaravelCustomColumnType(): void
@@ -155,10 +154,12 @@ class RegisterColumnType
             };
             $customType->type = $type;
 
-            if (!Type::hasType($type)) {
-                Type::getTypeRegistry()->register($type, $customType);
-                $this->registerDoctrineTypeMapping($type, $type);
+            if (Type::hasType($type)) {
+                continue;
             }
+
+            Type::getTypeRegistry()->register($type, $customType);
+            $this->registerDoctrineTypeMapping($type, $type);
         }
     }
 

@@ -11,7 +11,6 @@ use MyCLabs\Enum\Enum;
  *
  * Keep cons as public to allow value assign in const property.
  * @see \KitLoong\MigrationsGenerator\DBAL\Types\Types
- *
  * @method static self BIG_INTEGER()
  * @method static self BIG_INCREMENTS()
  * @method static self BINARY()

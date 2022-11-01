@@ -4,11 +4,10 @@
 
 /** @noinspection PhpUnused */
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\Enum\Driver;
+use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateQuotedName_DB_View extends Migration
+class ExpectedCreateQuotedName_DB_View extends TestMigration
 {
     /**
      * Run the migrations.
@@ -31,20 +30,5 @@ class ExpectedCreateQuotedName_DB_View extends Migration
     public function down()
     {
         DB::statement("DROP VIEW IF EXISTS " . $this->quoteIdentifier('quoted-name-[db]-view'));
-    }
-
-    private function quoteIdentifier(string $string): string
-    {
-        switch (DB::getDriverName()) {
-            case Driver::MYSQL():
-            case Driver::SQLITE():
-                return '`' . $string . '`';
-            case Driver::PGSQL():
-                return '"' . $string . '"';
-            case Driver::SQLSRV():
-                return '[' . $string . ']';
-            default:
-        }
-        return '`' . $string . '`';
     }
 }

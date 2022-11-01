@@ -35,7 +35,7 @@ abstract class FeatureTestCase extends TestCase
 
     protected function tearDown(): void
     {
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         parent::tearDown();
     }
@@ -46,7 +46,9 @@ abstract class FeatureTestCase extends TestCase
             $dotenv = Dotenv::createImmutable(base_path());
             $dotenv->load();
             return;
-        } elseif (method_exists(Dotenv::class, 'create')) {
+        }
+
+        if (method_exists(Dotenv::class, 'create')) {
             /** @noinspection PhpParamsInspection */
             $dotenv = Dotenv::create(base_path());
             $dotenv->load();
@@ -94,16 +96,17 @@ abstract class FeatureTestCase extends TestCase
     protected function migrateFromTemplate(string $connection, string $templatePath): void
     {
         File::copyDirectory($templatePath, $this->getStorageFromPath());
+
         foreach (File::files($this->getStorageFromPath()) as $file) {
             $content = str_replace([
                 '[db]',
-                '_DB_'
+                '_DB_',
             ], [
                 $connection,
-                ucfirst("$connection")
+                ucfirst("$connection"),
             ], $file->getContents());
 
-            file_put_contents($this->getStorageFromPath($file->getBasename()), $content);
+            File::put($this->getStorageFromPath($file->getBasename()), $content);
             File::move(
                 $this->getStorageFromPath($file->getBasename()),
                 $this->getStorageFromPath(str_replace('_db_', "_${connection}_", $file->getBasename()))
@@ -118,7 +121,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan('migrate', [
             '--database' => $connection,
             '--realpath' => true,
-            '--path'     => $path
+            '--path'     => $path,
         ]);
     }
 
@@ -127,7 +130,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan('migrate:rollback', [
             '--database' => $connection,
             '--realpath' => true,
-            '--path'     => $path
+            '--path'     => $path,
         ]);
     }
 
@@ -147,7 +150,7 @@ abstract class FeatureTestCase extends TestCase
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
             ->expectsQuestion(
-                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
                 '0'
             );
     }
@@ -155,6 +158,7 @@ abstract class FeatureTestCase extends TestCase
     protected function assertMigrations(): void
     {
         $migrations = [];
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = $migration->getFilenameWithoutExtension();
         }
@@ -188,6 +192,7 @@ abstract class FeatureTestCase extends TestCase
                 if ($this->isIdentifierQuoted($table)) {
                     return $this->trimQuotes($table);
                 }
+
                 return $table;
             })
             ->toArray();
@@ -207,11 +212,5 @@ abstract class FeatureTestCase extends TestCase
             ->toArray();
     }
 
-    protected function setDefaultConnection(string $name): void
-    {
-        // Set default connection, to fix Laravel < 6.x.
-        DB::setDefaultConnection($name);
-    }
-
-    abstract protected function dropAllTables(): void;
+    abstract protected function refreshDatabase(): void;
 }

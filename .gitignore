@@ -11,6 +11,7 @@
 .phpstorm.meta.php
 .phpunit.result.cache
 _ide_helper.php
+check_migrations.sh
 docker-compose.yml
 composer.lock
 coverage.xml

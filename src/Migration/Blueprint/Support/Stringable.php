@@ -18,6 +18,7 @@ trait Stringable
     public function flattenLines(array $lines, int $numberOfPrefixTab): string
     {
         $content = '';
+
         foreach ($lines as $i => $line) {
             // Skip tab if the line is first line or line break.
             if ($i === 0 || $line === Space::LINE_BREAK()->getValue()) {
@@ -27,6 +28,7 @@ trait Stringable
 
             $content .= Space::LINE_BREAK() . str_repeat(Space::TAB(), $numberOfPrefixTab) . $line;
         }
+
         return $content;
     }
 
@@ -41,15 +43,20 @@ trait Stringable
         switch (gettype($value)) {
             case 'string':
                 return "'" . $this->escapeSingleQuote($value) . "'";
+
             case 'integer':
             case 'double':
                 return (string) $value;
+
             case 'boolean':
                 return $value ? 'true' : 'false';
+
             case 'NULL':
                 return 'null';
+
             case 'array':
                 return '[' . implode(', ', $this->mapArrayItemsToString($value)) . ']';
+
             default:
                 // Wrap with DB::raw();
                 if ($value instanceof Expression) {

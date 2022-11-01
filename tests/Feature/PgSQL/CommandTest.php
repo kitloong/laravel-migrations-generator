@@ -93,10 +93,10 @@ class CommandTest extends PgSQLTestCase
             '--ignore' => implode(',', [
                 'name-with-hyphen-pgsql',
                 'name-with-hyphen-pgsql_view',
-            ])
+            ]),
         ]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
 
@@ -109,8 +109,8 @@ class CommandTest extends PgSQLTestCase
 
     /**
      * Start from Laravel 9, the `schema` configuration option used to configure Postgres connection search paths renamed to `search_path`.
-     * @see https://laravel.com/docs/9.x/upgrade#postgres-schema-configuration
      *
+     * @see https://laravel.com/docs/9.x/upgrade#postgres-schema-configuration
      * @return void
      */
     public function testRunWithSearchPath()
@@ -137,7 +137,7 @@ class CommandTest extends PgSQLTestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations, callable $beforeVerify = null)
+    private function verify(callable $migrateTemplates, callable $generateMigrations, ?callable $beforeVerify = null)
     {
         $migrateTemplates();
 
@@ -148,7 +148,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
 
@@ -167,7 +167,7 @@ class CommandTest extends PgSQLTestCase
     {
         $this->assertTrue(
             str_contains(
-                file_get_contents($file),
+                File::get($file),
                 $line
             )
         );
@@ -177,7 +177,7 @@ class CommandTest extends PgSQLTestCase
             str_replace(
                 $line,
                 'replaced',
-                file_get_contents($file)
+                File::get($file)
             )
         );
     }

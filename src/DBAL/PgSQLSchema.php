@@ -7,13 +7,25 @@ use Doctrine\DBAL\Schema\View as DoctrineDBALView;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\DBAL\Models\PgSQL\PgSQLForeignKey;
+use KitLoong\MigrationsGenerator\DBAL\Models\PgSQL\PgSQLProcedure;
 use KitLoong\MigrationsGenerator\DBAL\Models\PgSQL\PgSQLTable;
 use KitLoong\MigrationsGenerator\DBAL\Models\PgSQL\PgSQLView;
+use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
+use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 
 class PgSQLSchema extends DBALSchema
 {
+    private $pgSQLRepository;
+
+    public function __construct(RegisterColumnType $registerColumnType, PgSQLRepository $pgSQLRepository)
+    {
+        parent::__construct($registerColumnType);
+
+        $this->pgSQLRepository = $pgSQLRepository;
+    }
+
     /**
      * @inheritDoc
      */
@@ -45,7 +57,7 @@ class PgSQLSchema extends DBALSchema
     public function getTable(string $name): Table
     {
         return new PgSQLTable(
-            $this->dbalSchema->listTableDetails($name),
+            $this->introspectTable($name),
             $this->dbalSchema->listTableColumns($name),
             $this->dbalSchema->listTableIndexes($name)
         );
@@ -85,6 +97,18 @@ class PgSQLSchema extends DBALSchema
                 return new PgSQLView($view);
             })
             ->values();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getProcedures(): Collection
+    {
+        $this->pgSQLRepository->getProcedures();
+        return (new Collection($this->pgSQLRepository->getProcedures()))
+            ->map(function (ProcedureDefinition $procedureDefinition) {
+                return new PgSQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition());
+            });
     }
 
     /**

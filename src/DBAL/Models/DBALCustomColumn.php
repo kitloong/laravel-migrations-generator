@@ -31,7 +31,7 @@ abstract class DBALCustomColumn implements CustomColumn
     {
         $this->name      = $column->getName();
         $this->tableName = $table;
-        $this->sqls      = DB::getDoctrineSchemaManager()->getDatabasePlatform()->getAlterTableSQL(new TableDiff($this->tableName, [$column]));
+        $this->sqls      = DB::getDoctrineConnection()->getDatabasePlatform()->getAlterTableSQL(new TableDiff($this->tableName, [$column]));
     }
 
     /**

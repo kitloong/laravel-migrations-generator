@@ -55,6 +55,7 @@ abstract class DBALTable implements Table
             if (!$column->getType() instanceof CustomType) {
                 $columns->push($this->makeColumn($table->getName(), $column));
             }
+
             return $columns;
         }, new Collection())->values();
 
@@ -62,6 +63,7 @@ abstract class DBALTable implements Table
             if ($column->getType() instanceof CustomType) {
                 $columns->push($this->makeCustomColumn($table->getName(), $column));
             }
+
             return $columns;
         }, new Collection())->values();
 

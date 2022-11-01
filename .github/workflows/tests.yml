@@ -106,6 +106,14 @@ jobs:
             laravel: 8.*
             dbal: 3.*
             sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
+          - php: 8.2
+            laravel: 9.*
+            dbal: 3.*
+            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
+          - php: 8.2
+            laravel: 8.*
+            dbal: 3.*
+            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 

@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Writer;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -27,7 +28,6 @@ class MigrationWriter
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $up  Blueprint of migration `up`.
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $down  Blueprint of migration `down`.
      * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType  $migrationFileType
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function writeTo(
         string $path,
@@ -37,32 +37,27 @@ class MigrationWriter
         Collection $down,
         MigrationFileType $migrationFileType
     ): void {
-        $stub = $this->migrationStub->getStub($stubPath);
+        try {
+            $stub = $this->migrationStub->getStub($stubPath);
 
-        $useDBFacade = false;
+            $upString   = $this->prettifyToString($up);
+            $downString = $this->prettifyToString($down);
 
-        $upString = $up->map(function (WritableBlueprint $up) {
-            return $up->toString();
-        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+            $useDBFacade = false;
 
-        if (Str::contains($upString, 'DB::')) {
-            $useDBFacade = true;
+            if (Str::contains($upString . $downString, 'DB::')) {
+                $useDBFacade = true;
+            }
+
+            $use = implode(Space::LINE_BREAK(), $this->getNamespaces($migrationFileType, $useDBFacade));
+
+            File::put(
+                $path,
+                $this->migrationStub->populateStub($stub, $use, $className, $upString, $downString)
+            );
+        } catch (FileNotFoundException $e) {
+            // Do nothing.
         }
-
-        $downString = $down->map(function (WritableBlueprint $down) {
-            return $down->toString();
-        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
-
-        if (Str::contains($downString, 'DB::')) {
-            $useDBFacade = true;
-        }
-
-        $use = implode(Space::LINE_BREAK(), $this->getImports($migrationFileType, $useDBFacade));
-
-        File::put(
-            $path,
-            $this->migrationStub->populateStub($stub, $use, $className, $upString, $downString)
-        );
     }
 
     /**
@@ -70,9 +65,12 @@ class MigrationWriter
      * @param  bool  $useDBFacade
      * @return string[]
      */
-    private function getImports(MigrationFileType $migrationFileType, bool $useDBFacade): array
+    private function getNamespaces(MigrationFileType $migrationFileType, bool $useDBFacade): array
     {
-        if ($migrationFileType->equals(MigrationFileType::VIEW())) {
+        if (
+            $migrationFileType->equals(MigrationFileType::VIEW())
+            || $migrationFileType->equals(MigrationFileType::PROCEDURE())
+        ) {
             return [
                 'use Illuminate\Database\Migrations\Migration;',
                 'use Illuminate\Support\Facades\DB;',
@@ -82,13 +80,28 @@ class MigrationWriter
         $imports = [
             'use Illuminate\Database\Migrations\Migration;',
             'use Illuminate\Database\Schema\Blueprint;',
-            'use Illuminate\Support\Facades\Schema;',
         ];
 
         if ($useDBFacade) {
             $imports[] = 'use Illuminate\Support\Facades\DB;';
         }
 
+        // Push at the last to maintain alphabetically sort.
+        $imports[] = 'use Illuminate\Support\Facades\Schema;';
+
         return $imports;
+    }
+
+    /**
+     * Convert collection of blueprints to string and prettify and tabular.
+     *
+     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $blueprints
+     * @return string
+     */
+    private function prettifyToString(Collection $blueprints): string
+    {
+        return $blueprints->map(function (WritableBlueprint $blueprint) {
+            return $blueprint->toString();
+        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
     }
 }

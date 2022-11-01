@@ -8,7 +8,6 @@ use MyCLabs\Enum\Enum;
  * Predefined index types of the framework.
  *
  * @see https://laravel.com/docs/master/migrations#available-index-types
- *
  * @method static self FULLTEXT()
  * @method static self FULLTEXT_CHAIN()
  * @method static self INDEX()
