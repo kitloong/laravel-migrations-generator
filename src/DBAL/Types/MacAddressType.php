@@ -24,6 +24,6 @@ class MacAddressType extends Type
      */
     public function getName()
     {
-        return Types::MAC_ADDRESS;
+        return '';
     }
 }

@@ -24,6 +24,6 @@ class PolygonType extends Type
      */
     public function getName()
     {
-        return Types::POLYGON;
+        return '';
     }
 }

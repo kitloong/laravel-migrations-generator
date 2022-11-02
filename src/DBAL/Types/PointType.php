@@ -24,6 +24,6 @@ class PointType extends Type
      */
     public function getName()
     {
-        return Types::POINT;
+        return '';
     }
 }

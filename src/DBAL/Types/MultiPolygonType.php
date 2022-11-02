@@ -24,6 +24,6 @@ class MultiPolygonType extends Type
      */
     public function getName()
     {
-        return Types::MULTI_POLYGON;
+        return '';
     }
 }

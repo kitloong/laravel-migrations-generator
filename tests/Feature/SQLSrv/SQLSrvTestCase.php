@@ -31,6 +31,17 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         ]);
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Drop first.
+        DB::statement("DROP TYPE IF EXISTS accountnumber");
+
+        // Create for custom column type test.
+        DB::statement("CREATE TYPE accountnumber FROM [nvarchar](15) NULL");
+    }
+
     protected function dumpSchemaAs(string $destination): void
     {
         $tables = DB::getDoctrineSchemaManager()->listTableNames();

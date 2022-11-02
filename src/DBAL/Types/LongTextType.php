@@ -24,6 +24,6 @@ class LongTextType extends Type
      */
     public function getName()
     {
-        return Types::LONG_TEXT;
+        return '';
     }
 }

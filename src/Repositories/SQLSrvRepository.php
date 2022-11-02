@@ -194,4 +194,23 @@ class SQLSrvRepository extends Repository
 
         return new Collection(array_reverse(explode('\' OR ' . $separator, $value)));
     }
+
+    /**
+     * Get a list of custom data types.
+     *
+     * @return \Illuminate\Support\Collection<string>
+     */
+    public function getCustomDataTypes(): Collection
+    {
+        $rows  = DB::select("SELECT * FROM sys.types WHERE is_user_defined = 1");
+        $types = new Collection();
+
+        if (count($rows) > 0) {
+            foreach ($rows as $row) {
+                $types->push($row->name);
+            }
+        }
+
+        return $types;
+    }
 }

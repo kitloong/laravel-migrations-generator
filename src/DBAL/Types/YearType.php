@@ -24,6 +24,6 @@ class YearType extends Type
      */
     public function getName()
     {
-        return Types::YEAR;
+        return '';
     }
 }

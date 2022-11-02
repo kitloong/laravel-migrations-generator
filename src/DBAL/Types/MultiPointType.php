@@ -24,6 +24,6 @@ class MultiPointType extends Type
      */
     public function getName()
     {
-        return Types::MULTI_POINT;
+        return '';
     }
 }
