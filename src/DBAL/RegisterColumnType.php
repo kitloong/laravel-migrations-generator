@@ -53,11 +53,13 @@ class RegisterColumnType
             ],
             Driver::SQLITE()->getValue() => [],
             Driver::SQLSRV()->getValue() => [
-                'geography'  => ColumnType::GEOMETRY,
-                'money'      => DoctrineDBALTypes::DECIMAL,
-                'smallmoney' => DoctrineDBALTypes::DECIMAL,
-                'tinyint'    => ColumnType::TINY_INTEGER,
-                'xml'        => DoctrineDBALTypes::TEXT,
+                'geography'   => ColumnType::GEOMETRY,
+                'sysname'     => DoctrineDBALTypes::STRING,
+                'hierarchyid' => DoctrineDBALTypes::STRING,
+                'money'       => DoctrineDBALTypes::DECIMAL,
+                'smallmoney'  => DoctrineDBALTypes::DECIMAL,
+                'tinyint'     => ColumnType::TINY_INTEGER,
+                'xml'         => DoctrineDBALTypes::TEXT,
             ],
         ];
 
