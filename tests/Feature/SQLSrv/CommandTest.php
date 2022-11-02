@@ -34,6 +34,10 @@ class CommandTest extends SQLSrvTestCase
     {
         $migrateTemplates = function () {
             $this->migrateGeneral('sqlsrv');
+
+            DB::statement(
+                "ALTER TABLE all_columns_sqlsrv ADD accountnumber accountnumber NOT NULL"
+            );
         };
 
         $generateMigrations = function () {

@@ -142,9 +142,9 @@ The generator first generates all tables and then adds foreign keys to existing 
 However, SQLite only supports foreign keys upon creation of the table and not when tables are altered.
 *_add_foreign_keys_* migrations will still be generated, however will get omitted if migrate to SQLite type database.
 
-## PostgreSQL Custom Column Type
+## User Defined Custom Column Type
 
-The generator will register custom data type from `pg_type`, then generate migration as
+The generator will register custom data type from the schema, then generate migration as
 
 ```php
 public function up()
@@ -157,6 +157,11 @@ public function up()
 ```
 
 Note that the new `column` is always added at the end of the created `table` which means the ordering of the column generated in migration will differ from what we have from the schema.
+
+Supported DB:
+
+- [x] PostgreSQL
+- [x] SQL Server
 
 ## Thank You
 

@@ -12,14 +12,17 @@ use KitLoong\MigrationsGenerator\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
+use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 
 class RegisterColumnType
 {
     private $pgSQLRepository;
+    private $sqlSrvRepository;
 
-    public function __construct(PgSQLRepository $pgSQLRepository)
+    public function __construct(PgSQLRepository $pgSQLRepository, SQLSrvRepository $sqlSrvRepository)
     {
-        $this->pgSQLRepository = $pgSQLRepository;
+        $this->pgSQLRepository  = $pgSQLRepository;
+        $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
     /**
@@ -128,11 +131,16 @@ class RegisterColumnType
      */
     private function getCustomTypes(): Collection
     {
-        if (DB::getDriverName() === Driver::PGSQL()->getValue()) {
-            return $this->pgSQLRepository->getCustomDataTypes();
-        }
+        switch (DB::getDriverName()) {
+            case Driver::PGSQL():
+                return $this->pgSQLRepository->getCustomDataTypes();
 
-        return new Collection();
+            case Driver::SQLSRV():
+                return $this->sqlSrvRepository->getCustomDataTypes();
+
+            default:
+                return new Collection();
+        }
     }
 
     /**
