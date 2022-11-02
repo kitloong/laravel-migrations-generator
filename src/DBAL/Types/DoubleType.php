@@ -24,6 +24,6 @@ class DoubleType extends Type
      */
     public function getName()
     {
-        return Types::DOUBLE;
+        return '';
     }
 }

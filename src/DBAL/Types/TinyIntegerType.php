@@ -24,6 +24,6 @@ class TinyIntegerType extends Type
      */
     public function getName()
     {
-        return Types::TINY_INTEGER;
+        return '';
     }
 }

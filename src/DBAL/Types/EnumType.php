@@ -24,6 +24,6 @@ class EnumType extends Type
      */
     public function getName()
     {
-        return Types::ENUM;
+        return '';
     }
 }

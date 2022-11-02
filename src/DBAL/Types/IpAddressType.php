@@ -24,6 +24,6 @@ class IpAddressType extends Type
      */
     public function getName()
     {
-        return Types::IP_ADDRESS;
+        return '';
     }
 }

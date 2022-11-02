@@ -24,6 +24,6 @@ class TimeTzType extends Type
      */
     public function getName()
     {
-        return Types::TIME_TZ;
+        return '';
     }
 }
