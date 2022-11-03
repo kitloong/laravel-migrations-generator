@@ -39,7 +39,7 @@ Laravel Migrations Generator supports all five Laravel first-party support datab
 The recommended way to install this is through composer:
 
 ```bash
-composer require --dev "kitloong/laravel-migrations-generator"
+composer require --dev kitloong/laravel-migrations-generator
 ```
 
 ### Laravel Setup
