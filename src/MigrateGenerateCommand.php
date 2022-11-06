@@ -165,7 +165,7 @@ class MigrateGenerateCommand extends Command
         );
 
         $setting->setProcedureFilename(
-            $this->option('proc-filename') ?? Config::get('generators.config.filename_pattern.procedure')
+            $this->option('proc-filename') ?? Config::get('migrations-generator.filename_pattern.procedure')
         );
 
         $setting->setFkFilename(
