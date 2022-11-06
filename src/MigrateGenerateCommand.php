@@ -145,11 +145,11 @@ class MigrateGenerateCommand extends Command
         $setting->setSquash((bool) $this->option('squash'));
 
         $setting->setPath(
-            $this->option('path') ?? Config::get('generators.config.migration_target_path')
+            $this->option('path') ?? Config::get('migrations-generator.migration_target_path')
         );
 
         $setting->setStubPath(
-            $this->option('template-path') ?? Config::get('generators.config.migration_template_path')
+            $this->option('template-path') ?? Config::get('migrations-generator.migration_template_path')
         );
 
         $setting->setDate(
@@ -157,19 +157,19 @@ class MigrateGenerateCommand extends Command
         );
 
         $setting->setTableFilename(
-            $this->option('table-filename') ?? Config::get('generators.config.filename_pattern.table')
+            $this->option('table-filename') ?? Config::get('migrations-generator.filename_pattern.table')
         );
 
         $setting->setViewFilename(
-            $this->option('view-filename') ?? Config::get('generators.config.filename_pattern.view')
+            $this->option('view-filename') ?? Config::get('migrations-generator.filename_pattern.view')
         );
 
         $setting->setProcedureFilename(
-            $this->option('proc-filename') ?? Config::get('generators.config.filename_pattern.procedure')
+            $this->option('proc-filename') ?? Config::get('migrations-generator.filename_pattern.procedure')
         );
 
         $setting->setFkFilename(
-            $this->option('fk-filename') ?? Config::get('generators.config.filename_pattern.foreign_key')
+            $this->option('fk-filename') ?? Config::get('migrations-generator.filename_pattern.foreign_key')
         );
     }
 

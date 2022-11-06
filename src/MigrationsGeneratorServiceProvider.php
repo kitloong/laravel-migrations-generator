@@ -92,11 +92,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $packageConfigFile = __DIR__ . '/../config/config.php';
-        $this->app->make('config')->set(
-            'generators.config',
-            $this->app->make('files')->getRequire($packageConfigFile)
-        );
+        $this->mergeConfigFrom(__DIR__ . '/../config/migrations-generator.php', 'migrations-generator');
     }
 
     /**
