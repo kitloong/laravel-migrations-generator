@@ -18,7 +18,7 @@ class MySQLColumn extends DBALColumn
     /**
      * @var \KitLoong\MigrationsGenerator\Repositories\MySQLRepository
      */
-    private $repository;
+    private $mysqlRepository;
 
     /**
      * @var \KitLoong\MigrationsGenerator\Repositories\MariaDBRepository
@@ -27,7 +27,7 @@ class MySQLColumn extends DBALColumn
 
     protected function handle(): void
     {
-        $this->repository        = app(MySQLRepository::class);
+        $this->mysqlRepository   = app(MySQLRepository::class);
         $this->mariaDBRepository = app(MariaDBRepository::class);
 
         $this->setTypeToIncrements(true);
@@ -60,10 +60,13 @@ class MySQLColumn extends DBALColumn
             default:
         }
 
+        $this->setVirtualDefinition();
+
         if (!$this->isMaria()) {
             return;
         }
 
+        // Extra logic for MariaDB
         switch ($this->type) {
             case ColumnType::LONG_TEXT():
                 if ($this->isJson()) {
@@ -97,7 +100,7 @@ class MySQLColumn extends DBALColumn
             return false;
         }
 
-        $showColumn = $this->repository->showColumn($this->tableName, $this->name);
+        $showColumn = $this->mysqlRepository->showColumn($this->tableName, $this->name);
 
         if ($showColumn === null) {
             return false;
@@ -113,7 +116,7 @@ class MySQLColumn extends DBALColumn
      */
     private function getEnumPresetValues(): array
     {
-        return $this->repository->getEnumPresetValues(
+        return $this->mysqlRepository->getEnumPresetValues(
             $this->tableName,
             $this->name
         )->toArray();
@@ -126,7 +129,7 @@ class MySQLColumn extends DBALColumn
      */
     private function getSetPresetValues(): array
     {
-        return $this->repository->getSetPresetValues(
+        return $this->mysqlRepository->getSetPresetValues(
             $this->tableName,
             $this->name
         )->toArray();
@@ -156,7 +159,7 @@ class MySQLColumn extends DBALColumn
      */
     private function hasOnUpdateCurrentTimestamp(): bool
     {
-        return $this->repository->isOnUpdateCurrentTimestamp($this->tableName, $this->name);
+        return $this->mysqlRepository->isOnUpdateCurrentTimestamp($this->tableName, $this->name);
     }
 
     /**
@@ -170,5 +173,15 @@ class MySQLColumn extends DBALColumn
     {
         $checkConstraint = $this->mariaDBRepository->getCheckConstraintForJson($this->tableName, $this->name);
         return $checkConstraint !== null;
+    }
+
+    /**
+     * Set virtual definition if the column is virtual.
+     *
+     * @return void
+     */
+    private function setVirtualDefinition(): void
+    {
+        $this->virtualDefinition = $this->mysqlRepository->getVirtualDefinition($this->tableName, $this->name);
     }
 }

@@ -91,6 +91,31 @@ class MySQLRepository extends Repository
     }
 
     /**
+     * Get the virtual column definition by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string|null  The virtual column definition. NULL if not found.
+     */
+    public function getVirtualDefinition(string $table, string $column): ?string
+    {
+        $virtualDefinition = DB::selectOne(
+            "SELECT GENERATION_EXPRESSION
+                FROM information_schema.COLUMNS
+                WHERE TABLE_NAME = '$table'
+                    AND COLUMN_NAME = '$column'
+                    AND EXTRA = 'VIRTUAL GENERATED'"
+        );
+
+        if ($virtualDefinition === null) {
+            return null;
+        }
+
+        $virtualDefinitionArr = array_change_key_case((array) $virtualDefinition);
+        return $virtualDefinitionArr['generation_expression'] !== '' ? $virtualDefinitionArr['generation_expression'] : null;
+    }
+
+    /**
      * Get a list of stored procedures.
      *
      * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>

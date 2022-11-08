@@ -144,6 +144,7 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
                     }
                     $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ \\\' quotes');
                     $table->string('comment_double_quote')->comment("string with \" ' quotes");
+                    $table->string('virtual')->nullable()->virtualAs("CONCAT(string, ' ', string_255)");
                     break;
                 case Driver::PGSQL():
                 case Driver::SQLSRV():
