@@ -19,7 +19,7 @@ class PgSQLRepository extends Repository
     public function getTypeByColumnName(string $table, string $column): ?string
     {
         $result = DB::selectOne(
-            "SELECT pg_catalog.format_type(a.atttypid, a.atttypmod) as datatype
+            "SELECT pg_catalog.format_type(a.atttypid, a.atttypmod) AS datatype
                 FROM
                     pg_catalog.pg_attribute a
                 WHERE
@@ -173,7 +173,7 @@ class PgSQLRepository extends Repository
         $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
 
         $rows  = DB::select(
-            "SELECT n.nspname as schema, t.typname as type
+            "SELECT n.nspname AS schema, t.typname AS type
                     FROM pg_type t
                         LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
                     WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid))

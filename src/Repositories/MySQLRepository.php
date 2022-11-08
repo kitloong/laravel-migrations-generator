@@ -18,7 +18,7 @@ class MySQLRepository extends Repository
      */
     public function showColumn(string $table, string $column): ?ShowColumn
     {
-        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column'");
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` WHERE Field = '$column'");
         return $result === null ? null : new ShowColumn($result);
     }
 
@@ -31,7 +31,7 @@ class MySQLRepository extends Repository
      */
     public function getEnumPresetValues(string $table, string $column): Collection
     {
-        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'enum(%'");
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` WHERE Field = '$column' AND Type LIKE 'enum(%'");
 
         if ($result === null) {
             return new Collection();
@@ -55,7 +55,7 @@ class MySQLRepository extends Repository
      */
     public function getSetPresetValues(string $table, string $column): Collection
     {
-        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'set(%'");
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` WHERE Field = '$column' AND Type LIKE 'set(%'");
 
         if ($result === null) {
             return new Collection();
@@ -85,7 +85,7 @@ class MySQLRepository extends Repository
             "SHOW COLUMNS FROM `$table`
                 WHERE Field = '$column'
                     AND Type = 'timestamp'
-                    AND EXTRA LIKE '%on update CURRENT_TIMESTAMP%'"
+                    AND Extra LIKE '%on update CURRENT_TIMESTAMP%'"
         );
         return !($result === null);
     }
@@ -98,7 +98,7 @@ class MySQLRepository extends Repository
     public function getProcedures(): Collection
     {
         $list       = new Collection();
-        $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . DB::getDatabaseName() . "'");
+        $procedures = DB::select("SHOW PROCEDURE STATUS WHERE Db='" . DB::getDatabaseName() . "'");
 
         foreach ($procedures as $procedure) {
             // Change all keys to lowercase.
