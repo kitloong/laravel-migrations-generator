@@ -99,6 +99,11 @@ abstract class DBALColumn implements Column
      */
     protected $virtualDefinition;
 
+    /**
+     * @var string|null
+     */
+    protected $storedDefinition;
+
     private const REMEMBER_TOKEN_LENGTH = 100;
 
     /**
@@ -125,6 +130,7 @@ abstract class DBALColumn implements Column
         $this->onUpdateCurrentTimestamp = false;
         $this->rawDefault               = false;
         $this->virtualDefinition        = null;
+        $this->storedDefinition         = null;
 
         $this->setTypeToSoftDeletes();
         $this->setTypeToRememberToken();
@@ -283,6 +289,14 @@ abstract class DBALColumn implements Column
     public function getVirtualDefinition(): ?string
     {
         return $this->virtualDefinition;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStoredDefinition(): ?string
+    {
+        return $this->storedDefinition;
     }
 
     /**

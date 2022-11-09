@@ -99,20 +99,19 @@ class MySQLRepository extends Repository
      */
     public function getVirtualDefinition(string $table, string $column): ?string
     {
-        $virtualDefinition = DB::selectOne(
-            "SELECT GENERATION_EXPRESSION
-                FROM information_schema.COLUMNS
-                WHERE TABLE_NAME = '$table'
-                    AND COLUMN_NAME = '$column'
-                    AND EXTRA = 'VIRTUAL GENERATED'"
-        );
+        return $this->getGenerationExpression($table, $column, 'VIRTUAL GENERATED');
+    }
 
-        if ($virtualDefinition === null) {
-            return null;
-        }
-
-        $virtualDefinitionArr = array_change_key_case((array) $virtualDefinition);
-        return $virtualDefinitionArr['generation_expression'] !== '' ? $virtualDefinitionArr['generation_expression'] : null;
+    /**
+     * Get the stored column definition by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string|null  The stored column definition. NULL if not found.
+     */
+    public function getStoredDefinition(string $table, string $column): ?string
+    {
+        return $this->getGenerationExpression($table, $column, 'STORED GENERATED');
     }
 
     /**
@@ -147,5 +146,31 @@ class MySQLRepository extends Repository
     private function getProcedure(string $procedure)
     {
         return DB::selectOne("SHOW CREATE PROCEDURE $procedure");
+    }
+
+    /**
+     * Get the column GENERATION_EXPRESSION when EXTRA is 'VIRTUAL GENERATED' or 'STORED GENERATED'.
+     *
+     * @param  string  $table
+     * @param  string  $column
+     * @param  'VIRTUAL GENERATED'|'STORED GENERATED'  $extra
+     * @return string|null
+     */
+    private function getGenerationExpression(string $table, string $column, $extra): ?string
+    {
+        $definition = DB::selectOne(
+            "SELECT GENERATION_EXPRESSION
+                FROM information_schema.COLUMNS
+                WHERE TABLE_NAME = '$table'
+                    AND COLUMN_NAME = '$column'
+                    AND EXTRA = '$extra'"
+        );
+
+        if ($definition === null) {
+            return null;
+        }
+
+        $definitionArr = array_change_key_case((array) $definition);
+        return $definitionArr['generation_expression'] !== '' ? $definitionArr['generation_expression'] : null;
     }
 }

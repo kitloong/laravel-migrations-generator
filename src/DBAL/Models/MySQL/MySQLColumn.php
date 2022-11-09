@@ -61,6 +61,7 @@ class MySQLColumn extends DBALColumn
         }
 
         $this->setVirtualDefinition();
+        $this->setStoredDefinition();
 
         if (!$this->isMaria()) {
             return;
@@ -183,5 +184,15 @@ class MySQLColumn extends DBALColumn
     private function setVirtualDefinition(): void
     {
         $this->virtualDefinition = $this->mysqlRepository->getVirtualDefinition($this->tableName, $this->name);
+    }
+
+    /**
+     * Set stored definition if the column is stored.
+     *
+     * @return void
+     */
+    private function setStoredDefinition(): void
+    {
+        $this->storedDefinition = $this->mysqlRepository->getStoredDefinition($this->tableName, $this->name);
     }
 }

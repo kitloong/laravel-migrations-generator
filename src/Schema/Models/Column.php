@@ -138,4 +138,11 @@ interface Column extends Model
      * @return string|null
      */
     public function getVirtualDefinition(): ?string;
+
+    /**
+     * Get the stored column definition.
+     *
+     * @return string|null
+     */
+    public function getStoredDefinition(): ?string;
 }

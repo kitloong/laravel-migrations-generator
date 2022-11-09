@@ -53,6 +53,8 @@ class PgSQLColumn extends DBALColumn
 
             default:
         }
+
+        $this->setStoredDefinition();
     }
 
     /**
@@ -190,5 +192,22 @@ class PgSQLColumn extends DBALColumn
 
         $this->precision = 0;
         $this->scale     = 0;
+    }
+
+    /**
+     * Set stored definition if the column is stored.
+     *
+     * @return void
+     */
+    private function setStoredDefinition(): void
+    {
+        $this->storedDefinition = $this->repository->getStoredDefinition($this->tableName, $this->name);
+
+        // A generated column cannot have a column default or an identity definition.
+        if ($this->storedDefinition === null) {
+            return;
+        }
+
+        $this->default = null;
     }
 }

@@ -144,12 +144,22 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
                     }
                     $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ \\\' quotes');
                     $table->string('comment_double_quote')->comment("string with \" ' quotes");
-                    $table->string('virtual')->nullable()->virtualAs("CONCAT(string, ' ', string_255)");
                     break;
                 case Driver::PGSQL():
                 case Driver::SQLSRV():
                     $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ quotes');
                     $table->string('comment_double_quote')->comment("string with ' quotes");
+                    break;
+                default:
+            }
+
+            switch (DB::getDriverName()) {
+                case Driver::MYSQL():
+                    $table->string('virtual')->nullable()->virtualAs("CONCAT(string, ' ', string_255)");
+                    $table->string('stored')->nullable()->storedAs("CONCAT(string_255, ' ', string)");
+                    break;
+                case Driver::PGSQL():
+                    $table->string('stored')->nullable()->storedAs("string_255 || ' ' || string");
                     break;
                 default:
             }
