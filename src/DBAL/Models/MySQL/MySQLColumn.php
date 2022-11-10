@@ -183,7 +183,15 @@ class MySQLColumn extends DBALColumn
      */
     private function setVirtualDefinition(): void
     {
-        $this->virtualDefinition = $this->mysqlRepository->getVirtualDefinition($this->tableName, $this->name);
+        $virtualDefinition = $this->mysqlRepository->getVirtualDefinition($this->tableName, $this->name);
+
+        if ($virtualDefinition === null) {
+            return;
+        }
+
+        // The definition of MySQL8 returned `concat(string,_utf8mb4\' \',string_255)`.
+        // Replace `\'` to `'` here to avoid double escape.
+        $this->virtualDefinition = str_replace("\'", "'", $virtualDefinition);
     }
 
     /**
@@ -193,7 +201,15 @@ class MySQLColumn extends DBALColumn
      */
     private function setStoredDefinition(): void
     {
-        $this->storedDefinition = $this->mysqlRepository->getStoredDefinition($this->tableName, $this->name);
+        $storedDefinition = $this->mysqlRepository->getStoredDefinition($this->tableName, $this->name);
+
+        if ($storedDefinition === null) {
+            return;
+        }
+
+        // The definition of MySQL8 returned `concat(string,_utf8mb4\' \',string_255)`.
+        // Replace `\'` to `'` here to avoid double escape.
+        $this->storedDefinition = str_replace("\'", "'", $storedDefinition);
     }
 
     /**
