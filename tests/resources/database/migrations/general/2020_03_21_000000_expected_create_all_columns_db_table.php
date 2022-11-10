@@ -135,20 +135,27 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
             $table->macAddress('macAddress_default')->default('00:0a:95:9d:68:16');
             $table->uuid('uuid');
             $table->uuid('uuid_default')->default('f6a16ff7-4a31-11eb-be7b-8344edc8f36b');
-            $table->string('name space');
+            $table->string('name space')->comment('Test');
+            $table->string('test_special_char')
+                ->default('string !@#$%^^&*()_+-=[]{};:,./<>?~`| \ \\ \\\ \\\\ \'\' \\\\\'\' " \" \\" \\\" \\\\" quotes')
+                ->comment('string !@#$%^^&*()_+-=[]{};:,./<>?~`| \ \\ \\\ \\\\ \'\' \\\\\'\' " \" \\" \\\" \\\\" quotes');
 
             switch (DB::getDriverName()) {
                 case Driver::MYSQL():
                     if ($this->hasSet()) {
                         $table->set('set', ['strawberry', 'vanilla']);
                     }
-                    $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ \\\' quotes');
-                    $table->string('comment_double_quote')->comment("string with \" ' quotes");
+                    break;
+                default:
+            }
+
+            switch (DB::getDriverName()) {
+                case Driver::MYSQL():
+                    $table->string('virtual')->nullable()->virtualAs('CONCAT(string, " ", string_255)');
+                    $table->string('stored')->nullable()->storedAs("CONCAT(string_255, ' ', string)");
                     break;
                 case Driver::PGSQL():
-                case Driver::SQLSRV():
-                    $table->string('default_single_quote')->default('string with \" !@#$%^^&*()_+ quotes');
-                    $table->string('comment_double_quote')->comment("string with ' quotes");
+                    $table->string('stored')->nullable()->storedAs("string_255 || ' ' || string");
                     break;
                 default:
             }

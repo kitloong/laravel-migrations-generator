@@ -11,6 +11,8 @@ use KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\CommentModifier;
 use KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\DefaultModifier;
 use KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\IndexModifier;
 use KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\NullableModifier;
+use KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\StoredAsModifier;
+use KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\VirtualAsModifier;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 
@@ -22,6 +24,8 @@ class ColumnGenerator
     private $defaultModifier;
     private $indexModifier;
     private $nullableModifier;
+    private $storedAsModifier;
+    private $virtualAsModifier;
 
     public function __construct(
         CharsetModifier $charsetModifier,
@@ -29,7 +33,9 @@ class ColumnGenerator
         CommentModifier $commentModifier,
         DefaultModifier $defaultModifier,
         IndexModifier $indexModifier,
-        NullableModifier $nullableModifier
+        NullableModifier $nullableModifier,
+        StoredAsModifier $storedAsModifier,
+        VirtualAsModifier $virtualAsModifier
     ) {
         $this->charsetModifier   = $charsetModifier;
         $this->collationModifier = $collationModifier;
@@ -37,6 +43,8 @@ class ColumnGenerator
         $this->defaultModifier   = $defaultModifier;
         $this->indexModifier     = $indexModifier;
         $this->nullableModifier  = $nullableModifier;
+        $this->storedAsModifier  = $storedAsModifier;
+        $this->virtualAsModifier = $virtualAsModifier;
     }
 
     /**
@@ -53,6 +61,8 @@ class ColumnGenerator
         $method = $this->collationModifier->chain($method, $table, $column);
         $method = $this->nullableModifier->chain($method, $table, $column);
         $method = $this->defaultModifier->chain($method, $table, $column);
+        $method = $this->virtualAsModifier->chain($method, $table, $column);
+        $method = $this->storedAsModifier->chain($method, $table, $column);
         $method = $this->indexModifier->chain($method, $table, $column, $chainableIndexes);
         $method = $this->commentModifier->chain($method, $table, $column);
 

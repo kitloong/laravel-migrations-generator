@@ -39,7 +39,7 @@ jobs:
           --health-retries=3
 
       postgres:
-        image: postgis/postgis:11-3.1
+        image: postgis/postgis:13-3.3
         env:
           POSTGRES_DB: migration
           POSTGRES_USER: root

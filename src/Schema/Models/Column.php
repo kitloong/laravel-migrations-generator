@@ -131,4 +131,18 @@ interface Column extends Model
      * @return bool
      */
     public function isRawDefault(): bool;
+
+    /**
+     * Get the virtual column definition.
+     *
+     * @return string|null
+     */
+    public function getVirtualDefinition(): ?string;
+
+    /**
+     * Get the stored column definition.
+     *
+     * @return string|null
+     */
+    public function getStoredDefinition(): ?string;
 }

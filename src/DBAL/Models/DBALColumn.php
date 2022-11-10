@@ -94,6 +94,16 @@ abstract class DBALColumn implements Column
      */
     protected $unsigned;
 
+    /**
+     * @var string|null
+     */
+    protected $virtualDefinition;
+
+    /**
+     * @var string|null
+     */
+    protected $storedDefinition;
+
     private const REMEMBER_TOKEN_LENGTH = 100;
 
     /**
@@ -108,17 +118,19 @@ abstract class DBALColumn implements Column
         $this->length                   = $column->getLength();
         $this->scale                    = $column->getScale();
         $this->precision                = $column->getPrecision();
-        $this->comment                  = $column->getComment();
+        $this->comment                  = $this->escapeComment($column->getComment());
         $this->fixed                    = $column->getFixed();
         $this->unsigned                 = $column->getUnsigned();
         $this->notNull                  = $column->getNotnull();
-        $this->default                  = $column->getDefault();
+        $this->default                  = $this->escapeDefault($column->getDefault());
         $this->collation                = $column->getPlatformOptions()['collation'] ?? null;
         $this->charset                  = $column->getPlatformOptions()['charset'] ?? null;
         $this->autoincrement            = $column->getAutoincrement();
         $this->presetValues             = [];
         $this->onUpdateCurrentTimestamp = false;
         $this->rawDefault               = false;
+        $this->virtualDefinition        = null;
+        $this->storedDefinition         = null;
 
         $this->setTypeToSoftDeletes();
         $this->setTypeToRememberToken();
@@ -272,6 +284,22 @@ abstract class DBALColumn implements Column
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getVirtualDefinition(): ?string
+    {
+        return $this->virtualDefinition;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStoredDefinition(): ?string
+    {
+        return $this->storedDefinition;
+    }
+
+    /**
      * Set the column type to "increments" or "*Increments" if the column is auto increment.
      * If the DB supports unsigned, should check if the column is unsigned.
      *
@@ -405,5 +433,36 @@ abstract class DBALColumn implements Column
 
         $this->precision = 0;
         $this->scale     = 0;
+    }
+
+    /**
+     * Escape `'` with `''`.
+     *
+     * @param  string|null  $default
+     * @return string|null
+     */
+    protected function escapeDefault(?string $default): ?string
+    {
+        if ($default === null) {
+            return null;
+        }
+
+        $default = str_replace("'", "''", $default);
+        return addcslashes($default, '\\');
+    }
+
+    /**
+     * Escape `\` with `\\`.
+     *
+     * @param  string|null  $comment
+     * @return string|null
+     */
+    protected function escapeComment(?string $comment): ?string
+    {
+        if ($comment === null) {
+            return null;
+        }
+
+        return addcslashes($comment, '\\');
     }
 }
