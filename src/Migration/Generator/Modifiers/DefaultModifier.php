@@ -181,9 +181,6 @@ class DefaultModifier implements Modifier
      */
     protected function chainDefaultForString(Method $method, Column $column): Method
     {
-        $quotes  = '\'';
-        $default = $column->getDefault();
-        // To replace from ' to \\\'
         $method->chain(ColumnModifier::DEFAULT(), $column->getDefault());
 
         return $method;
