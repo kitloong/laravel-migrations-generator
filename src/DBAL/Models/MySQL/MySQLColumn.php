@@ -195,4 +195,18 @@ class MySQLColumn extends DBALColumn
     {
         $this->storedDefinition = $this->mysqlRepository->getStoredDefinition($this->tableName, $this->name);
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function escapeDefault(?string $default): ?string
+    {
+        $default = parent::escapeDefault($default);
+
+        if ($default === null) {
+            return null;
+        }
+
+        return addcslashes($default, '\\');
+    }
 }

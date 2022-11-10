@@ -184,7 +184,7 @@ class DefaultModifier implements Modifier
         $quotes  = '\'';
         $default = $column->getDefault();
         // To replace from ' to \\\'
-        $method->chain(ColumnModifier::DEFAULT(), str_replace($quotes, '\\\\' . $quotes, $default));
+        $method->chain(ColumnModifier::DEFAULT(), $column->getDefault());
 
         return $method;
     }

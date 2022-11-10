@@ -118,11 +118,11 @@ abstract class DBALColumn implements Column
         $this->length                   = $column->getLength();
         $this->scale                    = $column->getScale();
         $this->precision                = $column->getPrecision();
-        $this->comment                  = $column->getComment();
+        $this->comment                  = $this->escapeComment($column->getComment());
         $this->fixed                    = $column->getFixed();
         $this->unsigned                 = $column->getUnsigned();
         $this->notNull                  = $column->getNotnull();
-        $this->default                  = $column->getDefault();
+        $this->default                  = $this->escapeDefault($column->getDefault());
         $this->collation                = $column->getPlatformOptions()['collation'] ?? null;
         $this->charset                  = $column->getPlatformOptions()['charset'] ?? null;
         $this->autoincrement            = $column->getAutoincrement();
@@ -433,5 +433,36 @@ abstract class DBALColumn implements Column
 
         $this->precision = 0;
         $this->scale     = 0;
+    }
+
+    /**
+     * Escape `'` with `''`.
+     *
+     * @param  string|null  $default
+     * @return string|null
+     */
+    protected function escapeDefault(?string $default): ?string
+    {
+        if ($default === null) {
+            return null;
+        }
+
+        $default = str_replace("'", "''", $default);
+        return addcslashes($default, '\\');
+    }
+
+    /**
+     * Escape `\` with `\\`.
+     *
+     * @param  string|null  $comment
+     * @return string|null
+     */
+    protected function escapeComment(?string $comment): ?string
+    {
+        if ($comment === null) {
+            return null;
+        }
+
+        return addcslashes($comment, '\\');
     }
 }
