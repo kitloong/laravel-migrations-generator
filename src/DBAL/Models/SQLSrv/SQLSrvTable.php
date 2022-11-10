@@ -16,6 +16,7 @@ class SQLSrvTable extends DBALTable
      */
     protected function handle(): void
     {
+        // Do nothing.
     }
 
     /**

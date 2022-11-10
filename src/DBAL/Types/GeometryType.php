@@ -24,6 +24,6 @@ class GeometryType extends Type
      */
     public function getName()
     {
-        return Types::GEOMETRY;
+        return '';
     }
 }

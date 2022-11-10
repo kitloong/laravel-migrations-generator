@@ -4,6 +4,8 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 use KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ColumnDefinition;
 use KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ViewDefinition;
 
@@ -35,11 +37,13 @@ class SQLSrvRepository extends Repository
                     AND idx.type = " . self::SPATIAL_INDEX_ID
         );
         $definitions = new Collection();
+
         if (count($columns) > 0) {
             foreach ($columns as $column) {
                 $definitions->push($column->indexname);
             }
         }
+
         return $definitions;
     }
 
@@ -115,20 +119,98 @@ class SQLSrvRepository extends Repository
      * @param  string  $table  The full qualified name of the table.
      * @param  string  $schemaColumn  The name of the column to compare the schema to in the where clause.
      * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
-     *
      * @return string
      * @see https://github.com/doctrine/dbal/blob/3.1.x/src/Platforms/SQLServer2012Platform.php#L1064
      */
     private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
     {
         $schema = 'SCHEMA_NAME()';
+
         if (strpos($table, '.') !== false) {
             [$schema, $table] = explode('.', $table);
-            $schema = $this->quoteStringLiteral($schema);
+            $schema           = $this->quoteStringLiteral($schema);
         }
 
         $table = $this->quoteStringLiteral($table);
 
         return sprintf('(%s = %s AND %s = %s)', $tableColumn, $table, $schemaColumn, $schema);
+    }
+
+    /**
+     * Get a list of stored procedures.
+     *
+     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     */
+    public function getProcedures(): Collection
+    {
+        $list       = new Collection();
+        $procedures = DB::select(
+            "SELECT name, definition
+            FROM sys.sysobjects
+                INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
+            WHERE type = 'P'
+                AND definition IS NOT NULL
+            ORDER BY name"
+        );
+
+        foreach ($procedures as $procedure) {
+            $list->push(new ProcedureDefinition($procedure->name, $procedure->definition));
+        }
+
+        return $list;
+    }
+
+    /**
+     * Get enum values.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return \Illuminate\Support\Collection
+     */
+    public function getEnumPresetValues(string $table, string $column): Collection
+    {
+        $result = DB::selectOne(
+            "SELECT con.definition
+                FROM sys.check_constraints con
+                JOIN sys.objects t
+                    ON con.parent_object_id = t.object_id
+                JOIN sys.all_columns col
+                    ON con.parent_column_id = col.column_id
+                    AND con.parent_object_id = col.object_id
+                WHERE t.name = '$table'
+                    AND col.name = '$column'
+                    AND con.definition IS NOT NULL"
+        );
+
+        if ($result === null) {
+            return new Collection();
+        }
+
+        $separator = "[$column]=N'";
+
+        // eg: ([enum_default]=N'hard' OR [enum_default]=N'easy')
+        $value = Str::replaceFirst('(' . $separator, '', $result->definition);
+        $value = Str::substr($value, 0, -2);
+
+        return new Collection(array_reverse(explode('\' OR ' . $separator, $value)));
+    }
+
+    /**
+     * Get a list of custom data types.
+     *
+     * @return \Illuminate\Support\Collection<string>
+     */
+    public function getCustomDataTypes(): Collection
+    {
+        $rows  = DB::select("SELECT * FROM sys.types WHERE is_user_defined = 1");
+        $types = new Collection();
+
+        if (count($rows) > 0) {
+            foreach ($rows as $row) {
+                $types->push($row->name);
+            }
+        }
+
+        return $types;
     }
 }

@@ -68,6 +68,7 @@ class Method
                 return true;
             }
         }
+
         return false;
     }
 

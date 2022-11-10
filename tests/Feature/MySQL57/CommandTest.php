@@ -103,11 +103,11 @@ class CommandTest extends MySQL57TestCase
             '--tables' => implode(',', [
                 'all_columns_mysql57',
                 'users_mysql57',
-                'users_mysql57_view'
-            ])
+                'users_mysql57_view',
+            ]),
         ]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
@@ -138,15 +138,13 @@ class CommandTest extends MySQL57TestCase
             'users_mysql57_view',
         ];
 
-        $ignoreNotExists = [
-            'not_exists',
-        ];
+        $ignoreNotExists = ['not_exists'];
 
         $this->generateMigrations([
-            '--ignore' => implode(',', $ignores + $ignoreNotExists)
+            '--ignore' => implode(',', $ignores + $ignoreNotExists),
         ]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
@@ -165,10 +163,10 @@ class CommandTest extends MySQL57TestCase
 
         $this->generateMigrations([
             '--tables'              => 'test_index_mysql57',
-            '--default-index-names' => true
+            '--default-index-names' => true,
         ]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
@@ -181,7 +179,7 @@ class CommandTest extends MySQL57TestCase
         })->toArray();
 
         $expectedIndexes = [
-            'PRIMARY',
+            '', // PRIMARY
             'test_index_mysql57_chain_index',
             'test_index_mysql57_chain_unique',
             'test_index_mysql57_col_multi1_col_multi2_index',
@@ -226,7 +224,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->generateMigrations(['--default-fk-names' => true]);
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
@@ -259,9 +257,7 @@ class CommandTest extends MySQL57TestCase
         };
 
         $generateMigrations = function () {
-            $this->generateMigrations([
-                '--date' => '2021-10-08 09:30:40',
-            ]);
+            $this->generateMigrations(['--date' => '2021-10-08 09:30:40']);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
@@ -274,17 +270,35 @@ class CommandTest extends MySQL57TestCase
         $this->truncateMigrationsTable();
 
         $this->generateMigrations([
-            '--table-filename' => '[datetime_prefix]_custom_[table]_table.php',
-            '--view-filename'  => '[datetime_prefix]_custom_[table]_view.php',
+            '--table-filename' => '[datetime]_custom_[name]_table.php',
+            '--view-filename'  => '[datetime]_custom_[name]_view.php',
         ]);
 
         $migrations = [];
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
-        $this->assertTrue(in_array('custom_all_columns_mysql57_table', $migrations));
-        $this->assertTrue(in_array('custom_users_mysql57_view_view', $migrations));
+        $this->assertContains('custom_all_columns_mysql57_table', $migrations);
+        $this->assertContains('custom_users_mysql57_view_view', $migrations);
+    }
+
+    public function testProcedureFilename()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations(['--proc-filename' => '[datetime]_custom_[name]_proc.php']);
+
+        $migrations = [];
+
+        foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
+            $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
+        }
+
+        $this->assertContains('custom_findNameWithHyphenmysql57_proc', $migrations);
     }
 
     public function testFKFilename()
@@ -293,14 +307,15 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigrationsTable();
 
-        $this->generateMigrations(['--fk-filename' => '[datetime_prefix]_custom_[table]_table.php']);
+        $this->generateMigrations(['--fk-filename' => '[datetime]_custom_[name]_table.php']);
 
         $migrations = [];
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
             $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
         }
 
-        $this->assertSame('custom_user_profile_mysql57_table', $migrations[count($migrations) - 1]);
+        $this->assertContains('custom_user_profile_mysql57_table', $migrations);
     }
 
     public function testSkipView()
@@ -309,17 +324,36 @@ class CommandTest extends MySQL57TestCase
 
         $this->truncateMigrationsTable();
 
-        $this->generateMigrations([
-            '--skip-views' => true,
-        ]);
+        $this->generateMigrations(['--skip-views' => true]);
 
-        $migrations = [];
+        $migrations   = [];
+        $prefixLength = 18;
+
         foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
-            $migrations[] = substr($migration->getFilenameWithoutExtension(), 18);
+            $migrations[] = substr($migration->getFilenameWithoutExtension(), $prefixLength);
         }
 
-        $this->assertTrue(in_array('create_all_columns_mysql57_table', $migrations));
-        $this->assertFalse(in_array('create_users_mysql57_view_view', $migrations));
+        $this->assertContains('create_all_columns_mysql57_table', $migrations);
+        $this->assertNotContains('create_users_mysql57_view_view', $migrations);
+    }
+
+    public function testSkipProcedure()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations(['--skip-proc' => true]);
+
+        $migrations   = [];
+        $prefixLength = 18;
+
+        foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
+            $migrations[] = substr($migration->getFilenameWithoutExtension(), $prefixLength);
+        }
+
+        $this->assertContains('create_all_columns_mysql57_table', $migrations);
+        $this->assertNotContains('create_getNameWithHyphen_proc', $migrations);
     }
 
     public function testWillCreateMigrationTable()
@@ -343,7 +377,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 

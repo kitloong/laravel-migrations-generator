@@ -27,11 +27,14 @@ class IndexNameHelper
      */
     public function shouldSkipName(string $table, Index $index): bool
     {
-        if ($index->getType()->equals(IndexType::PRIMARY())) {
+        if ($this->setting->isIgnoreIndexNames()) {
             return true;
         }
 
-        if ($this->setting->isIgnoreIndexNames()) {
+        if (
+            $index->getType()->equals(IndexType::PRIMARY())
+            && $index->getName() === ''
+        ) {
             return true;
         }
 

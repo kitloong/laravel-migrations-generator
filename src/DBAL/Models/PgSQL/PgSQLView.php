@@ -14,16 +14,22 @@ class PgSQLView extends DBALView
      */
     protected function handle(DoctrineDBALView $view): void
     {
-        $this->createViewSQL = $this->makeCreateViewSQL($this->quotedName, $view->getSql());
-
         $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
 
-        if ($view->getNamespaceName() === $searchPath) {
-            // Strip namespace from name.
-            $name                = $view->getShortestName($view->getNamespaceName());
-            $this->name          = $this->makeName($name);
-            $this->quotedName    = $this->makeQuotedName($this->name);
-            $this->createViewSQL = $this->makeCreateViewSQL($this->quotedName, $view->getSql());
+        if ($view->getNamespaceName() !== $searchPath) {
+            $this->definition = DB::getDoctrineConnection()
+                ->getDatabasePlatform()
+                ->getCreateViewSQL($this->quotedName, $view->getSql());
+            return;
         }
+
+        // Strip namespace from name.
+        $name                 = $view->getShortestName($view->getNamespaceName());
+        $this->name           = $this->trimQuotes($name);
+        $this->quotedName     = DB::getDoctrineConnection()->quoteIdentifier($this->name);
+        $this->definition     = DB::getDoctrineConnection()
+            ->getDatabasePlatform()
+            ->getCreateViewSQL($this->quotedName, $view->getSql());
+        $this->dropDefinition = "DROP VIEW IF EXISTS $this->quotedName";
     }
 }

@@ -5,6 +5,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition;
+use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 
 class PgSQLRepository extends Repository
 {
@@ -18,7 +19,7 @@ class PgSQLRepository extends Repository
     public function getTypeByColumnName(string $table, string $column): ?string
     {
         $result = DB::selectOne(
-            "SELECT pg_catalog.format_type(a.atttypid, a.atttypmod) as datatype
+            "SELECT pg_catalog.format_type(a.atttypid, a.atttypmod) AS datatype
                 FROM
                     pg_catalog.pg_attribute a
                 WHERE
@@ -112,6 +113,7 @@ class PgSQLRepository extends Repository
                     AND indexdef LIKE '% USING gist %'"
         );
         $definitions = new Collection();
+
         if (count($columns) > 0) {
             foreach ($columns as $column) {
                 $definitions->push(
@@ -123,6 +125,7 @@ class PgSQLRepository extends Repository
                 );
             }
         }
+
         return $definitions;
     }
 
@@ -143,6 +146,7 @@ class PgSQLRepository extends Repository
                     AND indexdef LIKE '%to_tsvector(%'"
         );
         $definitions = new Collection();
+
         if (count($columns) > 0) {
             foreach ($columns as $column) {
                 $definitions->push(
@@ -154,6 +158,7 @@ class PgSQLRepository extends Repository
                 );
             }
         }
+
         return $definitions;
     }
 
@@ -168,7 +173,7 @@ class PgSQLRepository extends Repository
         $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
 
         $rows  = DB::select(
-            "SELECT n.nspname as schema, t.typname as type
+            "SELECT n.nspname AS schema, t.typname AS type
                     FROM pg_type t
                         LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
                     WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid))
@@ -176,11 +181,65 @@ class PgSQLRepository extends Repository
                         AND n.nspname IN ('$searchPath');"
         );
         $types = new Collection();
+
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $types->push($row->type);
             }
         }
+
         return $types;
+    }
+
+    /**
+     * Get a list of stored procedures.
+     *
+     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     */
+    public function getProcedures(): Collection
+    {
+        $list = new Collection();
+
+        $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
+
+        $procedures = DB::select(
+            "SELECT proname, pg_get_functiondef(pg_proc.oid) AS definition
+            FROM pg_catalog.pg_proc
+                JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
+            WHERE prokind = 'p'
+                AND pg_namespace.nspname = '$searchPath'"
+        );
+
+        foreach ($procedures as $procedure) {
+            $definition = str_replace('$procedure', '$', $procedure->definition);
+            $list->push(new ProcedureDefinition($procedure->proname, $definition));
+        }
+
+        return $list;
+    }
+
+    /**
+     * Get the stored column definition by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string|null  The stored column definition. NULL if not found.
+     */
+    public function getStoredDefinition(string $table, string $column): ?string
+    {
+        $definition = DB::selectOne(
+            "SELECT generation_expression
+                FROM information_schema.columns
+                WHERE table_name = '$table'
+                    AND column_name = '$column'
+                    AND is_generated = 'ALWAYS'"
+        );
+
+        if ($definition === null) {
+            return null;
+        }
+
+        $definitionArr = array_change_key_case((array) $definition);
+        return $definitionArr['generation_expression'] !== '' ? $definitionArr['generation_expression'] : null;
     }
 }

@@ -24,6 +24,6 @@ class LineStringType extends Type
      */
     public function getName()
     {
-        return Types::LINE_STRING;
+        return '';
     }
 }

@@ -24,6 +24,6 @@ class SetType extends Type
      */
     public function getName()
     {
-        return Types::SET;
+        return '';
     }
 }

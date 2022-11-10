@@ -24,6 +24,6 @@ class JsonbType extends Type
      */
     public function getName()
     {
-        return Types::JSONB;
+        return '';
     }
 }

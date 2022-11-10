@@ -49,7 +49,7 @@ class IndexGenerator
     public function getChainableIndexes(string $name, Collection $indexes): Collection
     {
         return $indexes->reduce(function (Collection $carry, Index $index) use ($name) {
-            /** @var Collection<string, \KitLoong\MigrationsGenerator\Schema\Models\Index> $carry */
+            /** @var \Illuminate\Support\Collection<string, \KitLoong\MigrationsGenerator\Schema\Models\Index> $carry */
             if (count($index->getColumns()) > 1) {
                 return $carry;
             }
@@ -65,6 +65,14 @@ class IndexGenerator
             if (
                 $index->getType()->equals(IndexType::SPATIAL_INDEX())
                 && !$this->indexNameHelper->shouldSkipName($name, $index)
+            ) {
+                return $carry;
+            }
+
+            // If name is not empty, primary name should be set explicitly.
+            if (
+                $index->getType()->equals(IndexType::PRIMARY())
+                && $index->getName() !== ''
             ) {
                 return $carry;
             }
@@ -111,13 +119,16 @@ class IndexGenerator
     private function getColumns(Index $index): array
     {
         $cols = [];
+
         foreach ($index->getColumns() as $i => $column) {
             if ($index->getLengths()[$i] !== null) {
                 $cols[] = DB::raw($column . '(' . $index->getLengths()[$i] . ')');
                 continue;
             }
+
             $cols[] = $column;
         }
+
         return $cols;
     }
 }

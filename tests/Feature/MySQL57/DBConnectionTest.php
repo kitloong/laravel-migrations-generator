@@ -45,7 +45,7 @@ class DBConnectionTest extends MySQL57TestCase
         Schema::connection('mysql8')->dropIfExists('migrations');
 
         // Switch back to mysql57, to drop mysql57 tables in tearDown.
-        $this->setDefaultConnection('mysql57');
+        DB::setDefaultConnection('mysql57');
 
         parent::tearDown();
     }
@@ -57,14 +57,15 @@ class DBConnectionTest extends MySQL57TestCase
         };
 
         $generateMigrations = function () {
-            $this->setDefaultConnection('mysql8');
+            // Needed for Laravel 6 and below.
+            DB::setDefaultConnection('mysql8');
 
             $this->artisan(
                 'migrate:generate',
                 [
                     '--connection'    => 'mysql57',
                     '--path'          => $this->getStorageMigrationsPath(),
-                    '--template-path' => base_path('resources/stub/migration.stub'),
+                    '--template-path' => base_path('stubs/migration.generate.stub'),
                 ]
             )
                 ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
@@ -73,11 +74,13 @@ class DBConnectionTest extends MySQL57TestCase
                     true
                 )
                 ->expectsQuestion(
-                    'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                    'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
                     '0'
                 );
 
-            $this->assertSame(35, DB::connection('mysql57')->table('migrations')->count());
+            $totalMigrations = count(File::allFiles($this->getStorageMigrationsPath()));
+
+            $this->assertSame($totalMigrations, DB::connection('mysql57')->table('migrations')->count());
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
@@ -92,14 +95,15 @@ class DBConnectionTest extends MySQL57TestCase
     {
         $this->migrateGeneral('mysql57');
 
-        $this->setDefaultConnection('mysql8');
+        // Needed for Laravel 6 and below.
+        DB::setDefaultConnection('mysql8');
 
         $this->artisan(
             'migrate:generate',
             [
                 '--connection'    => 'mysql57',
                 '--path'          => $this->getStorageMigrationsPath(),
-                '--template-path' => base_path('resources/stub/migration.stub'),
+                '--template-path' => base_path('stubs/migration.generate.stub'),
             ]
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
@@ -108,11 +112,13 @@ class DBConnectionTest extends MySQL57TestCase
                 false
             )
             ->expectsQuestion(
-                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration [Default: 0]',
+                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
                 '0'
             );
 
-        $this->assertSame(35, DB::connection('mysql8')->table('migrations')->count());
+        $totalMigrations = count(File::allFiles($this->getStorageMigrationsPath()));
+
+        $this->assertSame($totalMigrations, DB::connection('mysql8')->table('migrations')->count());
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)
@@ -126,7 +132,7 @@ class DBConnectionTest extends MySQL57TestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 

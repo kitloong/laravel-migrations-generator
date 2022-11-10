@@ -29,6 +29,7 @@ If applicable, add screenshots to help explain your problem.
  - Laravel Version: 
  - PHP Version: 
  - Migrations Generator Version: 
+ - Doctrine DBAL Version [`doctrine/dbal`]:
 
 **Additional context**
 Add any other context about the problem here.

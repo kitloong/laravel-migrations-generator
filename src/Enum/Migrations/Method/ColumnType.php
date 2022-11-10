@@ -2,16 +2,17 @@
 
 namespace KitLoong\MigrationsGenerator\Enum\Migrations\Method;
 
+use Doctrine\DBAL\Types\Type;
+use KitLoong\MigrationsGenerator\DBAL\Types\Types;
 use MyCLabs\Enum\Enum;
 
 /**
- * Preserved column types of the framework.
+ * Define column types of the framework.
+ * Keep const as public to allow used by:
+ * {@see \KitLoong\MigrationsGenerator\DBAL\RegisterColumnType::registerLaravelColumnType()}
+ * {@see \KitLoong\MigrationsGenerator\DBAL\Types\Types}
  *
  * @link https://laravel.com/docs/master/migrations#available-column-types
- *
- * Keep cons as public to allow value assign in const property.
- * @see \KitLoong\MigrationsGenerator\DBAL\Types\Types
- *
  * @method static self BIG_INTEGER()
  * @method static self BIG_INCREMENTS()
  * @method static self BINARY()
@@ -123,4 +124,16 @@ final class ColumnType extends Enum
     public const UNSIGNED_TINY_INTEGER   = 'unsignedTinyInteger';
     public const UUID                    = 'uuid';
     public const YEAR                    = 'year';
+
+    /**
+     * Create instance from {@see \Doctrine\DBAL\Types\Type}.
+     *
+     * @param  \Doctrine\DBAL\Types\Type  $dbalType
+     * @return static
+     */
+    public static function fromDBALType(Type $dbalType): self
+    {
+        $map = Types::BUILTIN_TYPES_MAP + Types::ADDITIONAL_TYPES_MAP;
+        return self::from($map[get_class($dbalType)]);
+    }
 }

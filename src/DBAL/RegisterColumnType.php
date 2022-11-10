@@ -4,43 +4,25 @@ namespace KitLoong\MigrationsGenerator\DBAL;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types as DoctrineDBALTypes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\DBAL\Types\CustomType;
-use KitLoong\MigrationsGenerator\DBAL\Types\DoubleType;
-use KitLoong\MigrationsGenerator\DBAL\Types\EnumType;
-use KitLoong\MigrationsGenerator\DBAL\Types\GeometryCollectionType;
-use KitLoong\MigrationsGenerator\DBAL\Types\GeometryType;
-use KitLoong\MigrationsGenerator\DBAL\Types\IpAddressType;
-use KitLoong\MigrationsGenerator\DBAL\Types\JsonbType;
-use KitLoong\MigrationsGenerator\DBAL\Types\LineStringType;
-use KitLoong\MigrationsGenerator\DBAL\Types\LongTextType;
-use KitLoong\MigrationsGenerator\DBAL\Types\MacAddressType;
-use KitLoong\MigrationsGenerator\DBAL\Types\MediumIntegerType;
-use KitLoong\MigrationsGenerator\DBAL\Types\MediumTextType;
-use KitLoong\MigrationsGenerator\DBAL\Types\MultiLineStringType;
-use KitLoong\MigrationsGenerator\DBAL\Types\MultiPointType;
-use KitLoong\MigrationsGenerator\DBAL\Types\MultiPolygonType;
-use KitLoong\MigrationsGenerator\DBAL\Types\PointType;
-use KitLoong\MigrationsGenerator\DBAL\Types\PolygonType;
-use KitLoong\MigrationsGenerator\DBAL\Types\SetType;
-use KitLoong\MigrationsGenerator\DBAL\Types\TimestampType;
-use KitLoong\MigrationsGenerator\DBAL\Types\TimestampTzType;
-use KitLoong\MigrationsGenerator\DBAL\Types\TimeTzType;
-use KitLoong\MigrationsGenerator\DBAL\Types\TinyIntegerType;
 use KitLoong\MigrationsGenerator\DBAL\Types\Types;
-use KitLoong\MigrationsGenerator\DBAL\Types\UUIDType;
-use KitLoong\MigrationsGenerator\DBAL\Types\YearType;
 use KitLoong\MigrationsGenerator\Enum\Driver;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
+use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 
 class RegisterColumnType
 {
     private $pgSQLRepository;
+    private $sqlSrvRepository;
 
-    public function __construct(PgSQLRepository $pgSQLRepository)
+    public function __construct(PgSQLRepository $pgSQLRepository, SQLSrvRepository $sqlSrvRepository)
     {
-        $this->pgSQLRepository = $pgSQLRepository;
+        $this->pgSQLRepository  = $pgSQLRepository;
+        $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
     /**
@@ -53,30 +35,31 @@ class RegisterColumnType
 
         $doctrineTypes = [
             Driver::MYSQL()->getValue()  => [
-                'bit'            => Types::BOOLEAN,
-                'geomcollection' => Types::GEOMETRY_COLLECTION,
-                'json'           => Types::JSON,
-                'mediumint'      => Types::MEDIUM_INTEGER,
-                'tinyint'        => Types::TINY_INTEGER,
+                'bit'            => DoctrineDBALTypes::BOOLEAN,
+                'geomcollection' => ColumnType::GEOMETRY_COLLECTION,
+                'mediumint'      => ColumnType::MEDIUM_INTEGER,
+                'tinyint'        => ColumnType::TINY_INTEGER,
             ],
             Driver::PGSQL()->getValue()  => [
-                '_int4'     => Types::TEXT,
-                '_int8'     => Types::TEXT,
-                '_numeric'  => Types::FLOAT,
-                '_text'     => Types::TEXT,
-                'cidr'      => Types::STRING,
-                'geography' => Types::GEOMETRY,
-                'inet'      => Types::IP_ADDRESS,
-                'macaddr'   => Types::MAC_ADDRESS,
-                'oid'       => Types::STRING,
+                '_int4'     => DoctrineDBALTypes::TEXT,
+                '_int8'     => DoctrineDBALTypes::TEXT,
+                '_numeric'  => DoctrineDBALTypes::FLOAT,
+                '_text'     => DoctrineDBALTypes::TEXT,
+                'cidr'      => DoctrineDBALTypes::STRING,
+                'geography' => ColumnType::GEOMETRY,
+                'inet'      => ColumnType::IP_ADDRESS,
+                'macaddr'   => ColumnType::MAC_ADDRESS,
+                'oid'       => DoctrineDBALTypes::STRING,
             ],
             Driver::SQLITE()->getValue() => [],
             Driver::SQLSRV()->getValue() => [
-                'geography'  => Types::GEOMETRY,
-                'money'      => Types::DECIMAL,
-                'smallmoney' => Types::DECIMAL,
-                'tinyint'    => Types::TINY_INTEGER,
-                'xml'        => Types::TEXT,
+                'geography'   => ColumnType::GEOMETRY,
+                'sysname'     => DoctrineDBALTypes::STRING,
+                'hierarchyid' => DoctrineDBALTypes::STRING,
+                'money'       => DoctrineDBALTypes::DECIMAL,
+                'smallmoney'  => DoctrineDBALTypes::DECIMAL,
+                'tinyint'     => ColumnType::TINY_INTEGER,
+                'xml'         => DoctrineDBALTypes::TEXT,
             ],
         ];
 
@@ -93,38 +76,18 @@ class RegisterColumnType
      */
     private function registerLaravelColumnType(): void
     {
-        /**
-         * The map of supported doctrine mapping types.
-         */
-        $typeMap = [
-            // [$name => $className]
-            Types::DOUBLE              => DoubleType::class,
-            Types::ENUM                => EnumType::class,
-            Types::GEOMETRY            => GeometryType::class,
-            Types::GEOMETRY_COLLECTION => GeometryCollectionType::class,
-            Types::IP_ADDRESS          => IpAddressType::class,
-            Types::JSONB               => JsonbType::class,
-            Types::LINE_STRING         => LineStringType::class,
-            Types::LONG_TEXT           => LongTextType::class,
-            Types::MAC_ADDRESS         => MacAddressType::class,
-            Types::MEDIUM_INTEGER      => MediumIntegerType::class,
-            Types::MEDIUM_TEXT         => MediumTextType::class,
-            Types::MULTI_LINE_STRING   => MultiLineStringType::class,
-            Types::MULTI_POINT         => MultiPointType::class,
-            Types::MULTI_POLYGON       => MultiPolygonType::class,
-            Types::POINT               => PointType::class,
-            Types::POLYGON             => PolygonType::class,
-            Types::SET                 => SetType::class,
-            Types::TIMESTAMP           => TimestampType::class,
-            Types::TIMESTAMP_TZ        => TimestampTzType::class,
-            Types::TIME_TZ             => TimeTzType::class,
-            Types::TINY_INTEGER        => TinyIntegerType::class,
-            Types::UUID                => UUIDType::class,
-            Types::YEAR                => YearType::class,
-        ];
+        /** @var array<string, string> $typesMap */
+        $typesMap = array_flip(Types::ADDITIONAL_TYPES_MAP);
 
-        foreach ($typeMap as $dbType => $class) {
-            $this->overrideDoctrineType($dbType, $class);
+        foreach ($typesMap as $type => $doctrineTypeClassName) {
+            // Add a new type by providing a `type` name and a `\Doctrine\DBAL\Types\Type` class name.
+            // eg: `$type = double`, `$doctrineTypeClassName = \KitLoong\MigrationsGenerator\DBAL\Types\DoubleType`
+            $this->addOrOverrideType($type, $doctrineTypeClassName);
+
+            // Register type mapping so that Doctrine DBAL can recognize the DB column type.
+            // eg: `$type = double`
+            // Now Doctrine DBAL can recognize `column double NOT NULL` and create a column instance with type `\KitLoong\MigrationsGenerator\DBAL\Types\DoubleType`.
+            $this->registerDoctrineTypeMapping($type, $type);
         }
     }
 
@@ -134,7 +97,6 @@ class RegisterColumnType
      * @note Uses {@see \Doctrine\DBAL\Types\Type::__construct} instead of {@see \Doctrine\DBAL\Types\Type::addType} here as workaround.
      * @return void
      * @throws \Doctrine\DBAL\Exception
-     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter) to suppress `getSQLDeclaration` warning.
      */
     private function registerLaravelCustomColumnType(): void
@@ -155,10 +117,12 @@ class RegisterColumnType
             };
             $customType->type = $type;
 
-            if (!Type::hasType($type)) {
-                Type::getTypeRegistry()->register($type, $customType);
-                $this->registerDoctrineTypeMapping($type, $type);
+            if (Type::hasType($type)) {
+                continue;
             }
+
+            Type::getTypeRegistry()->register($type, $customType);
+            $this->registerDoctrineTypeMapping($type, $type);
         }
     }
 
@@ -169,41 +133,33 @@ class RegisterColumnType
      */
     private function getCustomTypes(): Collection
     {
-        if (DB::getDriverName() === Driver::PGSQL()->getValue()) {
-            return $this->pgSQLRepository->getCustomDataTypes();
+        switch (DB::getDriverName()) {
+            case Driver::PGSQL():
+                return $this->pgSQLRepository->getCustomDataTypes();
+
+            case Driver::SQLSRV():
+                return $this->sqlSrvRepository->getCustomDataTypes();
+
+            default:
+                return new Collection();
         }
-
-        return new Collection();
-    }
-
-    /**
-     * Register custom doctrine type, override if exists.
-     *
-     * @param  string  $dbType
-     * @param  string  $class  The class name of the custom type.
-     * @throws \Doctrine\DBAL\Exception
-     */
-    private function overrideDoctrineType(string $dbType, string $class): void
-    {
-        $this->addOrOverrideType($dbType, $class);
-        $this->registerDoctrineTypeMapping($dbType, $dbType);
     }
 
     /**
      * Add or override doctrine type.
      *
-     * @param  string  $dbType
-     * @param  string  $class  The class name of the custom type.
+     * @param  string  $type
+     * @param  string  $class  The class name which is extends {@see \Doctrine\DBAL\Types\Type}.
      * @throws \Doctrine\DBAL\Exception
      */
-    private function addOrOverrideType(string $dbType, string $class): void
+    private function addOrOverrideType(string $type, string $class): void
     {
-        if (!Type::hasType($dbType)) {
-            Type::addType($dbType, $class);
+        if (!Type::hasType($type)) {
+            Type::addType($type, $class);
             return;
         }
 
-        Type::overrideType($dbType, $class);
+        Type::overrideType($type, $class);
     }
 
     /**

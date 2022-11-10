@@ -5,6 +5,7 @@ namespace KitLoong\MigrationsGenerator\Repositories;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Repositories\Entities\MySQL\ShowColumn;
+use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 
 class MySQLRepository extends Repository
 {
@@ -17,7 +18,7 @@ class MySQLRepository extends Repository
      */
     public function showColumn(string $table, string $column): ?ShowColumn
     {
-        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column'");
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` WHERE Field = '$column'");
         return $result === null ? null : new ShowColumn($result);
     }
 
@@ -30,7 +31,8 @@ class MySQLRepository extends Repository
      */
     public function getEnumPresetValues(string $table, string $column): Collection
     {
-        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'enum(%'");
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` WHERE Field = '$column' AND Type LIKE 'enum(%'");
+
         if ($result === null) {
             return new Collection();
         }
@@ -53,7 +55,8 @@ class MySQLRepository extends Repository
      */
     public function getSetPresetValues(string $table, string $column): Collection
     {
-        $result = DB::selectOne("SHOW COLUMNS FROM `$table` where Field = '$column' AND Type LIKE 'set(%'");
+        $result = DB::selectOne("SHOW COLUMNS FROM `$table` WHERE Field = '$column' AND Type LIKE 'set(%'");
+
         if ($result === null) {
             return new Collection();
         }
@@ -82,8 +85,92 @@ class MySQLRepository extends Repository
             "SHOW COLUMNS FROM `$table`
                 WHERE Field = '$column'
                     AND Type = 'timestamp'
-                    AND EXTRA LIKE '%on update CURRENT_TIMESTAMP%'"
+                    AND Extra LIKE '%on update CURRENT_TIMESTAMP%'"
         );
         return !($result === null);
+    }
+
+    /**
+     * Get the virtual column definition by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string|null  The virtual column definition. NULL if not found.
+     */
+    public function getVirtualDefinition(string $table, string $column): ?string
+    {
+        return $this->getGenerationExpression($table, $column, 'VIRTUAL GENERATED');
+    }
+
+    /**
+     * Get the stored column definition by table and column name.
+     *
+     * @param  string  $table  Table name.
+     * @param  string  $column  Column name.
+     * @return string|null  The stored column definition. NULL if not found.
+     */
+    public function getStoredDefinition(string $table, string $column): ?string
+    {
+        return $this->getGenerationExpression($table, $column, 'STORED GENERATED');
+    }
+
+    /**
+     * Get a list of stored procedures.
+     *
+     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     */
+    public function getProcedures(): Collection
+    {
+        $list       = new Collection();
+        $procedures = DB::select("SHOW PROCEDURE STATUS WHERE Db='" . DB::getDatabaseName() . "'");
+
+        foreach ($procedures as $procedure) {
+            // Change all keys to lowercase.
+            $procedureArr = array_change_key_case((array) $procedure);
+            $createProc   = $this->getProcedure($procedureArr['name']);
+
+            // Change all keys to lowercase.
+            $createProcArr = array_change_key_case((array) $createProc);
+            $list->push(new ProcedureDefinition($procedureArr['name'], $createProcArr['create procedure']));
+        }
+
+        return $list;
+    }
+
+    /**
+     * Get single stored procedure by name.
+     *
+     * @param  string  $procedure  Procedure name.
+     * @return mixed
+     */
+    private function getProcedure(string $procedure)
+    {
+        return DB::selectOne("SHOW CREATE PROCEDURE $procedure");
+    }
+
+    /**
+     * Get the column GENERATION_EXPRESSION when EXTRA is 'VIRTUAL GENERATED' or 'STORED GENERATED'.
+     *
+     * @param  string  $table
+     * @param  string  $column
+     * @param  'VIRTUAL GENERATED'|'STORED GENERATED'  $extra
+     * @return string|null
+     */
+    private function getGenerationExpression(string $table, string $column, $extra): ?string
+    {
+        $definition = DB::selectOne(
+            "SELECT GENERATION_EXPRESSION
+                FROM information_schema.COLUMNS
+                WHERE TABLE_NAME = '$table'
+                    AND COLUMN_NAME = '$column'
+                    AND EXTRA = '$extra'"
+        );
+
+        if ($definition === null) {
+            return null;
+        }
+
+        $definitionArr = array_change_key_case((array) $definition);
+        return $definitionArr['generation_expression'] !== '' ? $definitionArr['generation_expression'] : null;
     }
 }

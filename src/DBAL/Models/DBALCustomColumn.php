@@ -31,7 +31,14 @@ abstract class DBALCustomColumn implements CustomColumn
     {
         $this->name      = $column->getName();
         $this->tableName = $table;
-        $this->sqls      = DB::getDoctrineSchemaManager()->getDatabasePlatform()->getAlterTableSQL(new TableDiff($this->tableName, [$column]));
+
+        // COLLATE clause cannot be used on user-defined data types.
+        // Unset collation here.
+        $platformOptions = $column->getPlatformOptions();
+        unset($platformOptions['collation']);
+        $column->setPlatformOptions($platformOptions);
+
+        $this->sqls = DB::getDoctrineConnection()->getDatabasePlatform()->getAlterTableSQL(new TableDiff($this->tableName, [$column]));
     }
 
     /**

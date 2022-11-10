@@ -24,6 +24,6 @@ class TimestampTzType extends Type
      */
     public function getName()
     {
-        return Types::TIMESTAMP_TZ;
+        return '';
     }
 }

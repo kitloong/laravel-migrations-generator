@@ -16,6 +16,7 @@ class MySQLTable extends DBALTable
      */
     protected function handle(): void
     {
+        // Do nothing.
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace KitLoong\MigrationsGenerator\DBAL\Models;
 
 use Doctrine\DBAL\Schema\Column as DoctrineDBALColumn;
-use KitLoong\MigrationsGenerator\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\Enum\Migrations\ColumnName;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
@@ -69,6 +68,7 @@ abstract class DBALColumn implements Column
      * @var string[]
      */
     protected $presetValues;
+
     /**
      * @var bool
      */
@@ -94,6 +94,16 @@ abstract class DBALColumn implements Column
      */
     protected $unsigned;
 
+    /**
+     * @var string|null
+     */
+    protected $virtualDefinition;
+
+    /**
+     * @var string|null
+     */
+    protected $storedDefinition;
+
     private const REMEMBER_TOKEN_LENGTH = 100;
 
     /**
@@ -104,21 +114,23 @@ abstract class DBALColumn implements Column
     {
         $this->tableName                = $table;
         $this->name                     = $column->getName();
-        $this->type                     = $this->mapToColumnType($column->getType()->getName());
+        $this->type                     = ColumnType::fromDBALType($column->getType());
         $this->length                   = $column->getLength();
         $this->scale                    = $column->getScale();
         $this->precision                = $column->getPrecision();
-        $this->comment                  = $column->getComment();
+        $this->comment                  = $this->escapeComment($column->getComment());
         $this->fixed                    = $column->getFixed();
         $this->unsigned                 = $column->getUnsigned();
         $this->notNull                  = $column->getNotnull();
-        $this->default                  = $column->getDefault();
+        $this->default                  = $this->escapeDefault($column->getDefault());
         $this->collation                = $column->getPlatformOptions()['collation'] ?? null;
         $this->charset                  = $column->getPlatformOptions()['charset'] ?? null;
         $this->autoincrement            = $column->getAutoincrement();
         $this->presetValues             = [];
         $this->onUpdateCurrentTimestamp = false;
         $this->rawDefault               = false;
+        $this->virtualDefinition        = null;
+        $this->storedDefinition         = null;
 
         $this->setTypeToSoftDeletes();
         $this->setTypeToRememberToken();
@@ -272,30 +284,19 @@ abstract class DBALColumn implements Column
     }
 
     /**
-     * Converts built-in DBALTypes to ColumnType (Laravel column).
-     *
-     * @param  string  $dbalType
-     * @return \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType
+     * @inheritDoc
      */
-    private function mapToColumnType(string $dbalType): ColumnType
+    public function getVirtualDefinition(): ?string
     {
-        $map = [
-            Types::BIGINT               => ColumnType::BIG_INTEGER(),
-            Types::BLOB                 => ColumnType::BINARY(),
-            Types::DATE_MUTABLE         => ColumnType::DATE(),
-            Types::DATE_IMMUTABLE       => ColumnType::DATE(),
-            Types::DATETIME_MUTABLE     => ColumnType::DATETIME(),
-            Types::DATETIME_IMMUTABLE   => ColumnType::DATETIME(),
-            Types::DATETIMETZ_MUTABLE   => ColumnType::DATETIME_TZ(),
-            Types::DATETIMETZ_IMMUTABLE => ColumnType::DATETIME_TZ(),
-            Types::SMALLINT             => ColumnType::SMALL_INTEGER(),
-            Types::GUID                 => ColumnType::UUID(),
-            Types::TIME_MUTABLE         => ColumnType::TIME(),
-            Types::TIME_IMMUTABLE       => ColumnType::TIME(),
-        ];
+        return $this->virtualDefinition;
+    }
 
-        // $dbalType outside from the map has the same name with ColumnType.
-        return $map[$dbalType] ?? ColumnType::from($dbalType);
+    /**
+     * @inheritDoc
+     */
+    public function getStoredDefinition(): ?string
+    {
+        return $this->storedDefinition;
     }
 
     /**
@@ -343,7 +344,7 @@ abstract class DBALColumn implements Column
     protected function setTypeToUnsigned(): void
     {
         if (
-            in_array($this->type, [
+            !in_array($this->type, [
                 ColumnType::BIG_INTEGER(),
                 ColumnType::INTEGER(),
                 ColumnType::MEDIUM_INTEGER(),
@@ -351,10 +352,12 @@ abstract class DBALColumn implements Column
                 ColumnType::TINY_INTEGER(),
                 ColumnType::DECIMAL(),
             ])
-            && $this->unsigned
+            || !$this->unsigned
         ) {
-            $this->type = ColumnType::from('unsigned' . ucfirst($this->type));
+            return;
         }
+
+        $this->type = ColumnType::from('unsigned' . ucfirst($this->type));
     }
 
     /**
@@ -364,15 +367,18 @@ abstract class DBALColumn implements Column
      */
     private function setTypeToSoftDeletes(): void
     {
-        if ($this->name === ColumnName::DELETED_AT()->getValue()) {
-            switch ($this->type) {
-                case ColumnType::TIMESTAMP():
-                    $this->type = ColumnType::SOFT_DELETES();
-                    return;
-                case ColumnType::TIMESTAMP_TZ():
-                    $this->type = ColumnType::SOFT_DELETES_TZ();
-                    return;
-            }
+        if ($this->name !== ColumnName::DELETED_AT()->getValue()) {
+            return;
+        }
+
+        switch ($this->type) {
+            case ColumnType::TIMESTAMP():
+                $this->type = ColumnType::SOFT_DELETES();
+                return;
+
+            case ColumnType::TIMESTAMP_TZ():
+                $this->type = ColumnType::SOFT_DELETES_TZ();
+                return;
         }
     }
 
@@ -384,12 +390,14 @@ abstract class DBALColumn implements Column
     private function setTypeToRememberToken(): void
     {
         if (
-            ColumnName::REMEMBER_TOKEN()->getValue() === $this->name
-            && $this->length === self::REMEMBER_TOKEN_LENGTH
-            && !$this->fixed
+            ColumnName::REMEMBER_TOKEN()->getValue() !== $this->name
+            || $this->length !== self::REMEMBER_TOKEN_LENGTH
+            || $this->fixed
         ) {
-            $this->type = ColumnType::REMEMBER_TOKEN();
+            return;
         }
+
+        $this->type = ColumnType::REMEMBER_TOKEN();
     }
 
     /**
@@ -399,9 +407,11 @@ abstract class DBALColumn implements Column
      */
     private function setTypeToChar(): void
     {
-        if ($this->fixed) {
-            $this->type = ColumnType::CHAR();
+        if (!$this->fixed) {
+            return;
         }
+
+        $this->type = ColumnType::CHAR();
     }
 
     /**
@@ -414,12 +424,45 @@ abstract class DBALColumn implements Column
     private function fixDoubleLength(): void
     {
         if (
-            $this->type->equals(ColumnType::DOUBLE())
-            && $this->getPrecision() === 10
-            && $this->getScale() === 0
+            !$this->type->equals(ColumnType::DOUBLE())
+            || $this->getPrecision() !== 10
+            || $this->getScale() !== 0
         ) {
-            $this->precision = 0;
-            $this->scale     = 0;
+            return;
         }
+
+        $this->precision = 0;
+        $this->scale     = 0;
+    }
+
+    /**
+     * Escape `'` with `''`.
+     *
+     * @param  string|null  $default
+     * @return string|null
+     */
+    protected function escapeDefault(?string $default): ?string
+    {
+        if ($default === null) {
+            return null;
+        }
+
+        $default = str_replace("'", "''", $default);
+        return addcslashes($default, '\\');
+    }
+
+    /**
+     * Escape `\` with `\\`.
+     *
+     * @param  string|null  $comment
+     * @return string|null
+     */
+    protected function escapeComment(?string $comment): ?string
+    {
+        if ($comment === null) {
+            return null;
+        }
+
+        return addcslashes($comment, '\\');
     }
 }

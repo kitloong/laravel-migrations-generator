@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\DBAL;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Schema\Schema;
@@ -36,8 +37,27 @@ abstract class DBALSchema implements Schema
                 if ($this->isIdentifierQuoted($table)) {
                     return $this->trimQuotes($table);
                 }
+
                 return $table;
             });
+    }
+
+    /**
+     * Introspects the table with the given name.
+     * `listTableDetails` is deprecated since `doctrine/dbal` v3.5 and will be removed from v4.
+     * This method will try to call `introspectTable` and fallback to `listTableDetails`.
+     *
+     * @param  string  $name
+     * @return \Doctrine\DBAL\Schema\Table
+     * @throws \Doctrine\DBAL\Exception
+     */
+    protected function introspectTable(string $name): Table
+    {
+        if (method_exists($this->dbalSchema, 'introspectTable')) {
+            return $this->dbalSchema->introspectTable($name);
+        }
+
+        return $this->dbalSchema->listTableDetails($name);
     }
 
     /**
@@ -49,6 +69,7 @@ abstract class DBALSchema implements Schema
     private function makeSchemaManager(): AbstractSchemaManager
     {
         $doctrineConnection = DB::getDoctrineConnection();
+
         if (method_exists($doctrineConnection, 'createSchemaManager')) {
             return $doctrineConnection->createSchemaManager();
         }

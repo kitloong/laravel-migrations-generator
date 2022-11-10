@@ -2,65 +2,88 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL\Types;
 
-use Doctrine\DBAL\Types\Types as BuiltInTypes;
+use Doctrine\DBAL\Types\AsciiStringType;
+use Doctrine\DBAL\Types\BigIntType;
+use Doctrine\DBAL\Types\BinaryType;
+use Doctrine\DBAL\Types\BlobType;
+use Doctrine\DBAL\Types\BooleanType;
+use Doctrine\DBAL\Types\DateImmutableType;
+use Doctrine\DBAL\Types\DateIntervalType;
+use Doctrine\DBAL\Types\DateTimeImmutableType;
+use Doctrine\DBAL\Types\DateTimeType;
+use Doctrine\DBAL\Types\DateTimeTzImmutableType;
+use Doctrine\DBAL\Types\DateTimeTzType;
+use Doctrine\DBAL\Types\DateType;
+use Doctrine\DBAL\Types\DecimalType;
+use Doctrine\DBAL\Types\FloatType;
+use Doctrine\DBAL\Types\GuidType;
+use Doctrine\DBAL\Types\IntegerType;
+use Doctrine\DBAL\Types\JsonType;
+use Doctrine\DBAL\Types\SimpleArrayType;
+use Doctrine\DBAL\Types\SmallIntType;
+use Doctrine\DBAL\Types\StringType;
+use Doctrine\DBAL\Types\TextType;
+use Doctrine\DBAL\Types\TimeImmutableType;
+use Doctrine\DBAL\Types\TimeType;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 
 final class Types
 {
-    // Default built-in types provided by Doctrine DBAL.
-    public const ARRAY                = BuiltInTypes::ARRAY;
-    public const ASCII_STRING         = BuiltInTypes::ASCII_STRING;
-    public const BIGINT               = BuiltInTypes::BIGINT;
-    public const BINARY               = BuiltInTypes::BINARY;
-    public const BLOB                 = BuiltInTypes::BLOB;
-    public const BOOLEAN              = BuiltInTypes::BOOLEAN;
-    public const DATE_MUTABLE         = BuiltInTypes::DATE_MUTABLE;
-    public const DATE_IMMUTABLE       = BuiltInTypes::DATE_IMMUTABLE;
-    public const DATEINTERVAL         = BuiltInTypes::DATEINTERVAL;
-    public const DATETIME_MUTABLE     = BuiltInTypes::DATETIME_MUTABLE;
-    public const DATETIME_IMMUTABLE   = BuiltInTypes::DATETIME_IMMUTABLE;
-    public const DATETIMETZ_MUTABLE   = BuiltInTypes::DATETIMETZ_MUTABLE;
-    public const DATETIMETZ_IMMUTABLE = BuiltInTypes::DATETIMETZ_IMMUTABLE;
-    public const DECIMAL              = BuiltInTypes::DECIMAL;
-    public const FLOAT                = BuiltInTypes::FLOAT;
-    public const GUID                 = BuiltInTypes::GUID;
-    public const INTEGER              = BuiltInTypes::INTEGER;
-    public const JSON                 = BuiltInTypes::JSON;
-    public const OBJECT               = BuiltInTypes::OBJECT;
-    public const SIMPLE_ARRAY         = BuiltInTypes::SIMPLE_ARRAY;
-    public const SMALLINT             = BuiltInTypes::SMALLINT;
-    public const STRING               = BuiltInTypes::STRING;
-    public const TEXT                 = BuiltInTypes::TEXT;
-    public const TIME_MUTABLE         = BuiltInTypes::TIME_MUTABLE;
-    public const TIME_IMMUTABLE       = BuiltInTypes::TIME_IMMUTABLE;
+    /**
+     * Default built-in types provided by Doctrine DBAL.
+     */
+    public const BUILTIN_TYPES_MAP = [
+        AsciiStringType::class         => ColumnType::STRING,
+        BigIntType::class              => ColumnType::BIG_INTEGER,
+        BinaryType::class              => ColumnType::BINARY,
+        BlobType::class                => ColumnType::BINARY,
+        BooleanType::class             => ColumnType::BOOLEAN,
+        DateType::class                => ColumnType::DATE,
+        DateImmutableType::class       => ColumnType::DATE,
+        DateIntervalType::class        => ColumnType::DATE,
+        DateTimeType::class            => ColumnType::DATETIME,
+        DateTimeImmutableType::class   => ColumnType::DATETIME,
+        DateTimeTzType::class          => ColumnType::DATETIME_TZ,
+        DateTimeTzImmutableType::class => ColumnType::DATETIME_TZ,
+        DecimalType::class             => ColumnType::DECIMAL,
+        FloatType::class               => ColumnType::FLOAT,
+        GuidType::class                => ColumnType::UUID,
+        IntegerType::class             => ColumnType::INTEGER,
+        JsonType::class                => ColumnType::JSON,
+        SimpleArrayType::class         => ColumnType::STRING,
+        SmallIntType::class            => ColumnType::SMALL_INTEGER,
+        StringType::class              => ColumnType::STRING,
+        TextType::class                => ColumnType::TEXT,
+        TimeType::class                => ColumnType::TIME,
+        TimeImmutableType::class       => ColumnType::TIME,
+    ];
 
     /**
-     * Custom types, should identical with CustomDoctrineType name.
-     * Example,
-     *
-     * @see \KitLoong\MigrationsGenerator\DBAL\Types\DoubleType::getName()
+     * Additional types provided by Migration Generator.
      */
-    public const DOUBLE              = ColumnType::DOUBLE;
-    public const ENUM                = ColumnType::ENUM;
-    public const GEOMETRY            = ColumnType::GEOMETRY;
-    public const GEOMETRY_COLLECTION = ColumnType::GEOMETRY_COLLECTION;
-    public const IP_ADDRESS          = ColumnType::IP_ADDRESS;
-    public const JSONB               = ColumnType::JSONB;
-    public const LINE_STRING         = ColumnType::LINE_STRING;
-    public const LONG_TEXT           = ColumnType::LONG_TEXT;
-    public const MAC_ADDRESS         = ColumnType::MAC_ADDRESS;
-    public const MEDIUM_INTEGER      = ColumnType::MEDIUM_INTEGER;
-    public const MEDIUM_TEXT         = ColumnType::MEDIUM_TEXT;
-    public const MULTI_LINE_STRING   = ColumnType::MULTI_LINE_STRING;
-    public const MULTI_POINT         = ColumnType::MULTI_POINT;
-    public const MULTI_POLYGON       = ColumnType::MULTI_POLYGON;
-    public const POINT               = ColumnType::POINT;
-    public const POLYGON             = ColumnType::POLYGON;
-    public const SET                 = ColumnType::SET;
-    public const TIMESTAMP           = ColumnType::TIMESTAMP;
-    public const TIMESTAMP_TZ        = ColumnType::TIMESTAMP_TZ;
-    public const TIME_TZ             = ColumnType::TIME_TZ;
-    public const TINY_INTEGER        = ColumnType::TINY_INTEGER;
-    public const UUID                = ColumnType::UUID;
-    public const YEAR                = ColumnType::YEAR;
+    public const ADDITIONAL_TYPES_MAP = [
+        DoubleType::class             => ColumnType::DOUBLE,
+        EnumType::class               => ColumnType::ENUM,
+        GeometryType::class           => ColumnType::GEOMETRY,
+        GeometryCollectionType::class => ColumnType::GEOMETRY_COLLECTION,
+        IpAddressType::class          => ColumnType::IP_ADDRESS,
+        JsonbType::class              => ColumnType::JSONB,
+        LineStringType::class         => ColumnType::LINE_STRING,
+        LongTextType::class           => ColumnType::LONG_TEXT,
+        MacAddressType::class         => ColumnType::MAC_ADDRESS,
+        MediumIntegerType::class      => ColumnType::MEDIUM_INTEGER,
+        MediumTextType::class         => ColumnType::MEDIUM_TEXT,
+        MultiLineStringType::class    => ColumnType::MULTI_LINE_STRING,
+        MultiPointType::class         => ColumnType::MULTI_POINT,
+        MultiPolygonType::class       => ColumnType::MULTI_POLYGON,
+        PointType::class              => ColumnType::POINT,
+        PolygonType::class            => ColumnType::POLYGON,
+        SetType::class                => ColumnType::SET,
+        TimestampType::class          => ColumnType::TIMESTAMP,
+        TimestampTzType::class        => ColumnType::TIMESTAMP_TZ,
+        TimeTzType::class             => ColumnType::TIME_TZ,
+        TinyIntegerType::class        => ColumnType::TINY_INTEGER,
+        UUIDType::class               => ColumnType::UUID,
+        YearType::class               => ColumnType::YEAR,
+    ];
 }

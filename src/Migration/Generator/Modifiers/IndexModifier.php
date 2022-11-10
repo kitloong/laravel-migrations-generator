@@ -22,9 +22,9 @@ class IndexModifier implements Modifier
      */
     public function chain(Method $method, Table $table, Column $column, ...$args): Method
     {
+        /** @var \Illuminate\Support\Collection<string, \KitLoong\MigrationsGenerator\Schema\Models\Index> $chainableIndexes Key is column name. */
         $chainableIndexes = $args[0];
 
-        /** @var \Illuminate\Support\Collection<string, \KitLoong\MigrationsGenerator\Schema\Models\Index> $chainableIndexes Key is column name. */
         if (!$chainableIndexes->has($column->getName())) {
             return $method;
         }
@@ -53,7 +53,7 @@ class IndexModifier implements Modifier
      * when used for column chaining.
      *
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType  $indexType
-     * @return IndexType
+     * @return \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType
      */
     private function adjustIndexType(IndexType $indexType): IndexType
     {

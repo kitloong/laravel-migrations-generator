@@ -24,6 +24,6 @@ class UUIDType extends Type
      */
     public function getName()
     {
-        return Types::UUID;
+        return '';
     }
 }

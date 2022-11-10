@@ -65,7 +65,7 @@ class CommandTest extends MySQL8TestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mysql8', $this->getStorageMigrationsPath());
 

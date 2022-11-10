@@ -24,6 +24,6 @@ class MediumIntegerType extends Type
      */
     public function getName()
     {
-        return Types::MEDIUM_INTEGER;
+        return '';
     }
 }

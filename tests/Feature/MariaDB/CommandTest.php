@@ -68,7 +68,7 @@ class CommandTest extends MariaDBTestCase
 
         $this->assertMigrations();
 
-        $this->dropAllTables();
+        $this->refreshDatabase();
 
         $this->runMigrationsFrom('mariadb', $this->getStorageMigrationsPath());
 

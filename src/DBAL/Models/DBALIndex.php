@@ -93,7 +93,7 @@ abstract class DBALIndex implements Index
     }
 
     /**
-     * @return \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType
+     * @inheritDoc
      */
     public function getType(): IndexType
     {

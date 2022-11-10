@@ -32,6 +32,7 @@ class CharsetModifier implements Modifier
         $tableCharset   = Str::before($tableCollation, '_');
 
         $charset = $column->getCharset();
+
         if ($charset !== null && $charset !== $tableCharset) {
             $method->chain(ColumnModifier::CHARSET(), $charset);
         }

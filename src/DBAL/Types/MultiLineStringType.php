@@ -24,6 +24,6 @@ class MultiLineStringType extends Type
      */
     public function getName()
     {
-        return Types::MULTI_LINE_STRING;
+        return '';
     }
 }

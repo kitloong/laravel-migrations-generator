@@ -2,21 +2,22 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Writer;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
-use KitLoong\MigrationsGenerator\Support\FilenameHelper;
+use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class SquashWriter
 {
-    private $filenameHelper;
+    private $migrationNameHelper;
     private $migrationStub;
 
-    public function __construct(FilenameHelper $filenameHelper, MigrationStub $migrationStub)
+    public function __construct(MigrationNameHelper $migrationNameHelper, MigrationStub $migrationStub)
     {
-        $this->filenameHelper = $filenameHelper;
-        $this->migrationStub  = $migrationStub;
+        $this->migrationNameHelper = $migrationNameHelper;
+        $this->migrationStub       = $migrationStub;
     }
 
     /**
@@ -29,14 +30,14 @@ class SquashWriter
      */
     public function writeToTemp(Collection $upBlueprints, Collection $downBlueprints): void
     {
-        $upTempPath  = $this->filenameHelper->makeUpTempPath();
+        $upTempPath  = $this->migrationNameHelper->makeUpTempPath();
         $prettySpace = $this->getSpaceIfFileExists($upTempPath);
         $upString    = $upBlueprints->map(function (WritableBlueprint $up) {
             return $up->toString();
         })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
         File::append($upTempPath, $prettySpace . $upString);
 
-        $downTempPath = $this->filenameHelper->makeDownTempPath();
+        $downTempPath = $this->migrationNameHelper->makeDownTempPath();
         $prettySpace  = $this->getSpaceIfFileExists($downTempPath);
         $downString   = $downBlueprints->map(function (WritableBlueprint $down) {
             return $down->toString();
@@ -49,8 +50,8 @@ class SquashWriter
      */
     public function cleanTemps(): void
     {
-        File::delete($this->filenameHelper->makeUpTempPath());
-        File::delete($this->filenameHelper->makeDownTempPath());
+        File::delete($this->migrationNameHelper->makeUpTempPath());
+        File::delete($this->migrationNameHelper->makeDownTempPath());
     }
 
     /**
@@ -59,30 +60,36 @@ class SquashWriter
      * @param  string  $path  Migration file destination path.
      * @param  string  $stubPath  Migration stub file path.
      * @param  string  $className
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function squashMigrations(string $path, string $stubPath, string $className): void
     {
         $use = implode(Space::LINE_BREAK(), [
             'use Illuminate\Database\Migrations\Migration;',
             'use Illuminate\Database\Schema\Blueprint;',
-            'use Illuminate\Support\Facades\Schema;',
             'use Illuminate\Support\Facades\DB;',
+            'use Illuminate\Support\Facades\Schema;',
         ]);
 
-        File::put(
-            $path,
-            $this->migrationStub->populateStub(
-                $this->migrationStub->getStub($stubPath),
-                $use,
-                $className,
-                File::get($upTempPath = $this->filenameHelper->makeUpTempPath()),
-                File::get($downTempPath = $this->filenameHelper->makeDownTempPath())
-            )
-        );
+        $upTempPath   = $this->migrationNameHelper->makeUpTempPath();
+        $downTempPath = $this->migrationNameHelper->makeDownTempPath();
 
-        File::delete($upTempPath);
-        File::delete($downTempPath);
+        try {
+            File::put(
+                $path,
+                $this->migrationStub->populateStub(
+                    $this->migrationStub->getStub($stubPath),
+                    $use,
+                    $className,
+                    File::get($upTempPath),
+                    File::get($downTempPath)
+                )
+            );
+        } catch (FileNotFoundException $e) {
+            // Do nothing.
+        } finally {
+            File::delete($upTempPath);
+            File::delete($downTempPath);
+        }
     }
 
     private function getSpaceIfFileExists(string $path): string

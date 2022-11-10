@@ -4,10 +4,10 @@
 
 /** @noinspection PhpUnused */
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateUsers_DB_View extends Migration
+class ExpectedCreateUsers_DB_View extends TestMigration
 {
     /**
      * Run the migrations.

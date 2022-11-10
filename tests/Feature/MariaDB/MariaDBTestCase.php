@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MariaDB;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 use PDO;
@@ -41,6 +42,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
             '');
 
         $skipColumnStatistics = '';
+
         if (env('MYSQLDUMP_HAS_OPTION_SKIP_COLUMN_STATISTICS')) {
             $skipColumnStatistics = '--skip-column-statistics';
         }
@@ -56,9 +58,19 @@ abstract class MariaDBTestCase extends FeatureTestCase
         exec($command);
     }
 
-    protected function dropAllTables(): void
+    protected function refreshDatabase(): void
     {
         Schema::dropAllViews();
         Schema::dropAllTables();
+        $this->dropAllProcedures();
+    }
+
+    protected function dropAllProcedures(): void
+    {
+        $procedures = DB::select("SHOW PROCEDURE STATUS where DB='" . config('database.connections.mariadb.database') . "'");
+
+        foreach ($procedures as $procedure) {
+            DB::unprepared("DROP PROCEDURE IF EXISTS " . $procedure->Name);
+        }
     }
 }
