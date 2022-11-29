@@ -16,9 +16,9 @@ interface Table extends Model
     /**
      * Get the table comment.
      *
-     * @return string
+     * @return string|null
      */
-    public function getComment(): string;
+    public function getComment(): ?string;
 
     /**
      * Get a list of columns.
