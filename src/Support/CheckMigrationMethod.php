@@ -50,4 +50,15 @@ trait CheckMigrationMethod
     {
         return method_exists(Migrator::class, 'getMigrationClass');
     }
+
+    /**
+     * Check if support add comment to a table.
+     * This feature is added since Laravel v9.
+     *
+     * @return bool
+     */
+    public function hasTableComment(): bool
+    {
+        return method_exists(Blueprint::class, 'comment');
+    }
 }

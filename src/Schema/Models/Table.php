@@ -14,6 +14,13 @@ interface Table extends Model
     public function getName(): string;
 
     /**
+     * Get the table comment.
+     *
+     * @return string|null
+     */
+    public function getComment(): ?string;
+
+    /**
      * Get a list of columns.
      *
      * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Column>
