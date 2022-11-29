@@ -99,7 +99,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
      * Make column generator singleton by type.
      *
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType  $type
-     * @param  string  $columnTypeGenerator
+     * @param  class-string<\KitLoong\MigrationsGenerator\Migration\Generator\Columns\ColumnTypeGenerator>  $columnTypeGenerator
      */
     protected function columnTypeSingleton(ColumnType $type, string $columnTypeGenerator): void
     {

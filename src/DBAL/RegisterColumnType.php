@@ -76,7 +76,6 @@ class RegisterColumnType
      */
     private function registerLaravelColumnType(): void
     {
-        /** @var array<string, string> $typesMap */
         $typesMap = array_flip(Types::ADDITIONAL_TYPES_MAP);
 
         foreach ($typesMap as $type => $doctrineTypeClassName) {
@@ -149,7 +148,7 @@ class RegisterColumnType
      * Add or override doctrine type.
      *
      * @param  string  $type
-     * @param  string  $class  The class name which is extends {@see \Doctrine\DBAL\Types\Type}.
+     * @param  class-string<\Doctrine\DBAL\Types\Type>  $class  The class name which is extends {@see \Doctrine\DBAL\Types\Type}.
      * @throws \Doctrine\DBAL\Exception
      */
     private function addOrOverrideType(string $type, string $class): void
