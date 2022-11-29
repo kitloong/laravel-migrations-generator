@@ -125,7 +125,7 @@ abstract class DBALTable implements Table
     /**
      * @inheritDoc
      */
-    public function getComment(): string
+    public function getComment(): ?string
     {
         return $this->comment;
     }
