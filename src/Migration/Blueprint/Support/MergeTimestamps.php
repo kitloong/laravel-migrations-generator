@@ -67,18 +67,18 @@ trait MergeTimestamps
     /**
      * Check if column name (created_at or updated_at) is possible a timestamps.
      *
-     * @param  string  $name  Column name, created_at or updated_at.
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\ColumnName  $columnName  Column name, created_at or updated_at.
      * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
      * @param  bool  $tz  Is timezone.
      * @return bool
      */
-    private function checkTimestamps(string $name, Method $method, bool $tz): bool
+    private function checkTimestamps(ColumnName $columnName, Method $method, bool $tz): bool
     {
         if (!$this->isPossibleTimestampsColumn($method, $tz)) {
             return false;
         }
 
-        if ($method->getValues()[0] !== $name) {
+        if ($method->getValues()[0] !== $columnName->getValue()) {
             return false;
         }
 

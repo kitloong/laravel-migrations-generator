@@ -22,9 +22,12 @@ use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
 use KitLoong\MigrationsGenerator\Schema\Schema;
 use KitLoong\MigrationsGenerator\Schema\SQLiteSchema;
 use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
+use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 class MigrateGenerateCommand extends Command
 {
+    use CheckMigrationMethod;
+
     /**
      * The name and signature of the console command.
      *
@@ -148,9 +151,7 @@ class MigrateGenerateCommand extends Command
             $this->option('path') ?? Config::get('migrations-generator.migration_target_path')
         );
 
-        $setting->setStubPath(
-            $this->option('template-path') ?? Config::get('migrations-generator.migration_template_path')
-        );
+        $this->setStubPath($setting);
 
         $setting->setDate(
             $this->option('date') ? Carbon::parse($this->option('date')) : Carbon::now()
@@ -170,6 +171,25 @@ class MigrateGenerateCommand extends Command
 
         $setting->setFkFilename(
             $this->option('fk-filename') ?? Config::get('migrations-generator.filename_pattern.foreign_key')
+        );
+    }
+
+    /**
+     * Set migration stub.
+     *
+     * @param  \KitLoong\MigrationsGenerator\Setting  $setting
+     * @return void
+     */
+    protected function setStubPath(Setting $setting): void
+    {
+        $defaultStub = Config::get('migrations-generator.migration_anonymous_template_path');
+
+        if (!$this->hasAnonymousMigration()) {
+            $defaultStub = Config::get('migrations-generator.migration_template_path');
+        }
+
+        $setting->setStubPath(
+            $this->option('template-path') ?? $defaultStub
         );
     }
 
