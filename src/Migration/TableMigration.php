@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\TableMethod;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Property\TableProperty;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint;
+use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
@@ -18,11 +20,13 @@ use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Setting;
+use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 use KitLoong\MigrationsGenerator\Support\TableName;
 
 class TableMigration
 {
+    use CheckMigrationMethod;
     use TableName;
 
     private $columnGenerator;
@@ -115,6 +119,10 @@ class TableMigration
         if ($this->shouldSetCharset()) {
             $blueprint = $this->setTableCharset($blueprint, $table);
             $blueprint->setLineBreak();
+        }
+
+        if ($this->hasTableComment() && $table->getComment() !== null) {
+            $blueprint->setMethod(new Method(TableMethod::COMMENT(), $table->getComment()));
         }
 
         $chainableIndexes    = $this->indexGenerator->getChainableIndexes($table->getName(), $table->getIndexes());

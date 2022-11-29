@@ -23,6 +23,7 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
     public function up()
     {
         Schema::create('all_columns_[db]', function (Blueprint $table) {
+            $table->comment('A table comment.');
             $table->bigInteger('bigInteger');
             $table->bigInteger('bigInteger_default')->default(1080);
             $table->binary('binary');
