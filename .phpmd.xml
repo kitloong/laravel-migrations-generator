@@ -28,7 +28,7 @@
     </rule>
     <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
         <properties>
-            <property name="maximum" value="60"/>
+            <property name="maximum" value="65"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/ExcessiveParameterList">

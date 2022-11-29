@@ -63,9 +63,8 @@ class DBConnectionTest extends MySQL57TestCase
             $this->artisan(
                 'migrate:generate',
                 [
-                    '--connection'    => 'mysql57',
-                    '--path'          => $this->getStorageMigrationsPath(),
-                    '--template-path' => base_path('stubs/migration.generate.stub'),
+                    '--connection' => 'mysql57',
+                    '--path'       => $this->getStorageMigrationsPath(),
                 ]
             )
                 ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
@@ -101,9 +100,8 @@ class DBConnectionTest extends MySQL57TestCase
         $this->artisan(
             'migrate:generate',
             [
-                '--connection'    => 'mysql57',
-                '--path'          => $this->getStorageMigrationsPath(),
-                '--template-path' => base_path('stubs/migration.generate.stub'),
+                '--connection' => 'mysql57',
+                '--path'       => $this->getStorageMigrationsPath(),
             ]
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)

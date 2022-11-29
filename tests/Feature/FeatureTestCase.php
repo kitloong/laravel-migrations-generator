@@ -144,8 +144,7 @@ abstract class FeatureTestCase extends TestCase
         $this->artisan(
             'migrate:generate',
             array_merge([
-                '--path'          => $this->getStorageMigrationsPath(),
-                '--template-path' => base_path('stubs/migration.generate.stub'),
+                '--path' => $this->getStorageMigrationsPath(),
             ], $options)
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
