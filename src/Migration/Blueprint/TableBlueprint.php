@@ -36,6 +36,13 @@ class TableBlueprint implements WritableBlueprint
     /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[] */
     private $lines;
 
+    /**
+     * By default, generate 3 tabs for each line.
+     *
+     * @var int
+     */
+    private $numberOfPrefixTab = 3;
+
     public function __construct()
     {
         $this->lines = [];
@@ -106,6 +113,16 @@ class TableBlueprint implements WritableBlueprint
     }
 
     /**
+     * Increase number of prefix tab by 1.
+     *
+     * @return void
+     */
+    public function increaseNumberOfPrefixTab(): void
+    {
+        $this->numberOfPrefixTab++;
+    }
+
+    /**
      * @inheritDoc
      */
     public function toString(): string
@@ -127,7 +144,7 @@ class TableBlueprint implements WritableBlueprint
             }
         }
 
-        return $this->flattenLines($lines, 3);
+        return $this->flattenLines($lines, $this->numberOfPrefixTab);
     }
 
     /**
