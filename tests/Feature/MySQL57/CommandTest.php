@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
+use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
@@ -390,6 +391,106 @@ class CommandTest extends MySQL57TestCase
         $this->generateMigrations();
 
         $this->assertTrue(Schema::hasTable('migrations'));
+    }
+
+    public function testNoInteraction()
+    {
+        $this->migrateGeneral('mysql57');
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
+
+        $this->artisan(
+            'migrate:generate',
+            [
+                '--path'           => $this->getStorageMigrationsPath(),
+                '--no-interaction' => true,
+            ]
+        );
+
+        $this->assertSame(0, DB::table('migrations')->count());
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
+
+        $this->assertFileEqualsIgnoringOrder(
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
+        );
+    }
+
+    public function testSkipLog()
+    {
+        $this->migrateGeneral('mysql57');
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
+
+        $this->artisan(
+            'migrate:generate',
+            [
+                '--path'     => $this->getStorageMigrationsPath(),
+                '--skip-log' => true,
+            ]
+        );
+
+        $this->assertSame(0, DB::table('migrations')->count());
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
+
+        $this->assertFileEqualsIgnoringOrder(
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
+        );
+    }
+
+    public function testLogWithBatch0()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
+
+        $this->artisan(
+            'migrate:generate',
+            [
+                '--path'           => $this->getStorageMigrationsPath(),
+                '--log-with-batch' => '0',
+            ]
+        );
+
+        $this->assertMigrations();
+
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
+
+        $this->assertFileEqualsIgnoringOrder(
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
+        );
+    }
+
+    public function testLogWithBatch99()
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
+
+        $this->artisan(
+            'migrate:generate',
+            [
+                '--path'           => $this->getStorageMigrationsPath(),
+                '--log-with-batch' => '99',
+            ]
+        );
+
+        $this->assertMigrations();
+
+        $this->assertSame(99, app(MigrationRepositoryInterface::class)->getNextBatchNumber() - 1);
+
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
+
+        $this->assertFileEqualsIgnoringOrder(
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql')
+        );
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations)

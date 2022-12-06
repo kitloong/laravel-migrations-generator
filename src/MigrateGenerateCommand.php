@@ -50,6 +50,8 @@ class MigrateGenerateCommand extends Command
                             {--use-db-collation : Generate migrations with existing DB collation}
                             {--skip-views : Don\'t generate views}
                             {--skip-proc : Don\'t generate stored procedures}
+                            {--skip-log : Don\'t log into migrations table}
+                            {--log-with-batch= : The migrations batch number}
                             {--squash : Generate all migrations into a single file}
                             {--with-has-table : Check for the existence of a table using `hasTable`}';
 
@@ -282,9 +284,17 @@ class MigrateGenerateCommand extends Command
      */
     protected function askIfLogMigrationTable(string $defaultConnection): void
     {
-        if (!$this->option('no-interaction')) {
-            $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table?', true);
+        if ($this->option('no-interaction') || $this->option('skip-log')) {
+            return;
         }
+
+        if ($this->option('log-with-batch') !== null) {
+            $this->shouldLog       = true;
+            $this->nextBatchNumber = (int) $this->option('log-with-batch');
+            return;
+        }
+
+        $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table?', true);
 
         if (!$this->shouldLog) {
             return;

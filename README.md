@@ -133,6 +133,8 @@ Run `php artisan help migrate:generate` for a list of options.
 | --use-db-collation                   | Generate migrations with existing DB collation                                                                                                                |
 | --skip-views                         | Don\'t generate views                                                                                                                                         |
 | --skip-proc                          | Don\'t generate stored procedures                                                                                                                             |
+| --skip-log                           | Don\'t log into migrations table                                                                                                                              |
+| --log-with-batch[=LOG-WITH-BATCH]    | The migrations batch number                                                                                                                                   |
 | --squash                             | Generate all migrations into a single file                                                                                                                    |
 | --with-has-table                     | Check for the existence of a table using `hasTable`                                                                                                           |
 
