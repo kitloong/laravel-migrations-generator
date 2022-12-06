@@ -134,6 +134,7 @@ Run `php artisan help migrate:generate` for a list of options.
 | --skip-views                         | Don\'t generate views                                                                                                                                         |
 | --skip-proc                          | Don\'t generate stored procedures                                                                                                                             |
 | --squash                             | Generate all migrations into a single file                                                                                                                    |
+| --with-has-table                     | Check for the existence of a table using `hasTable`                                                                                                           |
 
 ## SQLite Alter Foreign Key
 

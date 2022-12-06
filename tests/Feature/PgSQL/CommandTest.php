@@ -137,6 +137,40 @@ class CommandTest extends PgSQLTestCase
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
+    public function testWithHasTable()
+    {
+        $migrateTemplates = function () {
+            $this->migrateGeneral('pgsql');
+
+            DB::statement(
+                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+            );
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations(['--with-has-table' => true]);
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testWithHasTableSquash()
+    {
+        $migrateTemplates = function () {
+            $this->migrateGeneral('pgsql');
+
+            DB::statement(
+                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+            );
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations(['--with-has-table' => true, '--squash' => true]);
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
     private function verify(callable $migrateTemplates, callable $generateMigrations, ?callable $beforeVerify = null)
     {
         $migrateTemplates();

@@ -50,7 +50,8 @@ class MigrateGenerateCommand extends Command
                             {--use-db-collation : Generate migrations with existing DB collation}
                             {--skip-views : Don\'t generate views}
                             {--skip-proc : Don\'t generate stored procedures}
-                            {--squash : Generate all migrations into a single file}';
+                            {--squash : Generate all migrations into a single file}
+                            {--with-has-table : Check for the existence of a table using `hasTable`}';
 
     /**
      * The console command description.
@@ -142,10 +143,11 @@ class MigrateGenerateCommand extends Command
     {
         $setting = app(Setting::class);
         $setting->setDefaultConnection($connection);
-        $setting->setUseDBCollation($this->option('use-db-collation'));
-        $setting->setIgnoreIndexNames($this->option('default-index-names'));
-        $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));
+        $setting->setUseDBCollation((bool) $this->option('use-db-collation'));
+        $setting->setIgnoreIndexNames((bool) $this->option('default-index-names'));
+        $setting->setIgnoreForeignKeyNames((bool) $this->option('default-fk-names'));
         $setting->setSquash((bool) $this->option('squash'));
+        $setting->setWithHasTable((bool) $this->option('with-has-table'));
 
         $setting->setPath(
             $this->option('path') ?? Config::get('migrations-generator.migration_target_path')

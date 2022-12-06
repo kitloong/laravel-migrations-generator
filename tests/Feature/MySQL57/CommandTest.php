@@ -356,6 +356,32 @@ class CommandTest extends MySQL57TestCase
         $this->assertNotContains('create_getNameWithHyphen_proc', $migrations);
     }
 
+    public function testWithHasTable()
+    {
+        $migrateTemplates = function () {
+            $this->migrateGeneral('mysql57');
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations(['--with-has-table' => true]);
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testWithHasTableSquash()
+    {
+        $migrateTemplates = function () {
+            $this->migrateGeneral('mysql57');
+        };
+
+        $generateMigrations = function () {
+            $this->generateMigrations(['--with-has-table' => true, '--squash' => true]);
+        };
+
+        $this->verify($migrateTemplates, $generateMigrations);
+    }
+
     public function testWillCreateMigrationTable()
     {
         $this->migrateGeneral('mysql57');

@@ -47,6 +47,9 @@ class Setting
     /** @var string */
     private $fkFilename;
 
+    /** @var bool */
+    private $withHasTable;
+
     /**
      * @return string
      */
@@ -237,5 +240,21 @@ class Setting
     public function setDate(Carbon $date): void
     {
         $this->date = $date;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWithHasTable(): bool
+    {
+        return $this->withHasTable;
+    }
+
+    /**
+     * @param  bool  $withHasTable
+     */
+    public function setWithHasTable(bool $withHasTable): void
+    {
+        $this->withHasTable = $withHasTable;
     }
 }
