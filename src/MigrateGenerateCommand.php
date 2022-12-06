@@ -34,24 +34,24 @@ class MigrateGenerateCommand extends Command
      * @var string
      */
     protected $signature = 'migrate:generate
-                            {tables? : A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments}
+                            {tables? : A list of tables or views you wish to generate migrations for separated by a comma: users,posts,comments}
                             {--c|connection= : The database connection to use}
-                            {--t|tables= : A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments}
-                            {--i|ignore= : A list of Tables or Views you wish to ignore, separated by a comma: users,posts,comments}
+                            {--t|tables= : A list of tables or views you wish to generate migrations for separated by a comma: users,posts,comments}
+                            {--i|ignore= : A list of tables or views you wish to ignore, separated by a comma: users,posts,comments}
                             {--p|path= : Where should the file be created?}
                             {--tp|template-path= : The location of the template for this generator}
-                            {--date= : Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format supported by Carbon::parse}
+                            {--date= : Migrations will be created with specified date. Views and foreign keys will be created with + 1 second. Date should be in format supported by Carbon::parse}
                             {--table-filename= : Define table migration filename, default pattern: [datetime]_create_[name]_table.php}
                             {--view-filename= : Define view migration filename, default pattern: [datetime]_create_[name]_view.php}
                             {--proc-filename= : Define stored procedure migration filename, default pattern: [datetime]_create_[name]_proc.php}
                             {--fk-filename= : Define foreign key migration filename, default pattern: [datetime]_add_foreign_keys_to_[name]_table.php}
+                            {--log-with-batch= : Log migrations with given batch number. We recommend using batch number 0 so that it becomes the first migration}
                             {--default-index-names : Don\'t use DB index names for migrations}
                             {--default-fk-names : Don\'t use DB foreign key names for migrations}
                             {--use-db-collation : Generate migrations with existing DB collation}
+                            {--skip-log : Don\'t log into migrations table}
                             {--skip-views : Don\'t generate views}
                             {--skip-proc : Don\'t generate stored procedures}
-                            {--skip-log : Don\'t log into migrations table}
-                            {--log-with-batch= : The migrations batch number}
                             {--squash : Generate all migrations into a single file}
                             {--with-has-table : Check for the existence of a table using `hasTable`}';
 
