@@ -2,7 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
-use Exception;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -11,6 +10,7 @@ use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
+use Throwable;
 
 /**
  * @runTestsInSeparateProcesses
@@ -496,7 +496,7 @@ class CommandTest extends MySQL57TestCase
 
     public function testLogWithBatchNaN()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(Throwable::class);
         $this->expectExceptionMessage('--log-with-batch must be a valid integer.');
 
         $this->artisan(
