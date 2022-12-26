@@ -128,7 +128,7 @@ Run `php artisan help migrate:generate` for a list of options.
 | --view-filename[=VIEW-FILENAME]      | Define view migration filename, default pattern: `[datetime]\_create_[name]_view.php`                                                                         |
 | --proc-filename[=PROC-FILENAME]      | Define stored procedure filename, default pattern: `[datetime]\_create_[name]_proc.php`                                                                       |
 | --fk-filename[=FK-FILENAME]          | Define foreign key migration filename, default pattern: `[datetime]\_add_foreign_keys_to_[name]_table.php`                                                    |
-| --log-with-batch[=LOG-WITH-BATCH]    | The migrations batch number                                                                                                                                   |
+| --log-with-batch[=LOG-WITH-BATCH]    | Log migrations with given batch number. We recommend using batch number 0 so that it becomes the first migration                                              |
 | --default-index-names                | Don\'t use DB index names for migrations                                                                                                                      |
 | --default-fk-names                   | Don\'t use DB foreign key names for migrations                                                                                                                |
 | --use-db-collation                   | Generate migrations with existing DB collation                                                                                                                |

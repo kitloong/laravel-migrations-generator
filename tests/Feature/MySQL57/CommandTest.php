@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
+use Exception;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -490,6 +491,20 @@ class CommandTest extends MySQL57TestCase
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
             $this->getStorageSqlPath('actual.sql')
+        );
+    }
+
+    public function testLogWithBatchNaN()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('--log-with-batch must be a valid integer.');
+
+        $this->artisan(
+            'migrate:generate',
+            [
+                '--path'           => $this->getStorageMigrationsPath(),
+                '--log-with-batch' => 'Not a number',
+            ]
         );
     }
 

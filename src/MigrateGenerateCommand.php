@@ -281,16 +281,11 @@ class MigrateGenerateCommand extends Command
      *
      * @param  string  $defaultConnection
      * @return void
+     * @throws \Exception
      */
     protected function askIfLogMigrationTable(string $defaultConnection): void
     {
-        if ($this->option('no-interaction') || $this->option('skip-log')) {
-            return;
-        }
-
-        if ($this->option('log-with-batch') !== null) {
-            $this->shouldLog       = true;
-            $this->nextBatchNumber = (int) $this->option('log-with-batch');
+        if ($this->skipInput()) {
             return;
         }
 
@@ -321,6 +316,32 @@ class MigrateGenerateCommand extends Command
             'Next Batch Number is: ' . $this->repository->getNextBatchNumber() . '. We recommend using Batch Number 0 so that it becomes the "first" migration.',
             0
         );
+    }
+
+    /**
+     * Checks if should skip gather input from the user.
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    protected function skipInput(): bool
+    {
+        if ($this->option('no-interaction') || $this->option('skip-log')) {
+            return true;
+        }
+
+        if ($this->option('log-with-batch') === null) {
+            return false;
+        }
+
+        if (!ctype_digit($this->option('log-with-batch'))) {
+            throw new Exception('--log-with-batch must be a valid integer.');
+        }
+
+        $this->shouldLog       = true;
+        $this->nextBatchNumber = (int) $this->option('log-with-batch');
+
+        return true;
     }
 
     /**
