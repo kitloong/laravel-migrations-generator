@@ -134,6 +134,22 @@ final class ColumnType extends Enum
     public static function fromDBALType(Type $dbalType): self
     {
         $map = Types::BUILTIN_TYPES_MAP + Types::ADDITIONAL_TYPES_MAP;
-        return self::from($map[get_class($dbalType)]);
+        return self::fromValue($map[get_class($dbalType)]);
+    }
+
+    /**
+     * Initiate an instance from value.
+     *
+     * @param  mixed  $value
+     * @return static
+     */
+    public static function fromValue($value): self
+    {
+        if (method_exists(Enum::class, 'from')) {
+            return parent::from($value);
+        }
+
+        $key = self::search($value);
+        return self::__callStatic($key, []);
     }
 }

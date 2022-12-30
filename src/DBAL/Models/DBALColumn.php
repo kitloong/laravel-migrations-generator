@@ -333,7 +333,7 @@ abstract class DBALColumn implements Column
             return;
         }
 
-        $this->type = ColumnType::from(str_replace('Integer', 'Increments', $this->type));
+        $this->type = ColumnType::fromValue(str_replace('Integer', 'Increments', $this->type));
     }
 
     /**
@@ -357,7 +357,7 @@ abstract class DBALColumn implements Column
             return;
         }
 
-        $this->type = ColumnType::from('unsigned' . ucfirst($this->type));
+        $this->type = ColumnType::fromValue('unsigned' . ucfirst($this->type));
     }
 
     /**
