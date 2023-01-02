@@ -19,6 +19,7 @@ class MigrationWriterTest extends TestCase
     {
         $setting = app(Setting::class);
         $setting->setDefaultConnection(DB::getDefaultConnection());
+        $setting->setWithHasTable(false);
 
         $this->mock(TableName::class, function (MockInterface $mock) {
             $mock->shouldReceive('stripPrefix')

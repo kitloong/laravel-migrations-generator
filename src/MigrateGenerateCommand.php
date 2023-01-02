@@ -34,23 +34,26 @@ class MigrateGenerateCommand extends Command
      * @var string
      */
     protected $signature = 'migrate:generate
-                            {tables? : A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments}
+                            {tables? : A list of tables or views you wish to generate migrations for separated by a comma: users,posts,comments}
                             {--c|connection= : The database connection to use}
-                            {--t|tables= : A list of Tables or Views you wish to Generate Migrations for separated by a comma: users,posts,comments}
-                            {--i|ignore= : A list of Tables or Views you wish to ignore, separated by a comma: users,posts,comments}
+                            {--t|tables= : A list of tables or views you wish to generate migrations for separated by a comma: users,posts,comments}
+                            {--i|ignore= : A list of tables or views you wish to ignore, separated by a comma: users,posts,comments}
                             {--p|path= : Where should the file be created?}
                             {--tp|template-path= : The location of the template for this generator}
-                            {--date= : Migrations will be created with specified date. Views and Foreign keys will be created with + 1 second. Date should be in format supported by Carbon::parse}
+                            {--date= : Migrations will be created with specified date. Views and foreign keys will be created with + 1 second. Date should be in format supported by Carbon::parse}
                             {--table-filename= : Define table migration filename, default pattern: [datetime]_create_[name]_table.php}
                             {--view-filename= : Define view migration filename, default pattern: [datetime]_create_[name]_view.php}
                             {--proc-filename= : Define stored procedure migration filename, default pattern: [datetime]_create_[name]_proc.php}
                             {--fk-filename= : Define foreign key migration filename, default pattern: [datetime]_add_foreign_keys_to_[name]_table.php}
+                            {--log-with-batch= : Log migrations with given batch number. We recommend using batch number 0 so that it becomes the first migration}
                             {--default-index-names : Don\'t use DB index names for migrations}
                             {--default-fk-names : Don\'t use DB foreign key names for migrations}
                             {--use-db-collation : Generate migrations with existing DB collation}
+                            {--skip-log : Don\'t log into migrations table}
                             {--skip-views : Don\'t generate views}
                             {--skip-proc : Don\'t generate stored procedures}
-                            {--squash : Generate all migrations into a single file}';
+                            {--squash : Generate all migrations into a single file}
+                            {--with-has-table : Check for the existence of a table using `hasTable`}';
 
     /**
      * The console command description.
@@ -142,10 +145,11 @@ class MigrateGenerateCommand extends Command
     {
         $setting = app(Setting::class);
         $setting->setDefaultConnection($connection);
-        $setting->setUseDBCollation($this->option('use-db-collation'));
-        $setting->setIgnoreIndexNames($this->option('default-index-names'));
-        $setting->setIgnoreForeignKeyNames($this->option('default-fk-names'));
+        $setting->setUseDBCollation((bool) $this->option('use-db-collation'));
+        $setting->setIgnoreIndexNames((bool) $this->option('default-index-names'));
+        $setting->setIgnoreForeignKeyNames((bool) $this->option('default-fk-names'));
         $setting->setSquash((bool) $this->option('squash'));
+        $setting->setWithHasTable((bool) $this->option('with-has-table'));
 
         $setting->setPath(
             $this->option('path') ?? Config::get('migrations-generator.migration_target_path')
@@ -277,12 +281,15 @@ class MigrateGenerateCommand extends Command
      *
      * @param  string  $defaultConnection
      * @return void
+     * @throws \Exception
      */
     protected function askIfLogMigrationTable(string $defaultConnection): void
     {
-        if (!$this->option('no-interaction')) {
-            $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table?', true);
+        if ($this->skipInput()) {
+            return;
         }
+
+        $this->shouldLog = $this->confirm('Do you want to log these migrations in the migrations table?', true);
 
         if (!$this->shouldLog) {
             return;
@@ -309,6 +316,32 @@ class MigrateGenerateCommand extends Command
             'Next Batch Number is: ' . $this->repository->getNextBatchNumber() . '. We recommend using Batch Number 0 so that it becomes the "first" migration.',
             0
         );
+    }
+
+    /**
+     * Checks if should skip gather input from the user.
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    protected function skipInput(): bool
+    {
+        if ($this->option('no-interaction') || $this->option('skip-log')) {
+            return true;
+        }
+
+        if ($this->option('log-with-batch') === null) {
+            return false;
+        }
+
+        if (!ctype_digit($this->option('log-with-batch'))) {
+            throw new Exception('--log-with-batch must be a valid integer.');
+        }
+
+        $this->shouldLog       = true;
+        $this->nextBatchNumber = (int) $this->option('log-with-batch');
+
+        return true;
     }
 
     /**
