@@ -206,8 +206,8 @@ class PgSQLRepository extends Repository
             "SELECT proname, pg_get_functiondef(pg_proc.oid) AS definition
             FROM pg_catalog.pg_proc
                 JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
-            WHERE prokind = 'p'
-                AND pg_namespace.nspname = '$searchPath'"
+                JOIN pg_language ON pg_catalog.pg_proc.prolang = pg_language.oid
+            WHERE pg_language.lanname = 'sql' AND pg_namespace.nspname = '$searchPath' ORDER BY proname"
         );
 
         foreach ($procedures as $procedure) {
