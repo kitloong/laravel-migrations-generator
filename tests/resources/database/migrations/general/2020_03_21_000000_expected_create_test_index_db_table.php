@@ -58,13 +58,14 @@ class ExpectedCreateTestIndex_DB_Table extends TestMigration
                 $table->fullText('chain');
             }
 
-            if (DB::getDriverName() === Driver::MYSQL()->getValue()) {
-                $table->index(['col_multi1', DB::raw('col_multi2(16)')], 'with_length_multi_custom');
-                $table->string('with_length');
-                $table->string('with_length_custom');
-                $table->index([DB::raw('with_length(16)')]);
-                $table->index([DB::raw('with_length_custom(16)')], 'with_length_custom');
-            }
+            // TODO Laravel 10 does not support `$table->index(DB::raw("with_length(16)"))`
+//            if (DB::getDriverName() === Driver::MYSQL()->getValue()) {
+//                $table->index(['col_multi1', DB::raw('col_multi2(16)')], 'with_length_multi_custom');
+//                $table->string('with_length');
+//                $table->string('with_length_custom');
+//                $table->index([DB::raw('with_length(16)')]);
+//                $table->index([DB::raw('with_length_custom(16)')], 'with_length_custom');
+//            }
         });
     }
 
