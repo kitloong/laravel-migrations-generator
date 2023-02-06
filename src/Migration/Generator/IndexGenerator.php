@@ -3,7 +3,6 @@
 namespace KitLoong\MigrationsGenerator\Migration\Generator;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
@@ -54,9 +53,10 @@ class IndexGenerator
                 return $carry;
             }
 
-            if ($index->getLengths()[0] !== null) {
-                return $carry;
-            }
+            // TODO Laravel 10 does not support `$table->index(DB::raw("with_length(16)"))`
+//            if ($index->getLengths()[0] !== null) {
+//                return $carry;
+//            }
 
             $columnName = $index->getColumns()[0];
 
@@ -120,12 +120,12 @@ class IndexGenerator
     {
         $cols = [];
 
-        foreach ($index->getColumns() as $i => $column) {
-            if ($index->getLengths()[$i] !== null) {
-                $cols[] = DB::raw($column . '(' . $index->getLengths()[$i] . ')');
-                continue;
-            }
-
+        foreach ($index->getColumns() as $column) {
+            // TODO Laravel 10 does not support `$table->index(DB::raw("with_length(16)"))`
+//            if ($index->getLengths()[$i] !== null) {
+//                $cols[] = DB::raw($column . '(' . $index->getLengths()[$i] . ')');
+//                continue;
+//            }
             $cols[] = $column;
         }
 

@@ -109,7 +109,7 @@ abstract class FeatureTestCase extends TestCase
             File::put($this->getStorageFromPath($file->getBasename()), $content);
             File::move(
                 $this->getStorageFromPath($file->getBasename()),
-                $this->getStorageFromPath(str_replace('_db_', "_${connection}_", $file->getBasename()))
+                $this->getStorageFromPath(str_replace('_db_', "_{$connection}_", $file->getBasename()))
             );
         }
 
