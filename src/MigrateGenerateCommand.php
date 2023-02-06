@@ -113,10 +113,10 @@ class MigrateGenerateCommand extends Command
 
             $this->info('Using connection: ' . $connection . "\n");
 
-            $tables       = $this->filterTables()->sortBy(function ($value, $key) {
+            $tables       = $this->filterTables()->sortBy(function ($value) {
                 return (string) $value;
             }, SORT_STRING);
-            $views        = $this->filterViews()->sortBy(function ($value, $key) {
+            $views        = $this->filterViews()->sortBy(function ($value) {
                 return (string) $value;
             }, SORT_STRING);
             $generateList = $tables->merge($views)->unique();
