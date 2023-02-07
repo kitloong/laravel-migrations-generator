@@ -99,11 +99,19 @@ jobs:
             dbal: 2.*
             sqlsrv_extension: pdo_sqlsrv
           - php: 8.1
+            laravel: 10.*
+            dbal: 3.*
+            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
+          - php: 8.1
             laravel: 9.*
             dbal: 3.*
             sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
           - php: 8.1
             laravel: 8.*
+            dbal: 3.*
+            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
+          - php: 8.2
+            laravel: 10.*
             dbal: 3.*
             sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
           - php: 8.2

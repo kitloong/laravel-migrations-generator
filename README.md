@@ -25,6 +25,7 @@ Laravel Migrations Generator supports all five Laravel first-party support datab
 
 | Laravel       | Version                                         |
 |---------------|-------------------------------------------------|
+| 10.x          | 6.x                                             |
 | 9.x           | 6.x                                             |
 | 8.x           | 6.x                                             |
 | 7.x           | 6.x                                             |

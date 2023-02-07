@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator\Migration\Blueprint\Support;
 
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
 
 trait Stringable
@@ -60,7 +61,7 @@ trait Stringable
             default:
                 // Wrap with DB::raw();
                 if ($value instanceof Expression) {
-                    return 'DB::raw("' . $this->escapeDoubleQuote($value) . '")';
+                    return 'DB::raw("' . $this->escapeDoubleQuote(DB::getSchemaGrammar()->getValue($value)) . '")';
                 }
 
                 return (string) $value;
