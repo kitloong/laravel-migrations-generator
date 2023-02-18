@@ -113,8 +113,8 @@ class MigrateGenerateCommand extends Command
 
             $this->info('Using connection: ' . $connection . "\n");
 
-            $tables       = $this->filterTables();
-            $views        = $this->filterViews();
+            $tables       = $this->filterTables()->sort()->values();
+            $views        = $this->filterViews()->sort()->values();
             $generateList = $tables->merge($views)->unique();
 
             $this->info('Generating migrations for: ' . $generateList->implode(',') . "\n");
