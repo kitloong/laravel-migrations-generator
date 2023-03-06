@@ -61,7 +61,7 @@ trait Stringable
             default:
                 // Wrap with DB::raw();
                 if ($value instanceof Expression) {
-                    return 'DB::raw("' . $this->escapeDoubleQuote(DB::getSchemaGrammar()->getValue($value)) . '")';
+                    return 'DB::raw("' . $this->escapeDoubleQuote(DB::getQueryGrammar()->getValue($value)) . '")';
                 }
 
                 return (string) $value;
