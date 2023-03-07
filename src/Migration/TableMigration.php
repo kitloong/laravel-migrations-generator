@@ -121,7 +121,7 @@ class TableMigration
             $blueprint->setLineBreak();
         }
 
-        if ($this->hasTableComment() && $table->getComment() !== null) {
+        if ($this->hasTableComment() && $table->getComment() !== null && $table->getComment() !== '') {
             $blueprint->setMethod(new Method(TableMethod::COMMENT(), $table->getComment()));
         }
 

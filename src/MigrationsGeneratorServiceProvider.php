@@ -49,17 +49,24 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
             [
                 Setting::class           => Setting::class,
                 MySQLRepository::class   => MySQLRepository::class,
-                MySQLSchema::class       => DBALMySQLSchema::class,
                 PgSQLRepository::class   => PgSQLRepository::class,
-                PgSQLSchema::class       => DBALPgSQLSchema::class,
                 SQLiteRepository::class  => SQLiteRepository::class,
-                SQLiteSchema::class      => DBALSQLiteSchema::class,
                 SQLSrvRepository::class  => SQLSrvRepository::class,
-                SQLSrvSchema::class      => DBALSQLSrvSchema::class,
                 MariaDBRepository::class => MariaDBRepository::class,
             ] as $abstract => $concrete
         ) {
             $this->app->singleton($abstract, $concrete);
+        }
+
+        foreach (
+            [
+                MySQLSchema::class  => DBALMySQLSchema::class,
+                PgSQLSchema::class  => DBALPgSQLSchema::class,
+                SQLiteSchema::class => DBALSQLiteSchema::class,
+                SQLSrvSchema::class => DBALSQLSrvSchema::class,
+            ] as $abstract => $concrete
+        ) {
+            $this->app->bind($abstract, $concrete);
         }
 
         // Bind the Repository Interface to $app['migrations.repository']

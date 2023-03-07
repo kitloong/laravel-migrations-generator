@@ -132,6 +132,7 @@ class MigrateGenerateCommand extends Command
             }
         } finally {
             DB::setDefaultConnection($previousConnection);
+            app()->forgetInstance(Setting::class);
         }
     }
 

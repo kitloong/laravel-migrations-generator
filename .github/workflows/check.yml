@@ -27,7 +27,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction
 
       - name: phpcs
-        run: vendor/bin/phpcs
+        run: composer run phpcs
 
       - name: phpstan
         run: composer run phpstan
