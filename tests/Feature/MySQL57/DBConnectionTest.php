@@ -60,22 +60,7 @@ class DBConnectionTest extends MySQL57TestCase
             // Needed for Laravel 6 and below.
             DB::setDefaultConnection('mysql8');
 
-            $this->artisan(
-                'migrate:generate',
-                [
-                    '--connection' => 'mysql57',
-                    '--path'       => $this->getStorageMigrationsPath(),
-                ]
-            )
-                ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
-                ->expectsQuestion(
-                    'Log into current connection: mysql57? [Y = mysql57, n = mysql8 (default connection)]',
-                    true
-                )
-                ->expectsQuestion(
-                    'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
-                    '0'
-                );
+            $this->generateMigrations(['--connection' => 'mysql57']);
 
             $totalMigrations = count(File::allFiles($this->getStorageMigrationsPath()));
 
