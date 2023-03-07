@@ -141,17 +141,34 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function generateMigrations(array $options = []): void
     {
-        $this->artisan(
+        $expectConnectionQuestion = false;
+
+        if (
+            array_key_exists('--connection', $options)
+            && $options['--connection'] !== config('database.default')
+        ) {
+            $expectConnectionQuestion = true;
+        }
+
+        $command = $this->artisan(
             'migrate:generate',
             array_merge([
                 '--path' => $this->getStorageMigrationsPath(),
             ], $options)
-        )
-            ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
-            ->expectsQuestion(
-                'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
-                '0'
+        );
+        $command->expectsQuestion('Do you want to log these migrations in the migrations table?', true);
+
+        if ($expectConnectionQuestion) {
+            $command->expectsQuestion(
+                'Log into current connection: ' . $options['--connection'] . '? [Y = ' . $options['--connection'] . ', n = ' . config('database.default') . ' (default connection)]',
+                true
             );
+        }
+
+        $command->expectsQuestion(
+            'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
+            '0'
+        );
     }
 
     protected function assertMigrations(): void
