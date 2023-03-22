@@ -77,7 +77,27 @@
   <rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints"/>
   <rule ref="SlevomatCodingStandard.TypeHints.NullTypeHintOnLastPosition"/>
   <rule ref="SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue"/>
+  <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint">
+    <properties>
+      <property name="enableObjectTypeHint" value="false"/>
+      <property name="enableMixedTypeHint" value="false"/>
+      <property name="enableUnionTypeHint" value="false"/>
+      <property name="enableIntersectionTypeHint" value="false"/>
+      <property name="enableStandaloneNullTrueFalseTypeHints" value="false"/>
+    </properties>
+  </rule>
   <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
+  <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
+    <properties>
+      <property name="enableObjectTypeHint" value="false"/>
+      <property name="enableStaticTypeHint" value="false"/>
+      <property name="enableMixedTypeHint" value="false"/>
+      <property name="enableUnionTypeHint" value="false"/>
+      <property name="enableIntersectionTypeHint" value="false"/>
+      <property name="enableNeverTypeHint" value="false"/>
+      <property name="enableStandaloneNullTrueFalseTypeHints" value="false"/>
+    </properties>
+  </rule>
   <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>
   <rule ref="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
   <rule ref="SlevomatCodingStandard.TypeHints.UselessConstantTypeHint"/>

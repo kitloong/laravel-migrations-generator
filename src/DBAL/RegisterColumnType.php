@@ -94,7 +94,6 @@ class RegisterColumnType
      * Register additional column types which are not supported by the framework.
      *
      * @note Uses {@see \Doctrine\DBAL\Types\Type::__construct} instead of {@see \Doctrine\DBAL\Types\Type::addType} here as workaround.
-     * @return void
      * @throws \Doctrine\DBAL\Exception
      * @SuppressWarnings(PHPMD.UnusedFormalParameter) to suppress `getSQLDeclaration` warning.
      */
@@ -104,11 +103,17 @@ class RegisterColumnType
             $customType = new class () extends CustomType {
                 public $type = '';
 
+                /**
+                 * @inheritDoc
+                 */
                 public function getSQLDeclaration(array $column, AbstractPlatform $platform)
                 {
                     return $this->type;
                 }
 
+                /**
+                 * @inheritDoc
+                 */
                 public function getName()
                 {
                     return $this->type;
@@ -148,7 +153,6 @@ class RegisterColumnType
     /**
      * Add or override doctrine type.
      *
-     * @param  string  $type
      * @param  class-string<\Doctrine\DBAL\Types\Type>  $class  The class name which is extends {@see \Doctrine\DBAL\Types\Type}.
      * @throws \Doctrine\DBAL\Exception
      */
@@ -165,8 +169,6 @@ class RegisterColumnType
     /**
      * Registers a doctrine type to be used in conjunction with a column type of this platform.
      *
-     * @param  string  $dbType
-     * @param  string  $doctrineType
      * @throws \Doctrine\DBAL\Exception
      */
     private function registerDoctrineTypeMapping(string $dbType, string $doctrineType): void

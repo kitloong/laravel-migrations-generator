@@ -14,7 +14,6 @@ class MariaDBRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
-     * @return \KitLoong\MigrationsGenerator\Repositories\Entities\MariaDB\CheckConstraint|null
      */
     public function getCheckConstraintForJson(string $table, string $column): ?CheckConstraint
     {

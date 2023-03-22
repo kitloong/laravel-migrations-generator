@@ -60,8 +60,6 @@ class SQLiteColumn extends DBALColumn
      * If column is integer and primary key,
      * doctrine/dbal assume the column is autoincrement, but it could be wrong.
      * Should check full sql statement from sqlite_master to ensure autoincrement is written corretly.
-     *
-     * @return void
      */
     private function setAutoincrement(): void
     {

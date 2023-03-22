@@ -106,10 +106,6 @@ abstract class DBALColumn implements Column
 
     private const REMEMBER_TOKEN_LENGTH = 100;
 
-    /**
-     * @param  string  $table
-     * @param  \Doctrine\DBAL\Schema\Column  $column
-     */
     public function __construct(string $table, DoctrineDBALColumn $column)
     {
         $this->tableName                = $table;
@@ -142,8 +138,6 @@ abstract class DBALColumn implements Column
 
     /**
      * Instance extend this abstract may run special handling.
-     *
-     * @return void
      */
     abstract protected function handle(): void;
 
@@ -304,7 +298,6 @@ abstract class DBALColumn implements Column
      * If the DB supports unsigned, should check if the column is unsigned.
      *
      * @param  bool  $supportUnsigned  DB support unsigned integer.
-     * @return void
      */
     protected function setTypeToIncrements(bool $supportUnsigned): void
     {
@@ -338,8 +331,6 @@ abstract class DBALColumn implements Column
 
     /**
      * Set the column type to "unsigned*" if the column is unsigned.
-     *
-     * @return void
      */
     protected function setTypeToUnsigned(): void
     {
@@ -362,8 +353,6 @@ abstract class DBALColumn implements Column
 
     /**
      * Set the column type to "softDeletes" or "softDeletesTz".
-     *
-     * @return void
      */
     private function setTypeToSoftDeletes(): void
     {
@@ -384,8 +373,6 @@ abstract class DBALColumn implements Column
 
     /**
      * Set the column type to "rememberToken".
-     *
-     * @return void
      */
     private function setTypeToRememberToken(): void
     {
@@ -402,8 +389,6 @@ abstract class DBALColumn implements Column
 
     /**
      * Set the column type to "char".
-     *
-     * @return void
      */
     private function setTypeToChar(): void
     {
@@ -418,8 +403,6 @@ abstract class DBALColumn implements Column
      * When double is created without total and places, $table->double('double');
      * Doctrine DBAL return precisions 10 and scale 0.
      * Reset precisions and scale to 0 here.
-     *
-     * @return void
      */
     private function fixDoubleLength(): void
     {
@@ -437,9 +420,6 @@ abstract class DBALColumn implements Column
 
     /**
      * Escape `'` with `''`.
-     *
-     * @param  string|null  $default
-     * @return string|null
      */
     protected function escapeDefault(?string $default): ?string
     {
@@ -453,9 +433,6 @@ abstract class DBALColumn implements Column
 
     /**
      * Escape `\` with `\\`.
-     *
-     * @param  string|null  $comment
-     * @return string|null
      */
     protected function escapeComment(?string $comment): ?string
     {

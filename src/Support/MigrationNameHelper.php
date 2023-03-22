@@ -18,8 +18,6 @@ class MigrationNameHelper
 
     /**
      * Makes file path for temporary `up` migration.
-     *
-     * @return string
      */
     public function makeUpTempPath(): string
     {
@@ -29,8 +27,6 @@ class MigrationNameHelper
 
     /**
      * Makes file path for temporary `down` migration.
-     *
-     * @return string
      */
     public function makeDownTempPath(): string
     {
@@ -44,7 +40,6 @@ class MigrationNameHelper
      * @param  string  $pattern  Naming pattern for migration filename.
      * @param  string  $datetime  Current datetime for filename prefix.
      * @param  string  $name  Name.
-     * @return string
      */
     public function makeFilename(string $pattern, string $datetime, string $name): string
     {
@@ -63,7 +58,6 @@ class MigrationNameHelper
      *
      * @param  string  $pattern  Naming pattern for class.
      * @param  string  $name  Name.
-     * @return string
      */
     public function makeClassName(string $pattern, string $name): string
     {

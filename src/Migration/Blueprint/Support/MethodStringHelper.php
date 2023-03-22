@@ -10,10 +10,6 @@ trait MethodStringHelper
 {
     /**
      * Generates method string with `connection` if `--connection=other` option is used.
-     *
-     * @param  string  $class
-     * @param  string  $method
-     * @return string
      */
     public function connection(string $class, string $method): string
     {

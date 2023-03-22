@@ -18,7 +18,6 @@ interface Schema
      * Get a table by name.
      *
      * @param  string  $name  Table name.
-     * @return \KitLoong\MigrationsGenerator\Schema\Models\Table
      */
     public function getTable(string $name): Table;
 
@@ -39,7 +38,6 @@ interface Schema
     /**
      * Get a list of foreign keys.
      *
-     * @param  string  $table
      * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>
      */
     public function getTableForeignKeys(string $table): Collection;

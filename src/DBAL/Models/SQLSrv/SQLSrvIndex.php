@@ -31,8 +31,6 @@ class SQLSrvIndex extends DBALIndex
 
     /**
      * Change the index type to `spatial` if the name is in the spatial index name list.
-     *
-     * @return void
      */
     private function changeTypeToSpatial(): void
     {
@@ -49,7 +47,6 @@ class SQLSrvIndex extends DBALIndex
      * Reset primary index name to empty if the name is using default naming convention.
      *
      * @see https://learnsql.com/cookbook/what-is-the-default-constraint-name-in-sql-server/ for default naming convention.
-     * @return void
      */
     private function resetPrimaryNameToEmptyIfIsDefaultName(): void
     {

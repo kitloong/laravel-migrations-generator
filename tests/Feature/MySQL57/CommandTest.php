@@ -20,20 +20,20 @@ class CommandTest extends MySQL57TestCase
 {
     use CheckMigrationMethod;
 
-    public function testRun()
+    public function testRun(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('mysql57');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testDown()
+    public function testDown(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -51,33 +51,33 @@ class CommandTest extends MySQL57TestCase
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
-    public function testCollation()
+    public function testCollation(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateCollation('mysql57');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--use-db-collation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testSquashUp()
+    public function testSquashUp(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('mysql57');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--squash' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testSquashDown()
+    public function testSquashDown(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -95,7 +95,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
-    public function testTables()
+    public function testTables(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -125,7 +125,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertContains('users_mysql57_view', $views);
     }
 
-    public function testIgnore()
+    public function testIgnore(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -157,7 +157,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertEmpty(array_intersect($ignores, $tables));
     }
 
-    public function testDefaultIndexNames()
+    public function testDefaultIndexNames(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -218,7 +218,7 @@ class CommandTest extends MySQL57TestCase
         );
     }
 
-    public function testDefaultFKNames()
+    public function testDefaultFKNames(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -252,20 +252,20 @@ class CommandTest extends MySQL57TestCase
         $this->rollbackMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
     }
 
-    public function testDate()
+    public function testDate(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('mysql57');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--date' => '2021-10-08 09:30:40']);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testTableFilenameAndViewFilename()
+    public function testTableFilenameAndViewFilename(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -286,7 +286,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertContains('custom_users_mysql57_view_view', $migrations);
     }
 
-    public function testProcedureFilename()
+    public function testProcedureFilename(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -303,7 +303,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertContains('custom_findNameWithHyphenmysql57_proc', $migrations);
     }
 
-    public function testFKFilename()
+    public function testFKFilename(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -320,7 +320,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertContains('custom_user_profile_mysql57_table', $migrations);
     }
 
-    public function testSkipView()
+    public function testSkipView(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -339,7 +339,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertNotContains('create_users_mysql57_view_view', $migrations);
     }
 
-    public function testSkipProcedure()
+    public function testSkipProcedure(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -358,33 +358,33 @@ class CommandTest extends MySQL57TestCase
         $this->assertNotContains('create_getNameWithHyphen_proc', $migrations);
     }
 
-    public function testWithHasTable()
+    public function testWithHasTable(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('mysql57');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--with-has-table' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testWithHasTableSquash()
+    public function testWithHasTableSquash(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('mysql57');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--with-has-table' => true, '--squash' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testWillCreateMigrationTable()
+    public function testWillCreateMigrationTable(): void
     {
         $this->migrateGeneral('mysql57');
         Schema::dropIfExists('migrations');
@@ -394,7 +394,7 @@ class CommandTest extends MySQL57TestCase
         $this->assertTrue(Schema::hasTable('migrations'));
     }
 
-    public function testNoInteraction()
+    public function testNoInteraction(): void
     {
         $this->migrateGeneral('mysql57');
         $this->truncateMigrationsTable();
@@ -417,7 +417,7 @@ class CommandTest extends MySQL57TestCase
         );
     }
 
-    public function testSkipLog()
+    public function testSkipLog(): void
     {
         $this->migrateGeneral('mysql57');
         $this->truncateMigrationsTable();
@@ -440,7 +440,7 @@ class CommandTest extends MySQL57TestCase
         );
     }
 
-    public function testLogWithBatch0()
+    public function testLogWithBatch0(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -466,7 +466,7 @@ class CommandTest extends MySQL57TestCase
         );
     }
 
-    public function testLogWithBatch99()
+    public function testLogWithBatch99(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -494,7 +494,7 @@ class CommandTest extends MySQL57TestCase
         );
     }
 
-    public function testLogWithBatchNaN()
+    public function testLogWithBatchNaN(): void
     {
         $this->expectException(Throwable::class);
         $this->expectExceptionMessage('--log-with-batch must be a valid integer.');
@@ -508,7 +508,7 @@ class CommandTest extends MySQL57TestCase
         );
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations)
+    private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
 

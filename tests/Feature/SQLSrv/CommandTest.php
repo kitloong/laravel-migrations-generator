@@ -30,9 +30,9 @@ class CommandTest extends SQLSrvTestCase
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function testRun()
+    public function testRun(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('sqlsrv');
 
             DB::statement(
@@ -40,14 +40,14 @@ class CommandTest extends SQLSrvTestCase
             );
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testUnsupportedColumns()
+    public function testUnsupportedColumns(): void
     {
         DB::statement(
             "CREATE TABLE custom_sqlsrv (
@@ -78,7 +78,7 @@ class CommandTest extends SQLSrvTestCase
         );
     }
 
-    public function testDown()
+    public function testDown(): void
     {
         $this->migrateGeneral('sqlsrv');
 
@@ -99,20 +99,20 @@ class CommandTest extends SQLSrvTestCase
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function testCollation()
+    public function testCollation(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateCollation('sqlsrv');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--use-db-collation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testGenerateXml()
+    public function testGenerateXml(): void
     {
         $this->migrateGeneral('sqlsrv');
 
@@ -127,11 +127,9 @@ class CommandTest extends SQLSrvTestCase
     }
 
     /**
-     * @param  callable  $migrateTemplates
-     * @param  callable  $generateMigrations
      * @throws \Doctrine\DBAL\Exception
      */
-    private function verify(callable $migrateTemplates, callable $generateMigrations)
+    private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
 

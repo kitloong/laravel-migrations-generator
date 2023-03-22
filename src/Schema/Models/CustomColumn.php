@@ -9,15 +9,11 @@ interface CustomColumn extends Model
 {
     /**
      * Get the column name.
-     *
-     * @return string
      */
     public function getName(): string;
 
     /**
      * Get the table name.
-     *
-     * @return string
      */
     public function getTableName(): string;
 

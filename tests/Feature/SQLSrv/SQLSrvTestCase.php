@@ -12,7 +12,10 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 {
     use CheckLaravelVersion;
 
-    protected function getEnvironmentSetUp($app)
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 
@@ -112,6 +115,9 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         }
     }
 
+    /**
+     * @return \stdClass[]
+     */
     protected function getAllProcedures(): array
     {
         return DB::select(
@@ -129,7 +135,6 @@ abstract class SQLSrvTestCase extends FeatureTestCase
      *
      * @param  string  $from  SQL source file path.
      * @param  string  $destination  Output path.
-     * @return void
      */
     private function removeDynamicInformation(string $from, string $destination): void
     {

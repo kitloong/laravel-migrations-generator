@@ -10,7 +10,6 @@ trait TableName
      * Strips table prefix.
      *
      * @param  string  $table  Table name.
-     * @return string
      */
     public function stripTablePrefix(string $table): string
     {
