@@ -2,7 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
@@ -118,7 +117,7 @@ class ViewMigration
         $withoutPrefix = $this->stripTablePrefix($view);
         return $this->migrationNameHelper->makeFilename(
             $this->setting->getViewFilename(),
-            Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
+            $this->setting->getDateForMigrationFilename(),
             $withoutPrefix
         );
     }

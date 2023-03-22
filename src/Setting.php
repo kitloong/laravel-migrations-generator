@@ -235,6 +235,14 @@ class Setting
     }
 
     /**
+     * @return string
+     */
+    public function getDateForMigrationFilename(): string
+    {
+        return $this->date->format('Y_m_d_His');
+    }
+
+    /**
      * @param  \Carbon\Carbon  $date
      */
     public function setDate(Carbon $date): void

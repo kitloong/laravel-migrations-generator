@@ -24,6 +24,10 @@ class PgSQLTable extends DBALTable
         $this->repository = app(PgSQLRepository::class);
 
         $this->pushFulltextIndexes();
+
+        $this->indexes = $this->indexes->sortBy(function (Index $index) {
+            return $index->getName();
+        })->values();
     }
 
     /**

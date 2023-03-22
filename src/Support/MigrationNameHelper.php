@@ -17,37 +17,6 @@ class MigrationNameHelper
     }
 
     /**
-     * Makes class name for table migration.
-     *
-     * @param  string  $table  Table name.
-     * @return string
-     */
-    public function makeTableClassName(string $table): string
-    {
-        $withoutPrefix = $this->stripTablePrefix($table);
-        return $this->makeClassName(
-            $this->setting->getTableFilename(),
-            $withoutPrefix
-        );
-    }
-
-    /**
-     * Makes file path for table migration.
-     *
-     * @param  string  $table  Table name.
-     * @return string
-     */
-    public function makeTablePath(string $table): string
-    {
-        $withoutPrefix = $this->stripTablePrefix($table);
-        return $this->makeFilename(
-            $this->setting->getTableFilename(),
-            $this->setting->getDate()->format('Y_m_d_His'),
-            $withoutPrefix
-        );
-    }
-
-    /**
      * Makes file path for temporary `up` migration.
      *
      * @return string
