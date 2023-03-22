@@ -30,7 +30,7 @@
         "friendsofphp/php-cs-fixer": "^2.19.0|^3.1",
         "nunomaduro/larastan": "^0.4|^0.5|^0.6|^0.7|^1.0|^2.0",
         "phpmd/phpmd": "^2.10",
-        "barryvdh/laravel-ide-helper": "^2.7",
+        "barryvdh/laravel-ide-helper": "^2.5",
         "slevomat/coding-standard": "^6.0|^7.0|^8.5"
     },
     "autoload": {

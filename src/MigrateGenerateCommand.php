@@ -398,19 +398,24 @@ class MigrateGenerateCommand extends Command
      */
     protected function generateMigrations(Collection $tables, Collection $views): void
     {
+        $setting = app(Setting::class);
+
         $this->info('Setting up Tables and Index migrations.');
         $this->generateTables($tables);
 
         if (!$this->option('skip-views')) {
+            $setting->getDate()->addSecond();
             $this->info("\nSetting up Views migrations.");
             $this->generateViews($views);
         }
 
         if (!$this->option('skip-proc')) {
+            $setting->getDate()->addSecond();
             $this->info("\nSetting up Stored Procedures migrations.");
             $this->generateProcedures();
         }
 
+        $setting->getDate()->addSecond();
         $this->info("\nSetting up Foreign Key migrations.");
         $this->generateForeignKeys($tables);
     }

@@ -101,7 +101,7 @@ class RegisterColumnType
     private function registerLaravelCustomColumnType(): void
     {
         foreach ($this->getCustomTypes() as $type) {
-            $customType       = new class () extends CustomType {
+            $customType = new class () extends CustomType {
                 public $type = '';
 
                 public function getSQLDeclaration(array $column, AbstractPlatform $platform)
@@ -114,6 +114,7 @@ class RegisterColumnType
                     return $this->type;
                 }
             };
+
             $customType->type = $type;
 
             if (Type::hasType($type)) {

@@ -2,7 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\DBUnpreparedBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
@@ -112,7 +111,7 @@ class ProcedureMigration
     {
         return $this->migrationNameHelper->makeFilename(
             $this->setting->getProcedureFilename(),
-            Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
+            $this->setting->getDateForMigrationFilename(),
             $procedure
         );
     }

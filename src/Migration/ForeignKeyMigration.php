@@ -2,7 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\Migration;
 
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
@@ -147,7 +146,7 @@ class ForeignKeyMigration
         $withoutPrefix = $this->stripTablePrefix($table);
         return $this->migrationNameHelper->makeFilename(
             $this->setting->getFkFilename(),
-            Carbon::parse($this->setting->getDate())->addSecond()->format('Y_m_d_His'),
+            $this->setting->getDateForMigrationFilename(),
             $withoutPrefix
         );
     }

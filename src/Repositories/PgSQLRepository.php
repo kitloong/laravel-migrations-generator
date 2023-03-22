@@ -143,7 +143,8 @@ class PgSQLRepository extends Repository
                        indexdef
                 FROM pg_indexes
                 WHERE tablename = '$table'
-                    AND indexdef LIKE '%to_tsvector(%'"
+                    AND indexdef LIKE '%to_tsvector(%'
+                ORDER BY indexname"
         );
         $definitions = new Collection();
 

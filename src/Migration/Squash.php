@@ -38,7 +38,7 @@ class Squash
     {
         $path = $this->migrationNameHelper->makeFilename(
             $this->setting->getTableFilename(),
-            $this->setting->getDate()->format('Y_m_d_His'),
+            $this->setting->getDateForMigrationFilename(),
             DB::getDatabaseName()
         );
 
