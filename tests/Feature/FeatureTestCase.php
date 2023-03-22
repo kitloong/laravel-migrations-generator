@@ -15,7 +15,10 @@ abstract class FeatureTestCase extends TestCase
 {
     use AssetNameQuote;
 
-    protected function getEnvironmentSetUp($app)
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 
@@ -40,7 +43,7 @@ abstract class FeatureTestCase extends TestCase
         parent::tearDown();
     }
 
-    protected function loadDotenv()
+    protected function loadDotenv(): void
     {
         if (method_exists(Dotenv::class, 'createImmutable')) {
             $dotenv = Dotenv::createImmutable(base_path());
@@ -137,6 +140,7 @@ abstract class FeatureTestCase extends TestCase
     /**
      * Generate migration files to $this->storageMigrations()
      *
+     * @param  array<string, string|bool|int>  $options
      * @see \KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase::getEnvironmentSetUp()
      */
     protected function generateMigrations(array $options = []): void
@@ -189,7 +193,7 @@ abstract class FeatureTestCase extends TestCase
         $this->assertSame($migrations, $dbMigrations);
     }
 
-    protected function truncateMigrationsTable()
+    protected function truncateMigrationsTable(): void
     {
         DB::table('migrations')->truncate();
     }

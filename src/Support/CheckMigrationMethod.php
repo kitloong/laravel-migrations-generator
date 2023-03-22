@@ -12,8 +12,6 @@ trait CheckMigrationMethod
 
     /**
      * `useCurrentOnUpdate` added since Laravel 8.
-     *
-     * @return bool
      */
     public function hasUseCurrentOnUpdate(): bool
     {
@@ -22,8 +20,6 @@ trait CheckMigrationMethod
 
     /**
      * `set` added since Laravel 5.8.
-     *
-     * @return bool
      */
     public function hasSet(): bool
     {
@@ -32,8 +28,6 @@ trait CheckMigrationMethod
 
     /**
      * `fulltext` added since Laravel 8.
-     *
-     * @return bool
      */
     public function hasFullText(): bool
     {
@@ -43,8 +37,6 @@ trait CheckMigrationMethod
     /**
      * Check if support anonymous migration.
      * This feature is added in late Laravel v8 and above.
-     *
-     * @return bool
      */
     public function hasAnonymousMigration(): bool
     {
@@ -54,8 +46,6 @@ trait CheckMigrationMethod
     /**
      * Check if support add comment to a table.
      * This feature is added since Laravel v9.
-     *
-     * @return bool
      */
     public function hasTableComment(): bool
     {

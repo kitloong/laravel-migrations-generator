@@ -14,7 +14,10 @@ class StackedCommandTest extends MySQL57TestCase
 {
     use CheckLaravelVersion;
 
-    protected function getEnvironmentSetUp($app)
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 
@@ -58,13 +61,13 @@ class StackedCommandTest extends MySQL57TestCase
         parent::tearDown();
     }
 
-    public function testRunAsCall()
+    public function testRunAsCall(): void
     {
-        Schema::create('migration_table', function (Blueprint $table) {
+        Schema::create('migration_table', function (Blueprint $table): void {
             $table->increments('id');
         });
 
-        Schema::connection('migration2')->create('migration2_table', function (Blueprint $table) {
+        Schema::connection('migration2')->create('migration2_table', function (Blueprint $table): void {
             $table->increments('id');
         });
 

@@ -48,10 +48,7 @@ class ColumnGenerator
     }
 
     /**
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
      * @param  \Illuminate\Support\Collection<string, \KitLoong\MigrationsGenerator\Schema\Models\Index>  $chainableIndexes
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     public function generate(Table $table, Column $column, Collection $chainableIndexes): Method
     {

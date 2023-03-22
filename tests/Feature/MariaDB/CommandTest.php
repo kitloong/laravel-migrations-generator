@@ -13,20 +13,20 @@ class CommandTest extends MariaDBTestCase
 {
     use CheckMigrationMethod;
 
-    public function testRun()
+    public function testRun(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('mariadb');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testDown()
+    public function testDown(): void
     {
         $this->migrateGeneral('mariadb');
 
@@ -44,20 +44,20 @@ class CommandTest extends MariaDBTestCase
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
-    public function testCollation()
+    public function testCollation(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateCollation('mariadb');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--use-db-collation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations)
+    private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
 

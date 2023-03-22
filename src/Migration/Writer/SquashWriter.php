@@ -59,7 +59,6 @@ class SquashWriter
      *
      * @param  string  $path  Migration file destination path.
      * @param  string  $stubPath  Migration stub file path.
-     * @param  string  $className
      */
     public function squashMigrations(string $path, string $stubPath, string $className): void
     {

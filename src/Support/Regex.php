@@ -12,7 +12,6 @@ class Regex
      * @param  string  $text  Subject.
      * @param  string  $left  Left tag.
      * @param  string  $right  Right tag.
-     * @return string|null
      */
     public static function getTextBetweenFirst(string $text, string $left = '\(', string $right = '\)'): ?string
     {
@@ -33,7 +32,6 @@ class Regex
      * @param  string  $text  Subject.
      * @param  string  $left  Left tag.
      * @param  string  $right  Right tag.
-     * @return string|null
      */
     public static function getTextBetween(string $text, string $left = '\(', string $right = '\)'): ?string
     {
@@ -68,9 +66,6 @@ class Regex
     /**
      * Get the string matching the given pattern.
      *
-     * @param  string  $pattern
-     * @param  string  $subject
-     * @return string
      * @see \Illuminate\Support\Str::match() Available since Laravel v8
      */
     public static function match(string $pattern, string $subject): string

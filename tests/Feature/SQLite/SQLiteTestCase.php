@@ -7,7 +7,10 @@ use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
 abstract class SQLiteTestCase extends FeatureTestCase
 {
-    protected function getEnvironmentSetUp($app)
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 

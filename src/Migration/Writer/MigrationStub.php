@@ -9,7 +9,6 @@ class MigrationStub
     /**
      * Get the migration stub file.
      *
-     * @param  string  $stubPath
      * @return string File content.
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
@@ -22,8 +21,6 @@ class MigrationStub
      * Populates the place-holders in the migration stub.
      *
      * @param  string  $stub  File content.
-     * @param  string  $use
-     * @param  string  $className
      * @param  string  $upContent  Content for migration `up`.
      * @param  string  $downContent  Content for migration `down`.
      * @return string Migration content.

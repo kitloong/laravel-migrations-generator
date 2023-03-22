@@ -128,7 +128,6 @@ final class ColumnType extends Enum
     /**
      * Create instance from {@see \Doctrine\DBAL\Types\Type}.
      *
-     * @param  \Doctrine\DBAL\Types\Type  $dbalType
      * @return static
      */
     public static function fromDBALType(Type $dbalType): self
@@ -140,10 +139,9 @@ final class ColumnType extends Enum
     /**
      * Initiate an instance from value.
      *
-     * @param  mixed  $value
      * @return static
      */
-    public static function fromValue($value): self
+    public static function fromValue(string $value): self
     {
         if (method_exists(Enum::class, 'from')) {
             return parent::from($value);

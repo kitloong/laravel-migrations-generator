@@ -33,7 +33,6 @@ class ProcedureMigration
     /**
      * Create stored procedure migration.
      *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
      * @return string The migration file path.
      */
     public function write(Procedure $procedure): string
@@ -54,8 +53,6 @@ class ProcedureMigration
 
     /**
      * Write stored procedure migration into temporary file.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
      */
     public function writeToTemp(Procedure $procedure): void
     {
@@ -67,9 +64,6 @@ class ProcedureMigration
 
     /**
      * Generates `up` db statement for stored procedure.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBUnpreparedBlueprint
      */
     private function up(Procedure $procedure): DBUnpreparedBlueprint
     {
@@ -78,9 +72,6 @@ class ProcedureMigration
 
     /**
      * Generates `down` db statement for stored procedure.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Procedure  $procedure
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBUnpreparedBlueprint
      */
     private function down(Procedure $procedure): DBUnpreparedBlueprint
     {
@@ -91,7 +82,6 @@ class ProcedureMigration
      * Makes class name for stored procedure migration.
      *
      * @param  string  $procedure  Stored procedure name.
-     * @return string
      */
     private function makeMigrationClassName(string $procedure): string
     {
@@ -105,7 +95,6 @@ class ProcedureMigration
      * Makes file path for stored procedure migration.
      *
      * @param  string  $procedure  Stored procedure name.
-     * @return string
      */
     private function makeMigrationPath(string $procedure): string
     {

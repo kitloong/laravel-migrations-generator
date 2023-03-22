@@ -41,7 +41,6 @@ class ForeignKeyMigration
     /**
      * Create foreign key migration.
      *
-     * @param  string  $table
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
      * @return string The migration file path.
      */
@@ -65,7 +64,6 @@ class ForeignKeyMigration
     /**
      * Write foreign key migration into temporary file.
      *
-     * @param  string  $table
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
      */
     public function writeToTemp(string $table, Collection $foreignKeys): void
@@ -79,9 +77,7 @@ class ForeignKeyMigration
     /**
      * Generates `up` schema for foreign key.
      *
-     * @param  string  $table
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
     private function up(string $table, Collection $foreignKeys): SchemaBlueprint
     {
@@ -101,9 +97,7 @@ class ForeignKeyMigration
     /**
      * Generates `down` schema for foreign key.
      *
-     * @param  string  $table
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
      */
     private function down(string $table, Collection $foreignKeys): SchemaBlueprint
     {
@@ -124,7 +118,6 @@ class ForeignKeyMigration
      * Makes class name for foreign key migration.
      *
      * @param  string  $table  Table name.
-     * @return string
      */
     private function makeMigrationClassName(string $table): string
     {
@@ -139,7 +132,6 @@ class ForeignKeyMigration
      * Makes file path for foreign key migration.
      *
      * @param  string  $table  Table name.
-     * @return string
      */
     private function makeMigrationPath(string $table): string
     {
@@ -151,10 +143,6 @@ class ForeignKeyMigration
         );
     }
 
-    /**
-     * @param  string  $table
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint
-     */
     private function getSchemaBlueprint(string $table): SchemaBlueprint
     {
         return new SchemaBlueprint(

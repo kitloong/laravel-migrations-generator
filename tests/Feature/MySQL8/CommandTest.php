@@ -10,20 +10,20 @@ use Illuminate\Support\Facades\DB;
  */
 class CommandTest extends MySQL8TestCase
 {
-    public function testRun()
+    public function testRun(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('mysql8');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testDown()
+    public function testDown(): void
     {
         $this->migrateGeneral('mysql8');
 
@@ -41,20 +41,20 @@ class CommandTest extends MySQL8TestCase
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
-    public function testCollation()
+    public function testCollation(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateCollation('mysql8');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--use-db-collation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations)
+    private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
 

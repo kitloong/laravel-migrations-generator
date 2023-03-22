@@ -13,7 +13,10 @@ use PDO;
  */
 class DBConnectionTest extends MySQL57TestCase
 {
-    protected function getEnvironmentSetUp($app)
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 
@@ -50,13 +53,13 @@ class DBConnectionTest extends MySQL57TestCase
         parent::tearDown();
     }
 
-    public function testDBConnection()
+    public function testDBConnection(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('mysql57');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             // Needed for Laravel 6 and below.
             DB::setDefaultConnection('mysql8');
 
@@ -75,7 +78,7 @@ class DBConnectionTest extends MySQL57TestCase
         );
     }
 
-    public function testLogMigrationToAnotherSource()
+    public function testLogMigrationToAnotherSource(): void
     {
         $this->migrateGeneral('mysql57');
 
@@ -104,7 +107,7 @@ class DBConnectionTest extends MySQL57TestCase
         $this->assertSame($totalMigrations, DB::connection('mysql8')->table('migrations')->count());
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations)
+    private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
 

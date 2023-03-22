@@ -20,10 +20,6 @@ class IndexNameHelper
      * 1. Index is primary.
      * 2. Argument `--default-index-names` is true.
      * 3. Index name is identical with framework's default naming practice.
-     *
-     * @param  string  $table
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Index  $index
-     * @return bool
      */
     public function shouldSkipName(string $table, Index $index): bool
     {

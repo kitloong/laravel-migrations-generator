@@ -14,9 +14,6 @@ class ForeignKeyGenerator
 
     /**
      * Converts foreign keys into migration foreign key method.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey  $foreignKey
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     public function generate(ForeignKey $foreignKey): Method
     {
@@ -38,9 +35,6 @@ class ForeignKeyGenerator
 
     /**
      * Generates drop foreign migration method.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey  $foreignKey
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     public function generateDrop(ForeignKey $foreignKey): Method
     {
@@ -53,9 +47,6 @@ class ForeignKeyGenerator
 
     /**
      * Checks should skip current foreign key name from DB.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey  $foreignKey
-     * @return bool
      */
     private function shouldSkipName(ForeignKey $foreignKey): bool
     {
@@ -68,9 +59,6 @@ class ForeignKeyGenerator
 
     /**
      * Makes foreign key name with Laravel way.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey  $foreignKey
-     * @return string
      */
     private function makeLaravelForeignKeyName(ForeignKey $foreignKey): string
     {
@@ -80,10 +68,6 @@ class ForeignKeyGenerator
         return str_replace(['-', '.'], '_', $name);
     }
 
-    /**
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey  $foreignKey
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
-     */
     public function makeMethod(ForeignKey $foreignKey): Method
     {
         if ($this->shouldSkipName($foreignKey)) {

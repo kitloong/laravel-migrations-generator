@@ -10,6 +10,9 @@ use PHPUnit\Framework\Constraint\IsEqual;
 
 abstract class TestCase extends Testbench
 {
+    /**
+     * @inheritDoc
+     */
     protected function getPackageProviders($app)
     {
         return [
@@ -17,7 +20,10 @@ abstract class TestCase extends Testbench
         ];
     }
 
-    protected function getEnvironmentSetUp($app)
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 
@@ -27,10 +33,6 @@ abstract class TestCase extends Testbench
     /**
      * Asserts that the contents of one file is equal to the contents of another file, ignore the ordering.
      * Also, strip all end of line commas.
-     *
-     * @param  string  $expected
-     * @param  string  $actual
-     * @param  string  $message
      */
     public static function assertFileEqualsIgnoringOrder(string $expected, string $actual, string $message = ''): void
     {

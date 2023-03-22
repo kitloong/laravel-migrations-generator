@@ -35,11 +35,10 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
     /**
      * Register the service provider.
      *
-     * @return void
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function register()
+    public function register(): void
     {
         $this->registerConfig();
 
@@ -80,7 +79,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         $this->registerColumnTypeGenerator();
     }
 
-    public function boot()
+    public function boot(): void
     {
         if (!$this->app->runningInConsole()) {
             return;
@@ -97,7 +96,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/migrations-generator.php', 'migrations-generator');
     }
@@ -105,7 +104,6 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
     /**
      * Make column generator singleton by type.
      *
-     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType  $type
      * @param  class-string<\KitLoong\MigrationsGenerator\Migration\Generator\Columns\ColumnTypeGenerator>  $columnTypeGenerator
      */
     protected function columnTypeSingleton(ColumnType $type, string $columnTypeGenerator): void
@@ -115,8 +113,6 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
     /**
      * Register column type generators.
-     *
-     * @return void
      */
     protected function registerColumnTypeGenerator(): void
     {

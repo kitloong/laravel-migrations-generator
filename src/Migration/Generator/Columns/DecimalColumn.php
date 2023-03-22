@@ -25,8 +25,6 @@ class DecimalColumn implements ColumnTypeGenerator
      * Default decimal precision and scale is (8, 2).
      * Return precision and scale if the column is not (8, 2).
      *
-     * @param  int  $precision
-     * @param  int  $scale
      * @return int[] "[]|[precision]|[precision, scale]"
      */
     private function getDecimalPrecisions(int $precision, int $scale): array

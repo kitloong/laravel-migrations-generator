@@ -14,7 +14,6 @@ class MySQLRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
-     * @return \KitLoong\MigrationsGenerator\Repositories\Entities\MySQL\ShowColumn|null
      */
     public function showColumn(string $table, string $column): ?ShowColumn
     {
@@ -75,7 +74,6 @@ class MySQLRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
-     * @return bool
      */
     public function isOnUpdateCurrentTimestamp(string $table, string $column): bool
     {
@@ -151,12 +149,9 @@ class MySQLRepository extends Repository
     /**
      * Get the column GENERATION_EXPRESSION when EXTRA is 'VIRTUAL GENERATED' or 'STORED GENERATED'.
      *
-     * @param  string  $table
-     * @param  string  $column
      * @param  'VIRTUAL GENERATED'|'STORED GENERATED'  $extra
-     * @return string|null
      */
-    private function getGenerationExpression(string $table, string $column, $extra): ?string
+    private function getGenerationExpression(string $table, string $column, string $extra): ?string
     {
         $definition = DB::selectOne(
             "SELECT GENERATION_EXPRESSION

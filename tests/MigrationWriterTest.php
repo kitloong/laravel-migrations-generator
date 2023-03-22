@@ -15,13 +15,13 @@ use Mockery\MockInterface;
 
 class MigrationWriterTest extends TestCase
 {
-    public function testWrite()
+    public function testWrite(): void
     {
         $setting = app(Setting::class);
         $setting->setDefaultConnection(DB::getDefaultConnection());
         $setting->setWithHasTable(false);
 
-        $this->mock(TableName::class, function (MockInterface $mock) {
+        $this->mock(TableName::class, function (MockInterface $mock): void {
             $mock->shouldReceive('stripPrefix')
                 ->andReturn('test');
         });

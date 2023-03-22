@@ -51,7 +51,6 @@ class TableBlueprint implements WritableBlueprint
     /**
      * @param  string  $name  Property name.
      * @param  mixed  $value
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Property
      */
     public function setProperty(string $name, $value): Property
     {
@@ -63,7 +62,6 @@ class TableBlueprint implements WritableBlueprint
     /**
      * @param  string  $name  Method name.
      * @param  mixed  ...$values  Method arguments.
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     public function setMethodByName(string $name, ...$values): Method
     {
@@ -72,10 +70,6 @@ class TableBlueprint implements WritableBlueprint
         return $method;
     }
 
-    /**
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
-     */
     public function setMethod(Method $method): Method
     {
         $this->lines[] = $method;
@@ -114,8 +108,6 @@ class TableBlueprint implements WritableBlueprint
 
     /**
      * Increase number of prefix tab by 1.
-     *
-     * @return void
      */
     public function increaseNumberOfPrefixTab(): void
     {
@@ -155,9 +147,6 @@ class TableBlueprint implements WritableBlueprint
      * $table->test = true;
      * $table->test = null;
      * $table->test = [1, 'abc', true];
-     *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Property  $property
-     * @return string
      */
     private function propertyToString(Property $property): string
     {
@@ -169,9 +158,6 @@ class TableBlueprint implements WritableBlueprint
      * Generates $table method with chains, example:
      *
      * $table->string('name', 100)->comment('Hello')->default('Test');
-     *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @return string
      */
     private function methodToString(Method $method): string
     {
@@ -192,9 +178,6 @@ class TableBlueprint implements WritableBlueprint
      * string('name', 100)
      * comment('Hello')
      * default('Test')
-     *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @return string
      */
     private function flattenMethod(Method $method): string
     {

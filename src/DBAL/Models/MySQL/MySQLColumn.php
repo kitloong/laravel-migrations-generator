@@ -82,8 +82,6 @@ class MySQLColumn extends DBALColumn
 
     /**
      * Determine if the connected database is a MariaDB database.
-     *
-     * @return bool
      */
     private function isMaria(): bool
     {
@@ -92,8 +90,6 @@ class MySQLColumn extends DBALColumn
 
     /**
      * Check if the column is "tinyint(1)", if yes then generate as boolean.
-     *
-     * @return bool
      */
     private function isBoolean(): bool
     {
@@ -139,8 +135,6 @@ class MySQLColumn extends DBALColumn
     /**
      * Check if "set" method is available, then get "set" preset values.
      * If not available, change type to string with 255 length.
-     *
-     * @return void
      */
     private function useSetOrString(): void
     {
@@ -155,8 +149,6 @@ class MySQLColumn extends DBALColumn
 
     /**
      * Check if the column uses "on update CURRENT_TIMESTAMP".
-     *
-     * @return bool
      */
     private function hasOnUpdateCurrentTimestamp(): bool
     {
@@ -167,8 +159,6 @@ class MySQLColumn extends DBALColumn
      * MariaDB return `longText` instead of `json` column.
      * Check the check constraint of this column to check if type is `json`.
      * Return true if check constraint contains `json_valid` keyword.
-     *
-     * @return bool
      */
     private function isJson(): bool
     {
@@ -178,8 +168,6 @@ class MySQLColumn extends DBALColumn
 
     /**
      * Set virtual definition if the column is virtual.
-     *
-     * @return void
      */
     private function setVirtualDefinition(): void
     {
@@ -196,8 +184,6 @@ class MySQLColumn extends DBALColumn
 
     /**
      * Set stored definition if the column is stored.
-     *
-     * @return void
      */
     private function setStoredDefinition(): void
     {
