@@ -77,57 +77,32 @@ jobs:
 
     strategy:
       matrix:
-        php: [ 7.3, 7.4 ]
-        laravel: [ 8.*, 7.*, 6.*, 5.8.*, 5.7.* ]
-        dbal: [ 2.* ]
+        php: [ 8.1, 8.2 ]
+        laravel: [ 9.*, 10.* ]
+        dbal: [ 3.* ]
         sqlsrv_extension: [ pdo_sqlsrv ]
         include:
-          - php: 8.0
-            laravel: 9.*
-            dbal: 3.*
-            sqlsrv_extension: pdo_sqlsrv
-          - php: 8.0
-            laravel: 8.*
-            dbal: 3.*
-            sqlsrv_extension: pdo_sqlsrv
-          - php: 8.0
-            laravel: 7.*
+          - php: 7.1
+            laravel: 5.7.*
             dbal: 2.*
-            sqlsrv_extension: pdo_sqlsrv
-          - php: 8.0
+          - php: 7.2
+            laravel: 5.8.*
+            dbal: 2.*
+          - php: 7.3
             laravel: 6.*
             dbal: 2.*
-            sqlsrv_extension: pdo_sqlsrv
-          - php: 8.1
-            laravel: 10.*
-            dbal: 3.*
-            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
-          - php: 8.1
-            laravel: 9.*
-            dbal: 3.*
-            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
-          - php: 8.1
+          - php: 7.4
+            laravel: 7.*
+            dbal: 2.*
+          - php: 8.0
             laravel: 8.*
-            dbal: 3.*
-            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
-          - php: 8.2
-            laravel: 10.*
-            dbal: 3.*
-            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
-          - php: 8.2
-            laravel: 9.*
-            dbal: 3.*
-            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
-          - php: 8.2
-            laravel: 8.*
-            dbal: 3.*
-            sqlsrv_extension: pdo_sqlsrv-5.10.0beta2
+            dbal: 2.*
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Alter MySQL 8 root plugin
         run: |
@@ -173,7 +148,7 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload to codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
           files: coverage.xml
