@@ -107,8 +107,7 @@
   <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
     <properties>
       <property name="ignoreSpacesBeforeAssignment" value="true"/>
-      <property name="ignoreSpacesInComment" value="true"/>
-      <property name="ignoreSpacesInParameters" value="true"/>
+      <property name="ignoreSpacesInAnnotation" value="true"/>
     </properties>
   </rule>
 
