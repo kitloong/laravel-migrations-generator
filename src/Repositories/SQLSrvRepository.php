@@ -52,7 +52,6 @@ class SQLSrvRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name..
-     * @return \KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ColumnDefinition|null
      */
     public function getColumnDefinition(string $table, string $column): ?ColumnDefinition
     {
@@ -92,7 +91,6 @@ class SQLSrvRepository extends Repository
      * Get single view name with definition.
      *
      * @param  string  $name  View name.
-     * @return \KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ViewDefinition|null
      */
     public function getView(string $name): ?ViewDefinition
     {
@@ -119,7 +117,6 @@ class SQLSrvRepository extends Repository
      * @param  string  $table  The full qualified name of the table.
      * @param  string  $schemaColumn  The name of the column to compare the schema to in the where clause.
      * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
-     * @return string
      * @see https://github.com/doctrine/dbal/blob/3.1.x/src/Platforms/SQLServer2012Platform.php#L1064
      */
     private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
@@ -165,7 +162,6 @@ class SQLSrvRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
-     * @return \Illuminate\Support\Collection
      */
     public function getEnumPresetValues(string $table, string $column): Collection
     {

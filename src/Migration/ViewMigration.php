@@ -36,7 +36,6 @@ class ViewMigration
     /**
      * Create view migration.
      *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\View  $view
      * @return string The migration file path.
      */
     public function write(View $view): string
@@ -58,8 +57,6 @@ class ViewMigration
 
     /**
      * Write view migration into temporary file.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\View  $view
      */
     public function writeToTemp(View $view): void
     {
@@ -71,9 +68,6 @@ class ViewMigration
 
     /**
      * Generates `up` db statement for view.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\View  $view
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint
      */
     private function up(View $view): DBStatementBlueprint
     {
@@ -82,9 +76,6 @@ class ViewMigration
 
     /**
      * Generates `down` db statement for view.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\View  $view
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\DBStatementBlueprint
      */
     private function down(View $view): DBStatementBlueprint
     {
@@ -95,7 +86,6 @@ class ViewMigration
      * Makes class name for view migration.
      *
      * @param  string  $view  View name.
-     * @return string
      */
     private function makeMigrationClassName(string $view): string
     {
@@ -110,7 +100,6 @@ class ViewMigration
      * Makes file path for view migration.
      *
      * @param  string  $view  View name.
-     * @return string
      */
     private function makeMigrationPath(string $view): string
     {

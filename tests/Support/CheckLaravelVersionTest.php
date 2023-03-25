@@ -8,7 +8,7 @@ use KitLoong\MigrationsGenerator\Tests\TestCase;
 
 class CheckLaravelVersionTest extends TestCase
 {
-    public function testAtLeastLaravel5Dot7()
+    public function testAtLeastLaravel5Dot7(): void
     {
         App::shouldReceive('version')->andReturn('5.6.0')->once();
         $this->assertFalse($this->stubInstance()->atLeastLaravel5Dot7());
@@ -20,7 +20,7 @@ class CheckLaravelVersionTest extends TestCase
         $this->assertTrue($this->stubInstance()->atLeastLaravel5Dot7());
     }
 
-    public function testAtLeastLaravel5Dot8()
+    public function testAtLeastLaravel5Dot8(): void
     {
         App::shouldReceive('version')->andReturn('5.7.0')->once();
         $this->assertFalse($this->stubInstance()->atLeastLaravel5Dot8());
@@ -32,7 +32,7 @@ class CheckLaravelVersionTest extends TestCase
         $this->assertTrue($this->stubInstance()->atLeastLaravel5Dot8());
     }
 
-    public function testAtLeastLaravel6()
+    public function testAtLeastLaravel6(): void
     {
         App::shouldReceive('version')->andReturn('5.8.0')->once();
         $this->assertFalse($this->stubInstance()->atLeastLaravel6());
@@ -44,7 +44,7 @@ class CheckLaravelVersionTest extends TestCase
         $this->assertTrue($this->stubInstance()->atLeastLaravel6());
     }
 
-    public function testAtLeastLaravel7()
+    public function testAtLeastLaravel7(): void
     {
         App::shouldReceive('version')->andReturn('6.0.0')->once();
         $this->assertFalse($this->stubInstance()->atLeastLaravel7());
@@ -56,7 +56,7 @@ class CheckLaravelVersionTest extends TestCase
         $this->assertTrue($this->stubInstance()->atLeastLaravel7());
     }
 
-    public function testAtLeastLaravel8()
+    public function testAtLeastLaravel8(): void
     {
         App::shouldReceive('version')->andReturn('7.0.0')->once();
         $this->assertFalse($this->stubInstance()->atLeastLaravel8());
@@ -68,6 +68,9 @@ class CheckLaravelVersionTest extends TestCase
         $this->assertTrue($this->stubInstance()->atLeastLaravel8());
     }
 
+    /**
+     * @return object
+     */
     private function stubInstance()
     {
         return new class () {

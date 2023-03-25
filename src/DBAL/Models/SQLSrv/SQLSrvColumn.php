@@ -72,8 +72,6 @@ class SQLSrvColumn extends DBALColumn
      * Get the datetime column length.
      * MySQL and PgSQL use "length" for precision while SQLSrv uses "scale".
      * Return "scale" as "length".
-     *
-     * @return int|null
      */
     private function getDataTypeLength(): ?int
     {
@@ -107,8 +105,6 @@ class SQLSrvColumn extends DBALColumn
 
     /**
      * Check if the column type is "text".
-     *
-     * @return bool
      */
     private function isText(): bool
     {
@@ -125,8 +121,6 @@ class SQLSrvColumn extends DBALColumn
      * The framework always create float without precision.
      * However, Doctrine DBAL always return precisions 53 and scale 0.
      * Reset precisions and scale to 0 here.
-     *
-     * @return void
      */
     private function fixFloatLength(): void
     {

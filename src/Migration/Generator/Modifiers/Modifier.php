@@ -11,11 +11,7 @@ interface Modifier
     /**
      * Chain column modifier.
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
      * @param  mixed  ...$args
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     public function chain(Method $method, Table $table, Column $column, ...$args): Method;
 }

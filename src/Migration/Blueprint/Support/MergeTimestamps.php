@@ -68,9 +68,7 @@ trait MergeTimestamps
      * Check if column name (created_at or updated_at) is possible a timestamps.
      *
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\ColumnName  $columnName  Column name, created_at or updated_at.
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
      * @param  bool  $tz  Is timezone.
-     * @return bool
      */
     private function checkTimestamps(ColumnName $columnName, Method $method, bool $tz): bool
     {
@@ -93,9 +91,7 @@ trait MergeTimestamps
     /**
      * Check if column type is possible a timestamps.
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
      * @param  bool  $tz  Is timezone.
-     * @return bool
      */
     private function isPossibleTimestampsColumn(Method $method, bool $tz): bool
     {
@@ -141,7 +137,6 @@ trait MergeTimestamps
      * Could merge into timestamps or timestampsTz.
      *
      * @param  bool  $tz  Is timezone.
-     * @return string
      */
     private function timestamps(bool $tz): string
     {
@@ -152,11 +147,6 @@ trait MergeTimestamps
         return ColumnType::TIMESTAMPS;
     }
 
-    /**
-     * @param  int  $length
-     * @param  bool  $tz
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
-     */
     private function makeMethod(int $length, bool $tz): Method
     {
         if ($length === 0) { // MIGRATION_DEFAULT_PRECISION = 0, no need specify length 0.

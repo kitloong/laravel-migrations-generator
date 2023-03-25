@@ -95,7 +95,6 @@ class MigrateGenerateCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return void
      * @throws \Exception
      */
     public function handle(): void
@@ -181,9 +180,6 @@ class MigrateGenerateCommand extends Command
 
     /**
      * Set migration stub.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Setting  $setting
-     * @return void
      */
     protected function setStubPath(Setting $setting): void
     {
@@ -280,8 +276,6 @@ class MigrateGenerateCommand extends Command
     /**
      * Asks user for log migration permission.
      *
-     * @param  string  $defaultConnection
-     * @return void
      * @throws \Exception
      */
     protected function askIfLogMigrationTable(string $defaultConnection): void
@@ -322,7 +316,6 @@ class MigrateGenerateCommand extends Command
     /**
      * Checks if should skip gather input from the user.
      *
-     * @return bool
      * @throws \Exception
      */
     protected function skipInput(): bool
@@ -462,7 +455,7 @@ class MigrateGenerateCommand extends Command
      */
     protected function generateTables(Collection $tables): void
     {
-        $tables->each(function (string $table) {
+        $tables->each(function (string $table): void {
             $path = $this->tableMigration->write(
                 $this->schema->getTable($table)
             );
@@ -484,7 +477,7 @@ class MigrateGenerateCommand extends Command
      */
     protected function generateTablesToTemp(Collection $tables): void
     {
-        $tables->each(function (string $table) {
+        $tables->each(function (string $table): void {
             $this->tableMigration->writeToTemp(
                 $this->schema->getTable($table)
             );
@@ -501,7 +494,7 @@ class MigrateGenerateCommand extends Command
     protected function generateViews(Collection $views): void
     {
         $schemaViews = $this->schema->getViews();
-        $schemaViews->each(function (View $view) use ($views) {
+        $schemaViews->each(function (View $view) use ($views): void {
             if (!$views->contains($view->getName())) {
                 return;
             }
@@ -526,7 +519,7 @@ class MigrateGenerateCommand extends Command
     protected function generateViewsToTemp(Collection $views): void
     {
         $schemaViews = $this->schema->getViews();
-        $schemaViews->each(function (View $view) use ($views) {
+        $schemaViews->each(function (View $view) use ($views): void {
             if (!$views->contains($view->getName())) {
                 return;
             }
@@ -539,13 +532,11 @@ class MigrateGenerateCommand extends Command
 
     /**
      * Generate stored procedure migrations.
-     *
-     * @return void
      */
     protected function generateProcedures(): void
     {
         $procedures = $this->schema->getProcedures();
-        $procedures->each(function (Procedure $procedure) {
+        $procedures->each(function (Procedure $procedure): void {
             $path = $this->procedureMigration->write($procedure);
 
             $this->info("Created: $path");
@@ -564,7 +555,7 @@ class MigrateGenerateCommand extends Command
     protected function generateProceduresToTemp(): void
     {
         $procedures = $this->schema->getProcedures();
-        $procedures->each(function (Procedure $procedure) {
+        $procedures->each(function (Procedure $procedure): void {
             $this->procedureMigration->writeToTemp($procedure);
 
             $this->info('Prepared: ' . $procedure->getName());
@@ -578,7 +569,7 @@ class MigrateGenerateCommand extends Command
      */
     protected function generateForeignKeys(Collection $tables): void
     {
-        $tables->each(function (string $table) {
+        $tables->each(function (string $table): void {
             $foreignKeys = $this->schema->getTableForeignKeys($table);
 
             if (!$foreignKeys->isNotEmpty()) {
@@ -607,7 +598,7 @@ class MigrateGenerateCommand extends Command
      */
     protected function generateForeignKeysToTemp(Collection $tables): void
     {
-        $tables->each(function (string $table) {
+        $tables->each(function (string $table): void {
             $foreignKeys = $this->schema->getTableForeignKeys($table);
 
             if (!$foreignKeys->isNotEmpty()) {
@@ -625,8 +616,6 @@ class MigrateGenerateCommand extends Command
 
     /**
      * Logs migration repository.
-     *
-     * @param  string  $migrationFilepath
      */
     protected function logMigration(string $migrationFilepath): void
     {
@@ -637,7 +626,6 @@ class MigrateGenerateCommand extends Command
     /**
      * Get DB schema by the database connection name.
      *
-     * @return \KitLoong\MigrationsGenerator\Schema\Schema
      * @throws \Exception
      */
     protected function makeSchema(): Schema

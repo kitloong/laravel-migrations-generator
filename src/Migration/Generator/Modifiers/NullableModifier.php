@@ -33,9 +33,6 @@ class NullableModifier implements Modifier
     /**
      * Check if the column type should add nullable.
      * "softDeletes", "softDeletesTz", "rememberToken", and "timestamps" are skipped.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType  $columnType
-     * @return bool
      */
     private function shouldAddNullableModifier(ColumnType $columnType): bool
     {
@@ -53,9 +50,6 @@ class NullableModifier implements Modifier
     /**
      * Check if the column type should add nullable(false).
      * Only check "softDeletes", "softDeletesTz", and "rememberToken".
-     *
-     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType  $columnType
-     * @return bool
      */
     private function shouldAddNotNullModifier(ColumnType $columnType): bool
     {

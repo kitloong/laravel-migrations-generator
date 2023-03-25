@@ -91,10 +91,6 @@ class DefaultModifier implements Modifier
 
     /**
      * Set default value to method for integer column.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     protected function chainDefaultForInteger(Method $method, Column $column): Method
     {
@@ -104,10 +100,6 @@ class DefaultModifier implements Modifier
 
     /**
      * Set default value to method for decimal column.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     protected function chainDefaultForDecimal(Method $method, Column $column): Method
     {
@@ -117,10 +109,6 @@ class DefaultModifier implements Modifier
 
     /**
      * Set default value to method for boolean column.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     protected function chainDefaultForBoolean(Method $method, Column $column): Method
     {
@@ -130,10 +118,6 @@ class DefaultModifier implements Modifier
 
     /**
      * Set default value to method for datetime column.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     protected function chainDefaultForDatetime(Method $method, Column $column): Method
     {
@@ -174,10 +158,6 @@ class DefaultModifier implements Modifier
 
     /**
      * Set default value to method, which support string.
-     *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Method  $method
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Column  $column
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
      */
     protected function chainDefaultForString(Method $method, Column $column): Method
     {

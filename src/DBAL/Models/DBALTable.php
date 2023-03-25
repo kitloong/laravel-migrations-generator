@@ -47,7 +47,6 @@ abstract class DBALTable implements Table
     /**
      * Create a new instance.
      *
-     * @param  \Doctrine\DBAL\Schema\Table  $table
      * @param  array<string, \Doctrine\DBAL\Schema\Column>  $columns  Key is quoted name.
      * @param  array<string, \Doctrine\DBAL\Schema\Index>  $indexes  Key is name.
      */
@@ -82,35 +81,21 @@ abstract class DBALTable implements Table
 
     /**
      * Instance extend this abstract may run special handling.
-     *
-     * @return void
      */
     abstract protected function handle(): void;
 
     /**
      * Make a Column instance.
-     *
-     * @param  string  $table
-     * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \KitLoong\MigrationsGenerator\Schema\Models\Column
      */
     abstract protected function makeColumn(string $table, DoctrineDBALColumn $column): Column;
 
     /**
      * Make a CustomColumn instance.
-     *
-     * @param  string  $table
-     * @param  \Doctrine\DBAL\Schema\Column  $column
-     * @return \KitLoong\MigrationsGenerator\Schema\Models\CustomColumn
      */
     abstract protected function makeCustomColumn(string $table, DoctrineDBALColumn $column): CustomColumn;
 
     /**
      * Make an Index instance.
-     *
-     * @param  string  $table
-     * @param  \Doctrine\DBAL\Schema\Index  $index
-     * @return \KitLoong\MigrationsGenerator\Schema\Models\Index
      */
     abstract protected function makeIndex(string $table, DoctrineDBALIndex $index): Index;
 

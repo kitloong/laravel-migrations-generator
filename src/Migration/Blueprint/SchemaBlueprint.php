@@ -65,9 +65,6 @@ class SchemaBlueprint implements WritableBlueprint
         $this->blueprint     = null;
     }
 
-    /**
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint  $blueprint
-     */
     public function setBlueprint(TableBlueprint $blueprint): void
     {
         $this->blueprint = $blueprint;
@@ -132,7 +129,7 @@ class SchemaBlueprint implements WritableBlueprint
      * Get table commands in array.
      *
      * @param  string  $schema  The stringify `Schema::something` or `Schema::connection('db')->something`.
-     * @return array
+     * @return string[]
      */
     private function getTableLines(string $schema): array
     {
@@ -154,8 +151,6 @@ class SchemaBlueprint implements WritableBlueprint
      * Generate `if` condition string.
      *
      * @param  string  $schemaHasTable  The stringify `Schema::hasTable` or `Schema::connection('db')->hasTable`.
-     * @param  string  $tableWithoutPrefix
-     * @return string
      */
     private function getIfCondition(string $schemaHasTable, string $tableWithoutPrefix): string
     {

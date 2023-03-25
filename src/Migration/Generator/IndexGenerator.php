@@ -18,11 +18,6 @@ class IndexGenerator
         $this->indexNameHelper = $indexNameHelper;
     }
 
-    /**
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Table  $table
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Index  $index
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method
-     */
     public function generate(Table $table, Index $index): Method
     {
         $columns = $this->getColumns($index);
@@ -113,7 +108,6 @@ class IndexGenerator
     /**
      * Get column names with length.
      *
-     * @param  \KitLoong\MigrationsGenerator\Schema\Models\Index  $index
      * @return array<string|\Illuminate\Database\Query\Expression>
      */
     private function getColumns(Index $index): array

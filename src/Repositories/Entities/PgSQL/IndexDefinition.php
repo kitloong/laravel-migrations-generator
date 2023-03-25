@@ -15,25 +15,16 @@ class IndexDefinition
         $this->indexDef  = $indexDef;
     }
 
-    /**
-     * @return string
-     */
     public function getTableName(): string
     {
         return $this->tableName;
     }
 
-    /**
-     * @return string
-     */
     public function getIndexName(): string
     {
         return $this->indexName;
     }
 
-    /**
-     * @return string
-     */
     public function getIndexDef(): string
     {
         return $this->indexDef;

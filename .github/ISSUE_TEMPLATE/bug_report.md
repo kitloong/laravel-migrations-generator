@@ -29,7 +29,7 @@ If applicable, add screenshots to help explain your problem.
  - Laravel Version: 
  - PHP Version: 
  - Migrations Generator Version: 
- - Doctrine DBAL Version [`doctrine/dbal`]:
+ - Doctrine DBAL Version [`composer info doctrine/dbal | grep versions`]:
 
 **Additional context**
 Add any other context about the problem here.

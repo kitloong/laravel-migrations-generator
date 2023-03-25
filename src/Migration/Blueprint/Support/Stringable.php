@@ -14,7 +14,6 @@ trait Stringable
      *
      * @param  string[]  $lines
      * @param  int  $numberOfPrefixTab  Number of tabs to prepend to each line.
-     * @return string
      */
     public function flattenLines(array $lines, int $numberOfPrefixTab): string
     {
@@ -37,7 +36,6 @@ trait Stringable
      * Convert $value to printable string.
      *
      * @param  mixed  $value
-     * @return string
      */
     public function convertFromAnyTypeToString($value): string
     {
@@ -70,9 +68,6 @@ trait Stringable
 
     /**
      * Escapes single quotes by adding backslash.
-     *
-     * @param  string  $string
-     * @return string
      */
     public function escapeSingleQuote(string $string): string
     {
@@ -81,9 +76,6 @@ trait Stringable
 
     /**
      * Escapes double quotes by adding backslash.
-     *
-     * @param  string  $string
-     * @return string
      */
     public function escapeDoubleQuote(string $string): string
     {
@@ -93,8 +85,8 @@ trait Stringable
     /**
      * Convert $list items to printable string.
      *
-     * @param  array  $list
-     * @return array
+     * @param  mixed[]  $list
+     * @return string[]
      */
     public function mapArrayItemsToString(array $list): array
     {

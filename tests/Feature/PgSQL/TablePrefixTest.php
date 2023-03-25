@@ -6,16 +6,19 @@ use Illuminate\Support\Facades\DB;
 
 class TablePrefixTest extends PgSQLTestCase
 {
-    protected function getEnvironmentSetUp($app)
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('database.connections.pgsql.prefix', 'kit_');
     }
 
-    public function testTablePrefix()
+    public function testTablePrefix(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('pgsql');
 
             DB::statement(
@@ -23,14 +26,14 @@ class TablePrefixTest extends PgSQLTestCase
             );
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations)
+    private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
 

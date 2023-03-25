@@ -24,10 +24,8 @@ class MigrationWriter
      *
      * @param  string  $path  Migration file destination path.
      * @param  string  $stubPath  Migration stub file path.
-     * @param  string  $className
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $up  Blueprint of migration `up`.
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $down  Blueprint of migration `down`.
-     * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType  $migrationFileType
      */
     public function writeTo(
         string $path,
@@ -61,8 +59,6 @@ class MigrationWriter
     }
 
     /**
-     * @param  \KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType  $migrationFileType
-     * @param  bool  $useDBFacade
      * @return string[]
      */
     private function getNamespaces(MigrationFileType $migrationFileType, bool $useDBFacade): array
@@ -96,7 +92,6 @@ class MigrationWriter
      * Convert collection of blueprints to string and prettify and tabular.
      *
      * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $blueprints
-     * @return string
      */
     private function prettifyToString(Collection $blueprints): string
     {

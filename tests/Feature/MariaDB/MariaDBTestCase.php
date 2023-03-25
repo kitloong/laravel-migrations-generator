@@ -9,7 +9,10 @@ use PDO;
 
 abstract class MariaDBTestCase extends FeatureTestCase
 {
-    protected function getEnvironmentSetUp($app)
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
 

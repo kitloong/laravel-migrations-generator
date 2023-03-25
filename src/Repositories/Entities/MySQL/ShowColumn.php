@@ -49,49 +49,31 @@ class ShowColumn
         $this->extra   = $lowerKey['extra'];
     }
 
-    /**
-     * @return string
-     */
     public function getField(): string
     {
         return $this->field;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getNull(): string
     {
         return $this->null;
     }
 
-    /**
-     * @return string
-     */
     public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDefault(): ?string
     {
         return $this->default;
     }
 
-    /**
-     * @return string
-     */
     public function getExtra(): string
     {
         return $this->extra;

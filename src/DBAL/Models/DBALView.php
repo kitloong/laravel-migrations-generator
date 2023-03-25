@@ -43,9 +43,6 @@ abstract class DBALView implements View
 
     /**
      * Instance extend this abstract may run special handling.
-     *
-     * @param  \Doctrine\DBAL\Schema\View  $view
-     * @return void
      */
     abstract protected function handle(DoctrineDBALView $view): void;
 

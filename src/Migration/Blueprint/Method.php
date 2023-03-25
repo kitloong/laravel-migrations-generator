@@ -7,7 +7,7 @@ class Method
     /** @var string */
     private $name;
 
-    /** @var mixed */
+    /** @var mixed[] */
     private $values;
 
     /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Method[] */
@@ -26,16 +26,13 @@ class Method
         $this->chains = [];
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getValues(): array
     {
@@ -59,7 +56,6 @@ class Method
      * Checks if chain name exists.
      *
      * @param  string  $name  Method name.
-     * @return bool
      */
     public function hasChain(string $name): bool
     {
@@ -74,8 +70,6 @@ class Method
 
     /**
      * Total chain.
-     *
-     * @return int
      */
     public function countChain(): int
     {

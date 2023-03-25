@@ -13,17 +13,11 @@ class ProcedureDefinition
         $this->definition = $definition;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getDefinition(): string
     {
         return $this->definition;

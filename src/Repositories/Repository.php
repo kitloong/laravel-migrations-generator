@@ -24,7 +24,6 @@ abstract class Repository
     /**
      * Gets the character used for string literal quoting.
      *
-     * @return string
      * @see https://github.com/doctrine/dbal/blob/3.1.x/src/Platforms/AbstractPlatform.php#L3572
      */
     protected function getStringLiteralQuoteCharacter(): string

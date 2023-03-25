@@ -15,9 +15,9 @@ class CommandTest extends PgSQLTestCase
 {
     use CheckLaravelVersion;
 
-    public function testRun()
+    public function testRun(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('pgsql');
 
             // Test timestamp default now()
@@ -34,11 +34,11 @@ class CommandTest extends PgSQLTestCase
             );
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
-        $beforeVerify = function () {
+        $beforeVerify = function (): void {
             $this->assertLineExistsThenReplace(
                 $this->getStorageSqlPath('actual.sql'),
                 'timestamp_defaultnow timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL'
@@ -53,9 +53,9 @@ class CommandTest extends PgSQLTestCase
         $this->verify($migrateTemplates, $generateMigrations, $beforeVerify);
     }
 
-    public function testSquashUp()
+    public function testSquashUp(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('pgsql');
 
             DB::statement(
@@ -63,27 +63,27 @@ class CommandTest extends PgSQLTestCase
             );
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--squash' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testCollation()
+    public function testCollation(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateCollation('pgsql');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--use-db-collation' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testIgnore()
+    public function testIgnore(): void
     {
         $this->migrateGeneral('pgsql');
 
@@ -111,9 +111,8 @@ class CommandTest extends PgSQLTestCase
      * Start from Laravel 9, the `schema` configuration option used to configure Postgres connection search paths renamed to `search_path`.
      *
      * @see https://laravel.com/docs/9.x/upgrade#postgres-schema-configuration
-     * @return void
      */
-    public function testRunWithSearchPath()
+    public function testRunWithSearchPath(): void
     {
         if (!$this->atLeastLaravel9()) {
             $this->markTestSkipped();
@@ -126,20 +125,20 @@ class CommandTest extends PgSQLTestCase
         // Use `search_path`
         Config::set('database.connections.pgsql.search_path', 'public');
 
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('pgsql');
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testWithHasTable()
+    public function testWithHasTable(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('pgsql');
 
             DB::statement(
@@ -147,16 +146,16 @@ class CommandTest extends PgSQLTestCase
             );
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--with-has-table' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    public function testWithHasTableSquash()
+    public function testWithHasTableSquash(): void
     {
-        $migrateTemplates = function () {
+        $migrateTemplates = function (): void {
             $this->migrateGeneral('pgsql');
 
             DB::statement(
@@ -164,14 +163,14 @@ class CommandTest extends PgSQLTestCase
             );
         };
 
-        $generateMigrations = function () {
+        $generateMigrations = function (): void {
             $this->generateMigrations(['--with-has-table' => true, '--squash' => true]);
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations, ?callable $beforeVerify = null)
+    private function verify(callable $migrateTemplates, callable $generateMigrations, ?callable $beforeVerify = null): void
     {
         $migrateTemplates();
 
@@ -197,7 +196,7 @@ class CommandTest extends PgSQLTestCase
         );
     }
 
-    private function assertLineExistsThenReplace(string $file, string $line)
+    private function assertLineExistsThenReplace(string $file, string $line): void
     {
         $this->assertTrue(
             str_contains(

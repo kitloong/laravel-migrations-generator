@@ -2,8 +2,10 @@
 
 namespace KitLoong\MigrationsGenerator\Repositories;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Repositories\Entities\MySQL\ShowColumn;
 use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 
@@ -14,7 +16,6 @@ class MySQLRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
-     * @return \KitLoong\MigrationsGenerator\Repositories\Entities\MySQL\ShowColumn|null
      */
     public function showColumn(string $table, string $column): ?ShowColumn
     {
@@ -75,7 +76,6 @@ class MySQLRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
-     * @return bool
      */
     public function isOnUpdateCurrentTimestamp(string $table, string $column): bool
     {
@@ -151,20 +151,35 @@ class MySQLRepository extends Repository
     /**
      * Get the column GENERATION_EXPRESSION when EXTRA is 'VIRTUAL GENERATED' or 'STORED GENERATED'.
      *
-     * @param  string  $table
-     * @param  string  $column
      * @param  'VIRTUAL GENERATED'|'STORED GENERATED'  $extra
-     * @return string|null
      */
-    private function getGenerationExpression(string $table, string $column, $extra): ?string
+    private function getGenerationExpression(string $table, string $column, string $extra): ?string
     {
-        $definition = DB::selectOne(
-            "SELECT GENERATION_EXPRESSION
+        try {
+            $definition = DB::selectOne(
+                "SELECT GENERATION_EXPRESSION
                 FROM information_schema.COLUMNS
                 WHERE TABLE_NAME = '$table'
                     AND COLUMN_NAME = '$column'
                     AND EXTRA = '$extra'"
-        );
+            );
+        } catch (QueryException $exception) {
+            // Check if error caused by missing column 'GENERATION_EXPRESSION'.
+            // The column is introduced since MySQL 5.7 and MariaDB 10.2.5.
+            // @see https://mariadb.com/kb/en/information-schema-columns-table/
+            // @see https://dev.mysql.com/doc/refman/5.7/en/information-schema-columns-table.html
+            if (
+                Str::contains(
+                    $exception->getMessage(),
+                    "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'GENERATION_EXPRESSION'",
+                    true
+                )
+            ) {
+                return null;
+            }
+
+            throw $exception;
+        }
 
         if ($definition === null) {
             return null;
