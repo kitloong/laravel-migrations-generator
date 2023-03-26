@@ -144,6 +144,14 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
                 ->default('string !@#$%^^&*()_+-=[]{};:,./<>?~`| \ \\ \\\ \\\\ \'\' \\\\\'\' " \" \\" \\\" \\\\" quotes')
                 ->comment('string !@#$%^^&*()_+-=[]{};:,./<>?~`| \ \\ \\\ \\\\ \'\' \\\\\'\' " \" \\" \\\" \\\\" quotes');
 
+            if ($this->hasTinyText()) {
+                $table->tinyText('tinyText');
+            }
+
+            if ($this->hasULID()) {
+                $table->ulid('ulid');
+            }
+
             switch (DB::getDriverName()) {
                 case Driver::MYSQL():
                     if ($this->hasSet()) {

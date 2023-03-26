@@ -59,6 +59,7 @@ use MyCLabs\Enum\Enum;
  * @method static self TIMESTAMPS_TZ()
  * @method static self TINY_INCREMENTS()
  * @method static self TINY_INTEGER()
+ * @method static self TINY_TEXT()
  * @method static self UNSIGNED_BIG_INTEGER()
  * @method static self UNSIGNED_DECIMAL()
  * @method static self UNSIGNED_INTEGER()
@@ -116,6 +117,7 @@ final class ColumnType extends Enum
     public const TIMESTAMPS_TZ           = 'timestampsTz';
     public const TINY_INCREMENTS         = 'tinyIncrements';
     public const TINY_INTEGER            = 'tinyInteger';
+    public const TINY_TEXT               = 'tinyText';
     public const UNSIGNED_BIG_INTEGER    = 'unsignedBigInteger';
     public const UNSIGNED_DECIMAL        = 'unsignedDecimal';
     public const UNSIGNED_INTEGER        = 'unsignedInteger';
