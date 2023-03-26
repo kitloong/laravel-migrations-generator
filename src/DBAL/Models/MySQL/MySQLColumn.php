@@ -2,7 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL\Models\MySQL;
 
-use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\DBAL\Models\DBALColumn;
@@ -174,17 +174,17 @@ class MySQLColumn extends DBALColumn
     private function getTextTypeByLength(): ColumnType
     {
         switch ($this->length) {
-            case AbstractMySQLPlatform::LENGTH_LIMIT_TINYTEXT:
+            case MySQLPlatform::LENGTH_LIMIT_TINYTEXT:
                 if ($this->hasTinyText()) {
                     return ColumnType::TINY_TEXT();
                 }
 
                 return ColumnType::TEXT();
 
-            case AbstractMySQLPlatform::LENGTH_LIMIT_TEXT:
+            case MySQLPlatform::LENGTH_LIMIT_TEXT:
                 return ColumnType::TEXT();
 
-            case AbstractMySQLPlatform::LENGTH_LIMIT_MEDIUMTEXT:
+            case MySQLPlatform::LENGTH_LIMIT_MEDIUMTEXT:
                 return ColumnType::MEDIUM_TEXT();
 
             default:
