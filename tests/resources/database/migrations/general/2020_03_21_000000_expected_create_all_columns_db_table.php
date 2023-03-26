@@ -126,6 +126,7 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
             $table->timestampTz('timestampTz_default')->default('2020-10-08 10:20:30');
             $table->tinyInteger('tinyInteger');
             $table->tinyInteger('tinyInteger_default')->default(10);
+            $table->tinyText('tinyText');
             $table->unsignedBigInteger('unsignedBigInteger');
             $table->decimal('unsignedDecimal')->unsigned();
             $table->double('unsignedDouble')->unsigned();
