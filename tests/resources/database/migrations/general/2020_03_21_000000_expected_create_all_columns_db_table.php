@@ -138,6 +138,7 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
             $table->year('year')->default(2020);
             $table->macAddress('macAddress');
             $table->macAddress('macAddress_default')->default('00:0a:95:9d:68:16');
+            $table->ulid('ulid');
             $table->uuid('uuid');
             $table->uuid('uuid_default')->default('f6a16ff7-4a31-11eb-be7b-8344edc8f36b');
             $table->string('name space')->comment('Test');
