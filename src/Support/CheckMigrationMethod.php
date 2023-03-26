@@ -35,6 +35,22 @@ trait CheckMigrationMethod
     }
 
     /**
+     * `tinyText` added since Laravel 8.
+     */
+    public function hasTinyText(): bool
+    {
+        return method_exists(Blueprint::class, 'tinyText');
+    }
+
+    /**
+     * `tinyText` added since Laravel 9.
+     */
+    public function hasULID(): bool
+    {
+        return method_exists(Blueprint::class, 'ulid');
+    }
+
+    /**
      * Check if support anonymous migration.
      * This feature is added in late Laravel v8 and above.
      */

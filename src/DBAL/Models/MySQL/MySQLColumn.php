@@ -175,7 +175,11 @@ class MySQLColumn extends DBALColumn
     {
         switch ($this->length) {
             case AbstractMySQLPlatform::LENGTH_LIMIT_TINYTEXT:
-                return ColumnType::TINY_TEXT();
+                if ($this->hasTinyText()) {
+                    return ColumnType::TINY_TEXT();
+                }
+
+                return ColumnType::TEXT();
 
             case AbstractMySQLPlatform::LENGTH_LIMIT_TEXT:
                 return ColumnType::TEXT();

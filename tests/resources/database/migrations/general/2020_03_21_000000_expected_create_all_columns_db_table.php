@@ -126,7 +126,6 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
             $table->timestampTz('timestampTz_default')->default('2020-10-08 10:20:30');
             $table->tinyInteger('tinyInteger');
             $table->tinyInteger('tinyInteger_default')->default(10);
-            $table->tinyText('tinyText');
             $table->unsignedBigInteger('unsignedBigInteger');
             $table->decimal('unsignedDecimal')->unsigned();
             $table->double('unsignedDouble')->unsigned();
@@ -138,13 +137,20 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
             $table->year('year')->default(2020);
             $table->macAddress('macAddress');
             $table->macAddress('macAddress_default')->default('00:0a:95:9d:68:16');
-            $table->ulid('ulid');
             $table->uuid('uuid');
             $table->uuid('uuid_default')->default('f6a16ff7-4a31-11eb-be7b-8344edc8f36b');
             $table->string('name space')->comment('Test');
             $table->string('test_special_char')
                 ->default('string !@#$%^^&*()_+-=[]{};:,./<>?~`| \ \\ \\\ \\\\ \'\' \\\\\'\' " \" \\" \\\" \\\\" quotes')
                 ->comment('string !@#$%^^&*()_+-=[]{};:,./<>?~`| \ \\ \\\ \\\\ \'\' \\\\\'\' " \" \\" \\\" \\\\" quotes');
+
+            if ($this->hasTinyText()) {
+                $table->tinyText('tinyText');
+            }
+
+            if ($this->hasULID()) {
+                $table->ulid('ulid');
+            }
 
             switch (DB::getDriverName()) {
                 case Driver::MYSQL():
