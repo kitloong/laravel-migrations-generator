@@ -5,6 +5,7 @@ namespace KitLoong\MigrationsGenerator\Enum\Migrations\Method;
 use Doctrine\DBAL\Types\Type;
 use KitLoong\MigrationsGenerator\DBAL\Types\Types;
 use MyCLabs\Enum\Enum;
+use UnexpectedValueException;
 
 /**
  * Define column types of the framework.
@@ -68,6 +69,7 @@ use MyCLabs\Enum\Enum;
  * @method static self UNSIGNED_TINY_INTEGER()
  * @method static self UUID()
  * @method static self YEAR()
+ * @extends \MyCLabs\Enum\Enum<string>
  */
 final class ColumnType extends Enum
 {
@@ -150,6 +152,11 @@ final class ColumnType extends Enum
         }
 
         $key = self::search($value);
+
+        if ($key === false) {
+            throw new UnexpectedValueException("Value '$value' is not part of the enum " . self::class);
+        }
+
         return self::__callStatic($key, []);
     }
 }

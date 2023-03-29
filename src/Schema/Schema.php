@@ -10,7 +10,7 @@ interface Schema
     /**
      * Get a list of table names.
      *
-     * @return \Illuminate\Support\Collection<string>
+     * @return \Illuminate\Support\Collection<int, string>
      */
     public function getTableNames(): Collection;
 
@@ -24,28 +24,28 @@ interface Schema
     /**
      * Get a list of view names.
      *
-     * @return \Illuminate\Support\Collection<string>
+     * @return \Illuminate\Support\Collection<int, string>
      */
     public function getViewNames(): Collection;
 
     /**
      * Get a list of views.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\View>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\View>
      */
     public function getViews(): Collection;
 
     /**
      * Get a list of foreign keys.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>
      */
     public function getTableForeignKeys(string $table): Collection;
 
     /**
      * Get a list of store procedures.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Procedure>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\Procedure>
      */
     public function getProcedures(): Collection;
 }

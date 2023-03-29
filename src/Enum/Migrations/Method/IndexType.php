@@ -14,6 +14,7 @@ use MyCLabs\Enum\Enum;
  * @method static self PRIMARY()
  * @method static self SPATIAL_INDEX()
  * @method static self UNIQUE()
+ * @extends \MyCLabs\Enum\Enum<string>
  */
 final class IndexType extends Enum
 {

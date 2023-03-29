@@ -7,6 +7,7 @@ use MyCLabs\Enum\Enum;
 /**
  * @method static self LINE_BREAK()
  * @method static self TAB()
+ * @extends \MyCLabs\Enum\Enum<string>
  */
 final class Space extends Enum
 {

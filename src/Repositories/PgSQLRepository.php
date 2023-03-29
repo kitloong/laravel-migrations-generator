@@ -97,7 +97,7 @@ class PgSQLRepository extends Repository
      * Get a list of spatial indexes.
      *
      * @param  string  $table  Table name.
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition>
      */
     public function getSpatialIndexes(string $table): Collection
     {
@@ -130,7 +130,7 @@ class PgSQLRepository extends Repository
      * Get a list of fulltext indexes.
      *
      * @param  string  $table  Table name.
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition>
      */
     public function getFulltextIndexes(string $table): Collection
     {
@@ -164,7 +164,7 @@ class PgSQLRepository extends Repository
      * Get a list of custom data types.
      *
      * @source https://stackoverflow.com/questions/3660787/how-to-list-custom-types-using-postgres-information-schema
-     * @return \Illuminate\Support\Collection<string>
+     * @return \Illuminate\Support\Collection<int, string>
      */
     public function getCustomDataTypes(): Collection
     {
@@ -192,7 +192,7 @@ class PgSQLRepository extends Repository
     /**
      * Get a list of stored procedures.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
      */
     public function getProcedures(): Collection
     {

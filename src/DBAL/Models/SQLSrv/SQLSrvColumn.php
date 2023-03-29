@@ -77,6 +77,10 @@ class SQLSrvColumn extends DBALColumn
     {
         $columnDef = $this->repository->getColumnDefinition($this->tableName, $this->name);
 
+        if ($columnDef === null) {
+            return null;
+        }
+
         switch ($this->type) {
             case ColumnType::DATETIME():
                 if (

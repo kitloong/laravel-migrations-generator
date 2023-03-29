@@ -7,15 +7,19 @@ parameters:
         - src
         - tests
 
-    # The level 8 is the highest level
-    level: 5
+    # The level 9 is the highest level
+    level: 6
 
     ignoreErrors:
         - '#Class Dotenv\\Dotenv constructor invoked with 1 parameter, 4 required.#'
         - '#Parameter \#1 \$store of class Dotenv\\Dotenv constructor expects Dotenv\\Store\\StoreInterface, string given.#'
         - '#Constant (.*)\\Enum\\(.*) is unused#'
+        - '#Method KitLoong\\MigrationsGenerator\\DBAL\\(.*)Schema::getViews\(\) should return Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Schema\\Models\\View> but returns Illuminate\\Support\\Collection<(int|\(int\|string\)), KitLoong\\MigrationsGenerator\\DBAL\\Models\\(.*)\\(.*)View>.#'
+        - '#Method KitLoong\\MigrationsGenerator\\DBAL\\(.*)Schema::getProcedures\(\) should return Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Schema\\Models\\Procedure> but returns Illuminate\\Support\\Collection<(int|\(int\|string\)), KitLoong\\MigrationsGenerator\\DBAL\\Models\\(.*)\\(.*)Procedure>.#'
+        - '#Method KitLoong\\MigrationsGenerator\\DBAL\\(.*)Schema::getTableForeignKeys\(\) should return Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Schema\\Models\\ForeignKey> but returns Illuminate\\Support\\Collection<(int|\(int\|string\)), KitLoong\\MigrationsGenerator\\DBAL\\Models\\(.*)\\(.*)ForeignKey>.#'
+        - '#(.*)expects Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Migration\\Blueprint\\WritableBlueprint>, Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Migration\\Blueprint\\(.*)Blueprint> given.#'
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php
 
-    checkMissingIterableValueType: false
+    checkMissingIterableValueType: true

@@ -45,12 +45,14 @@ abstract class TestCase extends Testbench
                 : $line;
         };
 
-        $expectedContent = new Collection(file($expected));
+        $expectedFiles   = file($expected) ?: [];
+        $expectedContent = new Collection($expectedFiles);
         $expectedContent = $expectedContent->map($removeLastComma)->sort();
 
         $constraint = new IsEqual($expectedContent->values());
 
-        $actualContent = new Collection(file($actual));
+        $actualFiles   = file($actual) ?: [];
+        $actualContent = new Collection($actualFiles);
         $actualContent = $actualContent->map($removeLastComma)->sort();
 
         static::assertThat($actualContent->values(), $constraint, $message);

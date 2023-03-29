@@ -12,6 +12,7 @@ use MyCLabs\Enum\Enum;
  * @method static self DELETED_AT()
  * @method static self REMEMBER_TOKEN()
  * @method static self UPDATED_AT()
+ * @extends \MyCLabs\Enum\Enum<string>
  */
 final class ColumnName extends Enum
 {
