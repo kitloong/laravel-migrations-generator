@@ -11,7 +11,14 @@ use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class SquashWriter
 {
+    /**
+     * @var \KitLoong\MigrationsGenerator\Support\MigrationNameHelper
+     */
     private $migrationNameHelper;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationStub
+     */
     private $migrationStub;
 
     public function __construct(MigrationNameHelper $migrationNameHelper, MigrationStub $migrationStub)
@@ -25,8 +32,8 @@ class SquashWriter
      * Append new content into `up`.
      * Prepend new content into `down`.
      *
-     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $upBlueprints
-     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $downBlueprints
+     * @param  \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $upBlueprints
+     * @param  \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Migration\Blueprint\WritableBlueprint>  $downBlueprints
      */
     public function writeToTemp(Collection $upBlueprints, Collection $downBlueprints): void
     {

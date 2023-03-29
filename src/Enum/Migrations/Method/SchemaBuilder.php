@@ -13,6 +13,7 @@ use MyCLabs\Enum\Enum;
  * @method static self DROP_IF_EXISTS()
  * @method static self HAS_TABLE()
  * @method static self TABLE()
+ * @extends \MyCLabs\Enum\Enum<string>
  */
 final class SchemaBuilder extends Enum
 {

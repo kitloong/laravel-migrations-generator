@@ -20,12 +20,12 @@ abstract class DBALTable implements Table
     protected $collation;
 
     /**
-     * @var \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Column>
+     * @var \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\Column>
      */
     protected $columns;
 
     /**
-     * @var \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\CustomColumn>
+     * @var \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\CustomColumn>
      */
     protected $customColumns;
 
@@ -35,12 +35,12 @@ abstract class DBALTable implements Table
     protected $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $comment;
 
     /**
-     * @var \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Index>
+     * @var \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\Index>
      */
     protected $indexes;
 

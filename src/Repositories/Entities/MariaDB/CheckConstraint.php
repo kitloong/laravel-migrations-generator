@@ -36,7 +36,7 @@ class CheckConstraint
     {
         // Convert column property to case-insensitive
         // Issue https://github.com/kitloong/laravel-migrations-generator/issues/34
-        $lowerKey = (new Collection($column))->mapWithKeys(function ($item, $key) {
+        $lowerKey = (new Collection((array) $column))->mapWithKeys(function ($item, $key) {
             return [strtolower($key) => $item];
         });
 

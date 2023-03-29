@@ -22,7 +22,7 @@ class SQLSrvRepository extends Repository
      * Get a list of spatial indexes.
      *
      * @param  string  $table  Table name.
-     * @return \Illuminate\Support\Collection<string>
+     * @return \Illuminate\Support\Collection<int, string>
      */
     public function getSpatialIndexNames(string $table): Collection
     {
@@ -51,7 +51,7 @@ class SQLSrvRepository extends Repository
      * Get column definition by table and column name.
      *
      * @param  string  $table  Table name.
-     * @param  string  $column  Column name..
+     * @param  string  $column  Column name.
      */
     public function getColumnDefinition(string $table, string $column): ?ColumnDefinition
     {
@@ -136,7 +136,7 @@ class SQLSrvRepository extends Repository
     /**
      * Get a list of stored procedures.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
      */
     public function getProcedures(): Collection
     {
@@ -162,6 +162,7 @@ class SQLSrvRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
+     * @return \Illuminate\Support\Collection<int, string>
      */
     public function getEnumPresetValues(string $table, string $column): Collection
     {
@@ -194,7 +195,7 @@ class SQLSrvRepository extends Repository
     /**
      * Get a list of custom data types.
      *
-     * @return \Illuminate\Support\Collection<string>
+     * @return \Illuminate\Support\Collection<int, string>
      */
     public function getCustomDataTypes(): Collection
     {

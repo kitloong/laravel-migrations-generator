@@ -11,6 +11,9 @@ use KitLoong\MigrationsGenerator\DBAL\Models\SQLite\SQLiteView;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 
+/**
+ * @extends \KitLoong\MigrationsGenerator\DBAL\DBALSchema<\Doctrine\DBAL\Platforms\SqlitePlatform>
+ */
 class SQLiteSchema extends DBALSchema
 {
     /**

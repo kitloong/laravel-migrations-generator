@@ -9,10 +9,16 @@ use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Schema\Schema;
 use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 
+/**
+ * @template T of \Doctrine\DBAL\Platforms\AbstractPlatform
+ */
 abstract class DBALSchema implements Schema
 {
     use AssetNameQuote;
 
+    /**
+     * @var \Doctrine\DBAL\Schema\AbstractSchemaManager<T>
+     */
     protected $dbalSchema;
 
     /**
@@ -61,6 +67,7 @@ abstract class DBALSchema implements Schema
     /**
      * Make a schema manager.
      *
+     * @return \Doctrine\DBAL\Schema\AbstractSchemaManager<T>
      * @throws \Doctrine\DBAL\Exception
      */
     private function makeSchemaManager(): AbstractSchemaManager

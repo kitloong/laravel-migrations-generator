@@ -18,10 +18,29 @@ class ForeignKeyMigration
 {
     use TableName;
 
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\ForeignKeyGenerator
+     */
     private $foreignKeyGenerator;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Support\MigrationNameHelper
+     */
     private $migrationNameHelper;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter
+     */
     private $migrationWriter;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Setting
+     */
     private $setting;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter
+     */
     private $squashWriter;
 
     public function __construct(
@@ -41,7 +60,7 @@ class ForeignKeyMigration
     /**
      * Create foreign key migration.
      *
-     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
+     * @param  \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
      * @return string The migration file path.
      */
     public function write(string $table, Collection $foreignKeys): string
@@ -64,7 +83,7 @@ class ForeignKeyMigration
     /**
      * Write foreign key migration into temporary file.
      *
-     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
+     * @param  \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
      */
     public function writeToTemp(string $table, Collection $foreignKeys): void
     {
@@ -77,7 +96,7 @@ class ForeignKeyMigration
     /**
      * Generates `up` schema for foreign key.
      *
-     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
+     * @param  \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
      */
     private function up(string $table, Collection $foreignKeys): SchemaBlueprint
     {
@@ -97,7 +116,7 @@ class ForeignKeyMigration
     /**
      * Generates `down` schema for foreign key.
      *
-     * @param  \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
+     * @param  \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>  $foreignKeys
      */
     private function down(string $table, Collection $foreignKeys): SchemaBlueprint
     {

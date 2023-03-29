@@ -13,9 +13,24 @@ use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class ProcedureMigration
 {
+    /**
+     * @var \KitLoong\MigrationsGenerator\Support\MigrationNameHelper
+     */
     private $migrationNameHelper;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter
+     */
     private $migrationWriter;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Setting
+     */
     private $setting;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter
+     */
     private $squashWriter;
 
     public function __construct(
@@ -48,6 +63,7 @@ class ProcedureMigration
             new Collection([$down]),
             MigrationFileType::PROCEDURE()
         );
+
         return $path;
     }
 

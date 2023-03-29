@@ -28,7 +28,7 @@ class MySQLRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
-     * @return \Illuminate\Support\Collection<string>
+     * @return \Illuminate\Support\Collection<int, string>
      */
     public function getEnumPresetValues(string $table, string $column): Collection
     {
@@ -52,7 +52,7 @@ class MySQLRepository extends Repository
      *
      * @param  string  $table  Table name.
      * @param  string  $column  Column name.
-     * @return \Illuminate\Support\Collection<string>
+     * @return \Illuminate\Support\Collection<int, string>
      */
     public function getSetPresetValues(string $table, string $column): Collection
     {
@@ -117,7 +117,7 @@ class MySQLRepository extends Repository
     /**
      * Get a list of stored procedures.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
      */
     public function getProcedures(): Collection
     {

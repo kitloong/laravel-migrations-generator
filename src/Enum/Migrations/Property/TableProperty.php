@@ -11,6 +11,7 @@ use MyCLabs\Enum\Enum;
  * @method static self CHARSET()
  * @method static self COLLATION()
  * @method static self ENGINE()
+ * @extends \MyCLabs\Enum\Enum<string>
  */
 final class TableProperty extends Enum
 {
