@@ -57,6 +57,8 @@ class MigrateGenerateCommand extends Command
 
     /**
      * The console command description.
+     *
+     * @var string
      */
     protected $description = 'Generate a migration from an existing table structure.';
 
