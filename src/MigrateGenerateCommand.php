@@ -60,7 +60,7 @@ class MigrateGenerateCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Generate a migration from an existing table structure.';
+    protected $description = 'Generate migrations from an existing table structure.';
 
     /**
      * @var \KitLoong\MigrationsGenerator\Schema\Schema
