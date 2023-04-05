@@ -46,9 +46,9 @@ class Method
      * @param  mixed  ...$values  Method arguments.
      * @return $this
      */
-    public function chain(string $name, ...$values): Method
+    public function chain(string $name, ...$values): self
     {
-        $this->chains[] = new Method($name, ...$values);
+        $this->chains[] = new self($name, ...$values);
         return $this;
     }
 
