@@ -15,3 +15,4 @@ check_migrations.sh
 docker-compose.yml
 composer.lock
 coverage.xml
+phpunit.xml
