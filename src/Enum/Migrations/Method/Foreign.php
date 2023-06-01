@@ -18,10 +18,10 @@ use MyCLabs\Enum\Enum;
  */
 class Foreign extends Enum
 {
-    private const DROP_FOREIGN = 'dropForeign';
-    private const FOREIGN      = 'foreign';
-    private const ON           = 'on';
-    private const ON_DELETE    = 'onDelete';
-    private const ON_UPDATE    = 'onUpdate';
-    private const REFERENCES   = 'references';
+    public const DROP_FOREIGN = 'dropForeign';
+    public const FOREIGN      = 'foreign';
+    public const ON           = 'on';
+    public const ON_DELETE    = 'onDelete';
+    public const ON_UPDATE    = 'onUpdate';
+    public const REFERENCES   = 'references';
 }

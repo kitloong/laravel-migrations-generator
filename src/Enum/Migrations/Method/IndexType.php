@@ -18,10 +18,10 @@ use MyCLabs\Enum\Enum;
  */
 final class IndexType extends Enum
 {
-    private const FULLTEXT       = 'fullText';
-    private const FULLTEXT_CHAIN = 'fulltext'; // Use lowercase.
-    private const INDEX          = 'index';
-    private const PRIMARY        = 'primary';
-    private const SPATIAL_INDEX  = 'spatialIndex';
-    private const UNIQUE         = 'unique';
+    public const FULLTEXT       = 'fullText';
+    public const FULLTEXT_CHAIN = 'fulltext'; // Use lowercase.
+    public const INDEX          = 'index';
+    public const PRIMARY        = 'primary';
+    public const SPATIAL_INDEX  = 'spatialIndex';
+    public const UNIQUE         = 'unique';
 }

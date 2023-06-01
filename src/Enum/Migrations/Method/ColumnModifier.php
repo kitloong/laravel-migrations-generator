@@ -25,17 +25,17 @@ use MyCLabs\Enum\Enum;
  */
 final class ColumnModifier extends Enum
 {
-    private const ALWAYS                = 'always';
-    private const AUTO_INCREMENT        = 'autoIncrement';
-    private const CHARSET               = 'charset';
-    private const COLLATION             = 'collation';
-    private const COMMENT               = 'comment';
-    private const DEFAULT               = 'default';
-    private const GENERATED_AS          = 'generatedAs';
-    private const NULLABLE              = 'nullable';
-    private const STORED_AS             = 'storedAs';
-    private const UNSIGNED              = 'unsigned';
-    private const USE_CURRENT           = 'useCurrent';
-    private const USE_CURRENT_ON_UPDATE = 'useCurrentOnUpdate';
-    private const VIRTUAL_AS            = 'virtualAs';
+    public const ALWAYS                = 'always';
+    public const AUTO_INCREMENT        = 'autoIncrement';
+    public const CHARSET               = 'charset';
+    public const COLLATION             = 'collation';
+    public const COMMENT               = 'comment';
+    public const DEFAULT               = 'default';
+    public const GENERATED_AS          = 'generatedAs';
+    public const NULLABLE              = 'nullable';
+    public const STORED_AS             = 'storedAs';
+    public const UNSIGNED              = 'unsigned';
+    public const USE_CURRENT           = 'useCurrent';
+    public const USE_CURRENT_ON_UPDATE = 'useCurrentOnUpdate';
+    public const VIRTUAL_AS            = 'virtualAs';
 }

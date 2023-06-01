@@ -15,7 +15,7 @@ use MyCLabs\Enum\Enum;
  */
 final class TableProperty extends Enum
 {
-    private const CHARSET   = 'charset';
-    private const COLLATION = 'collation';
-    private const ENGINE    = 'engine';
+    public const CHARSET   = 'charset';
+    public const COLLATION = 'collation';
+    public const ENGINE    = 'engine';
 }

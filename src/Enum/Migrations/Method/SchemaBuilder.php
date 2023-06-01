@@ -17,9 +17,9 @@ use MyCLabs\Enum\Enum;
  */
 final class SchemaBuilder extends Enum
 {
-    private const CONNECTION     = 'connection';
-    private const CREATE         = 'create';
-    private const DROP_IF_EXISTS = 'dropIfExists';
-    private const HAS_TABLE      = 'hasTable';
-    private const TABLE          = 'table';
+    public const CONNECTION     = 'connection';
+    public const CREATE         = 'create';
+    public const DROP_IF_EXISTS = 'dropIfExists';
+    public const HAS_TABLE      = 'hasTable';
+    public const TABLE          = 'table';
 }

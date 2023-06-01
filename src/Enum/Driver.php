@@ -15,8 +15,8 @@ use MyCLabs\Enum\Enum;
  */
 final class Driver extends Enum
 {
-    private const MYSQL  = 'mysql';
-    private const PGSQL  = 'pgsql';
-    private const SQLITE = 'sqlite';
-    private const SQLSRV = 'sqlsrv';
+    public const MYSQL  = 'mysql';
+    public const PGSQL  = 'pgsql';
+    public const SQLITE = 'sqlite';
+    public const SQLSRV = 'sqlsrv';
 }
