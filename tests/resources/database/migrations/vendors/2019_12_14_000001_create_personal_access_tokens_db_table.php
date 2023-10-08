@@ -16,7 +16,7 @@ class CreatePersonalAccessTokens_DB_Table extends TestMigration
     public function up(): void
     {
         Schema::create('personal_access_tokens_[db]', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->morphs('tokenable');
             $table->string('name');
             $table->string('token', 64)->unique();
