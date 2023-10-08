@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\SQLSrv;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
@@ -124,6 +125,48 @@ class CommandTest extends SQLSrvTestCase
         $this->generateMigrations();
 
         $this->assertTrue(true);
+    }
+
+    public function testSkipVendor(): void
+    {
+        $this->migrateGeneral('sqlsrv');
+
+        $this->migrateVendors('sqlsrv');
+
+        // Load migrations from vendors path to mock vendors migration.
+        // Loaded migrations should not be generated.
+        app('migrator')->path($this->getStorageFromVendorsPath());
+
+        $tables = $this->getTableNames();
+
+        $vendors = [
+            'personal_access_tokens_sqlsrv',
+            'telescope_entries_sqlsrv',
+            'telescope_entries_tags_sqlsrv',
+            'telescope_monitoring_sqlsrv',
+        ];
+
+        foreach ($vendors as $vendor) {
+            $this->assertContains($vendor, $tables);
+        }
+
+        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
+            return !in_array($table, $vendors);
+        })
+            ->values()
+            ->all();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations(['--skip-vendor' => true]);
+
+        $this->refreshDatabase();
+
+        $this->runMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
+
+        $generatedTables = $this->getTableNames();
+
+        $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
     /**

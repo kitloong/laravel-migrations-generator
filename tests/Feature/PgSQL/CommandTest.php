@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -168,6 +169,51 @@ class CommandTest extends PgSQLTestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testSkipVendor(): void
+    {
+        $this->migrateGeneral('pgsql');
+
+        $this->migrateVendors('pgsql');
+
+        // Load migrations from vendors path to mock vendors migration.
+        // Loaded migrations should not be generated.
+        app('migrator')->path($this->getStorageFromVendorsPath());
+
+        $tables = $this->getTableNames();
+
+        $vendors = [
+            'personal_access_tokens_pgsql',
+            'telescope_entries_pgsql',
+            'telescope_entries_tags_pgsql',
+            'telescope_monitoring_pgsql',
+        ];
+
+        foreach ($vendors as $vendor) {
+            $this->assertContains($vendor, $tables);
+        }
+
+        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
+            return !in_array($table, $vendors);
+        })
+            ->values()
+            ->all();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations(['--skip-vendor' => true]);
+
+        $this->refreshDatabase();
+
+        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+
+        $generatedTables = $this->getTableNames();
+
+        sort($tablesWithoutVendors);
+        sort($generatedTables);
+
+        $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations, ?callable $beforeVerify = null): void

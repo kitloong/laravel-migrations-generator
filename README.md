@@ -69,6 +69,7 @@ Add following line into the `Register Service Providers` section.
 ```php
 $app->register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
 ```
+
 </details>
 
 ## Usage
@@ -105,7 +106,7 @@ php artisan migrate:generate --connection="connection_name"
 
 ### Squash Migrations
 
-By default, Generator will generate multiple migration files for each table. 
+By default, Generator will generate multiple migration files for each table.
 
 You can squash all migrations into a single file with:
 
@@ -134,6 +135,7 @@ Run `php artisan help migrate:generate` for a list of options.
 | --default-fk-names                   | Don\'t use DB foreign key names for migrations                                                                                                                |
 | --use-db-collation                   | Generate migrations with existing DB collation                                                                                                                |
 | --skip-log                           | Don\'t log into migrations table                                                                                                                              |
+| --skip-vendor                        | Don\'t generate vendor migrations                                                                                                                             |
 | --skip-views                         | Don\'t generate views                                                                                                                                         |
 | --skip-proc                          | Don\'t generate stored procedures                                                                                                                             |
 | --squash                             | Generate all migrations into a single file                                                                                                                    |

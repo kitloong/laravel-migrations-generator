@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Migration\ForeignKeyMigration;
+use KitLoong\MigrationsGenerator\Migration\Migrator\Migrator;
 use KitLoong\MigrationsGenerator\Migration\ProcedureMigration;
 use KitLoong\MigrationsGenerator\Migration\Squash;
 use KitLoong\MigrationsGenerator\Migration\TableMigration;
@@ -50,6 +51,7 @@ class MigrateGenerateCommand extends Command
                             {--default-fk-names : Don\'t use DB foreign key names for migrations}
                             {--use-db-collation : Generate migrations with existing DB collation}
                             {--skip-log : Don\'t log into migrations table}
+                            {--skip-vendor : Don\'t generate vendor migrations}
                             {--skip-views : Don\'t generate views}
                             {--skip-proc : Don\'t generate stored procedures}
                             {--squash : Generate all migrations into a single file}
@@ -300,7 +302,12 @@ class MigrateGenerateCommand extends Command
         $ignore   = (string) $this->option('ignore');
 
         if (!empty($ignore)) {
-            return array_merge([$migrationTable], explode(',', $ignore));
+            $excludes = array_merge($excludes, explode(',', $ignore));
+        }
+
+        if ($this->option('skip-vendor')) {
+            $vendorTables = app(Migrator::class)->getVendorTableNames();
+            $excludes     = array_merge($excludes, $vendorTables);
         }
 
         return $excludes;
