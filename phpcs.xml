@@ -144,6 +144,7 @@
   <!--<rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInClosureUse"/>-->
   <!--<rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInDeclaration"/>-->
   <!--<rule ref="SlevomatCodingStandard.Functions.FunctionLength"/>-->
+  <rule ref="SlevomatCodingStandard.Functions.NamedArgumentSpacing"/>
   <!--<rule ref="SlevomatCodingStandard.Functions.RequireArrowFunction"/>-->
   <!--<rule ref="SlevomatCodingStandard.Functions.RequireMultiLineCall"/>-->
   <!--<rule ref="SlevomatCodingStandard.Functions.RequireSingleLineCall"/>-->
