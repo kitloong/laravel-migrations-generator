@@ -20,6 +20,7 @@ use KitLoong\MigrationsGenerator\Migration\Generator\Columns\OmitNameColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\PresetValuesColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\SoftDeleteColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\StringColumn;
+use KitLoong\MigrationsGenerator\Migration\Migrator\Migrator;
 use KitLoong\MigrationsGenerator\Repositories\MariaDBRepository;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
@@ -73,6 +74,16 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
             MigrationRepositoryInterface::class,
             function ($app) {
                 return $app['migration.repository'];
+            }
+        );
+
+        // Backward compatible for older Laravel version which failed to resolve Illuminate\Database\ConnectionResolverInterface.
+        $this->app->singleton(
+            Migrator::class,
+            function ($app) {
+                $repository = $app['migration.repository'];
+
+                return new Migrator($repository, $app['db'], $app['files'], $app['events']);
             }
         );
 
