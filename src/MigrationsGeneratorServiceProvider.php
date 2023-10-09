@@ -70,7 +70,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         }
 
         // Bind the Repository Interface to $app['migrations.repository']
-        $this->app->bind(
+        $this->app->singleton(
             MigrationRepositoryInterface::class,
             function ($app) {
                 return $app['migration.repository'];
