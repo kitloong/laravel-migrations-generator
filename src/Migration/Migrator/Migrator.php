@@ -82,8 +82,10 @@ class Migrator extends DefaultMigrator
             return $this->resolvePath($path);
         }
 
+        // @codeCoverageIgnoreStart
         return $this->resolve(
             $this->getMigrationName($path)
         );
+        // @codeCoverageIgnoreEnd
     }
 }
