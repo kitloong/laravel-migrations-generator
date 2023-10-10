@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
@@ -506,6 +507,48 @@ class CommandTest extends MySQL57TestCase
                 '--log-with-batch' => 'Not a number',
             ]
         );
+    }
+
+    public function testSkipVendor(): void
+    {
+        $this->migrateGeneral('mysql57');
+
+        $this->migrateVendors('mysql57');
+
+        // Load migrations from vendors path to mock vendors migration.
+        // Loaded migrations should not be generated.
+        app('migrator')->path($this->getStorageFromVendorsPath());
+
+        $tables = $this->getTableNames();
+
+        $vendors = [
+            'personal_access_tokens_mysql57',
+            'telescope_entries_mysql57',
+            'telescope_entries_tags_mysql57',
+            'telescope_monitoring_mysql57',
+        ];
+
+        foreach ($vendors as $vendor) {
+            $this->assertContains($vendor, $tables);
+        }
+
+        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
+            return !in_array($table, $vendors);
+        })
+            ->values()
+            ->all();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations(['--skip-vendor' => true]);
+
+        $this->refreshDatabase();
+
+        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
+
+        $generatedTables = $this->getTableNames();
+
+        $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations): void

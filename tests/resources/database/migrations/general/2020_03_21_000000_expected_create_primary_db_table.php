@@ -39,7 +39,7 @@ class ExpectedCreatePrimary_DB_Table extends TestMigration
         });
 
         // Test short table name
-        Schema::create('s[db]', function (Blueprint $table) {
+        Schema::create('s_[db]', function (Blueprint $table) {
             $table->bigIncrements('id');
         });
     }
@@ -55,6 +55,6 @@ class ExpectedCreatePrimary_DB_Table extends TestMigration
         Schema::dropIfExists('primary_name_[db]');
         Schema::dropIfExists('signed_primary_id_[db]');
         Schema::dropIfExists('composite_primary_[db]');
-        Schema::dropIfExists('s[db]');
+        Schema::dropIfExists('s_[db]');
     }
 }
