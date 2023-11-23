@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL8;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -52,6 +53,48 @@ class CommandTest extends MySQL8TestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    public function testSkipVendor(): void
+    {
+        $this->migrateGeneral('mysql8');
+
+        $this->migrateVendors('mysql8');
+
+        // Load migrations from vendors path to mock vendors migration.
+        // Loaded migrations should not be generated.
+        app('migrator')->path($this->getStorageFromVendorsPath());
+
+        $tables = $this->getTableNames();
+
+        $vendors = [
+            'personal_access_tokens_mysql8',
+            'telescope_entries_mysql8',
+            'telescope_entries_tags_mysql8',
+            'telescope_monitoring_mysql8',
+        ];
+
+        foreach ($vendors as $vendor) {
+            $this->assertContains($vendor, $tables);
+        }
+
+        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
+            return !in_array($table, $vendors);
+        })
+            ->values()
+            ->all();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations(['--skip-vendor' => true]);
+
+        $this->refreshDatabase();
+
+        $this->runMigrationsFrom('mysql8', $this->getStorageMigrationsPath());
+
+        $generatedTables = $this->getTableNames();
+
+        $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations): void

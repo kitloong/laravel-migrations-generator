@@ -14,6 +14,7 @@ use MyCLabs\Enum\Enum;
  * @method static self ON_DELETE()
  * @method static self ON_UPDATE()
  * @method static self REFERENCES()
+ * @extends \MyCLabs\Enum\Enum<string>
  */
 class Foreign extends Enum
 {

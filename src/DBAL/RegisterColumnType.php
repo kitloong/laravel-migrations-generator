@@ -16,7 +16,14 @@ use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 
 class RegisterColumnType
 {
+    /**
+     * @var \KitLoong\MigrationsGenerator\Repositories\PgSQLRepository
+     */
     private $pgSQLRepository;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository
+     */
     private $sqlSrvRepository;
 
     public function __construct(PgSQLRepository $pgSQLRepository, SQLSrvRepository $sqlSrvRepository)
@@ -101,6 +108,9 @@ class RegisterColumnType
     {
         foreach ($this->getCustomTypes() as $type) {
             $customType = new class () extends CustomType {
+                /**
+                 * @var string
+                 */
                 public $type = '';
 
                 /**
@@ -122,11 +132,10 @@ class RegisterColumnType
 
             $customType->type = $type;
 
-            if (Type::hasType($type)) {
-                continue;
+            if (!Type::hasType($type)) {
+                Type::getTypeRegistry()->register($type, $customType);
             }
 
-            Type::getTypeRegistry()->register($type, $customType);
             $this->registerDoctrineTypeMapping($type, $type);
         }
     }
@@ -134,7 +143,7 @@ class RegisterColumnType
     /**
      * Get a list of custom type names from DB.
      *
-     * @return \Illuminate\Support\Collection<string>
+     * @return \Illuminate\Support\Collection<int, string>
      */
     private function getCustomTypes(): Collection
     {

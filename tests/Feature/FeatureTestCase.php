@@ -81,6 +81,11 @@ abstract class FeatureTestCase extends TestCase
         return storage_path('from') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
+    protected function getStorageFromVendorsPath(string $path = ''): string
+    {
+        return storage_path("from/vendors") . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+
     protected function getStorageSqlPath(string $path = ''): string
     {
         return storage_path('sql') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
@@ -94,6 +99,11 @@ abstract class FeatureTestCase extends TestCase
     protected function migrateCollation(string $connection): void
     {
         $this->migrateFromTemplate($connection, base_path('tests/resources/database/migrations/collation'));
+    }
+
+    protected function migrateVendors(string $connection): void
+    {
+        $this->migrateFromVendorsTemplate($connection, base_path('tests/resources/database/migrations/vendors'));
     }
 
     protected function migrateFromTemplate(string $connection, string $templatePath): void
@@ -117,6 +127,29 @@ abstract class FeatureTestCase extends TestCase
         }
 
         $this->runMigrationsFrom($connection, $this->getStorageFromPath());
+    }
+
+    protected function migrateFromVendorsTemplate(string $connection, string $templatePath): void
+    {
+        File::copyDirectory($templatePath, $this->getStorageFromVendorsPath());
+
+        foreach (File::files($this->getStorageFromVendorsPath()) as $file) {
+            $content = str_replace([
+                '[db]',
+                '_DB_',
+            ], [
+                $connection,
+                ucfirst("$connection"),
+            ], $file->getContents());
+
+            File::put($this->getStorageFromVendorsPath($file->getBasename()), $content);
+            File::move(
+                $this->getStorageFromVendorsPath($file->getBasename()),
+                $this->getStorageFromVendorsPath(str_replace('_db_', "_{$connection}_", $file->getBasename()))
+            );
+        }
+
+        $this->runMigrationsFrom($connection, $this->getStorageFromVendorsPath());
     }
 
     protected function runMigrationsFrom(string $connection, string $path): void

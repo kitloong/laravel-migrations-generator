@@ -29,11 +29,34 @@ class TableMigration
     use CheckMigrationMethod;
     use TableName;
 
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\ColumnGenerator
+     */
     private $columnGenerator;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Support\MigrationNameHelper
+     */
     private $migrationNameHelper;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\IndexGenerator
+     */
     private $indexGenerator;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter
+     */
     private $migrationWriter;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Setting
+     */
     private $setting;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter
+     */
     private $squashWriter;
 
     public function __construct(
@@ -216,6 +239,10 @@ class TableMigration
             TableProperty::COLLATION(),
             $collation = $table->getCollation()
         );
+
+        if ($collation === null) {
+            return $blueprint;
+        }
 
         $charset = Str::before($collation, '_');
         $blueprint->setProperty(TableProperty::CHARSET(), $charset);

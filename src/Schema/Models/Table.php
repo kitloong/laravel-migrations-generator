@@ -19,21 +19,21 @@ interface Table extends Model
     /**
      * Get a list of columns.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Column>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\Column>
      */
     public function getColumns(): Collection;
 
     /**
      * Get a list of custom columns.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\CustomColumn>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\CustomColumn>
      */
     public function getCustomColumns(): Collection;
 
     /**
      * Get a list of indexes.
      *
-     * @return \Illuminate\Support\Collection<\KitLoong\MigrationsGenerator\Schema\Models\Index>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\Index>
      */
     public function getIndexes(): Collection;
 

@@ -4,7 +4,14 @@ namespace KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv;
 
 class ViewDefinition
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var string
+     */
     private $definition;
 
     public function __construct(string $name, string $definition)

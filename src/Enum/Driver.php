@@ -11,6 +11,7 @@ use MyCLabs\Enum\Enum;
  * @method static self PGSQL()
  * @method static self SQLITE()
  * @method static self SQLSRV()
+ * @extends \MyCLabs\Enum\Enum<string>
  */
 final class Driver extends Enum
 {

@@ -11,6 +11,9 @@ use KitLoong\MigrationsGenerator\Setting;
 
 class CharsetModifier implements Modifier
 {
+    /**
+     * @var \KitLoong\MigrationsGenerator\Setting
+     */
     private $setting;
 
     public function __construct(Setting $setting)

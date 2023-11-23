@@ -40,7 +40,7 @@ class ColumnDefinition
     public function __construct(stdClass $column)
     {
         // Convert column property to case-insensitive
-        $lowerKey = (new Collection($column))->mapWithKeys(function ($item, $key) {
+        $lowerKey = (new Collection((array) $column))->mapWithKeys(function ($item, $key) {
             return [strtolower($key) => $item];
         });
 

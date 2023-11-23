@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Migration\ForeignKeyMigration;
+use KitLoong\MigrationsGenerator\Migration\Migrator\Migrator;
 use KitLoong\MigrationsGenerator\Migration\ProcedureMigration;
 use KitLoong\MigrationsGenerator\Migration\Squash;
 use KitLoong\MigrationsGenerator\Migration\TableMigration;
@@ -50,6 +51,7 @@ class MigrateGenerateCommand extends Command
                             {--default-fk-names : Don\'t use DB foreign key names for migrations}
                             {--use-db-collation : Generate migrations with existing DB collation}
                             {--skip-log : Don\'t log into migrations table}
+                            {--skip-vendor : Don\'t generate vendor migrations}
                             {--skip-views : Don\'t generate views}
                             {--skip-proc : Don\'t generate stored procedures}
                             {--squash : Generate all migrations into a single file}
@@ -57,21 +59,54 @@ class MigrateGenerateCommand extends Command
 
     /**
      * The console command description.
+     *
+     * @var string
      */
-    protected $description = 'Generate a migration from an existing table structure.';
+    protected $description = 'Generate migrations from an existing table structure.';
 
     /**
      * @var \KitLoong\MigrationsGenerator\Schema\Schema
      */
     protected $schema;
 
-    protected $shouldLog       = false;
+    /**
+     * @var bool
+     */
+    protected $shouldLog = false;
+
+    /**
+     * @var int
+     */
     protected $nextBatchNumber = 0;
+
+    /**
+     * @var \Illuminate\Database\Migrations\MigrationRepositoryInterface
+     */
     protected $repository;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Squash
+     */
     protected $squash;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\ForeignKeyMigration
+     */
     protected $foreignKeyMigration;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\ProcedureMigration
+     */
     protected $procedureMigration;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\TableMigration
+     */
     protected $tableMigration;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\ViewMigration
+     */
     protected $viewMigration;
 
     public function __construct(
@@ -199,7 +234,7 @@ class MigrateGenerateCommand extends Command
      * Then filter and exclude tables in `--ignore` option if any.
      * Also exclude migrations table
      *
-     * @return \Illuminate\Support\Collection<string> Filtered table names.
+     * @return \Illuminate\Support\Collection<int, string> Filtered table names.
      */
     protected function filterTables(): Collection
     {
@@ -213,7 +248,7 @@ class MigrateGenerateCommand extends Command
      * Then filter and exclude tables in `--ignore` option if any.
      * Return empty if `--skip-views`
      *
-     * @return \Illuminate\Support\Collection<string> Filtered view names.
+     * @return \Illuminate\Support\Collection<int, string> Filtered view names.
      */
     protected function filterViews(): Collection
     {
@@ -229,8 +264,8 @@ class MigrateGenerateCommand extends Command
     /**
      * Filter and exclude tables in `--ignore` option if any.
      *
-     * @param  \Illuminate\Support\Collection<string>  $allAssets  Names before filter.
-     * @return \Illuminate\Support\Collection<string> Filtered names.
+     * @param  \Illuminate\Support\Collection<int, string>  $allAssets  Names before filter.
+     * @return \Illuminate\Support\Collection<int, string> Filtered names.
      */
     protected function filterAndExcludeAsset(Collection $allAssets): Collection
     {
@@ -267,7 +302,12 @@ class MigrateGenerateCommand extends Command
         $ignore   = (string) $this->option('ignore');
 
         if (!empty($ignore)) {
-            return array_merge([$migrationTable], explode(',', $ignore));
+            $excludes = array_merge($excludes, explode(',', $ignore));
+        }
+
+        if ($this->option('skip-vendor')) {
+            $vendorTables = app(Migrator::class)->getVendorTableNames();
+            $excludes     = array_merge($excludes, $vendorTables);
         }
 
         return $excludes;
@@ -370,8 +410,8 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates table, view and foreign key migrations.
      *
-     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
-     * @param  \Illuminate\Support\Collection<string>  $views  View names.
+     * @param  \Illuminate\Support\Collection<int, string>  $tables  Table names.
+     * @param  \Illuminate\Support\Collection<int, string>  $views  View names.
      */
     protected function generate(Collection $tables, Collection $views): void
     {
@@ -386,8 +426,8 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates table, view and foreign key migrations.
      *
-     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
-     * @param  \Illuminate\Support\Collection<string>  $views  View names.
+     * @param  \Illuminate\Support\Collection<int, string>  $tables  Table names.
+     * @param  \Illuminate\Support\Collection<int, string>  $views  View names.
      */
     protected function generateMigrations(Collection $tables, Collection $views): void
     {
@@ -415,6 +455,9 @@ class MigrateGenerateCommand extends Command
 
     /**
      * Generate all migrations in a single file.
+     *
+     * @param  \Illuminate\Support\Collection<int, string>  $tables
+     * @param  \Illuminate\Support\Collection<int, string>  $views
      */
     protected function generateSquashedMigrations(Collection $tables, Collection $views): void
     {
@@ -451,7 +494,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates table migrations.
      *
-     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
+     * @param  \Illuminate\Support\Collection<int, string>  $tables  Table names.
      */
     protected function generateTables(Collection $tables): void
     {
@@ -473,7 +516,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates table migrations.
      *
-     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
+     * @param  \Illuminate\Support\Collection<int, string>  $tables  Table names.
      */
     protected function generateTablesToTemp(Collection $tables): void
     {
@@ -489,7 +532,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generate view migrations.
      *
-     * @param  \Illuminate\Support\Collection<string>  $views  View names.
+     * @param  \Illuminate\Support\Collection<int, string>  $views  View names.
      */
     protected function generateViews(Collection $views): void
     {
@@ -514,7 +557,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generate view migrations.
      *
-     * @param  \Illuminate\Support\Collection<string>  $views  View names.
+     * @param  \Illuminate\Support\Collection<int, string>  $views  View names.
      */
     protected function generateViewsToTemp(Collection $views): void
     {
@@ -565,7 +608,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates foreign key migrations.
      *
-     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
+     * @param  \Illuminate\Support\Collection<int, string>  $tables  Table names.
      */
     protected function generateForeignKeys(Collection $tables): void
     {
@@ -594,7 +637,7 @@ class MigrateGenerateCommand extends Command
     /**
      * Generates foreign key migrations.
      *
-     * @param  \Illuminate\Support\Collection<string>  $tables  Table names.
+     * @param  \Illuminate\Support\Collection<int, string>  $tables  Table names.
      */
     protected function generateForeignKeysToTemp(Collection $tables): void
     {

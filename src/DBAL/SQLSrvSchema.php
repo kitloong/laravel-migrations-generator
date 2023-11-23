@@ -14,8 +14,14 @@ use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 
+/**
+ * @extends \KitLoong\MigrationsGenerator\DBAL\DBALSchema<\Doctrine\DBAL\Platforms\SQLServerPlatform>
+ */
 class SQLSrvSchema extends DBALSchema
 {
+    /**
+     * @var \KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository
+     */
     private $sqlSrvRepository;
 
     public function __construct(RegisterColumnType $registerColumnType, SQLSrvRepository $sqlSrvRepository)
@@ -70,7 +76,6 @@ class SQLSrvSchema extends DBALSchema
      */
     public function getProcedures(): Collection
     {
-        $this->sqlSrvRepository->getProcedures();
         return (new Collection($this->sqlSrvRepository->getProcedures()))
             ->map(function (ProcedureDefinition $procedureDefinition) {
                 return new PgSQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition());

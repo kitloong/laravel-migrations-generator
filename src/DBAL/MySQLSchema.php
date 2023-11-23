@@ -15,8 +15,14 @@ use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema as MySQLSchemaInterface;
 
+/**
+ * @extends \KitLoong\MigrationsGenerator\DBAL\DBALSchema<\Doctrine\DBAL\Platforms\MySQLPlatform>
+ */
 class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
 {
+    /**
+     * @var \KitLoong\MigrationsGenerator\Repositories\MySQLRepository
+     */
     private $mySQLRepository;
 
     public function __construct(RegisterColumnType $registerColumnType, MySQLRepository $mySQLRepository)
@@ -67,7 +73,6 @@ class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
      */
     public function getProcedures(): Collection
     {
-        $this->mySQLRepository->getProcedures();
         return (new Collection($this->mySQLRepository->getProcedures()))
             ->map(function (ProcedureDefinition $procedureDefinition) {
                 return new MySQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition());

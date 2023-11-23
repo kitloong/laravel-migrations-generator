@@ -12,6 +12,6 @@
 /check_migrations.sh export-ignore
 /phpcs.xml           export-ignore
 /phpstan.neon        export-ignore
-/phpunit.xml         export-ignore
+/phpunit.xml.dist    export-ignore
 /phpunit8.xml        export-ignore
 /testbench.yaml      export-ignore

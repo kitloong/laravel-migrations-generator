@@ -18,13 +18,44 @@ use KitLoong\MigrationsGenerator\Schema\Models\Table;
 
 class ColumnGenerator
 {
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\CharsetModifier
+     */
     private $charsetModifier;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\CollationModifier
+     */
     private $collationModifier;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\CommentModifier
+     */
     private $commentModifier;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\DefaultModifier
+     */
     private $defaultModifier;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\IndexModifier
+     */
     private $indexModifier;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\NullableModifier
+     */
     private $nullableModifier;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\StoredAsModifier
+     */
     private $storedAsModifier;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\VirtualAsModifier
+     */
     private $virtualAsModifier;
 
     public function __construct(
