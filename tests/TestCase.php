@@ -27,6 +27,10 @@ abstract class TestCase extends Testbench
     {
         parent::getEnvironmentSetUp($app);
 
+        // Tests run with @runTestsInSeparateProcesses failed since https://github.com/sebastianbergmann/phpunit/commit/3291172e198f044a922af8036378719f71267a51 and https://github.com/php/php-src/pull/11169.
+        // The root caused is not determined yet, however, by revert `set_error_handler` (https://github.com/laravel/framework/blob/2967d89906708cc7d619fc130e835c8002b7d3e3/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php#L45C20-L45C20) to default seems fix the failed test for now.
+        restore_error_handler();
+
         app()->setBasePath(__DIR__ . '/../');
     }
 
