@@ -54,7 +54,8 @@ class MigrationWriter
 
             // Create directory if it doesn't exist
             $directory = dirname($path);
-            if (!File::isDirectory($directory)) {
+
+            if (!File::exists($directory)) {
                 File::makeDirectory($directory, 0755, true);
             }
 
