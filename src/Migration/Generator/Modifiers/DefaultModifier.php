@@ -43,7 +43,6 @@ class DefaultModifier implements Modifier
         foreach (
             [
                 ColumnType::DECIMAL(),
-                ColumnType::UNSIGNED_DECIMAL(),
                 ColumnType::FLOAT(),
                 ColumnType::DOUBLE(),
             ] as $columnType

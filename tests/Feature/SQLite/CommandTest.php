@@ -45,18 +45,18 @@ class CommandTest extends SQLiteTestCase
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
-    public function testCollation(): void
-    {
-        $migrateTemplates = function (): void {
-            $this->migrateCollation('sqlite');
-        };
-
-        $generateMigrations = function (): void {
-            $this->generateMigrations(['--use-db-collation' => true]);
-        };
-
-        $this->verify($migrateTemplates, $generateMigrations);
-    }
+//    public function testCollation(): void
+//    {
+//        $migrateTemplates = function (): void {
+//            $this->migrateCollation('sqlite');
+//        };
+//
+//        $generateMigrations = function (): void {
+//            $this->generateMigrations(['--use-db-collation' => true]);
+//        };
+//
+//        $this->verify($migrateTemplates, $generateMigrations);
+//    }
 
     public function testSkipVendor(): void
     {

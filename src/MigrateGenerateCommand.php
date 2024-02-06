@@ -295,8 +295,10 @@ class MigrateGenerateCommand extends Command
      */
     protected function getExcludedTables(): array
     {
-        $prefix         = DB::getTablePrefix();
-        $migrationTable = $prefix . Config::get('database.migrations');
+        $prefix = DB::getTablePrefix();
+
+        // https://github.com/laravel/framework/pull/49330
+        $migrationTable = $prefix . (Config::get('database.migrations.table') ?? Config::get('database.migrations'));
 
         $excludes = [$migrationTable];
         $ignore   = (string) $this->option('ignore');

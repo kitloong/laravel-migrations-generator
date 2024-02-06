@@ -188,4 +188,36 @@ class MySQLRepository extends Repository
         $definitionArr = array_change_key_case((array) $definition);
         return $definitionArr['generation_expression'] !== '' ? $definitionArr['generation_expression'] : null;
     }
+
+    public function getSrID(string $table, string $column): ?int
+    {
+        try {
+            $srsID = DB::selectOne(
+                "SELECT SRS_ID
+                FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = '" . DB::getDatabaseName() . "'
+                    AND TABLE_NAME = '" . $table . "'
+                    AND COLUMN_NAME = '" . $column . "'"
+            );
+        } catch (QueryException $exception) {
+            if (
+                Str::contains(
+                    $exception->getMessage(),
+                    "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'SRS_ID'",
+                    true
+                )
+            ) {
+                return null;
+            }
+
+            throw $exception;
+        }
+
+        if ($srsID === null) {
+            return null;
+        }
+
+        $srsIDArr = array_change_key_case((array) $srsID);
+        return $srsIDArr['srs_id'] ?? null;
+    }
 }

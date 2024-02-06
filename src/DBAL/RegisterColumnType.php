@@ -48,19 +48,17 @@ class RegisterColumnType
                 'tinyint'        => ColumnType::TINY_INTEGER,
             ],
             Driver::PGSQL()->getValue()  => [
-                '_int4'     => DoctrineDBALTypes::TEXT,
-                '_int8'     => DoctrineDBALTypes::TEXT,
-                '_numeric'  => DoctrineDBALTypes::FLOAT,
-                '_text'     => DoctrineDBALTypes::TEXT,
-                'cidr'      => DoctrineDBALTypes::STRING,
-                'geography' => ColumnType::GEOMETRY,
-                'inet'      => ColumnType::IP_ADDRESS,
-                'macaddr'   => ColumnType::MAC_ADDRESS,
-                'oid'       => DoctrineDBALTypes::STRING,
+                '_int4'    => DoctrineDBALTypes::TEXT,
+                '_int8'    => DoctrineDBALTypes::TEXT,
+                '_numeric' => DoctrineDBALTypes::FLOAT,
+                '_text'    => DoctrineDBALTypes::TEXT,
+                'cidr'     => DoctrineDBALTypes::STRING,
+                'inet'     => ColumnType::IP_ADDRESS,
+                'macaddr'  => ColumnType::MAC_ADDRESS,
+                'oid'      => DoctrineDBALTypes::STRING,
             ],
             Driver::SQLITE()->getValue() => [],
             Driver::SQLSRV()->getValue() => [
-                'geography'   => ColumnType::GEOMETRY,
                 'sysname'     => DoctrineDBALTypes::STRING,
                 'hierarchyid' => DoctrineDBALTypes::STRING,
                 'money'       => DoctrineDBALTypes::DECIMAL,
@@ -116,7 +114,7 @@ class RegisterColumnType
                 /**
                  * @inheritDoc
                  */
-                public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+                public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
                 {
                     return $this->type;
                 }
@@ -124,7 +122,7 @@ class RegisterColumnType
                 /**
                  * @inheritDoc
                  */
-                public function getName()
+                public function getName(): string
                 {
                     return $this->type;
                 }
@@ -182,7 +180,7 @@ class RegisterColumnType
      */
     private function registerDoctrineTypeMapping(string $dbType, string $doctrineType): void
     {
-        DB::getDoctrineConnection()
+        app(Connection::class)->getDoctrineConnection()
             ->getDatabasePlatform()
             ->registerDoctrineTypeMapping($dbType, $doctrineType);
     }

@@ -14,7 +14,7 @@ class IpAddressType extends Type
      * @codeCoverageIgnore
      * @inheritDoc
      */
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'INET';
     }
@@ -22,7 +22,7 @@ class IpAddressType extends Type
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return '';
     }

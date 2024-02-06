@@ -62,6 +62,18 @@ class MySQLColumn extends DBALColumn
                 $this->onUpdateCurrentTimestamp = $this->hasOnUpdateCurrentTimestamp();
                 break;
 
+            case ColumnType::GEOGRAPHY():
+            case ColumnType::GEOMETRY():
+            case ColumnType::GEOMETRY_COLLECTION():
+            case ColumnType::LINE_STRING():
+            case ColumnType::MULTI_LINE_STRING():
+            case ColumnType::POINT():
+            case ColumnType::MULTI_POINT():
+            case ColumnType::POLYGON():
+            case ColumnType::MULTI_POLYGON():
+                $this->setRealSpatialColumn();
+                break;
+
             default:
         }
 
@@ -222,6 +234,26 @@ class MySQLColumn extends DBALColumn
         // The definition of MySQL8 returned `concat(string,_utf8mb4\' \',string_255)`.
         // Replace `\'` to `'` here to avoid double escape.
         $this->storedDefinition = str_replace("\'", "'", $storedDefinition);
+    }
+
+    /**
+     * Set to geometry or geography.
+     */
+    private function setRealSpatialColumn(): void
+    {
+        if (!$this->atLeastLaravel11()) {
+            return;
+        }
+
+        $this->type = ColumnType::GEOMETRY();
+
+        $this->spatialSrID = $this->mysqlRepository->getSrID($this->tableName, $this->name);
+
+        if ($this->spatialSrID === null) {
+            return;
+        }
+
+        $this->type = ColumnType::GEOGRAPHY();
     }
 
     /**

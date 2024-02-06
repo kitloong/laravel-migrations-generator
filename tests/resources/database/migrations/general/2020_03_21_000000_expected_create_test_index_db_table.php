@@ -43,9 +43,16 @@ class ExpectedCreateTestIndex_DB_Table extends TestMigration
 
             // SQLite does not support spatial index.
             if (DB::getDriverName() !== Driver::SQLITE()->getValue()) {
-                $table->lineString('spatial_index')->spatialIndex();
-                $table->lineString('spatial_index_custom');
-                $table->spatialIndex('spatial_index_custom', 'spatial_index_custom');
+                if ($this->hasGeography()) {
+                    $table->geography('spatial_index', null, 0)->spatialIndex();
+                    $table->geography('spatial_index_custom', null, 0);
+                    $table->spatialIndex('spatial_index_custom', 'spatial_index_custom');
+                }
+                if (!$this->hasGeography()) {
+                    $table->geometry('spatial_index')->spatialIndex();
+                    $table->geometry('spatial_index_custom');
+                    $table->spatialIndex('spatial_index_custom', 'spatial_index_custom');
+                }
             }
 
             if (

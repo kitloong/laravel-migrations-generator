@@ -33,8 +33,11 @@ class ExpectedCreateCollations_DB_Table extends TestMigration
                 case Driver::SQLSRV():
                     $collation = 'Latin1_General_100_CI_AI_SC_UTF8';
                     break;
-                default:
+                case Driver::MYSQL():
                     $collation = 'utf8_unicode_ci';
+                    break;
+                default:
+                    $collation = 'BINARY';
             }
 
             $table->char('char');

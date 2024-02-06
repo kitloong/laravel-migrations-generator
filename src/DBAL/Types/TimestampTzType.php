@@ -14,7 +14,7 @@ class TimestampTzType extends Type
      * @codeCoverageIgnore
      * @inheritDoc
      */
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'TIMESTAMPTZ';
     }
@@ -22,7 +22,7 @@ class TimestampTzType extends Type
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return '';
     }

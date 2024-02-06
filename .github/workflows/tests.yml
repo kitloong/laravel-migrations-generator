@@ -82,21 +82,15 @@ jobs:
         dbal: [ 3.* ]
         sqlsrv_extension: [ pdo_sqlsrv ]
         include:
-          - php: 7.1
-            laravel: 5.7.*
-            dbal: 2.*
-          - php: 7.2
-            laravel: 5.8.*
-            dbal: 2.*
-          - php: 7.3
-            laravel: 6.*
-            dbal: 2.*
-          - php: 7.4
-            laravel: 7.*
-            dbal: 2.*
           - php: 8.0
             laravel: 8.*
-            dbal: 2.*
+            dbal: 3.*
+          - php: 8.2
+            laravel: 11.*
+            dbal: 4.*
+          - php: 8.3
+            laravel: 11.*
+            dbal: 4.*
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
@@ -128,23 +122,12 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal:${{ matrix.dbal }}" --no-interaction --no-update
           composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
-      - name: Setup PCOV
-        if: ${{ matrix.laravel == '5.7.*' }}
-        run: |
-          composer require pcov/clobber
-          vendor/bin/pcov clobber
-
       - name: Setup .env
         run: |
           mkdir ./database
           composer run action-env-setup
 
-      - name: Execute tests with PHPUnit 8 or below
-        if: ${{ matrix.laravel == '5.7.*' || matrix.laravel == '5.8.*' }}
-        run: vendor/bin/phpunit -c ./phpunit8.xml --coverage-clover=coverage.xml
-
       - name: Execute tests
-        if: ${{ matrix.laravel != '5.7.*' && matrix.laravel != '5.8.*' }}
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload to codecov

@@ -67,4 +67,12 @@ trait CheckMigrationMethod
     {
         return method_exists(Blueprint::class, 'comment');
     }
+
+    /**
+     * `geography` added since Laravel 11.
+     */
+    public function hasGeography(): bool
+    {
+        return method_exists(Blueprint::class, 'geography');
+    }
 }

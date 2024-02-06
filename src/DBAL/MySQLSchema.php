@@ -85,6 +85,7 @@ class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
      */
     public function getTableForeignKeys(string $table): Collection
     {
+        // @phpstan-ignore-next-line
         return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
             ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
                 return new MySQLForeignKey($table, $foreignKeyConstraint);

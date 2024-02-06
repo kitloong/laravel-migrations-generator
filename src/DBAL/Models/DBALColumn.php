@@ -3,12 +3,24 @@
 namespace KitLoong\MigrationsGenerator\DBAL\Models;
 
 use Doctrine\DBAL\Schema\Column as DoctrineDBALColumn;
+use Doctrine\DBAL\Types\Type;
+use KitLoong\MigrationsGenerator\DBAL\Types\GeometryCollectionType;
+use KitLoong\MigrationsGenerator\DBAL\Types\LineStringType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MultiLineStringType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MultiPointType;
+use KitLoong\MigrationsGenerator\DBAL\Types\MultiPolygonType;
+use KitLoong\MigrationsGenerator\DBAL\Types\PointType;
+use KitLoong\MigrationsGenerator\DBAL\Types\PolygonType;
+use KitLoong\MigrationsGenerator\DBAL\Types\Types;
 use KitLoong\MigrationsGenerator\Enum\Migrations\ColumnName;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
 abstract class DBALColumn implements Column
 {
+    use CheckLaravelVersion;
+
     /**
      * @var bool
      */
@@ -60,7 +72,7 @@ abstract class DBALColumn implements Column
     protected $onUpdateCurrentTimestamp;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $precision;
 
@@ -104,14 +116,24 @@ abstract class DBALColumn implements Column
      */
     protected $storedDefinition;
 
+    /**
+     * @var string|null
+     */
+    protected $spatialSubType;
+
+    /**
+     * @var int|null
+     */
+    protected $spatialSrID;
+
     private const REMEMBER_TOKEN_LENGTH = 100;
 
     public function __construct(string $table, DoctrineDBALColumn $column)
     {
         $this->tableName                = $table;
         $this->name                     = $column->getName();
-        $this->type                     = ColumnType::fromDBALType($column->getType());
         $this->length                   = $column->getLength();
+        $this->type                     = Types::toColumnType($column->getType());
         $this->scale                    = $column->getScale();
         $this->precision                = $column->getPrecision();
         $this->comment                  = $this->escapeComment($column->getComment());
@@ -127,10 +149,13 @@ abstract class DBALColumn implements Column
         $this->rawDefault               = false;
         $this->virtualDefinition        = null;
         $this->storedDefinition         = null;
+        $this->spatialSubType           = null;
+        $this->spatialSrID              = null;
 
         $this->setTypeToSoftDeletes();
         $this->setTypeToRememberToken();
         $this->setTypeToChar();
+        $this->setSpatialSubType($column->getType());
         $this->fixDoubleLength();
 
         $this->handle();
@@ -184,7 +209,7 @@ abstract class DBALColumn implements Column
     /**
      * @inheritDoc
      */
-    public function getPrecision(): int
+    public function getPrecision(): ?int
     {
         return $this->precision;
     }
@@ -259,6 +284,22 @@ abstract class DBALColumn implements Column
     public function getPresetValues(): array
     {
         return $this->presetValues;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSpatialSubType(): ?string
+    {
+        return $this->spatialSubType;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSpatialSrID(): ?int
+    {
+        return $this->spatialSrID;
     }
 
     /**
@@ -341,7 +382,6 @@ abstract class DBALColumn implements Column
                 ColumnType::MEDIUM_INTEGER(),
                 ColumnType::SMALL_INTEGER(),
                 ColumnType::TINY_INTEGER(),
-                ColumnType::DECIMAL(),
             ])
             || !$this->unsigned
         ) {
@@ -400,6 +440,48 @@ abstract class DBALColumn implements Column
     }
 
     /**
+     * Set the column spatial subtype.
+     */
+    private function setSpatialSubType(Type $dbalColumnType): void
+    {
+        if (!$this->atLeastLaravel11()) {
+            return;
+        }
+
+        switch (true) {
+            case $dbalColumnType instanceof GeometryCollectionType:
+                $this->spatialSubType = 'geometryCollection';
+                break;
+
+            case $dbalColumnType instanceof LineStringType:
+                $this->spatialSubType = 'lineString';
+                break;
+
+            case $dbalColumnType instanceof MultiLineStringType:
+                $this->spatialSubType = 'multiLineString';
+                break;
+
+            case $dbalColumnType instanceof PointType:
+                $this->spatialSubType = 'point';
+                break;
+
+            case $dbalColumnType instanceof MultiPointType:
+                $this->spatialSubType = 'multiPoint';
+                break;
+
+            case $dbalColumnType instanceof PolygonType:
+                $this->spatialSubType = 'polygon';
+                break;
+
+            case $dbalColumnType instanceof MultiPolygonType:
+                $this->spatialSubType = 'multiPolygon';
+                break;
+
+            default:
+        }
+    }
+
+    /**
      * When double is created without total and places, $table->double('double');
      * Doctrine DBAL return precisions 10 and scale 0.
      * Reset precisions and scale to 0 here.
@@ -436,7 +518,7 @@ abstract class DBALColumn implements Column
      */
     protected function escapeComment(?string $comment): ?string
     {
-        if ($comment === null) {
+        if ($comment === null || $comment === '') {
             return null;
         }
 

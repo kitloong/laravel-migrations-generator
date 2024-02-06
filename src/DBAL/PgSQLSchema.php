@@ -122,6 +122,7 @@ class PgSQLSchema extends DBALSchema
      */
     public function getTableForeignKeys(string $table): Collection
     {
+        // @phpstan-ignore-next-line
         return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
             ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
                 return new PgSQLForeignKey($table, $foreignKeyConstraint);

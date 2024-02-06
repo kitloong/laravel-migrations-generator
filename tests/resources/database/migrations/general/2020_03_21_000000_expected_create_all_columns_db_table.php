@@ -62,37 +62,65 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
             $table->decimal('decimal_53', 5, 3);
             $table->decimal('decimal_default')->default(10.8);
             $table->double('double');
-            $table->double('double_82', 8, 2);
-            $table->double('double_83', 8, 3);
-            $table->double('double_92', 9, 2);
-            $table->double('double_53', 5, 3);
             $table->double('double_default')->default(10.8);
             $table->enum('enum', ['easy', 'hard']);
             $table->enum('enum_default', ['easy', 'hard'])->default('easy');
             $table->float('float');
-            $table->float('float_82', 8, 2);
-            $table->float('float_83', 8, 3);
-            $table->float('float_92', 9, 2);
-            $table->float('float_53', 5, 3);
             $table->float('float_default')->default(10.8);
-            $table->geometry('geometry');
-            $table->geometryCollection('geometryCollection');
             $table->integer('integer');
             $table->integer('integer_default')->default(1080);
             $table->ipAddress('ipAddress');
             $table->ipAddress('ipAddress_default')->default('10.0.0.8');
             $table->json('json');
             $table->jsonb('jsonb');
-            $table->lineString('lineString');
             $table->longText('longText');
             $table->mediumInteger('mediumInteger');
             $table->mediumInteger('mediumInteger_default')->default(1080);
             $table->mediumText('mediumText');
-            $table->multiLineString('multiLineString');
-            $table->multiPoint('multiPoint');
-            $table->multiPolygon('multiPolygon');
-            $table->point('point');
-            $table->polygon('polygon');
+            $table->geometry('geometry');
+
+            // https://github.com/laravel/framework/pull/49634
+            if ($this->atLeastLaravel11()) {
+                if (
+                    DB::getDriverName() !== Driver::MYSQL()->getValue() ||
+                    version_compare(DB::getServerVersion(), '5.8', '>')
+                ) {
+                    $table->geography('geography');
+                    $table->geography('geographyGeometryCollection', 'geometryCollection');
+                    $table->geography('geographyLineString', 'lineString');
+                    $table->geography('geographyMultiLineString', 'multiLineString');
+                    $table->geography('geographyMultiPoint', 'multiPoint');
+                    $table->geography('geographyMultiPolygon', 'multiPolygon');
+                    $table->geography('geographyPoint', 'point');
+                    $table->geography('geographyPolygon', 'polygon');
+                    $table->geography('geography1', null, 3857);
+
+                    if (DB::getDriverName() !== Driver::PGSQL()->getValue()) {
+                        $table->geography('geography2', 'geometryCollection', 3857);
+                    }
+
+                    $table->geometry('geometryCollection', 'geometryCollection');
+                    $table->geometry('lineString', 'lineString');
+                    $table->geometry('multiLineString', 'multiLineString');
+                    $table->geometry('multiPoint', 'multiPoint');
+                    $table->geometry('multiPolygon', 'multiPolygon');
+                    $table->geometry('point', 'point');
+                    $table->geometry('polygon', 'polygon');
+                    $table->geometry('geometry1', null, 3857);
+                    $table->geometry('geometry2', 'geometryCollection', 3857);
+                }
+            }
+
+            if (!$this->atLeastLaravel11()) {
+                $table->geometryCollection('geometryCollection'); // @phpstan-ignore-line
+                $table->lineString('lineString');  // @phpstan-ignore-line
+                $table->multiLineString('multiLineString');  // @phpstan-ignore-line
+                $table->multiPoint('multiPoint');  // @phpstan-ignore-line
+                $table->multiPolygon('multiPolygon');  // @phpstan-ignore-line
+                $table->point('point');  // @phpstan-ignore-line
+                $table->polygon('polygon');  // @phpstan-ignore-line
+            }
+
             $table->smallInteger('smallInteger');
             $table->smallInteger('smallInteger_default')->default(1080);
             $table->string('string');
@@ -130,6 +158,20 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
             $table->decimal('unsignedDecimal')->unsigned();
             $table->double('unsignedDouble')->unsigned();
             $table->float('unsignedFloat')->unsigned();
+
+            if (method_exists(Blueprint::class, 'unsignedDecimal')) {
+                // https://github.com/laravel/framework/pull/48861
+                $table->double('double_82', 8, 2); // @phpstan-ignore-line
+                $table->double('double_83', 8, 3); // @phpstan-ignore-line
+                $table->double('double_92', 9, 2); // @phpstan-ignore-line
+                $table->double('double_53', 5, 3); // @phpstan-ignore-line
+                $table->float('float_82', 8, 2); // @phpstan-ignore-line
+                $table->float('float_83', 8, 3); // @phpstan-ignore-line
+                $table->float('float_92', 9, 2); // @phpstan-ignore-line
+                $table->float('float_53', 5, 3); // @phpstan-ignore-line
+                $table->float('float_56', 50);
+            }
+
             $table->unsignedInteger('unsignedInteger');
             $table->unsignedMediumInteger('unsignedMediumInteger');
             $table->unsignedSmallInteger('unsignedSmallInteger');

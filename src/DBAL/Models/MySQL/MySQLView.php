@@ -3,7 +3,7 @@
 namespace KitLoong\MigrationsGenerator\DBAL\Models\MySQL;
 
 use Doctrine\DBAL\Schema\View as DoctrineDBALView;
-use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\DBAL\Connection;
 use KitLoong\MigrationsGenerator\DBAL\Models\DBALView;
 
 class MySQLView extends DBALView
@@ -14,7 +14,7 @@ class MySQLView extends DBALView
      */
     protected function handle(DoctrineDBALView $view): void
     {
-        $this->definition = DB::getDoctrineConnection()
+        $this->definition = app(Connection::class)->getDoctrineConnection()
             ->getDatabasePlatform()
             ->getCreateViewSQL($this->quotedName, $view->getSql());
     }

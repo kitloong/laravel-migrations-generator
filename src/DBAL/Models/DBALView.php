@@ -3,7 +3,7 @@
 namespace KitLoong\MigrationsGenerator\DBAL\Models;
 
 use Doctrine\DBAL\Schema\View as DoctrineDBALView;
-use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\DBAL\Connection;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 
@@ -34,7 +34,7 @@ abstract class DBALView implements View
     public function __construct(DoctrineDBALView $view)
     {
         $this->name           = $this->trimQuotes($view->getName());
-        $this->quotedName     = DB::getDoctrineConnection()->quoteIdentifier($this->name);
+        $this->quotedName     = app(Connection::class)->getDoctrineConnection()->quoteIdentifier($this->name);
         $this->definition     = '';
         $this->dropDefinition = "DROP VIEW IF EXISTS $this->quotedName";
 

@@ -14,7 +14,7 @@ class GeometryCollectionType extends Type
      * @codeCoverageIgnore
      * @inheritDoc
      */
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'GEOMETRYCOLLECTION';
     }
@@ -22,7 +22,7 @@ class GeometryCollectionType extends Type
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return '';
     }

@@ -3,12 +3,12 @@
 namespace KitLoong\MigrationsGenerator\Tests;
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\DBAL\Connection;
 
 abstract class TestMigration extends Migration
 {
     protected function quoteIdentifier(string $string): string
     {
-        return DB::getDoctrineConnection()->quoteIdentifier($string);
+        return app(Connection::class)->getDoctrineConnection()->quoteIdentifier($string);
     }
 }

@@ -38,7 +38,7 @@ interface Schema
     /**
      * Get a list of foreign keys.
      *
-     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>
+     * @return \Illuminate\Support\Collection<int|string, \KitLoong\MigrationsGenerator\Schema\Models\ForeignKey>
      */
     public function getTableForeignKeys(string $table): Collection;
 

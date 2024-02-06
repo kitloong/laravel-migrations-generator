@@ -73,7 +73,7 @@ interface Column extends Model
     /**
      * Get the column precision.
      */
-    public function getPrecision(): int;
+    public function getPrecision(): ?int;
 
     /**
      * Get the column comment.
@@ -87,6 +87,16 @@ interface Column extends Model
      * @return string[]
      */
     public function getPresetValues(): array;
+
+    /**
+     * Get the spatial column subtype.
+     */
+    public function getSpatialSubType(): ?string;
+
+    /**
+     * Get the spatial column srID.
+     */
+    public function getSpatialSrID(): ?int;
 
     /**
      * Check if the column uses "on update CURRENT_TIMESTAMP".

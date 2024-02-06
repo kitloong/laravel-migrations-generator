@@ -2,10 +2,8 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Schema\Schema;
 use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 
@@ -26,7 +24,8 @@ abstract class DBALSchema implements Schema
      */
     public function __construct(RegisterColumnType $registerColumnType)
     {
-        $this->dbalSchema = $this->makeSchemaManager();
+        // @phpstan-ignore-next-line
+        $this->dbalSchema = app(Connection::class)->getDoctrineSchemaManager();
         $registerColumnType->handle();
     }
 
@@ -61,25 +60,7 @@ abstract class DBALSchema implements Schema
             return $this->dbalSchema->introspectTable($name);
         }
 
+        // @phpstan-ignore-next-line
         return $this->dbalSchema->listTableDetails($name);
-    }
-
-    /**
-     * Make a schema manager.
-     *
-     * @return \Doctrine\DBAL\Schema\AbstractSchemaManager<T>
-     * @throws \Doctrine\DBAL\Exception
-     */
-    private function makeSchemaManager(): AbstractSchemaManager
-    {
-        $doctrineConnection = DB::getDoctrineConnection();
-
-        if (method_exists($doctrineConnection, 'createSchemaManager')) {
-            return $doctrineConnection->createSchemaManager();
-        }
-
-        // @codeCoverageIgnoreStart
-        return $doctrineConnection->getSchemaManager();
-        // @codeCoverageIgnoreEnd
     }
 }

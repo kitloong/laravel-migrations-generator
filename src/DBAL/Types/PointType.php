@@ -14,7 +14,7 @@ class PointType extends Type
      * @codeCoverageIgnore
      * @inheritDoc
      */
-    public function getSQLDeclaration(array $column, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return 'POINT';
     }
@@ -22,7 +22,7 @@ class PointType extends Type
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function getName(): string
     {
         return '';
     }

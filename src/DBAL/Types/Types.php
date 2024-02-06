@@ -25,6 +25,7 @@ use Doctrine\DBAL\Types\StringType;
 use Doctrine\DBAL\Types\TextType;
 use Doctrine\DBAL\Types\TimeImmutableType;
 use Doctrine\DBAL\Types\TimeType;
+use Doctrine\DBAL\Types\Type;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 
 final class Types
@@ -64,6 +65,7 @@ final class Types
     public const ADDITIONAL_TYPES_MAP = [
         DoubleType::class             => ColumnType::DOUBLE,
         EnumType::class               => ColumnType::ENUM,
+        GeographyType::class          => ColumnType::GEOGRAPHY,
         GeometryType::class           => ColumnType::GEOMETRY,
         GeometryCollectionType::class => ColumnType::GEOMETRY_COLLECTION,
         IpAddressType::class          => ColumnType::IP_ADDRESS,
@@ -84,4 +86,13 @@ final class Types
         UUIDType::class               => ColumnType::UUID,
         YearType::class               => ColumnType::YEAR,
     ];
+
+    /**
+     * Create instance from {@see \Doctrine\DBAL\Types\Type}.
+     */
+    public static function toColumnType(Type $dbalType): ColumnType
+    {
+        $map = self::BUILTIN_TYPES_MAP + self::ADDITIONAL_TYPES_MAP;
+        return ColumnType::fromValue($map[get_class($dbalType)]);
+    }
 }

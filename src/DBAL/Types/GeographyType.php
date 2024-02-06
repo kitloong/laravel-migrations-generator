@@ -5,7 +5,7 @@ namespace KitLoong\MigrationsGenerator\DBAL\Types;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 
-class YearType extends Type
+class GeographyType extends Type
 {
     /**
      * Implement to respect the contract. Generator is not using this method.
@@ -16,7 +16,7 @@ class YearType extends Type
      */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return 'YEAR';
+        return 'GEOGRAPHY';
     }
 
     /**

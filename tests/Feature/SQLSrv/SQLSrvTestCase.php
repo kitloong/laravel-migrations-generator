@@ -5,6 +5,7 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\SQLSrv;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use KitLoong\MigrationsGenerator\DBAL\Connection;
 use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
@@ -47,14 +48,14 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
     protected function dumpSchemaAs(string $destination): void
     {
-        $tables = DB::getDoctrineSchemaManager()->listTableNames();
+        $tables = app(Connection::class)->getDoctrineSchemaManager()->listTableNames();
         $sqls   = [];
 
         foreach ($tables as $table) {
             $sqls[] = "EXEC sp_help '" . $table . "';";
         }
 
-        $views = DB::getDoctrineSchemaManager()->listViews();
+        $views = app(Connection::class)->getDoctrineSchemaManager()->listViews();
 
         foreach ($views as $view) {
             $sqls[] = "EXEC sp_helptext '" . $view->getName() . "';";

@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use KitLoong\MigrationsGenerator\DBAL\Connection;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
 abstract class PgSQLTestCase extends FeatureTestCase
@@ -69,7 +70,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
 
     protected function dropAllTablesAndViews(): void
     {
-        $tables = DB::getDoctrineSchemaManager()->listTableNames();
+        $tables = app(Connection::class)->getDoctrineSchemaManager()->listTableNames();
 
         foreach ($tables as $table) {
             if (Str::startsWith($table, 'tiger.')) {

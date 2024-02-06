@@ -8,6 +8,7 @@ use Dotenv\Exception\InvalidPathException;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use KitLoong\MigrationsGenerator\DBAL\Connection;
 use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 use KitLoong\MigrationsGenerator\Tests\TestCase;
 
@@ -238,7 +239,7 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function getTableNames(): array
     {
-        return collect(DB::getDoctrineSchemaManager()->listTableNames())
+        return collect(app(Connection::class)->getDoctrineSchemaManager()->listTableNames())
             ->map(function ($table) {
                 // The table name may contain quotes.
                 // Always trim quotes before set into list.
@@ -258,7 +259,7 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function getViewNames(): array
     {
-        return collect(DB::getDoctrineSchemaManager()->listViews())
+        return collect(app(Connection::class)->getDoctrineSchemaManager()->listViews())
             ->map(function (View $view) {
                 return $view->getName();
             })

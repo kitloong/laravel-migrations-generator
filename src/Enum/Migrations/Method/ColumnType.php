@@ -2,8 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\Enum\Migrations\Method;
 
-use Doctrine\DBAL\Types\Type;
-use KitLoong\MigrationsGenerator\DBAL\Types\Types;
 use MyCLabs\Enum\Enum;
 use UnexpectedValueException;
 
@@ -26,6 +24,7 @@ use UnexpectedValueException;
  * @method static self DOUBLE()
  * @method static self ENUM()
  * @method static self FLOAT()
+ * @method static self GEOGRAPHY()
  * @method static self GEOMETRY()
  * @method static self GEOMETRY_COLLECTION()
  * @method static self INCREMENTS()
@@ -62,7 +61,6 @@ use UnexpectedValueException;
  * @method static self TINY_INTEGER()
  * @method static self TINY_TEXT()
  * @method static self UNSIGNED_BIG_INTEGER()
- * @method static self UNSIGNED_DECIMAL()
  * @method static self UNSIGNED_INTEGER()
  * @method static self UNSIGNED_MEDIUM_INTEGER()
  * @method static self UNSIGNED_SMALL_INTEGER()
@@ -85,6 +83,7 @@ final class ColumnType extends Enum
     public const DOUBLE                  = 'double';
     public const ENUM                    = 'enum';
     public const FLOAT                   = 'float';
+    public const GEOGRAPHY               = 'geography';
     public const GEOMETRY                = 'geometry';
     public const GEOMETRY_COLLECTION     = 'geometryCollection';
     public const INCREMENTS              = 'increments';
@@ -121,24 +120,12 @@ final class ColumnType extends Enum
     public const TINY_INTEGER            = 'tinyInteger';
     public const TINY_TEXT               = 'tinyText';
     public const UNSIGNED_BIG_INTEGER    = 'unsignedBigInteger';
-    public const UNSIGNED_DECIMAL        = 'unsignedDecimal';
     public const UNSIGNED_INTEGER        = 'unsignedInteger';
     public const UNSIGNED_MEDIUM_INTEGER = 'unsignedMediumInteger';
     public const UNSIGNED_SMALL_INTEGER  = 'unsignedSmallInteger';
     public const UNSIGNED_TINY_INTEGER   = 'unsignedTinyInteger';
     public const UUID                    = 'uuid';
     public const YEAR                    = 'year';
-
-    /**
-     * Create instance from {@see \Doctrine\DBAL\Types\Type}.
-     *
-     * @return static
-     */
-    public static function fromDBALType(Type $dbalType): self
-    {
-        $map = Types::BUILTIN_TYPES_MAP + Types::ADDITIONAL_TYPES_MAP;
-        return self::fromValue($map[get_class($dbalType)]);
-    }
 
     /**
      * Initiate an instance from value.

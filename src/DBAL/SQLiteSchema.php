@@ -12,7 +12,7 @@ use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Schema\Models\View;
 
 /**
- * @extends \KitLoong\MigrationsGenerator\DBAL\DBALSchema<\Doctrine\DBAL\Platforms\SqlitePlatform>
+ * @extends \KitLoong\MigrationsGenerator\DBAL\DBALSchema<\Doctrine\DBAL\Platforms\SQLitePlatform>
  */
 class SQLiteSchema extends DBALSchema
 {
@@ -68,6 +68,7 @@ class SQLiteSchema extends DBALSchema
      */
     public function getTableForeignKeys(string $table): Collection
     {
+        // @phpstan-ignore-next-line
         return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
             ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
                 return new SQLiteForeignKey($table, $foreignKeyConstraint);

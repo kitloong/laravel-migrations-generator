@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL\Models\PgSQL;
 
+use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\DBAL\Models\DBALColumn;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
@@ -38,8 +39,9 @@ class PgSQLColumn extends DBALColumn
                 $this->fixFloatLength();
                 break;
 
+            case ColumnType::GEOGRAPHY():
             case ColumnType::GEOMETRY():
-                $this->type = $this->setGeometryType();
+                $this->setRealSpatialColumn();
                 break;
 
             case ColumnType::STRING():
@@ -104,45 +106,62 @@ class PgSQLColumn extends DBALColumn
     }
 
     /**
-     * Get geography mapping.
+     * Get geometry mapping.
      *
      * @return array<string, \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType>
      */
-    private function getGeographyMap(): array
+    private function getGeometryMap(): array
     {
         return [
-            'geography(geometry,4326)'           => ColumnType::GEOMETRY(),
-            'geography(geometrycollection,4326)' => ColumnType::GEOMETRY_COLLECTION(),
-            'geography(linestring,4326)'         => ColumnType::LINE_STRING(),
-            'geography(multilinestring,4326)'    => ColumnType::MULTI_LINE_STRING(),
-            'geography(multipoint,4326)'         => ColumnType::MULTI_POINT(),
-            'geography(multipolygon,4326)'       => ColumnType::MULTI_POLYGON(),
-            'geography(point,4326)'              => ColumnType::POINT(),
-            'geography(polygon,4326)'            => ColumnType::POLYGON(),
+            'geometry'           => ColumnType::GEOMETRY(),
+            'geometrycollection' => ColumnType::GEOMETRY_COLLECTION(),
+            'linestring'         => ColumnType::LINE_STRING(),
+            'multilinestring'    => ColumnType::MULTI_LINE_STRING(),
+            'multipoint'         => ColumnType::MULTI_POINT(),
+            'multipolygon'       => ColumnType::MULTI_POLYGON(),
+            'point'              => ColumnType::POINT(),
+            'polygon'            => ColumnType::POLYGON(),
         ];
     }
 
     /**
      * Set to geometry type base on geography map.
      */
-    private function setGeometryType(): ColumnType
+    private function setRealSpatialColumn(): void
     {
         $dataType = $this->repository->getTypeByColumnName($this->tableName, $this->name);
 
         if ($dataType === null) {
-            return $this->type;
+            return;
         }
 
         $dataType = strtolower($dataType);
         $dataType = preg_replace('/\s+/', '', $dataType);
 
-        $map = $this->getGeographyMap();
-
-        if (!isset($map[$dataType])) {
-            return $this->type;
+        if ($dataType === 'geography' || $dataType === 'geometry') {
+            return;
         }
 
-        return $map[$dataType];
+        if (!preg_match('/(\w+)(?:\((\w+)(?:,\s*(\w+))?\))?/', $dataType, $matches)) {
+            return;
+        }
+
+        $spatialSubType = $matches[2];
+        $spatialSrID    = isset($matches[3]) ? (int) $matches[3] : null;
+
+        if (!$this->atLeastLaravel11()) {
+            $map = $this->getGeometryMap();
+
+            if (!isset($map[$spatialSubType])) {
+                return;
+            }
+
+            $this->type = $map[$spatialSubType];
+            return;
+        }
+
+        $this->spatialSubType = $spatialSubType;
+        $this->spatialSrID    = $spatialSrID;
     }
 
     /**
@@ -199,5 +218,33 @@ class PgSQLColumn extends DBALColumn
         }
 
         $this->default = null;
+    }
+
+    protected function setTypeToIncrements(bool $supportUnsigned): void
+    {
+        // https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-identity-column/
+        // https://github.com/doctrine/dbal/pull/5396
+        if (
+            !in_array($this->type, [
+                ColumnType::BIG_INTEGER(),
+                ColumnType::INTEGER(),
+                ColumnType::MEDIUM_INTEGER(),
+                ColumnType::SMALL_INTEGER(),
+                ColumnType::TINY_INTEGER(),
+            ])
+        ) {
+            return;
+        }
+
+        if (
+            $this->default !== null && (
+                Str::endsWith($this->default, '_seq') || Str::endsWith($this->default, '_seq"')
+            )
+        ) {
+            $this->default       = null;
+            $this->autoincrement = true;
+        }
+
+        parent::setTypeToIncrements($supportUnsigned);
     }
 }

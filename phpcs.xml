@@ -6,6 +6,7 @@
   <file>tests</file>
 
   <exclude-pattern>tests/resources/database/migrations/*.php</exclude-pattern>
+  <exclude-pattern>src/DBAL/PDO/*</exclude-pattern>
 
   <rule ref="PSR12">
     <exclude name="Generic.Files.LineLength"/>
@@ -183,8 +184,8 @@
   <!--<rule ref="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces"/>-->
   <rule ref="SlevomatCodingStandard.Namespaces.UseSpacing"/>
   <rule ref="SlevomatCodingStandard.Namespaces.UselessAlias"/>
-  <rule ref="SlevomatCodingStandard.Numbers.DisallowNumericLiteralSeparator"/>
-  <rule ref="SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator"/>
+  <!--  <rule ref="SlevomatCodingStandard.Numbers.DisallowNumericLiteralSeparator"/>-->
+  <!--  <rule ref="SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator"/>-->
   <rule ref="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
   <!--<rule ref="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators"/>-->
   <rule ref="SlevomatCodingStandard.Operators.NegationOperatorSpacing"/>

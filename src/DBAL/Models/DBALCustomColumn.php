@@ -3,12 +3,16 @@
 namespace KitLoong\MigrationsGenerator\DBAL\Models;
 
 use Doctrine\DBAL\Schema\Column as DoctrineDBALColumn;
+use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
-use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\DBAL\Connection;
 use KitLoong\MigrationsGenerator\Schema\Models\CustomColumn;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
 abstract class DBALCustomColumn implements CustomColumn
 {
+    use CheckLaravelVersion;
+
     /**
      * @var string
      */
@@ -38,7 +42,9 @@ abstract class DBALCustomColumn implements CustomColumn
         unset($platformOptions['collation']);
         $column->setPlatformOptions($platformOptions);
 
-        $this->sqls = DB::getDoctrineConnection()->getDatabasePlatform()->getAlterTableSQL(new TableDiff($this->tableName, [$column]));
+        $tableDiff = $this->getTableDiff($column);
+
+        $this->sqls = app(Connection::class)->getDoctrineConnection()->getDatabasePlatform()->getAlterTableSQL($tableDiff);
     }
 
     /**
@@ -63,5 +69,35 @@ abstract class DBALCustomColumn implements CustomColumn
     public function getSqls(): array
     {
         return $this->sqls;
+    }
+
+    /**
+     * Init TableDiff by table name.
+     * This method compare Laravel version to determine which TableDiff constructor to use.
+     * To be precise, it uses Laravel version to determine which constructor to use because Laravel 11 uses Doctrine DBAL 4.
+     *
+     * @see  https://github.com/doctrine/dbal/pull/5683
+     */
+    private function getTableDiff(DoctrineDBALColumn $column): TableDiff
+    {
+        if ($this->atLeastLaravel11()) {
+            return new TableDiff(
+                new Table($this->tableName),
+                [$column],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                []
+            );
+        }
+
+        // @phpstan-ignore-next-line
+        return new TableDiff($this->tableName, [$column]);
     }
 }

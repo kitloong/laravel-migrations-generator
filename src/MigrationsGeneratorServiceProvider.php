@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
+use KitLoong\MigrationsGenerator\DBAL\Connection;
 use KitLoong\MigrationsGenerator\DBAL\MySQLSchema as DBALMySQLSchema;
 use KitLoong\MigrationsGenerator\DBAL\PgSQLSchema as DBALPgSQLSchema;
 use KitLoong\MigrationsGenerator\DBAL\SQLiteSchema as DBALSQLiteSchema;
@@ -19,6 +20,7 @@ use KitLoong\MigrationsGenerator\Migration\Generator\Columns\MiscColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\OmitNameColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\PresetValuesColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\SoftDeleteColumn;
+use KitLoong\MigrationsGenerator\Migration\Generator\Columns\SpatialColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\StringColumn;
 use KitLoong\MigrationsGenerator\Migration\Migrator\Migrator;
 use KitLoong\MigrationsGenerator\Repositories\MariaDBRepository;
@@ -50,6 +52,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
                 SQLiteRepository::class  => SQLiteRepository::class,
                 SQLSrvRepository::class  => SQLSrvRepository::class,
                 MariaDBRepository::class => MariaDBRepository::class,
+                Connection::class        => Connection::class,
             ] as $abstract => $concrete
         ) {
             $this->app->singleton($abstract, $concrete);
@@ -163,7 +166,6 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         foreach (
             [
                 ColumnType::DECIMAL(),
-                ColumnType::UNSIGNED_DECIMAL(),
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, DecimalColumn::class);
@@ -185,6 +187,22 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, StringColumn::class);
+        }
+
+        foreach (
+            [
+                ColumnType::GEOGRAPHY(),
+                ColumnType::GEOMETRY(),
+                ColumnType::GEOMETRY_COLLECTION(),
+                ColumnType::LINE_STRING(),
+                ColumnType::MULTI_LINE_STRING(),
+                ColumnType::POINT(),
+                ColumnType::MULTI_POINT(),
+                ColumnType::MULTI_POLYGON(),
+                ColumnType::POLYGON(),
+            ] as $columnType
+        ) {
+            $this->columnTypeSingleton($columnType, SpatialColumn::class);
         }
 
         $this->columnTypeSingleton(ColumnType::BOOLEAN(), BooleanColumn::class);
