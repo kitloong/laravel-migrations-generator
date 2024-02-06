@@ -52,6 +52,13 @@ class MigrationWriter
 
             $use = implode(Space::LINE_BREAK(), $this->getNamespaces($migrationFileType, $useDBFacade));
 
+            // Create directory if it doesn't exist
+            $directory = dirname($path);
+
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
             File::put(
                 $path,
                 $this->migrationStub->populateStub($stub, $use, $className, $upString, $downString)
