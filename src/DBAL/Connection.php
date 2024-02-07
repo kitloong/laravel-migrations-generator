@@ -21,7 +21,7 @@ class Connection
     /**
      * The instance of Doctrine connection.
      */
-    protected ?DoctrineConnection $doctrineConnection;
+    protected ?DoctrineConnection $doctrineConnection = null;
 
     /**
      * Get the Doctrine DBAL database connection instance.
