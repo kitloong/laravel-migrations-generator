@@ -17,7 +17,8 @@
       <directory suffix=".php">src</directory>
     </include>
     <exclude>
-      <directory>src/KitLoong/MigrationsGenerator/Types</directory>
+      <directory>src/DBAL/Types</directory>
+      <directory>src/DBAL/PDO</directory>
     </exclude>
     </source>
 </phpunit>
