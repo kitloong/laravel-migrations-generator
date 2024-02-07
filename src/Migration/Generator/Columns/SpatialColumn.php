@@ -48,6 +48,10 @@ class SpatialColumn implements ColumnTypeGenerator
         return new Method($column->getType(), ...$methodValues);
     }
 
+    /**
+     * Get the SRID argument for spatial column.
+     * Return null if the SRID is null or it matches the default SRID.
+     */
     private function getSrIDArg(Column $column): ?int
     {
         if ($column->getSpatialSrID() === null) {

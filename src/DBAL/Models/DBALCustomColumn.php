@@ -72,9 +72,9 @@ abstract class DBALCustomColumn implements CustomColumn
     }
 
     /**
-     * Init TableDiff by table name.
-     * This method compare Laravel version to determine which TableDiff constructor to use.
-     * To be precise, it uses Laravel version to determine which constructor to use because Laravel 11 uses Doctrine DBAL 4.
+     * Initialize a TableDiff instance based on the table name.
+     * The \Doctrine\DBAL\Schema\TableDiff constructor has been updated from Doctrine DBAL 3 to DBAL 4.
+     * This method utilizes the Laravel version to determine which TableDiff constructor to use, as Laravel 11 requires Doctrine DBAL 4.
      *
      * @see  https://github.com/doctrine/dbal/pull/5683
      */

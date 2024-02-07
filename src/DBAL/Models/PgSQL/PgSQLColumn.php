@@ -220,6 +220,9 @@ class PgSQLColumn extends DBALColumn
         $this->default = null;
     }
 
+    /**
+     * Override parent method to handle autoincrement with default value.
+     */
     protected function setTypeToIncrements(bool $supportUnsigned): void
     {
         // https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-identity-column/

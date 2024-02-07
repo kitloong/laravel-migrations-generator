@@ -69,10 +69,8 @@ class Connection
 
     /**
      * Get the Doctrine DBAL driver.
-     *
-     * @return \KitLoong\MigrationsGenerator\DBAL\PDO\MySqlDriver|\KitLoong\MigrationsGenerator\DBAL\PDO\PostgresDriver|\KitLoong\MigrationsGenerator\DBAL\PDO\SQLiteDriver|\KitLoong\MigrationsGenerator\DBAL\PDO\SqlServerDriver
      */
-    protected function getDoctrineDriver()
+    protected function getDoctrineDriver(): SQLiteDriver|SqlServerDriver|MySqlDriver|PostgresDriver
     {
         switch (true) {
             case DB::connection() instanceof MySqlConnection:

@@ -189,6 +189,9 @@ class MySQLRepository extends Repository
         return $definitionArr['generation_expression'] !== '' ? $definitionArr['generation_expression'] : null;
     }
 
+    /**
+     * Get the SRID by table and column name.
+     */
     public function getSrID(string $table, string $column): ?int
     {
         try {
