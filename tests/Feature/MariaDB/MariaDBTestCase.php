@@ -40,7 +40,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
 
     protected function dumpSchemaAs(string $destination): void
     {
-        $password = (!empty(config('database.connections.mariadb.password')) ?
+        $password = (config('database.connections.mariadb.password') !== '' ?
             '-p\'' . config('database.connections.mariadb.password') . '\'' :
             '');
 
@@ -56,7 +56,7 @@ abstract class MariaDBTestCase extends FeatureTestCase
             config('database.connections.mariadb.port'),
             config('database.connections.mariadb.username'),
             config('database.connections.mariadb.database'),
-            $destination
+            $destination,
         );
         exec($command);
     }

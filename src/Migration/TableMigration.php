@@ -29,50 +29,14 @@ class TableMigration
     use CheckMigrationMethod;
     use TableName;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\ColumnGenerator
-     */
-    private $columnGenerator;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Support\MigrationNameHelper
-     */
-    private $migrationNameHelper;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\IndexGenerator
-     */
-    private $indexGenerator;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter
-     */
-    private $migrationWriter;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Setting
-     */
-    private $setting;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter
-     */
-    private $squashWriter;
-
     public function __construct(
-        ColumnGenerator $columnGenerator,
-        MigrationNameHelper $migrationNameHelper,
-        IndexGenerator $indexGenerator,
-        MigrationWriter $migrationWriter,
-        Setting $setting,
-        SquashWriter $squashWriter
+        private ColumnGenerator $columnGenerator,
+        private MigrationNameHelper $migrationNameHelper,
+        private IndexGenerator $indexGenerator,
+        private MigrationWriter $migrationWriter,
+        private Setting $setting,
+        private SquashWriter $squashWriter,
     ) {
-        $this->columnGenerator     = $columnGenerator;
-        $this->migrationNameHelper = $migrationNameHelper;
-        $this->indexGenerator      = $indexGenerator;
-        $this->migrationWriter     = $migrationWriter;
-        $this->setting             = $setting;
-        $this->squashWriter        = $squashWriter;
     }
 
     /**
@@ -99,7 +63,7 @@ class TableMigration
             $this->makeMigrationClassName($table->getName()),
             $upList,
             new Collection([$down]),
-            MigrationFileType::TABLE()
+            MigrationFileType::TABLE(),
         );
 
         return $path;
@@ -202,7 +166,7 @@ class TableMigration
         $withoutPrefix = $this->stripTablePrefix($table);
         return $this->migrationNameHelper->makeClassName(
             $this->setting->getTableFilename(),
-            $withoutPrefix
+            $withoutPrefix,
         );
     }
 
@@ -217,7 +181,7 @@ class TableMigration
         return $this->migrationNameHelper->makeFilename(
             $this->setting->getTableFilename(),
             $this->setting->getDateForMigrationFilename(),
-            $withoutPrefix
+            $withoutPrefix,
         );
     }
 
@@ -237,7 +201,7 @@ class TableMigration
     {
         $blueprint->setProperty(
             TableProperty::COLLATION(),
-            $collation = $table->getCollation()
+            $collation = $table->getCollation(),
         );
 
         if ($collation === null) {
@@ -254,7 +218,7 @@ class TableMigration
     {
         return new SchemaBlueprint(
             $table->getName(),
-            $schemaBuilder
+            $schemaBuilder,
         );
     }
 }

@@ -24,18 +24,12 @@ class DBUnpreparedBlueprint implements WritableBlueprint
     use MethodStringHelper;
 
     /**
-     * @var string
-     */
-    private $sql;
-
-    /**
      * DBStatementBlueprint constructor.
      *
      * @param  string  $sql  The SQL statement.
      */
-    public function __construct(string $sql)
+    public function __construct(private string $sql)
     {
-        $this->sql = $sql;
     }
 
     /**

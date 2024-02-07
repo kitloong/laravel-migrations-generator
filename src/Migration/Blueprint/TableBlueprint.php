@@ -34,14 +34,12 @@ class TableBlueprint implements WritableBlueprint
     use Stringable;
 
     /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[] */
-    private $lines;
+    private array $lines;
 
     /**
      * By default, generate 3 tabs for each line.
-     *
-     * @var int
      */
-    private $numberOfPrefixTab = 3;
+    private int $numberOfPrefixTab = 3;
 
     public function __construct()
     {
@@ -50,9 +48,8 @@ class TableBlueprint implements WritableBlueprint
 
     /**
      * @param  string  $name  Property name.
-     * @param  mixed  $value
      */
-    public function setProperty(string $name, $value): Property
+    public function setProperty(string $name, mixed $value): Property
     {
         $property      = new Property($name, $value);
         $this->lines[] = $property;
@@ -63,7 +60,7 @@ class TableBlueprint implements WritableBlueprint
      * @param  string  $name  Method name.
      * @param  mixed  ...$values  Method arguments.
      */
-    public function setMethodByName(string $name, ...$values): Method
+    public function setMethodByName(string $name, mixed ...$values): Method
     {
         $method        = new Method($name, ...$values);
         $this->lines[] = $method;
@@ -81,10 +78,7 @@ class TableBlueprint implements WritableBlueprint
         $this->lines[] = Space::LINE_BREAK();
     }
 
-    /**
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Method|\KitLoong\MigrationsGenerator\Migration\Blueprint\Property|string|null
-     */
-    public function removeLastLine()
+    public function removeLastLine(): Method|Property|string|null
     {
         return array_pop($this->lines);
     }
@@ -181,9 +175,7 @@ class TableBlueprint implements WritableBlueprint
      */
     private function flattenMethod(Method $method): string
     {
-        $v = (new Collection($method->getValues()))->map(function ($v) {
-            return $this->convertFromAnyTypeToString($v);
-        })->implode(', ');
+        $v = (new Collection($method->getValues()))->map(fn ($v) => $this->convertFromAnyTypeToString($v))->implode(', ');
         return $method->getName() . "($v)";
     }
 }

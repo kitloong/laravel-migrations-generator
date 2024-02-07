@@ -16,15 +16,9 @@ class MySQLColumn extends DBALColumn
 {
     use CheckMigrationMethod;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\MySQLRepository
-     */
-    private $mysqlRepository;
+    private MySQLRepository $mysqlRepository;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\MariaDBRepository
-     */
-    private $mariaDBRepository;
+    private MariaDBRepository $mariaDBRepository;
 
     protected function handle(): void
     {
@@ -132,7 +126,7 @@ class MySQLColumn extends DBALColumn
     {
         return $this->mysqlRepository->getEnumPresetValues(
             $this->tableName,
-            $this->name
+            $this->name,
         )->toArray();
     }
 
@@ -145,7 +139,7 @@ class MySQLColumn extends DBALColumn
     {
         return $this->mysqlRepository->getSetPresetValues(
             $this->tableName,
-            $this->name
+            $this->name,
         )->toArray();
     }
 

@@ -30,7 +30,7 @@ class MigrationStub
         string $use,
         string $className,
         string $upContent,
-        string $downContent
+        string $downContent,
     ): string {
         $content = $stub;
         $replace = [

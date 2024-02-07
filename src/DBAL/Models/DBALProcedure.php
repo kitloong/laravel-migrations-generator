@@ -6,25 +6,10 @@ use KitLoong\MigrationsGenerator\Schema\Models\Procedure;
 
 abstract class DBALProcedure implements Procedure
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $dropDefinition;
 
-    /**
-     * @var string
-     */
-    protected $definition;
-
-    /**
-     * @var string
-     */
-    protected $dropDefinition;
-
-    public function __construct(string $name, string $definition)
+    public function __construct(protected string $name, protected string $definition)
     {
-        $this->name           = $name;
-        $this->definition     = $definition;
         $this->dropDefinition = "DROP PROCEDURE IF EXISTS $name";
     }
 

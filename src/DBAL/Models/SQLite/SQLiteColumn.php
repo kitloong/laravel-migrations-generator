@@ -13,10 +13,7 @@ class SQLiteColumn extends DBALColumn
 {
     use CheckMigrationMethod;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\SQLiteRepository
-     */
-    private $repository;
+    private SQLiteRepository $repository;
 
     /**
      * @inheritDoc

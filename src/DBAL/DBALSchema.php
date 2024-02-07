@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\DBAL;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Schema\Schema;
@@ -17,7 +18,7 @@ abstract class DBALSchema implements Schema
     /**
      * @var \Doctrine\DBAL\Schema\AbstractSchemaManager<T>
      */
-    protected $dbalSchema;
+    protected AbstractSchemaManager $dbalSchema;
 
     /**
      * @throws \Doctrine\DBAL\Exception

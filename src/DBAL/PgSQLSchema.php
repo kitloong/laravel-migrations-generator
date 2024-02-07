@@ -20,16 +20,9 @@ use KitLoong\MigrationsGenerator\Schema\Models\View;
  */
 class PgSQLSchema extends DBALSchema
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\PgSQLRepository
-     */
-    private $pgSQLRepository;
-
-    public function __construct(RegisterColumnType $registerColumnType, PgSQLRepository $pgSQLRepository)
+    public function __construct(RegisterColumnType $registerColumnType, private PgSQLRepository $pgSQLRepository)
     {
         parent::__construct($registerColumnType);
-
-        $this->pgSQLRepository = $pgSQLRepository;
     }
 
     /**
@@ -38,7 +31,7 @@ class PgSQLSchema extends DBALSchema
     public function getTableNames(): Collection
     {
         return parent::getTableNames()
-            ->filter(function (string $table): bool {
+            ->filter(static function (string $table): bool {
                 // Checks if the table is from user defined "schema".
                 // If table name do not have namespace, it is using the default namespace.
                 if (strpos($table, '.') === false) {
@@ -65,7 +58,7 @@ class PgSQLSchema extends DBALSchema
         return new PgSQLTable(
             $this->introspectTable($name),
             $this->dbalSchema->listTableColumns($name),
-            $this->dbalSchema->listTableIndexes($name)
+            $this->dbalSchema->listTableIndexes($name),
         );
     }
 
@@ -76,9 +69,7 @@ class PgSQLSchema extends DBALSchema
     public function getViewNames(): Collection
     {
         return $this->getViews()
-            ->map(function (View $view) {
-                return $view->getName();
-            });
+            ->map(static fn (View $view) => $view->getName());
     }
 
     /**
@@ -88,7 +79,7 @@ class PgSQLSchema extends DBALSchema
     public function getViews(): Collection
     {
         return (new Collection($this->dbalSchema->listViews()))
-            ->filter(function (DoctrineDBALView $view) {
+            ->filter(static function (DoctrineDBALView $view) {
                 if (in_array($view->getName(), ['public.geography_columns', 'public.geometry_columns'])) {
                     return false;
                 }
@@ -99,9 +90,7 @@ class PgSQLSchema extends DBALSchema
 
                 return $view->getNamespaceName() === $searchPath;
             })
-            ->map(function (DoctrineDBALView $view) {
-                return new PgSQLView($view);
-            })
+            ->map(static fn (DoctrineDBALView $view) => new PgSQLView($view))
             ->values();
     }
 
@@ -111,9 +100,7 @@ class PgSQLSchema extends DBALSchema
     public function getProcedures(): Collection
     {
         return (new Collection($this->pgSQLRepository->getProcedures()))
-            ->map(function (ProcedureDefinition $procedureDefinition) {
-                return new PgSQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition());
-            });
+            ->map(static fn (ProcedureDefinition $procedureDefinition) => new PgSQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition()));
     }
 
     /**
@@ -124,8 +111,6 @@ class PgSQLSchema extends DBALSchema
     {
         // @phpstan-ignore-next-line
         return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
-            ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
-                return new PgSQLForeignKey($table, $foreignKeyConstraint);
-            });
+            ->map(static fn (ForeignKeyConstraint $foreignKeyConstraint) => new PgSQLForeignKey($table, $foreignKeyConstraint));
     }
 }

@@ -10,10 +10,7 @@ use KitLoong\MigrationsGenerator\Support\Regex;
 
 class PgSQLColumn extends DBALColumn
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\PgSQLRepository
-     */
-    private $repository;
+    private PgSQLRepository $repository;
 
     protected function handle(): void
     {

@@ -39,7 +39,7 @@
   <rule ref="SlevomatCodingStandard.Classes.ClassMemberSpacing"/>
   <!--<rule ref="SlevomatCodingStandard.Classes.ClassStructure"/>-->
   <rule ref="SlevomatCodingStandard.Classes.ConstantSpacing"/>
-  <!--<rule ref="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion"/>-->
+<!--  <rule ref="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion"/>-->
   <!--<rule ref="SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants"/>-->
   <!--<rule ref="SlevomatCodingStandard.Classes.DisallowMultiConstantDefinition"/>-->
   <!--<rule ref="SlevomatCodingStandard.Classes.DisallowMultiPropertyDefinition"/>-->
@@ -48,17 +48,12 @@
   <rule ref="SlevomatCodingStandard.Classes.EnumCaseSpacing"/>
   <!--<rule ref="SlevomatCodingStandard.Classes.ForbiddenPublicProperty"/>-->
   <rule ref="SlevomatCodingStandard.Classes.MethodSpacing"/>
-  <!--<rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference"/>-->
+  <rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference"/>
   <rule ref="SlevomatCodingStandard.Classes.ParentCallSpacing"/>
   <rule ref="SlevomatCodingStandard.Classes.PropertyDeclaration"/>
   <rule ref="SlevomatCodingStandard.Classes.PropertySpacing"/>
   <!--<rule ref="SlevomatCodingStandard.Classes.RequireAbstractOrFinal"/>-->
-  <rule ref="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion">
-    <!--Disabled to support PHP 7.1-->
-    <properties>
-      <property name="enable" value="false"/>
-    </properties>
-  </rule>
+  <rule ref="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion"/>
   <!--<rule ref="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>-->
   <rule ref="SlevomatCodingStandard.Classes.RequireSelfReference"/>
   <rule ref="SlevomatCodingStandard.Classes.RequireSingleLineMethodSignature"/>
@@ -92,10 +87,10 @@
   <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition"/>
   <rule ref="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing"/>
   <rule ref="SlevomatCodingStandard.ControlStructures.DisallowContinueWithoutIntegerOperandInSwitch"/>
-  <!--<rule ref="SlevomatCodingStandard.ControlStructures.DisallowEmpty"/>-->
+  <rule ref="SlevomatCodingStandard.ControlStructures.DisallowEmpty"/>
   <!--<rule ref="SlevomatCodingStandard.ControlStructures.DisallowNullSafeObjectOperator"/>-->
   <!--<rule ref="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator"/>-->
-  <!--<rule ref="SlevomatCodingStandard.ControlStructures.DisallowTrailingMultiLineTernaryOperatorSniff"/>-->
+  <!--<rule ref="SlevomatCodingStandard.ControlStructures.DisallowTrailingMultiLineTernaryOperator"/>-->
   <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison"/>
   <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit"/>
   <!--<rule ref="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing"/>-->
@@ -106,12 +101,7 @@
   <!--<rule ref="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator"/>-->
   <rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceEqualOperator"/>
   <rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator"/>
-  <rule ref="SlevomatCodingStandard.ControlStructures.RequireNullSafeObjectOperator">
-    <!--Disabled to support PHP 7.1-->
-    <properties>
-      <property name="enable" value="false"/>
-    </properties>
-  </rule>
+  <rule ref="SlevomatCodingStandard.ControlStructures.RequireNullSafeObjectOperator"/>
   <rule ref="SlevomatCodingStandard.ControlStructures.RequireShortTernaryOperator"/>
   <!--<rule ref="SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition"/>-->
   <rule ref="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator"/>
@@ -121,12 +111,7 @@
   <rule ref="SlevomatCodingStandard.Exceptions.DeadCatch"/>
   <!--<rule ref="SlevomatCodingStandard.Exceptions.DisallowNonCapturingCatch"/>-->
   <rule ref="SlevomatCodingStandard.Exceptions.ReferenceThrowableOnly"/>
-  <rule ref="SlevomatCodingStandard.Exceptions.RequireNonCapturingCatch">
-    <!--Disabled to support PHP 7.1-->
-    <properties>
-      <property name="enable" value="false"/>
-    </properties>
-  </rule>
+  <rule ref="SlevomatCodingStandard.Exceptions.RequireNonCapturingCatch"/>
   <!--<rule ref="SlevomatCodingStandard.Files.FileLength"/>-->
   <!--<rule ref="SlevomatCodingStandard.Files.LineLength"/>-->
   <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
@@ -146,23 +131,13 @@
   <!--<rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInDeclaration"/>-->
   <!--<rule ref="SlevomatCodingStandard.Functions.FunctionLength"/>-->
   <rule ref="SlevomatCodingStandard.Functions.NamedArgumentSpacing"/>
-  <!--<rule ref="SlevomatCodingStandard.Functions.RequireArrowFunction"/>-->
+  <rule ref="SlevomatCodingStandard.Functions.RequireArrowFunction"/>
   <!--<rule ref="SlevomatCodingStandard.Functions.RequireMultiLineCall"/>-->
   <!--<rule ref="SlevomatCodingStandard.Functions.RequireSingleLineCall"/>-->
-  <!--<rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall"/>-->
-  <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInClosureUse">
-    <!--Disabled to support PHP 7.1-->
-    <properties>
-      <property name="enable" value="false"/>
-    </properties>
-  </rule>
-  <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration">
-    <!--Disabled to support PHP 7.1-->
-    <properties>
-      <property name="enable" value="false"/>
-    </properties>
-  </rule>
-  <!--<rule ref="SlevomatCodingStandard.Functions.StaticClosure"/>-->
+  <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall"/>
+  <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInClosureUse"/>
+  <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration"/>
+  <rule ref="SlevomatCodingStandard.Functions.StaticClosure"/>
   <!--<rule ref="SlevomatCodingStandard.Functions.StrictCall"/>-->
   <rule ref="SlevomatCodingStandard.Functions.UnusedInheritedVariablePassedToClosure"/>
   <!--<rule ref="SlevomatCodingStandard.Functions.UnusedParameter"/>-->
@@ -184,8 +159,8 @@
   <!--<rule ref="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces"/>-->
   <rule ref="SlevomatCodingStandard.Namespaces.UseSpacing"/>
   <rule ref="SlevomatCodingStandard.Namespaces.UselessAlias"/>
-  <!--  <rule ref="SlevomatCodingStandard.Numbers.DisallowNumericLiteralSeparator"/>-->
-  <!--  <rule ref="SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator"/>-->
+  <!--<rule ref="SlevomatCodingStandard.Numbers.DisallowNumericLiteralSeparator"/>-->
+  <!--<rule ref="SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator"/>-->
   <rule ref="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
   <!--<rule ref="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators"/>-->
   <rule ref="SlevomatCodingStandard.Operators.NegationOperatorSpacing"/>
@@ -210,39 +185,10 @@
   <rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints"/>
   <rule ref="SlevomatCodingStandard.TypeHints.NullTypeHintOnLastPosition"/>
   <rule ref="SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue"/>
-  <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint">
-    <!--Disabled to support PHP 7.1-->
-    <properties>
-      <property name="enableObjectTypeHint" value="false"/>
-      <property name="enableMixedTypeHint" value="false"/>
-      <property name="enableUnionTypeHint" value="false"/>
-      <property name="enableIntersectionTypeHint" value="false"/>
-      <property name="enableStandaloneNullTrueFalseTypeHints" value="false"/>
-    </properties>
-  </rule>
+  <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint"/>
   <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
-  <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint">
-    <!--Disabled to support PHP 7.1-->
-    <properties>
-      <property name="enableNativeTypeHint" value="false"/>
-      <property name="enableMixedTypeHint" value="false"/>
-      <property name="enableUnionTypeHint" value="false"/>
-      <property name="enableIntersectionTypeHint" value="false"/>
-      <property name="enableStandaloneNullTrueFalseTypeHints" value="false"/>
-    </properties>
-  </rule>
-  <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
-    <!--Disabled to support PHP 7.1-->
-    <properties>
-      <property name="enableObjectTypeHint" value="false"/>
-      <property name="enableStaticTypeHint" value="false"/>
-      <property name="enableMixedTypeHint" value="false"/>
-      <property name="enableUnionTypeHint" value="false"/>
-      <property name="enableIntersectionTypeHint" value="false"/>
-      <property name="enableNeverTypeHint" value="false"/>
-      <property name="enableStandaloneNullTrueFalseTypeHints" value="false"/>
-    </properties>
-  </rule>
+  <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint"/>
+  <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint"/>
   <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>
   <rule ref="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
   <rule ref="SlevomatCodingStandard.TypeHints.UselessConstantTypeHint"/>

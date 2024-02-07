@@ -13,20 +13,14 @@ abstract class DBALCustomColumn implements CustomColumn
 {
     use CheckLaravelVersion;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
-    /**
-     * @var string
-     */
-    private $tableName;
+    private string $tableName;
 
     /**
      * @var string[]
      */
-    private $sqls;
+    private array $sqls;
 
     /**
      * @throws \Doctrine\DBAL\Exception
@@ -93,7 +87,7 @@ abstract class DBALCustomColumn implements CustomColumn
                 [],
                 [],
                 [],
-                []
+                [],
             );
         }
 

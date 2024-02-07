@@ -22,7 +22,7 @@ class TablePrefixTest extends PgSQLTestCase
             $this->migrateGeneral('pgsql');
 
             DB::statement(
-                "ALTER TABLE kit_all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+                "ALTER TABLE kit_all_columns_pgsql ADD COLUMN status my_status NOT NULL",
             );
         };
 
@@ -53,7 +53,7 @@ class TablePrefixTest extends PgSQLTestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

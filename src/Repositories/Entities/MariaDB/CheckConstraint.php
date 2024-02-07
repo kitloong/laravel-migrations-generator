@@ -14,31 +14,23 @@ use stdClass;
  */
 class CheckConstraint
 {
-    /** @var string */
-    private $constraintCatalog;
+    private string $constraintCatalog;
 
-    /** @var string */
-    private $constraintSchema;
+    private string $constraintSchema;
 
-    /** @var string */
-    private $tableName;
+    private string $tableName;
 
-    /** @var string */
-    private $constraintName;
+    private string $constraintName;
 
-    /** @var string|null */
-    private $level;
+    private ?string $level = null;
 
-    /** @var string */
-    private $checkClause;
+    private string $checkClause;
 
     public function __construct(stdClass $column)
     {
         // Convert column property to case-insensitive
         // Issue https://github.com/kitloong/laravel-migrations-generator/issues/34
-        $lowerKey = (new Collection((array) $column))->mapWithKeys(function ($item, $key) {
-            return [strtolower($key) => $item];
-        });
+        $lowerKey = (new Collection((array) $column))->mapWithKeys(static fn ($item, $key) => [strtolower($key) => $item]);
 
         $this->constraintCatalog = $lowerKey['constraint_catalog'];
         $this->constraintSchema  = $lowerKey['constraint_schema'];

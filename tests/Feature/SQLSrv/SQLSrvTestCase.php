@@ -75,7 +75,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
             config('database.connections.sqlsrv.password'),
             config('database.connections.sqlsrv.database'),
             implode('', $sqls),
-            $this->getStorageSqlPath('temp.sql')
+            $this->getStorageSqlPath('temp.sql'),
         );
         exec($command);
 
@@ -103,7 +103,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
             SELECT @sql += 'DROP VIEW ' + QUOTENAME(OBJECT_SCHEMA_NAME(object_id)) + '.' + QUOTENAME(name) + ';'
             FROM sys.views;
 
-            EXEC sp_executesql @sql;"
+            EXEC sp_executesql @sql;",
         );
     }
 
@@ -127,7 +127,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
                 INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
             WHERE type = 'P'
                 AND definition IS NOT NULL
-            ORDER BY name"
+            ORDER BY name",
         );
     }
 

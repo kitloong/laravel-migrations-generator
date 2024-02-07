@@ -68,10 +68,7 @@ class CheckLaravelVersionTest extends TestCase
         $this->assertTrue($this->stubInstance()->atLeastLaravel8());
     }
 
-    /**
-     * @return object
-     */
-    private function stubInstance()
+    private function stubInstance(): object
     {
         return new class () {
             use CheckLaravelVersion;

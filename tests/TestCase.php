@@ -43,11 +43,9 @@ abstract class TestCase extends Testbench
         static::assertFileExists($expected, $message);
         static::assertFileExists($actual, $message);
 
-        $removeLastComma = function (string $line): string {
-            return Str::endsWith($line, ',' . PHP_EOL)
+        $removeLastComma = static fn (string $line): string => Str::endsWith($line, ',' . PHP_EOL)
                 ? Str::replaceLast(',' . PHP_EOL, PHP_EOL, $line)
                 : $line;
-        };
 
         $expectedFiles   = file($expected) ?: [];
         $expectedContent = new Collection($expectedFiles);

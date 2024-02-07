@@ -14,27 +14,18 @@ abstract class DBALIndex implements Index
     /**
      * @var string[]
      */
-    protected $columns;
+    protected array $columns;
 
     /**
      * @var array<int|null>
      */
-    protected $lengths;
+    protected array $lengths;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string
-     */
-    protected $tableName;
+    protected string $tableName;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType
-     */
-    protected $type;
+    protected IndexType $type;
 
     /**
      * Create an index instance.

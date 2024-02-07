@@ -19,16 +19,9 @@ use KitLoong\MigrationsGenerator\Schema\Models\View;
  */
 class SQLSrvSchema extends DBALSchema
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository
-     */
-    private $sqlSrvRepository;
-
-    public function __construct(RegisterColumnType $registerColumnType, SQLSrvRepository $sqlSrvRepository)
+    public function __construct(RegisterColumnType $registerColumnType, private SQLSrvRepository $sqlSrvRepository)
     {
         parent::__construct($registerColumnType);
-
-        $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
     /**
@@ -40,7 +33,7 @@ class SQLSrvSchema extends DBALSchema
         return new SQLSrvTable(
             $this->introspectTable($name),
             $this->dbalSchema->listTableColumns($name),
-            $this->dbalSchema->listTableIndexes($name)
+            $this->dbalSchema->listTableIndexes($name),
         );
     }
 
@@ -50,9 +43,7 @@ class SQLSrvSchema extends DBALSchema
      */
     public function getViewNames(): Collection
     {
-        return $this->getViews()->map(function (View $view) {
-            return $view->getName();
-        });
+        return $this->getViews()->map(static fn (View $view) => $view->getName());
     }
 
     /**
@@ -62,13 +53,8 @@ class SQLSrvSchema extends DBALSchema
     public function getViews(): Collection
     {
         return (new Collection($this->dbalSchema->listViews()))
-            ->map(function (DoctrineDBALView $view) {
-                return new SQLSrvView($view);
-            })
-            ->filter(function (SQLSrvView $view) {
-                // `$view->getDefinition()` is empty string if the view definition is encrypted.
-                return $view->getDefinition() !== '';
-            });
+            ->map(static fn (DoctrineDBALView $view) => new SQLSrvView($view))
+            ->filter(static fn (SQLSrvView $view) => $view->getDefinition() !== '');
     }
 
     /**
@@ -77,9 +63,7 @@ class SQLSrvSchema extends DBALSchema
     public function getProcedures(): Collection
     {
         return (new Collection($this->sqlSrvRepository->getProcedures()))
-            ->map(function (ProcedureDefinition $procedureDefinition) {
-                return new PgSQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition());
-            });
+            ->map(static fn (ProcedureDefinition $procedureDefinition) => new PgSQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition()));
     }
 
     /**
@@ -90,8 +74,6 @@ class SQLSrvSchema extends DBALSchema
     {
         // @phpstan-ignore-next-line
         return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
-            ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
-                return new SQLSrvForeignKey($table, $foreignKeyConstraint);
-            });
+            ->map(static fn (ForeignKeyConstraint $foreignKeyConstraint) => new SQLSrvForeignKey($table, $foreignKeyConstraint));
     }
 }

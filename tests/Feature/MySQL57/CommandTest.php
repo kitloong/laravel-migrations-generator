@@ -177,9 +177,7 @@ class CommandTest extends MySQL57TestCase
             ->getTable('test_index_mysql57')
             ->getIndexes();
 
-        $actualIndexes = $indexes->map(function (Index $index) {
-            return $index->getName();
-        })->toArray();
+        $actualIndexes = $indexes->map(static fn (Index $index) => $index->getName())->toArray();
 
         $expectedIndexes = [
             '', // PRIMARY
@@ -215,7 +213,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertSame(
             $expectedIndexes,
-            $actualIndexes
+            $actualIndexes,
         );
     }
 
@@ -232,9 +230,7 @@ class CommandTest extends MySQL57TestCase
         $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
 
         $foreignKeys     = app(MySQLSchema::class)->getTableForeignKeys('user_profile_mysql57');
-        $foreignKeyNames = $foreignKeys->map(function (ForeignKey $foreignKey) {
-            return $foreignKey->getName();
-        })
+        $foreignKeyNames = $foreignKeys->map(static fn (ForeignKey $foreignKey) => $foreignKey->getName())
             ->sort()
             ->values()
             ->toArray();
@@ -247,7 +243,7 @@ class CommandTest extends MySQL57TestCase
                 'user_profile_mysql57_user_id_user_sub_id_fk_custom_foreign',
                 'user_profile_mysql57_user_id_user_sub_id_foreign',
             ],
-            $foreignKeyNames
+            $foreignKeyNames,
         );
 
         $this->rollbackMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
@@ -406,7 +402,7 @@ class CommandTest extends MySQL57TestCase
             [
                 '--path'           => $this->getStorageMigrationsPath(),
                 '--no-interaction' => true,
-            ]
+            ],
         );
 
         $this->assertSame(0, DB::table('migrations')->count());
@@ -414,7 +410,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 
@@ -429,7 +425,7 @@ class CommandTest extends MySQL57TestCase
             [
                 '--path'     => $this->getStorageMigrationsPath(),
                 '--skip-log' => true,
-            ]
+            ],
         );
 
         $this->assertSame(0, DB::table('migrations')->count());
@@ -437,7 +433,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 
@@ -453,7 +449,7 @@ class CommandTest extends MySQL57TestCase
             [
                 '--path'           => $this->getStorageMigrationsPath(),
                 '--log-with-batch' => '0',
-            ]
+            ],
         );
 
         $this->assertMigrations();
@@ -463,7 +459,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 
@@ -479,7 +475,7 @@ class CommandTest extends MySQL57TestCase
             [
                 '--path'           => $this->getStorageMigrationsPath(),
                 '--log-with-batch' => '99',
-            ]
+            ],
         );
 
         $this->assertMigrations();
@@ -491,7 +487,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 
@@ -505,7 +501,7 @@ class CommandTest extends MySQL57TestCase
             [
                 '--path'           => $this->getStorageMigrationsPath(),
                 '--log-with-batch' => 'Not a number',
-            ]
+            ],
         );
     }
 
@@ -532,9 +528,7 @@ class CommandTest extends MySQL57TestCase
             $this->assertContains($vendor, $tables);
         }
 
-        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
-            return !in_array($table, $vendors);
-        })
+        $tablesWithoutVendors = (new Collection($tables))->filter(static fn ($table) => !in_array($table, $vendors))
             ->values()
             ->all();
 
@@ -571,7 +565,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

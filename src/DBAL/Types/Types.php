@@ -93,6 +93,6 @@ final class Types
     public static function toColumnType(Type $dbalType): ColumnType
     {
         $map = self::BUILTIN_TYPES_MAP + self::ADDITIONAL_TYPES_MAP;
-        return ColumnType::fromValue($map[get_class($dbalType)]);
+        return ColumnType::fromValue($map[$dbalType::class]);
     }
 }

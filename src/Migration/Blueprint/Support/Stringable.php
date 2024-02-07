@@ -34,10 +34,8 @@ trait Stringable
 
     /**
      * Convert $value to printable string.
-     *
-     * @param  mixed  $value
      */
-    public function convertFromAnyTypeToString($value): string
+    public function convertFromAnyTypeToString(mixed $value): string
     {
         switch (gettype($value)) {
             case 'string':
@@ -90,8 +88,6 @@ trait Stringable
      */
     public function mapArrayItemsToString(array $list): array
     {
-        return (new Collection($list))->map(function ($v) {
-            return $this->convertFromAnyTypeToString($v);
-        })->toArray();
+        return (new Collection($list))->map(fn ($v) => $this->convertFromAnyTypeToString($v))->toArray();
     }
 }

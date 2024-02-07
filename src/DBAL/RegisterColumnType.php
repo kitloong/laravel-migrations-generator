@@ -16,20 +16,8 @@ use KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository;
 
 class RegisterColumnType
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\PgSQLRepository
-     */
-    private $pgSQLRepository;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository
-     */
-    private $sqlSrvRepository;
-
-    public function __construct(PgSQLRepository $pgSQLRepository, SQLSrvRepository $sqlSrvRepository)
+    public function __construct(private PgSQLRepository $pgSQLRepository, private SQLSrvRepository $sqlSrvRepository)
     {
-        $this->pgSQLRepository  = $pgSQLRepository;
-        $this->sqlSrvRepository = $sqlSrvRepository;
     }
 
     /**
@@ -106,10 +94,7 @@ class RegisterColumnType
     {
         foreach ($this->getCustomTypes() as $type) {
             $customType = new class () extends CustomType {
-                /**
-                 * @var string
-                 */
-                public $type = '';
+                public string $type = '';
 
                 /**
                  * @inheritDoc

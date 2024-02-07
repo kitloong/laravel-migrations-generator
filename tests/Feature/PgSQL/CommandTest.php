@@ -23,15 +23,15 @@ class CommandTest extends PgSQLTestCase
 
             // Test timestamp default now()
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL"
+                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL",
             );
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL",
             );
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL"
+                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL",
             );
         };
 
@@ -42,12 +42,12 @@ class CommandTest extends PgSQLTestCase
         $beforeVerify = function (): void {
             $this->assertLineExistsThenReplace(
                 $this->getStorageSqlPath('actual.sql'),
-                'timestamp_defaultnow timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL'
+                'timestamp_defaultnow timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL',
             );
 
             $this->assertLineExistsThenReplace(
                 $this->getStorageSqlPath('expected.sql'),
-                'timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL'
+                'timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL',
             );
         };
 
@@ -60,7 +60,7 @@ class CommandTest extends PgSQLTestCase
             $this->migrateGeneral('pgsql');
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL",
             );
         };
 
@@ -143,7 +143,7 @@ class CommandTest extends PgSQLTestCase
             $this->migrateGeneral('pgsql');
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL",
             );
         };
 
@@ -160,7 +160,7 @@ class CommandTest extends PgSQLTestCase
             $this->migrateGeneral('pgsql');
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
+                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL",
             );
         };
 
@@ -194,9 +194,7 @@ class CommandTest extends PgSQLTestCase
             $this->assertContains($vendor, $tables);
         }
 
-        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
-            return !in_array($table, $vendors);
-        })
+        $tablesWithoutVendors = (new Collection($tables))->filter(static fn ($table) => !in_array($table, $vendors))
             ->values()
             ->all();
 
@@ -238,7 +236,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 
@@ -247,8 +245,8 @@ class CommandTest extends PgSQLTestCase
         $this->assertTrue(
             str_contains(
                 File::get($file),
-                $line
-            )
+                $line,
+            ),
         );
 
         File::put(
@@ -256,8 +254,8 @@ class CommandTest extends PgSQLTestCase
             str_replace(
                 $line,
                 'replaced',
-                File::get($file)
-            )
+                File::get($file),
+            ),
         );
     }
 }

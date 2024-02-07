@@ -39,18 +39,10 @@ class SchemaBlueprint implements WritableBlueprint
 
     /**
      * The table name without prefix. {@see \Illuminate\Support\Facades\DB::getTablePrefix()}
-     *
-     * @var string
      */
-    private $table;
+    private string $table;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder
-     */
-    private $schemaBuilder;
-
-    /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint|null */
-    private $blueprint;
+    private ?TableBlueprint $blueprint = null;
 
     /**
      * SchemaBlueprint constructor.
@@ -58,11 +50,10 @@ class SchemaBlueprint implements WritableBlueprint
      * @param  string  $table  Table name.
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder  $schemaBuilder  SchemaBuilder name.
      */
-    public function __construct(string $table, SchemaBuilder $schemaBuilder)
+    public function __construct(string $table, private SchemaBuilder $schemaBuilder)
     {
-        $this->table         = $this->stripTablePrefix($table);
-        $this->schemaBuilder = $schemaBuilder;
-        $this->blueprint     = null;
+        $this->table     = $this->stripTablePrefix($table);
+        $this->blueprint = null;
     }
 
     public function setBlueprint(TableBlueprint $blueprint): void

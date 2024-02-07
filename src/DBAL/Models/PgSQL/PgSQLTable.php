@@ -13,8 +13,7 @@ use KitLoong\MigrationsGenerator\Schema\Models\Index;
 
 class PgSQLTable extends DBALTable
 {
-    /** @var \KitLoong\MigrationsGenerator\Repositories\PgSQLRepository */
-    private $repository;
+    private PgSQLRepository $repository;
 
     /**
      * @inheritDoc
@@ -25,9 +24,7 @@ class PgSQLTable extends DBALTable
 
         $this->pushFulltextIndexes();
 
-        $this->indexes = $this->indexes->sortBy(function (Index $index) {
-            return $index->getName();
-        })->values();
+        $this->indexes = $this->indexes->sortBy(static fn (Index $index) => $index->getName())->values();
     }
 
     /**
@@ -65,7 +62,7 @@ class PgSQLTable extends DBALTable
             //     Get "fulltext_custom"
             preg_match_all('/to_tsvector\((.*), \((.*)\)::text/U', $indexDefinition->getIndexDef(), $matches);
 
-            if (empty($matches[2])) {
+            if (!isset($matches[2])) {
                 return;
             }
 
@@ -80,9 +77,9 @@ class PgSQLTable extends DBALTable
                         false,
                         false,
                         ['fulltext'],
-                        []
-                    )
-                )
+                        [],
+                    ),
+                ),
             );
         });
     }

@@ -21,110 +21,50 @@ abstract class DBALColumn implements Column
 {
     use CheckLaravelVersion;
 
-    /**
-     * @var bool
-     */
-    protected $autoincrement;
+    protected bool $autoincrement;
 
-    /**
-     * @var string|null
-     */
-    protected $charset;
+    protected ?string $charset = null;
 
-    /**
-     * @var string|null
-     */
-    protected $collation;
+    protected ?string $collation = null;
 
-    /**
-     * @var string|null
-     */
-    protected $comment;
+    protected ?string $comment = null;
 
-    /**
-     * @var string|null
-     */
-    protected $default;
+    protected ?string $default = null;
 
-    /**
-     * @var bool
-     */
-    protected $fixed;
+    protected bool $fixed;
 
-    /**
-     * @var int|null
-     */
-    protected $length;
+    protected ?int $length = null;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var bool
-     */
-    protected $notNull;
+    protected bool $notNull;
 
-    /**
-     * @var bool
-     */
-    protected $onUpdateCurrentTimestamp;
+    protected bool $onUpdateCurrentTimestamp;
 
-    /**
-     * @var int|null
-     */
-    protected $precision;
+    protected ?int $precision = null;
 
     /**
      * @var string[]
      */
-    protected $presetValues;
+    protected array $presetValues;
 
-    /**
-     * @var bool
-     */
-    protected $rawDefault;
+    protected bool $rawDefault;
 
-    /**
-     * @var int
-     */
-    protected $scale;
+    protected int $scale;
 
-    /**
-     * @var string
-     */
-    protected $tableName;
+    protected string $tableName;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType
-     */
-    protected $type;
+    protected ColumnType $type;
 
-    /**
-     * @var bool
-     */
-    protected $unsigned;
+    protected bool $unsigned;
 
-    /**
-     * @var string|null
-     */
-    protected $virtualDefinition;
+    protected ?string $virtualDefinition = null;
 
-    /**
-     * @var string|null
-     */
-    protected $storedDefinition;
+    protected ?string $storedDefinition = null;
 
-    /**
-     * @var string|null
-     */
-    protected $spatialSubType;
+    protected ?string $spatialSubType = null;
 
-    /**
-     * @var int|null
-     */
-    protected $spatialSrID;
+    protected ?int $spatialSrID = null;
 
     private const REMEMBER_TOKEN_LENGTH = 100;
 

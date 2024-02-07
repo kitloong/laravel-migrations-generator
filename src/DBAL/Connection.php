@@ -20,10 +20,8 @@ class Connection
 {
     /**
      * The instance of Doctrine connection.
-     *
-     * @var \Doctrine\DBAL\Connection
      */
-    protected $doctrineConnection;
+    protected ?DoctrineConnection $doctrineConnection;
 
     /**
      * Get the Doctrine DBAL database connection instance.

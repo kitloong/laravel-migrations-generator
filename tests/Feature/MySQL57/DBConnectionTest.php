@@ -74,7 +74,7 @@ class DBConnectionTest extends MySQL57TestCase
 
         $this->assertStringContainsString(
             'Schema::connection',
-            File::files($this->getStorageMigrationsPath())[0]->getContents()
+            File::files($this->getStorageMigrationsPath())[0]->getContents(),
         );
     }
 
@@ -90,16 +90,16 @@ class DBConnectionTest extends MySQL57TestCase
             [
                 '--connection' => 'mysql57',
                 '--path'       => $this->getStorageMigrationsPath(),
-            ]
+            ],
         )
             ->expectsQuestion('Do you want to log these migrations in the migrations table?', true)
             ->expectsQuestion(
                 'Log into current connection: mysql57? [Y = mysql57, n = mysql8 (default connection)]',
-                false
+                false,
             )
             ->expectsQuestion(
                 'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
-                '0'
+                '0',
             );
 
         $totalMigrations = count(File::allFiles($this->getStorageMigrationsPath()));
@@ -127,7 +127,7 @@ class DBConnectionTest extends MySQL57TestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

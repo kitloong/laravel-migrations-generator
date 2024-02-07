@@ -10,10 +10,7 @@ use KitLoong\MigrationsGenerator\Support\Regex;
 
 class SQLSrvIndex extends DBALIndex
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository
-     */
-    private $repository;
+    private SQLSrvRepository $repository;
 
     protected function handle(): void
     {

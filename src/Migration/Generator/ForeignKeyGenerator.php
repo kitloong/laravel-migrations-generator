@@ -63,7 +63,7 @@ class ForeignKeyGenerator
     private function makeLaravelForeignKeyName(ForeignKey $foreignKey): string
     {
         $name = strtolower(
-            $foreignKey->getTableName() . '_' . implode('_', $foreignKey->getLocalColumns()) . '_foreign'
+            $foreignKey->getTableName() . '_' . implode('_', $foreignKey->getLocalColumns()) . '_foreign',
         );
         return str_replace(['-', '.'], '_', $name);
     }

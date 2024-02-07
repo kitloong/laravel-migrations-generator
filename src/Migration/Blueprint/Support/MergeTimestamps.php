@@ -85,7 +85,7 @@ trait MergeTimestamps
         }
 
         return $method->getChains()[0]->getName() === ColumnModifier::NULLABLE()->getValue()
-            && empty($method->getChains()[0]->getValues());
+            && count($method->getChains()[0]->getValues()) === 0;
     }
 
     /**

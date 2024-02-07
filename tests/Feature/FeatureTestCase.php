@@ -25,7 +25,7 @@ abstract class FeatureTestCase extends TestCase
 
         try {
             $this->loadDotenv();
-        } catch (InvalidPathException $exception) {
+        } catch (InvalidPathException) {
             $this->markTestSkipped('Skipped feature tests.');
         }
     }
@@ -123,7 +123,7 @@ abstract class FeatureTestCase extends TestCase
             File::put($this->getStorageFromPath($file->getBasename()), $content);
             File::move(
                 $this->getStorageFromPath($file->getBasename()),
-                $this->getStorageFromPath(str_replace('_db_', "_{$connection}_", $file->getBasename()))
+                $this->getStorageFromPath(str_replace('_db_', "_{$connection}_", $file->getBasename())),
             );
         }
 
@@ -146,7 +146,7 @@ abstract class FeatureTestCase extends TestCase
             File::put($this->getStorageFromVendorsPath($file->getBasename()), $content);
             File::move(
                 $this->getStorageFromVendorsPath($file->getBasename()),
-                $this->getStorageFromVendorsPath(str_replace('_db_', "_{$connection}_", $file->getBasename()))
+                $this->getStorageFromVendorsPath(str_replace('_db_', "_{$connection}_", $file->getBasename())),
             );
         }
 
@@ -192,20 +192,20 @@ abstract class FeatureTestCase extends TestCase
             'migrate:generate',
             array_merge([
                 '--path' => $this->getStorageMigrationsPath(),
-            ], $options)
+            ], $options),
         );
         $command->expectsQuestion('Do you want to log these migrations in the migrations table?', true);
 
         if ($expectConnectionQuestion) {
             $command->expectsQuestion(
                 'Log into current connection: ' . $options['--connection'] . '? [Y = ' . $options['--connection'] . ', n = ' . config('database.default') . ' (default connection)]',
-                true
+                true,
             );
         }
 
         $command->expectsQuestion(
             'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
-            '0'
+            '0',
         );
     }
 
@@ -260,9 +260,7 @@ abstract class FeatureTestCase extends TestCase
     protected function getViewNames(): array
     {
         return collect(app(Connection::class)->getDoctrineSchemaManager()->listViews())
-            ->map(function (View $view) {
-                return $view->getName();
-            })
+            ->map(static fn (View $view) => $view->getName())
             ->toArray();
     }
 

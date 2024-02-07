@@ -19,10 +19,7 @@ class SQLSrvColumn extends DBALColumn
     private const TEXT_TYPE   = 'nvarchar';
     private const TEXT_LENGTH = -1;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\SQLSrvRepository
-     */
-    private $repository;
+    private SQLSrvRepository $repository;
 
     /**
      * @inheritDoc
@@ -145,7 +142,7 @@ class SQLSrvColumn extends DBALColumn
     {
         return $this->repository->getEnumPresetValues(
             $this->tableName,
-            $this->name
+            $this->name,
         )->toArray();
     }
 }

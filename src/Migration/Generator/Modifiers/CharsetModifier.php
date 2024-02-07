@@ -11,20 +11,14 @@ use KitLoong\MigrationsGenerator\Setting;
 
 class CharsetModifier implements Modifier
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Setting
-     */
-    private $setting;
-
-    public function __construct(Setting $setting)
+    public function __construct(private Setting $setting)
     {
-        $this->setting = $setting;
     }
 
     /**
      * @inheritDoc
      */
-    public function chain(Method $method, Table $table, Column $column, ...$args): Method
+    public function chain(Method $method, Table $table, Column $column, mixed ...$args): Method
     {
         if (!$this->setting->isUseDBCollation()) {
             return $method;

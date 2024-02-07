@@ -25,7 +25,7 @@ class SQLiteSchema extends DBALSchema
         return new SQLiteTable(
             $this->introspectTable($name),
             $this->dbalSchema->listTableColumns($name),
-            $this->dbalSchema->listTableIndexes($name)
+            $this->dbalSchema->listTableIndexes($name),
         );
     }
 
@@ -35,9 +35,7 @@ class SQLiteSchema extends DBALSchema
      */
     public function getViewNames(): Collection
     {
-        return $this->getViews()->map(function (View $view) {
-            return $view->getName();
-        });
+        return $this->getViews()->map(static fn (View $view) => $view->getName());
     }
 
     /**
@@ -47,9 +45,7 @@ class SQLiteSchema extends DBALSchema
     public function getViews(): Collection
     {
         return (new Collection($this->dbalSchema->listViews()))
-            ->map(function (DoctrineDBALView $view) {
-                return new SQLiteView($view);
-            });
+            ->map(static fn (DoctrineDBALView $view) => new SQLiteView($view));
     }
 
     /**
@@ -70,8 +66,6 @@ class SQLiteSchema extends DBALSchema
     {
         // @phpstan-ignore-next-line
         return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
-            ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
-                return new SQLiteForeignKey($table, $foreignKeyConstraint);
-            });
+            ->map(static fn (ForeignKeyConstraint $foreignKeyConstraint) => new SQLiteForeignKey($table, $foreignKeyConstraint));
     }
 }

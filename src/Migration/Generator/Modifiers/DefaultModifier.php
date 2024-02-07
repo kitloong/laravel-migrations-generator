@@ -17,7 +17,7 @@ class DefaultModifier implements Modifier
     /**
      * @var array<string, \Closure(\KitLoong\MigrationsGenerator\Migration\Blueprint\Method $method, \KitLoong\MigrationsGenerator\Schema\Models\Column $column): \KitLoong\MigrationsGenerator\Migration\Blueprint\Method>
      */
-    private $chainerMap = [];
+    private array $chainerMap = [];
 
     public function __construct()
     {
@@ -35,9 +35,7 @@ class DefaultModifier implements Modifier
                 ColumnType::UNSIGNED_TINY_INTEGER(),
             ] as $columnType
         ) {
-            $this->chainerMap[$columnType->getValue()] = function (Method $method, Column $column): Method {
-                return call_user_func([$this, 'chainDefaultForInteger'], $method, $column);
-            };
+            $this->chainerMap[$columnType->getValue()] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForInteger'], $method, $column);
         }
 
         foreach (
@@ -47,14 +45,10 @@ class DefaultModifier implements Modifier
                 ColumnType::DOUBLE(),
             ] as $columnType
         ) {
-            $this->chainerMap[$columnType->getValue()] = function (Method $method, Column $column): Method {
-                return call_user_func([$this, 'chainDefaultForDecimal'], $method, $column);
-            };
+            $this->chainerMap[$columnType->getValue()] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForDecimal'], $method, $column);
         }
 
-        $this->chainerMap[ColumnType::BOOLEAN()->getValue()] = function (Method $method, Column $column): Method {
-            return call_user_func([$this, 'chainDefaultForBoolean'], $method, $column);
-        };
+        $this->chainerMap[ColumnType::BOOLEAN()->getValue()] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForBoolean'], $method, $column);
 
         foreach (
             [
@@ -69,16 +63,14 @@ class DefaultModifier implements Modifier
                 ColumnType::TIMESTAMP_TZ(),
             ] as $columnType
         ) {
-            $this->chainerMap[$columnType->getValue()] = function (Method $method, Column $column): Method {
-                return call_user_func([$this, 'chainDefaultForDatetime'], $method, $column);
-            };
+            $this->chainerMap[$columnType->getValue()] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForDatetime'], $method, $column);
         }
     }
 
     /**
      * @inheritDoc
      */
-    public function chain(Method $method, Table $table, Column $column, ...$args): Method
+    public function chain(Method $method, Table $table, Column $column, mixed ...$args): Method
     {
         if ($column->getDefault() === null) {
             return $method;

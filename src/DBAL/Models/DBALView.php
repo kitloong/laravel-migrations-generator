@@ -11,25 +11,13 @@ abstract class DBALView implements View
 {
     use AssetNameQuote;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string
-     */
-    protected $quotedName;
+    protected string $quotedName;
 
-    /**
-     * @var string
-     */
-    protected $definition;
+    protected string $definition;
 
-    /**
-     * @var string
-     */
-    protected $dropDefinition;
+    protected string $dropDefinition;
 
     public function __construct(DoctrineDBALView $view)
     {

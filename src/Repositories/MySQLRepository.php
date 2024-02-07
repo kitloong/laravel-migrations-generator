@@ -42,7 +42,7 @@ class MySQLRepository extends Repository
         $value      = substr(
             str_replace('enum(\'', '', $showColumn->getType()),
             0,
-            -2
+            -2,
         );
         return new Collection(explode("','", $value));
     }
@@ -66,7 +66,7 @@ class MySQLRepository extends Repository
         $value      = substr(
             str_replace('set(\'', '', $showColumn->getType()),
             0,
-            -2
+            -2,
         );
         return new Collection(explode("','", $value));
     }
@@ -85,7 +85,7 @@ class MySQLRepository extends Repository
             "SHOW COLUMNS FROM `$table`
                 WHERE Field = '$column'
                     AND Type = 'timestamp'
-                    AND Extra LIKE '%on update CURRENT_TIMESTAMP%'"
+                    AND Extra LIKE '%on update CURRENT_TIMESTAMP%'",
         );
         return !($result === null);
     }
@@ -141,9 +141,8 @@ class MySQLRepository extends Repository
      * Get single stored procedure by name.
      *
      * @param  string  $procedure  Procedure name.
-     * @return mixed
      */
-    private function getProcedure(string $procedure)
+    private function getProcedure(string $procedure): mixed
     {
         return DB::selectOne("SHOW CREATE PROCEDURE $procedure");
     }
@@ -161,7 +160,7 @@ class MySQLRepository extends Repository
                 FROM information_schema.COLUMNS
                 WHERE TABLE_NAME = '$table'
                     AND COLUMN_NAME = '$column'
-                    AND EXTRA = '$extra'"
+                    AND EXTRA = '$extra'",
             );
         } catch (QueryException $exception) {
             // Check if error caused by missing column 'GENERATION_EXPRESSION'.
@@ -172,7 +171,7 @@ class MySQLRepository extends Repository
                 Str::contains(
                     $exception->getMessage(),
                     "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'GENERATION_EXPRESSION'",
-                    true
+                    true,
                 )
             ) {
                 return null;
@@ -200,14 +199,14 @@ class MySQLRepository extends Repository
                 FROM information_schema.COLUMNS
                 WHERE TABLE_SCHEMA = '" . DB::getDatabaseName() . "'
                     AND TABLE_NAME = '" . $table . "'
-                    AND COLUMN_NAME = '" . $column . "'"
+                    AND COLUMN_NAME = '" . $column . "'",
             );
         } catch (QueryException $exception) {
             if (
                 Str::contains(
                     $exception->getMessage(),
                     "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'SRS_ID'",
-                    true
+                    true,
                 )
             ) {
                 return null;

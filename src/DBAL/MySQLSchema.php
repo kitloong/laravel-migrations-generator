@@ -20,16 +20,9 @@ use KitLoong\MigrationsGenerator\Schema\MySQLSchema as MySQLSchemaInterface;
  */
 class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\MySQLRepository
-     */
-    private $mySQLRepository;
-
-    public function __construct(RegisterColumnType $registerColumnType, MySQLRepository $mySQLRepository)
+    public function __construct(RegisterColumnType $registerColumnType, private MySQLRepository $mySQLRepository)
     {
         parent::__construct($registerColumnType);
-
-        $this->mySQLRepository = $mySQLRepository;
     }
 
     /**
@@ -41,7 +34,7 @@ class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
         return new MySQLTable(
             $this->introspectTable($name),
             $this->dbalSchema->listTableColumns($name),
-            $this->dbalSchema->listTableIndexes($name)
+            $this->dbalSchema->listTableIndexes($name),
         );
     }
 
@@ -51,9 +44,7 @@ class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
      */
     public function getViewNames(): Collection
     {
-        return $this->getViews()->map(function (View $view) {
-            return $view->getName();
-        });
+        return $this->getViews()->map(static fn (View $view) => $view->getName());
     }
 
     /**
@@ -63,9 +54,7 @@ class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
     public function getViews(): Collection
     {
         return (new Collection($this->dbalSchema->listViews()))
-            ->map(function (DoctrineDBALView $view) {
-                return new MySQLView($view);
-            });
+            ->map(static fn (DoctrineDBALView $view) => new MySQLView($view));
     }
 
     /**
@@ -74,9 +63,7 @@ class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
     public function getProcedures(): Collection
     {
         return (new Collection($this->mySQLRepository->getProcedures()))
-            ->map(function (ProcedureDefinition $procedureDefinition) {
-                return new MySQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition());
-            });
+            ->map(static fn (ProcedureDefinition $procedureDefinition) => new MySQLProcedure($procedureDefinition->getName(), $procedureDefinition->getDefinition()));
     }
 
     /**
@@ -87,8 +74,6 @@ class MySQLSchema extends DBALSchema implements MySQLSchemaInterface
     {
         // @phpstan-ignore-next-line
         return (new Collection($this->dbalSchema->listTableForeignKeys($table)))
-            ->map(function (ForeignKeyConstraint $foreignKeyConstraint) use ($table) {
-                return new MySQLForeignKey($table, $foreignKeyConstraint);
-            });
+            ->map(static fn (ForeignKeyConstraint $foreignKeyConstraint) => new MySQLForeignKey($table, $foreignKeyConstraint));
     }
 }

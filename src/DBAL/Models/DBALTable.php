@@ -14,35 +14,26 @@ use KitLoong\MigrationsGenerator\Schema\Models\Table;
 
 abstract class DBALTable implements Table
 {
-    /**
-     * @var string|null
-     */
-    protected $collation;
+    protected ?string $collation = null;
 
     /**
      * @var \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\Column>
      */
-    protected $columns;
+    protected Collection $columns;
 
     /**
      * @var \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\CustomColumn>
      */
-    protected $customColumns;
+    protected Collection $customColumns;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string|null
-     */
-    protected $comment;
+    protected ?string $comment = null;
 
     /**
      * @var \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\Index>
      */
-    protected $indexes;
+    protected Collection $indexes;
 
     /**
      * Create a new instance.
@@ -72,9 +63,7 @@ abstract class DBALTable implements Table
             return $columns;
         }, new Collection())->values();
 
-        $this->indexes = (new Collection($indexes))->map(function (DoctrineDBALIndex $index) use ($table) {
-            return $this->makeIndex($table->getName(), $index);
-        })->values();
+        $this->indexes = (new Collection($indexes))->map(fn (DoctrineDBALIndex $index) => $this->makeIndex($table->getName(), $index))->values();
 
         $this->handle();
     }

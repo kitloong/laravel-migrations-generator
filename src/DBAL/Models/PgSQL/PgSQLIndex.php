@@ -12,10 +12,7 @@ class PgSQLIndex extends DBALIndex
 {
     use CheckMigrationMethod;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Repositories\PgSQLRepository
-     */
-    private $repository;
+    private PgSQLRepository $repository;
 
     protected function handle(): void
     {
@@ -36,9 +33,7 @@ class PgSQLIndex extends DBALIndex
     private function setTypeToSpatial(): void
     {
         $spatialNames = $this->repository->getSpatialIndexes($this->tableName)
-            ->map(function (IndexDefinition $indexDefinition) {
-                return $indexDefinition->getIndexName();
-            });
+            ->map(static fn (IndexDefinition $indexDefinition) => $indexDefinition->getIndexName());
 
         if (!$spatialNames->contains($this->name)) {
             return;

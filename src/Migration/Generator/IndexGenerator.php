@@ -11,14 +11,8 @@ use KitLoong\MigrationsGenerator\Support\IndexNameHelper;
 
 class IndexGenerator
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Support\IndexNameHelper
-     */
-    private $indexNameHelper;
-
-    public function __construct(IndexNameHelper $indexNameHelper)
+    public function __construct(private IndexNameHelper $indexNameHelper)
     {
-        $this->indexNameHelper = $indexNameHelper;
     }
 
     public function generate(Table $table, Index $index): Method
@@ -99,13 +93,9 @@ class IndexGenerator
      */
     public function getNotChainableIndexes(Collection $indexes, Collection $chainableIndexes): Collection
     {
-        $chainableNames = $chainableIndexes->map(function (Index $index) {
-            return $index->getName();
-        });
+        $chainableNames = $chainableIndexes->map(static fn (Index $index) => $index->getName());
 
-        return $indexes->filter(function (Index $index) use ($chainableNames) {
-            return !$chainableNames->contains($index->getName());
-        });
+        return $indexes->filter(static fn (Index $index) => !$chainableNames->contains($index->getName()));
     }
 
     /**

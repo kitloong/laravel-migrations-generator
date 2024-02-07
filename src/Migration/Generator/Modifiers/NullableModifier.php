@@ -13,7 +13,7 @@ class NullableModifier implements Modifier
     /**
      * @inheritDoc
      */
-    public function chain(Method $method, Table $table, Column $column, ...$args): Method
+    public function chain(Method $method, Table $table, Column $column, mixed ...$args): Method
     {
         if ($column->isNotNull()) {
             if ($this->shouldAddNotNullModifier($column->getType())) {
@@ -43,7 +43,7 @@ class NullableModifier implements Modifier
                 ColumnType::SOFT_DELETES_TZ(),
                 ColumnType::REMEMBER_TOKEN(),
                 ColumnType::TIMESTAMPS(),
-            ]
+            ],
         );
     }
 
@@ -59,7 +59,7 @@ class NullableModifier implements Modifier
                 ColumnType::SOFT_DELETES(),
                 ColumnType::SOFT_DELETES_TZ(),
                 ColumnType::REMEMBER_TOKEN(),
-            ]
+            ],
         );
     }
 }

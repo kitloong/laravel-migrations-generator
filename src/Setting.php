@@ -9,46 +9,32 @@ class Setting
     /**
      * The default DB connection name, also known as "previous" connection name if migration is called
      * with `--connection=other` option.
-     *
-     * @var string
      */
-    private $defaultConnection;
+    private string $defaultConnection;
 
-    /** @var bool */
-    private $useDBCollation;
+    private bool $useDBCollation;
 
-    /** @var bool */
-    private $ignoreIndexNames;
+    private bool $ignoreIndexNames;
 
-    /** @var bool */
-    private $ignoreForeignKeyNames;
+    private bool $ignoreForeignKeyNames;
 
-    /** @var bool */
-    private $squash;
+    private bool $squash;
 
-    /** @var string */
-    private $path;
+    private string $path;
 
-    /** @var string */
-    private $stubPath;
+    private string $stubPath;
 
-    /** @var \Carbon\Carbon */
-    private $date;
+    private Carbon $date;
 
-    /** @var string */
-    private $tableFilename;
+    private string $tableFilename;
 
-    /** @var string */
-    private $viewFilename;
+    private string $viewFilename;
 
-    /** @var string */
-    private $procedureFilename;
+    private string $procedureFilename;
 
-    /** @var string */
-    private $fkFilename;
+    private string $fkFilename;
 
-    /** @var bool */
-    private $withHasTable;
+    private bool $withHasTable;
 
     public function getDefaultConnection(): string
     {

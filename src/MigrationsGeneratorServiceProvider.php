@@ -72,19 +72,17 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
         // Bind the Repository Interface to $app['migrations.repository']
         $this->app->singleton(
             MigrationRepositoryInterface::class,
-            function ($app) {
-                return $app['migration.repository'];
-            }
+            static fn ($app) => $app['migration.repository'],
         );
 
         // Backward compatible for older Laravel version which failed to resolve Illuminate\Database\ConnectionResolverInterface.
         $this->app->singleton(
             Migrator::class,
-            function ($app) {
+            static function ($app) {
                 $repository = $app['migration.repository'];
 
                 return new Migrator($repository, $app['db'], $app['files'], $app['events']);
-            }
+            },
         );
 
         $this->registerColumnTypeGenerator();

@@ -37,7 +37,7 @@ class CommandTest extends SQLSrvTestCase
             $this->migrateGeneral('sqlsrv');
 
             DB::statement(
-                "ALTER TABLE all_columns_sqlsrv ADD accountnumber accountnumber NOT NULL"
+                "ALTER TABLE all_columns_sqlsrv ADD accountnumber accountnumber NOT NULL",
             );
         };
 
@@ -55,7 +55,7 @@ class CommandTest extends SQLSrvTestCase
                 money money,
                 smallmoney smallmoney,
                 [name.dot] varchar(255)
-            )"
+            )",
         );
 
         $this->generateMigrations();
@@ -65,17 +65,17 @@ class CommandTest extends SQLSrvTestCase
 
         $this->assertStringContainsString(
             '$table->decimal(\'money\', 19, 4)->nullable();',
-            $migration->getContents()
+            $migration->getContents(),
         );
 
         $this->assertStringContainsString(
             '$table->decimal(\'smallmoney\', 10, 4)->nullable();',
-            $migration->getContents()
+            $migration->getContents(),
         );
 
         $this->assertStringContainsString(
             '$table->string(\'name.dot\')->nullable()',
-            $migration->getContents()
+            $migration->getContents(),
         );
     }
 
@@ -150,9 +150,7 @@ class CommandTest extends SQLSrvTestCase
             $this->assertContains($vendor, $tables);
         }
 
-        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
-            return !in_array($table, $vendors);
-        })
+        $tablesWithoutVendors = (new Collection($tables))->filter(static fn ($table) => !in_array($table, $vendors))
             ->values()
             ->all();
 
@@ -192,7 +190,7 @@ class CommandTest extends SQLSrvTestCase
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

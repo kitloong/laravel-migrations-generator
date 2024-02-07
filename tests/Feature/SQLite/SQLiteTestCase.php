@@ -31,7 +31,7 @@ abstract class SQLiteTestCase extends FeatureTestCase
         $command = sprintf(
             'sqlite3 %s .dump > %s',
             config('database.connections.sqlite.database'),
-            $destination
+            $destination,
         );
         exec($command);
     }

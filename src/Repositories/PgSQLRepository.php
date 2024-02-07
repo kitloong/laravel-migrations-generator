@@ -31,9 +31,9 @@ class PgSQLRepository extends Repository
                         WHERE c.relname ~ '^($table)$'
                             AND pg_catalog.pg_table_is_visible(c.oid)
                     )
-                    AND a.attname='$column'"
+                    AND a.attname='$column'",
         );
-        return $result === null ? null : $result->datatype;
+        return $result?->datatype;
     }
 
     /**
@@ -60,9 +60,9 @@ class PgSQLRepository extends Repository
                         WHERE c.relname ~ '^($table)$'
                             AND pg_catalog.pg_table_is_visible(c.oid)
                     )
-                    AND a.attname='$column'"
+                    AND a.attname='$column'",
         );
-        return $result === null ? null : $result->default_value;
+        return $result?->default_value;
     }
 
     /**
@@ -88,9 +88,9 @@ class PgSQLRepository extends Repository
                           AND nsp.nspname = ccu.constraint_schema
                 WHERE contype ='c'
                     AND ccu.table_name='$table'
-                    AND ccu.column_name='$column'"
+                    AND ccu.column_name='$column'",
         );
-        return $result === null ? null : $result->definition;
+        return $result?->definition;
     }
 
     /**
@@ -107,7 +107,7 @@ class PgSQLRepository extends Repository
                        indexdef
                 FROM pg_indexes
                 WHERE tablename = '$table'
-                    AND indexdef LIKE '% USING gist %'"
+                    AND indexdef LIKE '% USING gist %'",
         );
         $definitions = new Collection();
 
@@ -117,8 +117,8 @@ class PgSQLRepository extends Repository
                     new IndexDefinition(
                         $column->tablename,
                         $column->indexname,
-                        $column->indexdef
-                    )
+                        $column->indexdef,
+                    ),
                 );
             }
         }
@@ -141,7 +141,7 @@ class PgSQLRepository extends Repository
                 FROM pg_indexes
                 WHERE tablename = '$table'
                     AND indexdef LIKE '%to_tsvector(%'
-                ORDER BY indexname"
+                ORDER BY indexname",
         );
         $definitions = new Collection();
 
@@ -151,8 +151,8 @@ class PgSQLRepository extends Repository
                     new IndexDefinition(
                         $column->tablename,
                         $column->indexname,
-                        $column->indexdef
-                    )
+                        $column->indexdef,
+                    ),
                 );
             }
         }
@@ -176,7 +176,7 @@ class PgSQLRepository extends Repository
                         LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
                     WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid))
                         AND NOT EXISTS(SELECT 1 FROM pg_catalog.pg_type el WHERE el.oid = t.typelem AND el.typarray = t.oid)
-                        AND n.nspname IN ('$searchPath');"
+                        AND n.nspname IN ('$searchPath');",
         );
         $types = new Collection();
 
@@ -205,7 +205,7 @@ class PgSQLRepository extends Repository
             FROM pg_catalog.pg_proc
                 JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
             WHERE prokind = 'p'
-                AND pg_namespace.nspname = '$searchPath'"
+                AND pg_namespace.nspname = '$searchPath'",
         );
 
         foreach ($procedures as $procedure) {
@@ -230,7 +230,7 @@ class PgSQLRepository extends Repository
                 FROM information_schema.columns
                 WHERE table_name = '$table'
                     AND column_name = '$column'
-                    AND is_generated = 'ALWAYS'"
+                    AND is_generated = 'ALWAYS'",
         );
 
         if ($definition === null) {

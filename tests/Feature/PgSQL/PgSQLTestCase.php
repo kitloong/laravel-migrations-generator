@@ -57,7 +57,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
             config('database.connections.pgsql.port'),
             config('database.connections.pgsql.username'),
             config('database.connections.pgsql.database'),
-            $destination
+            $destination,
         );
         exec($command);
     }
@@ -96,7 +96,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
             FROM pg_catalog.pg_proc
                 JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
             WHERE prokind = 'p'
-                AND pg_namespace.nspname = '" . $searchPath . "'"
+                AND pg_namespace.nspname = '" . $searchPath . "'",
         );
 
         foreach ($procedures as $procedure) {

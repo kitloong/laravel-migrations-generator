@@ -4,14 +4,11 @@ namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
 class Method
 {
-    /** @var string */
-    private $name;
-
     /** @var mixed[] */
-    private $values;
+    private array $values;
 
     /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Method[] */
-    private $chains;
+    private array $chains;
 
     /**
      * Method constructor.
@@ -19,9 +16,8 @@ class Method
      * @param  string  $name  Method name.
      * @param  mixed  ...$values  Method arguments.
      */
-    public function __construct(string $name, ...$values)
+    public function __construct(private string $name, mixed ...$values)
     {
-        $this->name   = $name;
         $this->values = $values;
         $this->chains = [];
     }
@@ -46,7 +42,7 @@ class Method
      * @param  mixed  ...$values  Method arguments.
      * @return $this
      */
-    public function chain(string $name, ...$values): self
+    public function chain(string $name, mixed ...$values): self
     {
         $this->chains[] = new self($name, ...$values);
         return $this;

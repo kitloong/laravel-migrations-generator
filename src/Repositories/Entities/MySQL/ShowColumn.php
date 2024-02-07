@@ -15,31 +15,23 @@ use stdClass;
  */
 class ShowColumn
 {
-    /** @var string */
-    private $field;
+    private string $field;
 
-    /** @var string */
-    private $type;
+    private string $type;
 
-    /** @var string */
-    private $null;
+    private string $null;
 
-    /** @var string */
-    private $key;
+    private string $key;
 
-    /** @var string|null */
-    private $default;
+    private ?string $default = null;
 
-    /** @var string */
-    private $extra;
+    private string $extra;
 
     public function __construct(stdClass $column)
     {
         // Convert column property to case-insensitive
         // Issue https://github.com/kitloong/laravel-migrations-generator/issues/34
-        $lowerKey = (new Collection((array) $column))->mapWithKeys(function ($item, $key) {
-            return [strtolower($key) => $item];
-        });
+        $lowerKey = (new Collection((array) $column))->mapWithKeys(static fn ($item, $key) => [strtolower($key) => $item]);
 
         $this->field   = $lowerKey['field'];
         $this->type    = $lowerKey['type'];

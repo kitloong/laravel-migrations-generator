@@ -21,7 +21,7 @@ class MigrationWriterTest extends TestCase
         $setting->setDefaultConnection(DB::getDefaultConnection());
         $setting->setWithHasTable(false);
 
-        $this->mock(TableName::class, function (MockInterface $mock): void {
+        $this->mock(TableName::class, static function (MockInterface $mock): void {
             $mock->shouldReceive('stripPrefix')
                 ->andReturn('test');
         });
@@ -49,7 +49,7 @@ class MigrationWriterTest extends TestCase
             'Tester',
             new Collection([$up]),
             new Collection([$down]),
-            MigrationFileType::TABLE()
+            MigrationFileType::TABLE(),
         );
 
         $this->assertFileExists(storage_path('migration.php'));
