@@ -8,13 +8,10 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Enum\Driver;
-use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
 return new class extends TestMigration
 {
-    use CheckLaravelVersion;
-
     /**
      * Run the migrations.
      *
@@ -65,12 +62,10 @@ return new class extends TestMigration
             $table->text('text_collation')->collation($collation);
 
             if (DB::getDriverName() === Driver::MYSQL()->getValue()) {
-                if ($this->atLeastLaravel5Dot8()) {
-                    $table->set('set', ['strawberry', 'vanilla']);
-                    $table->set('set_default', ['strawberry', 'vanilla'])->default('strawberry');
-                    $table->set('set_charset', ['strawberry', 'vanilla'])->charset('utf8');
-                    $table->set('set_collation', ['strawberry', 'vanilla'])->collation($collation);
-                }
+                $table->set('set', ['strawberry', 'vanilla']);
+                $table->set('set_default', ['strawberry', 'vanilla'])->default('strawberry');
+                $table->set('set_charset', ['strawberry', 'vanilla'])->charset('utf8');
+                $table->set('set_collation', ['strawberry', 'vanilla'])->collation($collation);
             }
 
             $table->string('string');

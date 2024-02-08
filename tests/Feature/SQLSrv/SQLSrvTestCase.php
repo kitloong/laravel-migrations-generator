@@ -6,13 +6,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\DBAL\Connection;
-use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
 abstract class SQLSrvTestCase extends FeatureTestCase
 {
-    use CheckLaravelVersion;
-
     /**
      * @inheritDoc
      */
@@ -84,27 +81,9 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
     protected function refreshDatabase(): void
     {
-        $this->dropAllViews();
+        Schema::dropAllViews();
         Schema::dropAllTables();
         $this->dropAllProcedures();
-    }
-
-    protected function dropAllViews(): void
-    {
-        // `dropAllViews` available in Laravel >= 6.x
-        if ($this->atLeastLaravel6()) {
-            Schema::dropAllViews();
-            return;
-        }
-
-        // See https://github.com/laravel/framework/blob/6.x/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L360
-        DB::statement(
-            "DECLARE @sql NVARCHAR(MAX) = N'';
-            SELECT @sql += 'DROP VIEW ' + QUOTENAME(OBJECT_SCHEMA_NAME(object_id)) + '.' + QUOTENAME(name) + ';'
-            FROM sys.views;
-
-            EXEC sp_executesql @sql;",
-        );
     }
 
     protected function dropAllProcedures(): void

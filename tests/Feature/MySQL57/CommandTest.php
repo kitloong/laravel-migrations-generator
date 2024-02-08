@@ -10,13 +10,10 @@ use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 use Throwable;
 
 class CommandTest extends MySQL57TestCase
 {
-    use CheckMigrationMethod;
-
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
@@ -193,16 +190,11 @@ class CommandTest extends MySQL57TestCase
             'test_index_unique_unique',
 //            'test_index_with_length(16)_index',
 //            'test_index_with_length_custom(16)_index',
+            'test_index_chain_fulltext',
+            'test_index_col_multi1_col_multi2_fulltext',
+            'test_index_fulltext_custom_fulltext',
+            'test_index_fulltext_fulltext',
         ];
-
-        if ($this->hasFullText()) {
-            $expectedIndexes = array_merge($expectedIndexes, [
-                'test_index_chain_fulltext',
-                'test_index_col_multi1_col_multi2_fulltext',
-                'test_index_fulltext_custom_fulltext',
-                'test_index_fulltext_fulltext',
-            ]);
-        }
 
         sort($actualIndexes);
         sort($expectedIndexes);

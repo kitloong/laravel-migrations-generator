@@ -8,11 +8,13 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Enum\Driver;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
 return new class extends TestMigration
 {
+    use CheckLaravelVersion;
     use CheckMigrationMethod;
 
     /**
@@ -186,9 +188,7 @@ return new class extends TestMigration
                 ->default('string !@#$%^^&*()_+-=[]{};:,./<>?~`| \ \\ \\\ \\\\ \'\' \\\\\'\' " \" \\" \\\" \\\\" quotes')
                 ->comment('string !@#$%^^&*()_+-=[]{};:,./<>?~`| \ \\ \\\ \\\\ \'\' \\\\\'\' " \" \\" \\\" \\\\" quotes');
 
-            if ($this->hasTinyText()) {
-                $table->tinyText('tinyText');
-            }
+            $table->tinyText('tinyText');
 
             if ($this->hasULID()) {
                 $table->ulid('ulid');
@@ -196,9 +196,7 @@ return new class extends TestMigration
 
             switch (DB::getDriverName()) {
                 case Driver::MYSQL():
-                    if ($this->hasSet()) {
-                        $table->set('set', ['strawberry', 'vanilla']);
-                    }
+                    $table->set('set', ['strawberry', 'vanilla']);
                     break;
                 default:
             }

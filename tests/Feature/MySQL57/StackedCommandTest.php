@@ -7,13 +7,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use PDO;
 
 class StackedCommandTest extends MySQL57TestCase
 {
-    use CheckLaravelVersion;
-
     /**
      * @inheritDoc
      */
@@ -45,11 +42,6 @@ class StackedCommandTest extends MySQL57TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // `Schema::createDatabase` available since Laravel 8.
-        if (!$this->atLeastLaravel8()) {
-            $this->markTestSkipped();
-        }
 
         Schema::createDatabase('migration2');
     }

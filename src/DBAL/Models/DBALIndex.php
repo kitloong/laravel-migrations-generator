@@ -5,12 +5,9 @@ namespace KitLoong\MigrationsGenerator\DBAL\Models;
 use Doctrine\DBAL\Schema\Index as DoctrineDBALIndex;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 abstract class DBALIndex implements Index
 {
-    use CheckMigrationMethod;
-
     /**
      * @var string[]
      */
@@ -103,7 +100,7 @@ abstract class DBALIndex implements Index
             return IndexType::SPATIAL_INDEX();
         }
 
-        if ($this->hasFullText() && $index->hasFlag('fulltext')) {
+        if ($index->hasFlag('fulltext')) {
             return IndexType::FULLTEXT();
         }
 

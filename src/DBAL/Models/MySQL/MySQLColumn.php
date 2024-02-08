@@ -9,13 +9,10 @@ use KitLoong\MigrationsGenerator\DBAL\Models\DBALColumn;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Repositories\MariaDBRepository;
 use KitLoong\MigrationsGenerator\Repositories\MySQLRepository;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 use PDO;
 
 class MySQLColumn extends DBALColumn
 {
-    use CheckMigrationMethod;
-
     private MySQLRepository $mysqlRepository;
 
     private MariaDBRepository $mariaDBRepository;
@@ -46,7 +43,7 @@ class MySQLColumn extends DBALColumn
                 break;
 
             case ColumnType::SET():
-                $this->useSetOrString();
+                $this->presetValues = $this->getSetPresetValues();
                 break;
 
             case ColumnType::SOFT_DELETES():
@@ -144,21 +141,6 @@ class MySQLColumn extends DBALColumn
     }
 
     /**
-     * Check if "set" method is available, then get "set" preset values.
-     * If not available, change type to string with 255 length.
-     */
-    private function useSetOrString(): void
-    {
-        if ($this->hasSet()) {
-            $this->presetValues = $this->getSetPresetValues();
-            return;
-        }
-
-        $this->type   = ColumnType::STRING();
-        $this->length = 255; // Framework default string length.
-    }
-
-    /**
      * Check if the column uses "on update CURRENT_TIMESTAMP".
      */
     private function hasOnUpdateCurrentTimestamp(): bool
@@ -181,11 +163,7 @@ class MySQLColumn extends DBALColumn
     {
         switch ($this->length) {
             case MySQLPlatform::LENGTH_LIMIT_TINYTEXT:
-                if ($this->hasTinyText()) {
-                    return ColumnType::TINY_TEXT();
-                }
-
-                return ColumnType::TEXT();
+                return ColumnType::TINY_TEXT();
 
             case MySQLPlatform::LENGTH_LIMIT_TEXT:
                 return ColumnType::TEXT();

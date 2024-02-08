@@ -8,12 +8,9 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 class DefaultModifier implements Modifier
 {
-    use CheckMigrationMethod;
-
     /**
      * @var array<string, \Closure(\KitLoong\MigrationsGenerator\Migration\Blueprint\Method $method, \KitLoong\MigrationsGenerator\Schema\Models\Column $column): \KitLoong\MigrationsGenerator\Migration\Blueprint\Method>
      */
@@ -118,20 +115,6 @@ class DefaultModifier implements Modifier
         switch ($column->getDefault()) {
             case 'now()':
             case 'CURRENT_TIMESTAMP':
-                // By default, `timestamp()` and `timestampTz()` will generate column as:
-                // `DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`, migration translated to `useCurrent()` and `useCurrentOnUpdate()`.
-                // Due to old Laravel version does not have `useCurrentOnUpdate()`,
-                // if column has both `DEFAULT CURRENT_TIMESTAMP` and `ON UPDATE CURRENT_TIMESTAMP`,
-                // we need to generate column without chain.
-                // New laravel is okay to chain `useCurrent()` and `useCurrentOnUpdate()`.
-                if (!$this->hasUseCurrentOnUpdate()) {
-                    if (!$column->isOnUpdateCurrentTimestamp()) {
-                        $method->chain(ColumnModifier::USE_CURRENT());
-                    }
-
-                    break;
-                }
-
                 $method->chain(ColumnModifier::USE_CURRENT());
                 break;
 
