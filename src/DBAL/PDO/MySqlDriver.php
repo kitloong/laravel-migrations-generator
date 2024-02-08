@@ -3,7 +3,6 @@
 namespace KitLoong\MigrationsGenerator\DBAL\PDO;
 
 use Doctrine\DBAL\Driver\AbstractMySQLDriver;
-use KitLoong\MigrationsGenerator\DBAL\PDO\Concerns\ConnectsToDatabase;
 
 class MySqlDriver extends AbstractMySQLDriver
 {

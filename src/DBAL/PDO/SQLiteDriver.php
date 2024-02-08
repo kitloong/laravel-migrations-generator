@@ -3,7 +3,6 @@
 namespace KitLoong\MigrationsGenerator\DBAL\PDO;
 
 use Doctrine\DBAL\Driver\AbstractSQLiteDriver;
-use KitLoong\MigrationsGenerator\DBAL\PDO\Concerns\ConnectsToDatabase;
 
 class SQLiteDriver extends AbstractSQLiteDriver
 {

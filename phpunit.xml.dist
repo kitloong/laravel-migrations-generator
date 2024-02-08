@@ -18,7 +18,6 @@
     </include>
     <exclude>
       <directory>src/DBAL/Types</directory>
-      <directory>src/DBAL/PDO</directory>
     </exclude>
     </source>
 </phpunit>

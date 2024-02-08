@@ -3,7 +3,6 @@
 namespace KitLoong\MigrationsGenerator\DBAL\PDO;
 
 use Doctrine\DBAL\Driver\AbstractPostgreSQLDriver;
-use KitLoong\MigrationsGenerator\DBAL\PDO\Concerns\ConnectsToDatabase;
 
 class PostgresDriver extends AbstractPostgreSQLDriver
 {

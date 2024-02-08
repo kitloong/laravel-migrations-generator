@@ -6,7 +6,6 @@
   <file>tests</file>
 
   <exclude-pattern>tests/resources/database/migrations/*.php</exclude-pattern>
-  <exclude-pattern>src/DBAL/PDO/*</exclude-pattern>
 
   <rule ref="PSR12">
     <exclude name="Generic.Files.LineLength"/>

@@ -20,6 +20,5 @@ parameters:
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php
-        - ./src/DBAL/PDO/*
 
     checkMissingIterableValueType: true
