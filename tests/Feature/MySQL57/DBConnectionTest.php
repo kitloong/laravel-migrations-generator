@@ -7,10 +7,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use PDO;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class DBConnectionTest extends MySQL57TestCase
 {
     /**
@@ -56,13 +52,10 @@ class DBConnectionTest extends MySQL57TestCase
     public function testDBConnection(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('mysql57');
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
-            // Needed for Laravel 6 and below.
-            DB::setDefaultConnection('mysql8');
-
             $this->generateMigrations(['--connection' => 'mysql57']);
 
             $totalMigrations = count(File::allFiles($this->getStorageMigrationsPath()));
@@ -80,9 +73,9 @@ class DBConnectionTest extends MySQL57TestCase
 
     public function testLogMigrationToAnotherSource(): void
     {
-        $this->migrateGeneral('mysql57');
+        DB::setDefaultConnection('mysql57');
+        $this->migrateGeneral();
 
-        // Needed for Laravel 6 and below.
         DB::setDefaultConnection('mysql8');
 
         $this->artisan(
@@ -109,19 +102,23 @@ class DBConnectionTest extends MySQL57TestCase
 
     private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
+        DB::setDefaultConnection('mysql57');
         $migrateTemplates();
 
         DB::connection('mysql57')->table('migrations')->truncate();
         $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
 
+        DB::setDefaultConnection('mysql8');
         $generateMigrations();
 
         $this->assertMigrations();
 
+        DB::setDefaultConnection('mysql57');
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
+        DB::setDefaultConnection('mysql57');
         DB::connection('mysql57')->table('migrations')->truncate();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 

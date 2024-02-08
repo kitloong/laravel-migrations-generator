@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class CommandTest extends PgSQLTestCase
 {
     use CheckLaravelVersion;
@@ -19,19 +15,19 @@ class CommandTest extends PgSQLTestCase
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
+            $this->migrateGeneral();
 
             // Test timestamp default now()
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL",
+                "ALTER TABLE all_columns ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL",
             );
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL",
+                "ALTER TABLE all_columns ADD COLUMN status my_status NOT NULL",
             );
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL",
+                "ALTER TABLE all_columns ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL",
             );
         };
 
@@ -57,10 +53,10 @@ class CommandTest extends PgSQLTestCase
     public function testSquashUp(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
+            $this->migrateGeneral();
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL",
+                "ALTER TABLE all_columns ADD COLUMN status my_status NOT NULL",
             );
         };
 
@@ -74,7 +70,7 @@ class CommandTest extends PgSQLTestCase
     public function testCollation(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateCollation('pgsql');
+            $this->migrateCollation();
         };
 
         $generateMigrations = function (): void {
@@ -86,26 +82,26 @@ class CommandTest extends PgSQLTestCase
 
     public function testIgnore(): void
     {
-        $this->migrateGeneral('pgsql');
+        $this->migrateGeneral();
 
         $this->truncateMigrationsTable();
 
         $this->generateMigrations([
             '--ignore' => implode(',', [
-                'name-with-hyphen-pgsql',
-                'name-with-hyphen-pgsql_view',
+                'name-with-hyphen',
+                'name-with-hyphen_view',
             ]),
         ]);
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
 
-        $this->assertNotContains('name-with-hyphen-pgsql', $tables);
-        $this->assertNotContains('public."name-with-hyphen-pgsql_view"', $views);
+        $this->assertNotContains('name-with-hyphen', $tables);
+        $this->assertNotContains('public."name-with-hyphen_view"', $views);
     }
 
     /**
@@ -127,7 +123,7 @@ class CommandTest extends PgSQLTestCase
         Config::set('database.connections.pgsql.search_path', 'public');
 
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -140,10 +136,10 @@ class CommandTest extends PgSQLTestCase
     public function testWithHasTable(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
+            $this->migrateGeneral();
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL",
+                "ALTER TABLE all_columns ADD COLUMN status my_status NOT NULL",
             );
         };
 
@@ -157,10 +153,10 @@ class CommandTest extends PgSQLTestCase
     public function testWithHasTableSquash(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
+            $this->migrateGeneral();
 
             DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL",
+                "ALTER TABLE all_columns ADD COLUMN status my_status NOT NULL",
             );
         };
 
@@ -173,9 +169,9 @@ class CommandTest extends PgSQLTestCase
 
     public function testSkipVendor(): void
     {
-        $this->migrateGeneral('pgsql');
+        $this->migrateGeneral();
 
-        $this->migrateVendors('pgsql');
+        $this->migrateVendors();
 
         // Load migrations from vendors path to mock vendors migration.
         // Loaded migrations should not be generated.
@@ -184,10 +180,10 @@ class CommandTest extends PgSQLTestCase
         $tables = $this->getTableNames();
 
         $vendors = [
-            'personal_access_tokens_pgsql',
-            'telescope_entries_pgsql',
-            'telescope_entries_tags_pgsql',
-            'telescope_monitoring_pgsql',
+            'personal_access_tokens',
+            'telescope_entries',
+            'telescope_entries_tags',
+            'telescope_monitoring',
         ];
 
         foreach ($vendors as $vendor) {
@@ -204,7 +200,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $generatedTables = $this->getTableNames();
 
@@ -227,7 +223,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));

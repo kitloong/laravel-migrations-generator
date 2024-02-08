@@ -8,7 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class CreateTelescope_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     /**
      * Get the migration connection name.
@@ -25,7 +25,7 @@ class CreateTelescope_DB_Table extends TestMigration
     {
         $schema = Schema::connection($this->getConnection());
 
-        $schema->create('telescope_entries_[db]', function (Blueprint $table) {
+        $schema->create('telescope_entries', function (Blueprint $table) {
             $table->bigIncrements('sequence');
             $table->uuid('uuid');
             $table->uuid('batch_id');
@@ -42,7 +42,7 @@ class CreateTelescope_DB_Table extends TestMigration
             $table->index(['type', 'should_display_on_index']);
         });
 
-        $schema->create('telescope_entries_tags_[db]', function (Blueprint $table) {
+        $schema->create('telescope_entries_tags', function (Blueprint $table) {
             $table->uuid('entry_uuid');
             $table->string('tag');
 
@@ -51,11 +51,11 @@ class CreateTelescope_DB_Table extends TestMigration
 
             $table->foreign('entry_uuid')
                 ->references('uuid')
-                ->on('telescope_entries_[db]')
+                ->on('telescope_entries')
                 ->onDelete('cascade');
         });
 
-        $schema->create('telescope_monitoring_[db]', function (Blueprint $table) {
+        $schema->create('telescope_monitoring', function (Blueprint $table) {
             $table->string('tag');
         });
     }
@@ -67,8 +67,8 @@ class CreateTelescope_DB_Table extends TestMigration
     {
         $schema = Schema::connection($this->getConnection());
 
-        $schema->dropIfExists('telescope_entries_tags_[db]');
-        $schema->dropIfExists('telescope_entries_[db]');
-        $schema->dropIfExists('telescope_monitoring_[db]');
+        $schema->dropIfExists('telescope_entries_tags');
+        $schema->dropIfExists('telescope_entries');
+        $schema->dropIfExists('telescope_monitoring');
     }
-}
+};

@@ -8,7 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateQuotedName_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     /**
      * Run the migrations.
@@ -17,7 +17,7 @@ class ExpectedCreateQuotedName_DB_Table extends TestMigration
      */
     public function up()
     {
-        Schema::create('quoted-name-[db]', function (Blueprint $table) {
+        Schema::create('quoted-name', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('quoted-column');
         });
@@ -30,6 +30,6 @@ class ExpectedCreateQuotedName_DB_Table extends TestMigration
      */
     public function down()
     {
-        Schema::dropIfExists('quoted-name-[db]');
+        Schema::dropIfExists('quoted-name');
     }
-}
+};

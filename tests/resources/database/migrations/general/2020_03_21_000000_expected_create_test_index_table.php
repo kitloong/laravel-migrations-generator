@@ -11,7 +11,7 @@ use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateTestIndex_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     use CheckMigrationMethod;
 
@@ -22,7 +22,7 @@ class ExpectedCreateTestIndex_DB_Table extends TestMigration
      */
     public function up()
     {
-        Schema::create('test_index_[db]', function (Blueprint $table) {
+        Schema::create('test_index', function (Blueprint $table) {
             $table->increments('id');
             $table->string('index')->index();
             $table->string('index_custom')->index('index_custom');
@@ -83,6 +83,6 @@ class ExpectedCreateTestIndex_DB_Table extends TestMigration
      */
     public function down()
     {
-        Schema::dropIfExists('test_index_[db]');
+        Schema::dropIfExists('test_index');
     }
-}
+};

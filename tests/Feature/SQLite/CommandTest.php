@@ -6,10 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class CommandTest extends SQLiteTestCase
 {
     use CheckMigrationMethod;
@@ -17,7 +13,7 @@ class CommandTest extends SQLiteTestCase
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('sqlite');
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -29,7 +25,7 @@ class CommandTest extends SQLiteTestCase
 
     public function testDown(): void
     {
-        $this->migrateGeneral('sqlite');
+        $this->migrateGeneral();
 
         $this->truncateMigrationsTable();
 
@@ -48,7 +44,7 @@ class CommandTest extends SQLiteTestCase
 //    public function testCollation(): void
 //    {
 //        $migrateTemplates = function (): void {
-//            $this->migrateCollation('sqlite');
+//            $this->migrateCollation();
 //        };
 //
 //        $generateMigrations = function (): void {
@@ -60,9 +56,9 @@ class CommandTest extends SQLiteTestCase
 
     public function testSkipVendor(): void
     {
-        $this->migrateGeneral('sqlite');
+        $this->migrateGeneral();
 
-        $this->migrateVendors('sqlite');
+        $this->migrateVendors();
 
         // Load migrations from vendors path to mock vendors migration.
         // Loaded migrations should not be generated.
@@ -71,10 +67,10 @@ class CommandTest extends SQLiteTestCase
         $tables = $this->getTableNames();
 
         $vendors = [
-            'personal_access_tokens_sqlite',
-            'telescope_entries_sqlite',
-            'telescope_entries_tags_sqlite',
-            'telescope_monitoring_sqlite',
+            'personal_access_tokens',
+            'telescope_entries',
+            'telescope_entries_tags',
+            'telescope_monitoring',
         ];
 
         foreach ($vendors as $vendor) {
@@ -91,7 +87,7 @@ class CommandTest extends SQLiteTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('sqlite', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $generatedTables = $this->getTableNames();
 
@@ -111,7 +107,7 @@ class CommandTest extends SQLiteTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('sqlite', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));

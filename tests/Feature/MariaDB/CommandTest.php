@@ -5,10 +5,6 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\MariaDB;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class CommandTest extends MariaDBTestCase
 {
     use CheckMigrationMethod;
@@ -16,7 +12,7 @@ class CommandTest extends MariaDBTestCase
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('mariadb');
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -28,7 +24,7 @@ class CommandTest extends MariaDBTestCase
 
     public function testDown(): void
     {
-        $this->migrateGeneral('mariadb');
+        $this->migrateGeneral();
 
         $this->truncateMigrationsTable();
 
@@ -47,7 +43,7 @@ class CommandTest extends MariaDBTestCase
     public function testCollation(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateCollation('mariadb');
+            $this->migrateCollation();
         };
 
         $generateMigrations = function (): void {
@@ -70,7 +66,7 @@ class CommandTest extends MariaDBTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('mariadb', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));

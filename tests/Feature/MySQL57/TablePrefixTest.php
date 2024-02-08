@@ -17,7 +17,7 @@ class TablePrefixTest extends MySQL57TestCase
     public function testTablePrefix(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('mysql57');
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -40,7 +40,7 @@ class TablePrefixTest extends MySQL57TestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));

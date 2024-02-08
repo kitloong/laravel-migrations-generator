@@ -19,10 +19,10 @@ class TablePrefixTest extends PgSQLTestCase
     public function testTablePrefix(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
+            $this->migrateGeneral();
 
             DB::statement(
-                "ALTER TABLE kit_all_columns_pgsql ADD COLUMN status my_status NOT NULL",
+                "ALTER TABLE kit_all_columns ADD COLUMN status my_status NOT NULL",
             );
         };
 
@@ -46,7 +46,7 @@ class TablePrefixTest extends PgSQLTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));

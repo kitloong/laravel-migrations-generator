@@ -11,7 +11,7 @@ use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateCollations_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     use CheckLaravelVersion;
 
@@ -22,7 +22,7 @@ class ExpectedCreateCollations_DB_Table extends TestMigration
      */
     public function up()
     {
-        Schema::create('collations_[db]', function (Blueprint $table) {
+        Schema::create('collations', function (Blueprint $table) {
             $table->charset   = 'utf8mb4';
             $table->collation = 'utf8mb4_general_ci';
 
@@ -86,6 +86,6 @@ class ExpectedCreateCollations_DB_Table extends TestMigration
      */
     public function down()
     {
-        Schema::dropIfExists('all_columns_[db]');
+        Schema::dropIfExists('all_columns');
     }
-}
+};

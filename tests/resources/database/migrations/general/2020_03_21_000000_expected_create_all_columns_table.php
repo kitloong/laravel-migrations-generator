@@ -11,7 +11,7 @@ use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateAllColumns_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     use CheckMigrationMethod;
 
@@ -22,7 +22,7 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
      */
     public function up()
     {
-        Schema::create('all_columns_[db]', function (Blueprint $table) {
+        Schema::create('all_columns', function (Blueprint $table) {
             if ($this->hasTableComment()) {
                 $table->comment('A table comment.');
             }
@@ -223,6 +223,6 @@ class ExpectedCreateAllColumns_DB_Table extends TestMigration
      */
     public function down()
     {
-        Schema::dropIfExists('all_columns_[db]');
+        Schema::dropIfExists('all_columns');
     }
-}
+};

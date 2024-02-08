@@ -8,7 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateUserCollations_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     /**
      * Run the migrations.
@@ -17,19 +17,18 @@ class ExpectedCreateUserCollations_DB_Table extends TestMigration
      */
     public function up()
     {
-        Schema::create('user_collations_[db]', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
-            $table->unsignedInteger('sub_id');
+        Schema::create('users', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('sub_id');
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->softDeletes()->comment('Soft delete');
-            $table->softDeletes('deleted_at2', 2)->comment('Soft delete');
-            $table->rememberToken()->comment('Remember token');
+            $table->softDeletes();
+            $table->rememberToken();
             $table->timestamps();
 
-            $table->primary(['id', 'sub_id']);
+            $table->unique(['id', 'sub_id']);
         });
     }
 
@@ -40,6 +39,6 @@ class ExpectedCreateUserCollations_DB_Table extends TestMigration
      */
     public function down()
     {
-        Schema::dropIfExists('users_[db]');
+        Schema::dropIfExists('users');
     }
-}
+};

@@ -8,14 +8,14 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class CreatePersonalAccessTokens_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('personal_access_tokens_[db]', function (Blueprint $table) {
+        Schema::create('personal_access_tokens', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->morphs('tokenable');
             $table->string('name');
@@ -32,6 +32,6 @@ class CreatePersonalAccessTokens_DB_Table extends TestMigration
      */
     public function down(): void
     {
-        Schema::dropIfExists('personal_access_tokens_[db]');
+        Schema::dropIfExists('personal_access_tokens');
     }
-}
+};

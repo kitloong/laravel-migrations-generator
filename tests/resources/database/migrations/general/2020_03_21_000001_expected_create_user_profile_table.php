@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateUserProfile_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     /**
      * Run the migrations.
@@ -19,7 +19,7 @@ class ExpectedCreateUserProfile_DB_Table extends TestMigration
      */
     public function up()
     {
-        Schema::create('user_profile_[db]', function (Blueprint $table) {
+        Schema::create('user_profile', function (Blueprint $table) {
             $table->increments('id');
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('user_id_fk_custom')->unsigned();
@@ -34,15 +34,15 @@ class ExpectedCreateUserProfile_DB_Table extends TestMigration
             // SQLite does not support alter add foreign key.
             // https://www.sqlite.org/omitted.html
             if (DB::getDriverName() !== Driver::SQLITE()->getValue()) {
-                $table->foreign('user_id')->references('id')->on('users_[db]');
-                $table->foreign('user_id_fk_custom', 'users_[db]_foreign_custom')->references('id')->on('users_[db]');
-                $table->foreign('user_id_fk_constraint', 'users_[db]_foreign_constraint')->references('id')->on(
-                    'users_[db]'
+                $table->foreign('user_id')->references('id')->on('users');
+                $table->foreign('user_id_fk_custom', 'users_foreign_custom')->references('id')->on('users');
+                $table->foreign('user_id_fk_constraint', 'users_foreign_constraint')->references('id')->on(
+                    'users'
                 )->onDelete('cascade')->onUpdate('cascade');
-                $table->foreign(['user_id', 'user_sub_id'])->references(['id', 'sub_id'])->on('users_[db]');
-                $table->foreign(['user_id', 'user_sub_id_fk_custom'], 'users_[db]_composite_foreign_custom')
+                $table->foreign(['user_id', 'user_sub_id'])->references(['id', 'sub_id'])->on('users');
+                $table->foreign(['user_id', 'user_sub_id_fk_custom'], 'users_composite_foreign_custom')
                     ->references(['id', 'sub_id'])
-                    ->on('users_[db]');
+                    ->on('users');
             }
         });
     }
@@ -54,6 +54,6 @@ class ExpectedCreateUserProfile_DB_Table extends TestMigration
      */
     public function down()
     {
-        Schema::dropIfExists('user_profile_[db]');
+        Schema::dropIfExists('user_profile');
     }
-}
+};

@@ -6,10 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class CommandTest extends SQLSrvTestCase
 {
     protected function setUp(): void
@@ -34,10 +30,10 @@ class CommandTest extends SQLSrvTestCase
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('sqlsrv');
+            $this->migrateGeneral();
 
             DB::statement(
-                "ALTER TABLE all_columns_sqlsrv ADD accountnumber accountnumber NOT NULL",
+                "ALTER TABLE all_columns ADD accountnumber accountnumber NOT NULL",
             );
         };
 
@@ -51,7 +47,7 @@ class CommandTest extends SQLSrvTestCase
     public function testUnsupportedColumns(): void
     {
         DB::statement(
-            "CREATE TABLE custom_sqlsrv (
+            "CREATE TABLE custom (
                 money money,
                 smallmoney smallmoney,
                 [name.dot] varchar(255)
@@ -81,7 +77,7 @@ class CommandTest extends SQLSrvTestCase
 
     public function testDown(): void
     {
-        $this->migrateGeneral('sqlsrv');
+        $this->migrateGeneral();
 
         $this->truncateMigrationsTable();
 
@@ -103,7 +99,7 @@ class CommandTest extends SQLSrvTestCase
     public function testCollation(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateCollation('sqlsrv');
+            $this->migrateCollation();
         };
 
         $generateMigrations = function (): void {
@@ -115,10 +111,10 @@ class CommandTest extends SQLSrvTestCase
 
     public function testGenerateXml(): void
     {
-        $this->migrateGeneral('sqlsrv');
+        $this->migrateGeneral();
 
         // Test xml column
-        DB::statement("alter table all_columns_sqlsrv add xml xml");
+        DB::statement("alter table all_columns add xml xml");
 
         $this->truncateMigrationsTable();
 
@@ -129,9 +125,9 @@ class CommandTest extends SQLSrvTestCase
 
     public function testSkipVendor(): void
     {
-        $this->migrateGeneral('sqlsrv');
+        $this->migrateGeneral();
 
-        $this->migrateVendors('sqlsrv');
+        $this->migrateVendors();
 
         // Load migrations from vendors path to mock vendors migration.
         // Loaded migrations should not be generated.
@@ -140,10 +136,10 @@ class CommandTest extends SQLSrvTestCase
         $tables = $this->getTableNames();
 
         $vendors = [
-            'personal_access_tokens_sqlsrv',
-            'telescope_entries_sqlsrv',
-            'telescope_entries_tags_sqlsrv',
-            'telescope_monitoring_sqlsrv',
+            'personal_access_tokens',
+            'telescope_entries',
+            'telescope_entries_tags',
+            'telescope_monitoring',
         ];
 
         foreach ($vendors as $vendor) {
@@ -160,7 +156,7 @@ class CommandTest extends SQLSrvTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $generatedTables = $this->getTableNames();
 
@@ -183,7 +179,7 @@ class CommandTest extends SQLSrvTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));

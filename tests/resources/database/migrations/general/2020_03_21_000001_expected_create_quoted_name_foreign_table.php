@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateQuotedNameForeign_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     /**
      * Run the migrations.
@@ -19,14 +19,14 @@ class ExpectedCreateQuotedNameForeign_DB_Table extends TestMigration
      */
     public function up()
     {
-        Schema::create('quoted-name-foreign-[db]', function (Blueprint $table) {
+        Schema::create('quoted-name-foreign', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('quoted-name-id');
 
             // SQLite does not support alter add foreign key.
             // https://www.sqlite.org/omitted.html
             if (DB::getDriverName() !== Driver::SQLITE()->getValue()) {
-                $table->foreign('quoted-name-id')->references('id')->on('quoted-name-[db]');
+                $table->foreign('quoted-name-id')->references('id')->on('quoted-name');
             }
         });
     }
@@ -38,6 +38,6 @@ class ExpectedCreateQuotedNameForeign_DB_Table extends TestMigration
      */
     public function down()
     {
-        Schema::dropIfExists('quoted-name-foreign-[db]');
+        Schema::dropIfExists('quoted-name-foreign');
     }
-}
+};

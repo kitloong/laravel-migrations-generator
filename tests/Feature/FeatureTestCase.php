@@ -92,71 +92,36 @@ abstract class FeatureTestCase extends TestCase
         return storage_path('sql') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
-    protected function migrateGeneral(string $connection): void
+    protected function migrateGeneral(): void
     {
-        $this->migrateFromTemplate($connection, base_path('tests/resources/database/migrations/general'));
+        $this->migrateFromTemplate(base_path('tests/resources/database/migrations/general'));
     }
 
-    protected function migrateCollation(string $connection): void
+    protected function migrateCollation(): void
     {
-        $this->migrateFromTemplate($connection, base_path('tests/resources/database/migrations/collation'));
+        $this->migrateFromTemplate(base_path('tests/resources/database/migrations/collation'));
     }
 
-    protected function migrateVendors(string $connection): void
+    protected function migrateVendors(): void
     {
-        $this->migrateFromVendorsTemplate($connection, base_path('tests/resources/database/migrations/vendors'));
+        $this->migrateFromVendorsTemplate(base_path('tests/resources/database/migrations/vendors'));
     }
 
-    protected function migrateFromTemplate(string $connection, string $templatePath): void
+    protected function migrateFromTemplate(string $templatePath): void
     {
         File::copyDirectory($templatePath, $this->getStorageFromPath());
-
-        foreach (File::files($this->getStorageFromPath()) as $file) {
-            $content = str_replace([
-                '[db]',
-                '_DB_',
-            ], [
-                $connection,
-                ucfirst("$connection"),
-            ], $file->getContents());
-
-            File::put($this->getStorageFromPath($file->getBasename()), $content);
-            File::move(
-                $this->getStorageFromPath($file->getBasename()),
-                $this->getStorageFromPath(str_replace('_db_', "_{$connection}_", $file->getBasename())),
-            );
-        }
-
-        $this->runMigrationsFrom($connection, $this->getStorageFromPath());
+        $this->runMigrationsFrom($this->getStorageFromPath());
     }
 
-    protected function migrateFromVendorsTemplate(string $connection, string $templatePath): void
+    protected function migrateFromVendorsTemplate(string $templatePath): void
     {
         File::copyDirectory($templatePath, $this->getStorageFromVendorsPath());
-
-        foreach (File::files($this->getStorageFromVendorsPath()) as $file) {
-            $content = str_replace([
-                '[db]',
-                '_DB_',
-            ], [
-                $connection,
-                ucfirst("$connection"),
-            ], $file->getContents());
-
-            File::put($this->getStorageFromVendorsPath($file->getBasename()), $content);
-            File::move(
-                $this->getStorageFromVendorsPath($file->getBasename()),
-                $this->getStorageFromVendorsPath(str_replace('_db_', "_{$connection}_", $file->getBasename())),
-            );
-        }
-
-        $this->runMigrationsFrom($connection, $this->getStorageFromVendorsPath());
+        $this->runMigrationsFrom($this->getStorageFromVendorsPath());
     }
 
-    protected function runMigrationsFrom(string $connection, string $path): void
+    protected function runMigrationsFrom(string $path): void
     {
         $this->artisan('migrate', [
-            '--database' => $connection,
             '--realpath' => true,
             '--path'     => $path,
         ]);

@@ -8,7 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateReservedNameWithPrecision_DB_Table extends TestMigration
+return new class extends TestMigration
 {
     /**
      * Run the migrations.
@@ -17,7 +17,7 @@ class ExpectedCreateReservedNameWithPrecision_DB_Table extends TestMigration
      */
     public function up()
     {
-        Schema::create('reserved_name_with_precision_[db]', function (Blueprint $table) {
+        Schema::create('reserved_name_with_precision', function (Blueprint $table) {
             $table->increments('id');
             $table->softDeletes('deleted_at', 2);
             $table->softDeletesTz('deleted_at_tz', 2);
@@ -33,6 +33,6 @@ class ExpectedCreateReservedNameWithPrecision_DB_Table extends TestMigration
      */
     public function down()
     {
-        Schema::dropIfExists('reserved_name_with_precision_[db]');
+        Schema::dropIfExists('reserved_name_with_precision');
     }
-}
+};

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
-class ExpectedCreateQuotedName_DB_Proc extends TestMigration
+return new class extends TestMigration
 {
     /**
      * Run the migrations.
@@ -20,27 +20,27 @@ class ExpectedCreateQuotedName_DB_Proc extends TestMigration
         switch (DB::getDriverName()) {
             case Driver::MYSQL():
                 DB::unprepared(
-                    "CREATE PROCEDURE findNameWithHyphen[db]()
+                    "CREATE PROCEDURE findNameWithHyphen()
                     BEGIN
-                        SELECT * from " . $this->quoteIdentifier('name-with-hyphen-[db]') . ";
+                        SELECT * from " . $this->quoteIdentifier('name-with-hyphen') . ";
                     END"
                 );
                 break;
             case Driver::PGSQL():
                 DB::unprepared(
-                    "CREATE PROCEDURE findNameWithHyphen[db]()
+                    "CREATE PROCEDURE findNameWithHyphen()
                     language plpgsql
                     as $$
                     BEGIN
-                        SELECT * from " . $this->quoteIdentifier('name-with-hyphen-[db]') . ";
+                        SELECT * from " . $this->quoteIdentifier('name-with-hyphen') . ";
                     END;$$"
                 );
                 break;
             case Driver::SQLSRV():
                 DB::unprepared(
-                    "CREATE PROCEDURE findNameWithHyphen[db]
+                    "CREATE PROCEDURE findNameWithHyphen
                     AS
-                    SELECT * from " . $this->quoteIdentifier('name-with-hyphen-[db]') . ";"
+                    SELECT * from " . $this->quoteIdentifier('name-with-hyphen') . ";"
                 );
                 break;
             default:
@@ -54,6 +54,6 @@ class ExpectedCreateQuotedName_DB_Proc extends TestMigration
      */
     public function down()
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS findNameWithHyphen[db]");
+        DB::unprepared("DROP PROCEDURE IF EXISTS findNameWithHyphen");
     }
-}
+};
