@@ -3,7 +3,6 @@
 namespace KitLoong\MigrationsGenerator\Enum\Migrations\Method;
 
 use MyCLabs\Enum\Enum;
-use UnexpectedValueException;
 
 /**
  * Define column types of the framework.
@@ -134,16 +133,6 @@ final class ColumnType extends Enum
      */
     public static function fromValue(string $value): self
     {
-        if (method_exists(Enum::class, 'from')) {
-            return parent::from($value);
-        }
-
-        $key = self::search($value);
-
-        if ($key === false) {
-            throw new UnexpectedValueException("Value '$value' is not part of the enum " . self::class);
-        }
-
-        return self::__callStatic($key, []);
+        return parent::from($value);
     }
 }
