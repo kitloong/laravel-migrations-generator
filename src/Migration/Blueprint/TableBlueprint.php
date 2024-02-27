@@ -33,7 +33,9 @@ class TableBlueprint implements WritableBlueprint
     use MergeTimestamps;
     use Stringable;
 
-    /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[] */
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[]
+     */
     private array $lines;
 
     /**

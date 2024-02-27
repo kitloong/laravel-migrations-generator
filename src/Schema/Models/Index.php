@@ -25,13 +25,6 @@ interface Index extends Model
     public function getColumns(): array;
 
     /**
-     * Get the index column lengths, always same size with {@see self::getColumns()}.
-     *
-     * @return array<int|null>
-     */
-    public function getLengths(): array;
-
-    /**
      * Get the index type.
      */
     public function getType(): IndexType;

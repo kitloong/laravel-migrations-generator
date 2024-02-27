@@ -217,7 +217,7 @@ class CommandTest extends MySQL57TestCase
 
         $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
-        $foreignKeys     = app(MySQLSchema::class)->getTableForeignKeys('user_profile');
+        $foreignKeys     = app(MySQLSchema::class)->getForeignKeys('user_profile');
         $foreignKeyNames = $foreignKeys->map(static fn (ForeignKey $foreignKey) => $foreignKey->getName())
             ->sort()
             ->values()

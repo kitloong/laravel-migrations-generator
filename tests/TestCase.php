@@ -11,26 +11,6 @@ use PHPUnit\Framework\Constraint\IsEqual;
 abstract class TestCase extends Testbench
 {
     /**
-     * @inheritDoc
-     */
-    protected function getPackageProviders($app)
-    {
-        return [
-            MigrationsGeneratorServiceProvider::class,
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        app()->setBasePath(__DIR__ . '/../');
-    }
-
-    /**
      * Asserts that the contents of one file is equal to the contents of another file, ignore the ordering.
      * Also, strip all end of line commas.
      */
@@ -54,5 +34,25 @@ abstract class TestCase extends Testbench
         $actualContent = $actualContent->map($removeLastComma)->sort();
 
         static::assertThat($actualContent->values(), $constraint, $message);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getPackageProviders($app)
+    {
+        return [
+            MigrationsGeneratorServiceProvider::class,
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        app()->setBasePath(__DIR__ . '/../');
     }
 }

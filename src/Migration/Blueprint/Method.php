@@ -4,10 +4,14 @@ namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
 class Method
 {
-    /** @var mixed[] */
+    /**
+     * @var mixed[]
+     */
     private array $values;
 
-    /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Method[] */
+    /**
+     * @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]
+     */
     private array $chains;
 
     /**

@@ -103,7 +103,12 @@ class DefaultModifier implements Modifier
      */
     protected function chainDefaultForBoolean(Method $method, Column $column): Method
     {
-        $method->chain(ColumnModifier::DEFAULT(), (int) $column->getDefault() === 1);
+        $default = match ($column->getDefault()) {
+            'true', '1' => true,
+            default => false,
+        };
+
+        $method->chain(ColumnModifier::DEFAULT(), $default);
         return $method;
     }
 
@@ -113,7 +118,6 @@ class DefaultModifier implements Modifier
     protected function chainDefaultForDatetime(Method $method, Column $column): Method
     {
         switch ($column->getDefault()) {
-            case 'now()':
             case 'CURRENT_TIMESTAMP':
                 $method->chain(ColumnModifier::USE_CURRENT());
                 break;

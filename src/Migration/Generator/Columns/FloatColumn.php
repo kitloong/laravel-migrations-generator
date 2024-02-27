@@ -16,6 +16,8 @@ class FloatColumn implements ColumnTypeGenerator
     private const DEFAULT_PRECISION = 8;
     private const DEFAULT_SCALE     = 2;
 
+    private const DEFAULT_PRECISION_V11 = 53;
+
     /**
      * @inheritDoc
      */
@@ -41,7 +43,7 @@ class FloatColumn implements ColumnTypeGenerator
     private function getPrecisions(Column $column): array
     {
         if ($this->atLeastLaravel11()) {
-            if ($column->getPrecision() === null) {
+            if ($column->getPrecision() === null || $column->getPrecision() === self::DEFAULT_PRECISION_V11) {
                 return [];
             }
 

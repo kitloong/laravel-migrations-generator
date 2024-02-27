@@ -4,11 +4,10 @@ namespace KitLoong\MigrationsGenerator;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
-use KitLoong\MigrationsGenerator\DBAL\Connection;
-use KitLoong\MigrationsGenerator\DBAL\MySQLSchema as DBALMySQLSchema;
-use KitLoong\MigrationsGenerator\DBAL\PgSQLSchema as DBALPgSQLSchema;
-use KitLoong\MigrationsGenerator\DBAL\SQLiteSchema as DBALSQLiteSchema;
-use KitLoong\MigrationsGenerator\DBAL\SQLSrvSchema as DBALSQLSrvSchema;
+use KitLoong\MigrationsGenerator\Database\MySQLSchema as DBALMySQLSchema;
+use KitLoong\MigrationsGenerator\Database\PgSQLSchema as DBALPgSQLSchema;
+use KitLoong\MigrationsGenerator\Database\SQLiteSchema as DBALSQLiteSchema;
+use KitLoong\MigrationsGenerator\Database\SQLSrvSchema as DBALSQLSrvSchema;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\BooleanColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\DatetimeColumn;
@@ -52,7 +51,6 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
                 SQLiteRepository::class  => SQLiteRepository::class,
                 SQLSrvRepository::class  => SQLSrvRepository::class,
                 MariaDBRepository::class => MariaDBRepository::class,
-                Connection::class        => Connection::class,
             ] as $abstract => $concrete
         ) {
             $this->app->singleton($abstract, $concrete);

@@ -8,17 +8,10 @@ use Illuminate\Support\Facades\File;
 
 class CommandTest extends SQLSrvTestCase
 {
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
             $this->migrateGeneral();
-
-            DB::statement(
-                "ALTER TABLE all_columns ADD accountnumber accountnumber NOT NULL",
-            );
         };
 
         $generateMigrations = function (): void {
@@ -77,9 +70,6 @@ class CommandTest extends SQLSrvTestCase
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testCollation(): void
     {
         $migrateTemplates = function (): void {
@@ -147,9 +137,6 @@ class CommandTest extends SQLSrvTestCase
         $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
