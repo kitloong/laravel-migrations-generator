@@ -82,7 +82,7 @@ jobs:
         sqlsrv_extension: [ pdo_sqlsrv ]
         include:
           - php: 8.1
-            laravel: 10.38
+            laravel: 10.43.*
           - php: 8.1
             laravel: 10.*
 

@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "illuminate/support": "^10.38|^11.0",
+        "illuminate/support": "^10.43|^11.0",
         "myclabs/php-enum": "^1.8",
         "ext-pdo": "*"
     },
