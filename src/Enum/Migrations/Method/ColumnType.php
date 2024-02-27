@@ -6,9 +6,6 @@ use MyCLabs\Enum\Enum;
 
 /**
  * Define column types of the framework.
- * Keep const as public to allow used by:
- * {@see \KitLoong\MigrationsGenerator\DBAL\RegisterColumnType::registerLaravelColumnType()}
- * {@see \KitLoong\MigrationsGenerator\DBAL\Types\Types}
  *
  * @link https://laravel.com/docs/master/migrations#available-column-types
  * @method static self BIG_INTEGER()

@@ -24,54 +24,6 @@ class MySQLRepository extends Repository
     }
 
     /**
-     * Get enum values.
-     *
-     * @param  string  $table  Table name.
-     * @param  string  $column  Column name.
-     * @return \Illuminate\Support\Collection<int, string>
-     */
-    public function getEnumPresetValues(string $table, string $column): Collection
-    {
-        $result = DB::selectOne("SHOW COLUMNS FROM `$table` WHERE Field = '$column' AND Type LIKE 'enum(%'");
-
-        if ($result === null) {
-            return new Collection();
-        }
-
-        $showColumn = new ShowColumn($result);
-        $value      = substr(
-            str_replace('enum(\'', '', $showColumn->getType()),
-            0,
-            -2,
-        );
-        return new Collection(explode("','", $value));
-    }
-
-    /**
-     * Get set values.
-     *
-     * @param  string  $table  Table name.
-     * @param  string  $column  Column name.
-     * @return \Illuminate\Support\Collection<int, string>
-     */
-    public function getSetPresetValues(string $table, string $column): Collection
-    {
-        $result = DB::selectOne("SHOW COLUMNS FROM `$table` WHERE Field = '$column' AND Type LIKE 'set(%'");
-
-        if ($result === null) {
-            return new Collection();
-        }
-
-        $showColumn = new ShowColumn($result);
-        $value      = substr(
-            str_replace('set(\'', '', $showColumn->getType()),
-            0,
-            -2,
-        );
-        return new Collection(explode("','", $value));
-    }
-
-    /**
      * Checks if column has `on update CURRENT_TIMESTAMP`
      *
      * @param  string  $table  Table name.
@@ -138,6 +90,41 @@ class MySQLRepository extends Repository
     }
 
     /**
+     * Get the SRID by table and column name.
+     */
+    public function getSrID(string $table, string $column): ?int
+    {
+        try {
+            $srsID = DB::selectOne(
+                "SELECT SRS_ID
+                FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = '" . DB::getDatabaseName() . "'
+                    AND TABLE_NAME = '" . $table . "'
+                    AND COLUMN_NAME = '" . $column . "'",
+            );
+        } catch (QueryException $exception) {
+            if (
+                Str::contains(
+                    $exception->getMessage(),
+                    "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'SRS_ID'",
+                    true,
+                )
+            ) {
+                return null;
+            }
+
+            throw $exception;
+        }
+
+        if ($srsID === null) {
+            return null;
+        }
+
+        $srsIDArr = array_change_key_case((array) $srsID);
+        return $srsIDArr['srs_id'] ?? null;
+    }
+
+    /**
      * Get single stored procedure by name.
      *
      * @param  string  $procedure  Procedure name.
@@ -186,40 +173,5 @@ class MySQLRepository extends Repository
 
         $definitionArr = array_change_key_case((array) $definition);
         return $definitionArr['generation_expression'] !== '' ? $definitionArr['generation_expression'] : null;
-    }
-
-    /**
-     * Get the SRID by table and column name.
-     */
-    public function getSrID(string $table, string $column): ?int
-    {
-        try {
-            $srsID = DB::selectOne(
-                "SELECT SRS_ID
-                FROM information_schema.COLUMNS
-                WHERE TABLE_SCHEMA = '" . DB::getDatabaseName() . "'
-                    AND TABLE_NAME = '" . $table . "'
-                    AND COLUMN_NAME = '" . $column . "'",
-            );
-        } catch (QueryException $exception) {
-            if (
-                Str::contains(
-                    $exception->getMessage(),
-                    "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'SRS_ID'",
-                    true,
-                )
-            ) {
-                return null;
-            }
-
-            throw $exception;
-        }
-
-        if ($srsID === null) {
-            return null;
-        }
-
-        $srsIDArr = array_change_key_case((array) $srsID);
-        return $srsIDArr['srs_id'] ?? null;
     }
 }

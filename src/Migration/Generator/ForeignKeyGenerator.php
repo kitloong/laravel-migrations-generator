@@ -46,6 +46,18 @@ class ForeignKeyGenerator
     }
 
     /**
+     * Create a new Method with foreignKey and columns.
+     */
+    public function makeMethod(ForeignKey $foreignKey): Method
+    {
+        if ($this->shouldSkipName($foreignKey)) {
+            return new Method(Foreign::FOREIGN(), $foreignKey->getLocalColumns());
+        }
+
+        return new Method(Foreign::FOREIGN(), $foreignKey->getLocalColumns(), $foreignKey->getName());
+    }
+
+    /**
      * Checks should skip current foreign key name from DB.
      */
     private function shouldSkipName(ForeignKey $foreignKey): bool
@@ -66,14 +78,5 @@ class ForeignKeyGenerator
             $foreignKey->getTableName() . '_' . implode('_', $foreignKey->getLocalColumns()) . '_foreign',
         );
         return str_replace(['-', '.'], '_', $name);
-    }
-
-    public function makeMethod(ForeignKey $foreignKey): Method
-    {
-        if ($this->shouldSkipName($foreignKey)) {
-            return new Method(Foreign::FOREIGN(), $foreignKey->getLocalColumns());
-        }
-
-        return new Method(Foreign::FOREIGN(), $foreignKey->getLocalColumns(), $foreignKey->getName());
     }
 }

@@ -36,7 +36,7 @@
   <rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility"/>
   <!--<rule ref="SlevomatCodingStandard.Classes.ClassLength"/>-->
   <rule ref="SlevomatCodingStandard.Classes.ClassMemberSpacing"/>
-  <!--<rule ref="SlevomatCodingStandard.Classes.ClassStructure"/>-->
+  <rule ref="SlevomatCodingStandard.Classes.ClassStructure"/>
   <rule ref="SlevomatCodingStandard.Classes.ConstantSpacing"/>
 <!--  <rule ref="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion"/>-->
   <!--<rule ref="SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants"/>-->
@@ -67,7 +67,7 @@
   <rule ref="SlevomatCodingStandard.Commenting.AnnotationName"/>
   <rule ref="SlevomatCodingStandard.Commenting.DeprecatedAnnotationDeclaration"/>
   <!--<rule ref="SlevomatCodingStandard.Commenting.DisallowCommentAfterCode"/>-->
-  <!--<rule ref="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>-->
+  <rule ref="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>
   <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing"/>
   <rule ref="SlevomatCodingStandard.Commenting.EmptyComment"/>
   <rule ref="SlevomatCodingStandard.Commenting.ForbiddenAnnotations"/>

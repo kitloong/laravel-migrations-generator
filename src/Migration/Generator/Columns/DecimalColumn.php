@@ -37,6 +37,10 @@ class DecimalColumn implements ColumnTypeGenerator
      */
     private function getDecimalPrecisions(?int $precision, int $scale): array
     {
+        if ($precision === null) {
+            return [];
+        }
+
         if ($precision === self::DEFAULT_PRECISION && $scale === self::DEFAULT_SCALE) {
             return [];
         }

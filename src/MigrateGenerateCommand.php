@@ -567,7 +567,7 @@ class MigrateGenerateCommand extends Command
     protected function generateForeignKeys(Collection $tables): void
     {
         $tables->each(function (string $table): void {
-            $foreignKeys = $this->schema->getTableForeignKeys($table);
+            $foreignKeys = $this->schema->getForeignKeys($table);
 
             if (!$foreignKeys->isNotEmpty()) {
                 return;
@@ -596,7 +596,7 @@ class MigrateGenerateCommand extends Command
     protected function generateForeignKeysToTemp(Collection $tables): void
     {
         $tables->each(function (string $table): void {
-            $foreignKeys = $this->schema->getTableForeignKeys($table);
+            $foreignKeys = $this->schema->getForeignKeys($table);
 
             if (!$foreignKeys->isNotEmpty()) {
                 return;

@@ -77,20 +77,14 @@ jobs:
 
     strategy:
       matrix:
-        php: [ 8.1, 8.2, 8.3 ]
-        laravel: [ 9.*, 10.* ]
-        dbal: [ 3.* ]
+        php: [ 8.2, 8.3 ]
+        laravel: [ 11.* ]
         sqlsrv_extension: [ pdo_sqlsrv ]
         include:
-          - php: 8.0
-            laravel: 8.*
-            dbal: 3.*
-          - php: 8.2
-            laravel: 11.*
-            dbal: 4.*
-          - php: 8.3
-            laravel: 11.*
-            dbal: 4.*
+          - php: 8.1
+            laravel: 10.38
+          - php: 8.1
+            laravel: 10.*
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
@@ -119,7 +113,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer config --no-plugins allow-plugins.kylekatarnls/update-helper true
-          composer require "laravel/framework:${{ matrix.laravel }}" "doctrine/dbal:${{ matrix.dbal }}" --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
           composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Setup .env

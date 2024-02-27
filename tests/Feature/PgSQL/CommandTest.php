@@ -4,8 +4,6 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
 class CommandTest extends PgSQLTestCase
@@ -16,48 +14,19 @@ class CommandTest extends PgSQLTestCase
     {
         $migrateTemplates = function (): void {
             $this->migrateGeneral();
-
-            // Test timestamp default now()
-            DB::statement(
-                "ALTER TABLE all_columns ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL",
-            );
-
-            DB::statement(
-                "ALTER TABLE all_columns ADD COLUMN status my_status NOT NULL",
-            );
-
-            DB::statement(
-                "ALTER TABLE all_columns ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL",
-            );
         };
 
         $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
-        $beforeVerify = function (): void {
-            $this->assertLineExistsThenReplace(
-                $this->getStorageSqlPath('actual.sql'),
-                'timestamp_defaultnow timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL',
-            );
-
-            $this->assertLineExistsThenReplace(
-                $this->getStorageSqlPath('expected.sql'),
-                'timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL',
-            );
-        };
-
-        $this->verify($migrateTemplates, $generateMigrations, $beforeVerify);
+        $this->verify($migrateTemplates, $generateMigrations);
     }
 
     public function testSquashUp(): void
     {
         $migrateTemplates = function (): void {
             $this->migrateGeneral();
-
-            DB::statement(
-                "ALTER TABLE all_columns ADD COLUMN status my_status NOT NULL",
-            );
         };
 
         $generateMigrations = function (): void {
@@ -109,7 +78,7 @@ class CommandTest extends PgSQLTestCase
      *
      * @see https://laravel.com/docs/9.x/upgrade#postgres-schema-configuration
      */
-    public function testRunWithSearchPath(): void
+    public function testWithSearchPath(): void
     {
         if (!$this->atLeastLaravel9()) {
             $this->markTestSkipped();
@@ -137,10 +106,6 @@ class CommandTest extends PgSQLTestCase
     {
         $migrateTemplates = function (): void {
             $this->migrateGeneral();
-
-            DB::statement(
-                "ALTER TABLE all_columns ADD COLUMN status my_status NOT NULL",
-            );
         };
 
         $generateMigrations = function (): void {
@@ -154,10 +119,6 @@ class CommandTest extends PgSQLTestCase
     {
         $migrateTemplates = function (): void {
             $this->migrateGeneral();
-
-            DB::statement(
-                "ALTER TABLE all_columns ADD COLUMN status my_status NOT NULL",
-            );
         };
 
         $generateMigrations = function (): void {
@@ -210,7 +171,7 @@ class CommandTest extends PgSQLTestCase
         $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations, ?callable $beforeVerify = null): void
+    private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
 
@@ -228,30 +189,9 @@ class CommandTest extends PgSQLTestCase
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
-        $beforeVerify === null ?: $beforeVerify();
-
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
             $this->getStorageSqlPath('actual.sql'),
-        );
-    }
-
-    private function assertLineExistsThenReplace(string $file, string $line): void
-    {
-        $this->assertTrue(
-            str_contains(
-                File::get($file),
-                $line,
-            ),
-        );
-
-        File::put(
-            $file,
-            str_replace(
-                $line,
-                'replaced',
-                File::get($file),
-            ),
         );
     }
 }
