@@ -20,47 +20,47 @@ class DefaultModifier implements Modifier
     {
         foreach (
             [
-                ColumnType::BIG_INTEGER(),
-                ColumnType::INTEGER(),
-                ColumnType::MEDIUM_INTEGER(),
-                ColumnType::SMALL_INTEGER(),
-                ColumnType::TINY_INTEGER(),
-                ColumnType::UNSIGNED_BIG_INTEGER(),
-                ColumnType::UNSIGNED_INTEGER(),
-                ColumnType::UNSIGNED_MEDIUM_INTEGER(),
-                ColumnType::UNSIGNED_SMALL_INTEGER(),
-                ColumnType::UNSIGNED_TINY_INTEGER(),
+                ColumnType::BIG_INTEGER,
+                ColumnType::INTEGER,
+                ColumnType::MEDIUM_INTEGER,
+                ColumnType::SMALL_INTEGER,
+                ColumnType::TINY_INTEGER,
+                ColumnType::UNSIGNED_BIG_INTEGER,
+                ColumnType::UNSIGNED_INTEGER,
+                ColumnType::UNSIGNED_MEDIUM_INTEGER,
+                ColumnType::UNSIGNED_SMALL_INTEGER,
+                ColumnType::UNSIGNED_TINY_INTEGER,
             ] as $columnType
         ) {
-            $this->chainerMap[$columnType->getValue()] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForInteger'], $method, $column);
+            $this->chainerMap[$columnType->value] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForInteger'], $method, $column);
         }
 
         foreach (
             [
-                ColumnType::DECIMAL(),
-                ColumnType::FLOAT(),
-                ColumnType::DOUBLE(),
+                ColumnType::DECIMAL,
+                ColumnType::FLOAT,
+                ColumnType::DOUBLE,
             ] as $columnType
         ) {
-            $this->chainerMap[$columnType->getValue()] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForDecimal'], $method, $column);
+            $this->chainerMap[$columnType->value] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForDecimal'], $method, $column);
         }
 
-        $this->chainerMap[ColumnType::BOOLEAN()->getValue()] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForBoolean'], $method, $column);
+        $this->chainerMap[ColumnType::BOOLEAN->value] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForBoolean'], $method, $column);
 
         foreach (
             [
-                ColumnType::SOFT_DELETES(),
-                ColumnType::SOFT_DELETES_TZ(),
-                ColumnType::DATE(),
-                ColumnType::DATETIME(),
-                ColumnType::DATETIME_TZ(),
-                ColumnType::TIME(),
-                ColumnType::TIME_TZ(),
-                ColumnType::TIMESTAMP(),
-                ColumnType::TIMESTAMP_TZ(),
+                ColumnType::SOFT_DELETES,
+                ColumnType::SOFT_DELETES_TZ,
+                ColumnType::DATE,
+                ColumnType::DATETIME,
+                ColumnType::DATETIME_TZ,
+                ColumnType::TIME,
+                ColumnType::TIME_TZ,
+                ColumnType::TIMESTAMP,
+                ColumnType::TIMESTAMP_TZ,
             ] as $columnType
         ) {
-            $this->chainerMap[$columnType->getValue()] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForDatetime'], $method, $column);
+            $this->chainerMap[$columnType->value] = fn (Method $method, Column $column): Method => call_user_func([$this, 'chainDefaultForDatetime'], $method, $column);
         }
     }
 
@@ -73,8 +73,8 @@ class DefaultModifier implements Modifier
             return $method;
         }
 
-        if (isset($this->chainerMap[$column->getType()->getValue()])) {
-            return $this->chainerMap[$column->getType()->getValue()]($method, $column);
+        if (isset($this->chainerMap[$column->getType()->value])) {
+            return $this->chainerMap[$column->getType()->value]($method, $column);
         }
 
         return $this->chainDefaultForString($method, $column);
@@ -85,7 +85,7 @@ class DefaultModifier implements Modifier
      */
     protected function chainDefaultForInteger(Method $method, Column $column): Method
     {
-        $method->chain(ColumnModifier::DEFAULT(), (int) $column->getDefault());
+        $method->chain(ColumnModifier::DEFAULT, (int) $column->getDefault());
         return $method;
     }
 
@@ -94,7 +94,7 @@ class DefaultModifier implements Modifier
      */
     protected function chainDefaultForDecimal(Method $method, Column $column): Method
     {
-        $method->chain(ColumnModifier::DEFAULT(), (float) $column->getDefault());
+        $method->chain(ColumnModifier::DEFAULT, (float) $column->getDefault());
         return $method;
     }
 
@@ -103,7 +103,12 @@ class DefaultModifier implements Modifier
      */
     protected function chainDefaultForBoolean(Method $method, Column $column): Method
     {
-        $method->chain(ColumnModifier::DEFAULT(), (int) $column->getDefault() === 1);
+        $default = match ($column->getDefault()) {
+            'true', '1' => true,
+            default => false,
+        };
+
+        $method->chain(ColumnModifier::DEFAULT, $default);
         return $method;
     }
 
@@ -113,9 +118,8 @@ class DefaultModifier implements Modifier
     protected function chainDefaultForDatetime(Method $method, Column $column): Method
     {
         switch ($column->getDefault()) {
-            case 'now()':
             case 'CURRENT_TIMESTAMP':
-                $method->chain(ColumnModifier::USE_CURRENT());
+                $method->chain(ColumnModifier::USE_CURRENT);
                 break;
 
             default:
@@ -127,7 +131,7 @@ class DefaultModifier implements Modifier
                     $default = DB::raw($default);
                 }
 
-                $method->chain(ColumnModifier::DEFAULT(), $default);
+                $method->chain(ColumnModifier::DEFAULT, $default);
         }
 
         return $method;
@@ -138,7 +142,7 @@ class DefaultModifier implements Modifier
      */
     protected function chainDefaultForString(Method $method, Column $column): Method
     {
-        $method->chain(ColumnModifier::DEFAULT(), $column->getDefault());
+        $method->chain(ColumnModifier::DEFAULT, $column->getDefault());
 
         return $method;
     }

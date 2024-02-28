@@ -31,7 +31,7 @@ class CharsetModifier implements Modifier
         $charset = $column->getCharset();
 
         if ($charset !== null && $charset !== $tableCharset) {
-            $method->chain(ColumnModifier::CHARSET(), $charset);
+            $method->chain(ColumnModifier::CHARSET, $charset);
         }
 
         return $method;

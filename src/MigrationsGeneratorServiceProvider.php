@@ -4,11 +4,10 @@ namespace KitLoong\MigrationsGenerator;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
-use KitLoong\MigrationsGenerator\DBAL\Connection;
-use KitLoong\MigrationsGenerator\DBAL\MySQLSchema as DBALMySQLSchema;
-use KitLoong\MigrationsGenerator\DBAL\PgSQLSchema as DBALPgSQLSchema;
-use KitLoong\MigrationsGenerator\DBAL\SQLiteSchema as DBALSQLiteSchema;
-use KitLoong\MigrationsGenerator\DBAL\SQLSrvSchema as DBALSQLSrvSchema;
+use KitLoong\MigrationsGenerator\Database\MySQLSchema as DBALMySQLSchema;
+use KitLoong\MigrationsGenerator\Database\PgSQLSchema as DBALPgSQLSchema;
+use KitLoong\MigrationsGenerator\Database\SQLiteSchema as DBALSQLiteSchema;
+use KitLoong\MigrationsGenerator\Database\SQLSrvSchema as DBALSQLSrvSchema;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\BooleanColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\DatetimeColumn;
@@ -52,7 +51,6 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
                 SQLiteRepository::class  => SQLiteRepository::class,
                 SQLSrvRepository::class  => SQLSrvRepository::class,
                 MariaDBRepository::class => MariaDBRepository::class,
-                Connection::class        => Connection::class,
             ] as $abstract => $concrete
         ) {
             $this->app->singleton($abstract, $concrete);
@@ -114,7 +112,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
      */
     protected function columnTypeSingleton(ColumnType $type, string $columnTypeGenerator): void
     {
-        $this->app->singleton(ColumnType::class . '\\' . $type->getKey(), $columnTypeGenerator);
+        $this->app->singleton(ColumnType::class . '\\' . $type->name, $columnTypeGenerator);
     }
 
     /**
@@ -122,17 +120,17 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
      */
     protected function registerColumnTypeGenerator(): void
     {
-        foreach (ColumnType::values() as $columnType) {
+        foreach (ColumnType::cases() as $columnType) {
             $this->columnTypeSingleton($columnType, MiscColumn::class);
         }
 
         foreach (
             [
-                ColumnType::BIG_INTEGER(),
-                ColumnType::INTEGER(),
-                ColumnType::MEDIUM_INTEGER(),
-                ColumnType::SMALL_INTEGER(),
-                ColumnType::TINY_INTEGER(),
+                ColumnType::BIG_INTEGER,
+                ColumnType::INTEGER,
+                ColumnType::MEDIUM_INTEGER,
+                ColumnType::SMALL_INTEGER,
+                ColumnType::TINY_INTEGER,
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, IntegerColumn::class);
@@ -140,13 +138,13 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         foreach (
             [
-                ColumnType::DATE(),
-                ColumnType::DATETIME(),
-                ColumnType::DATETIME_TZ(),
-                ColumnType::TIME(),
-                ColumnType::TIME_TZ(),
-                ColumnType::TIMESTAMP(),
-                ColumnType::TIMESTAMP_TZ(),
+                ColumnType::DATE,
+                ColumnType::DATETIME,
+                ColumnType::DATETIME_TZ,
+                ColumnType::TIME,
+                ColumnType::TIME_TZ,
+                ColumnType::TIMESTAMP,
+                ColumnType::TIMESTAMP_TZ,
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, DatetimeColumn::class);
@@ -154,8 +152,8 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         foreach (
             [
-                ColumnType::SOFT_DELETES(),
-                ColumnType::SOFT_DELETES_TZ(),
+                ColumnType::SOFT_DELETES,
+                ColumnType::SOFT_DELETES_TZ,
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, SoftDeleteColumn::class);
@@ -163,7 +161,7 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         foreach (
             [
-                ColumnType::DECIMAL(),
+                ColumnType::DECIMAL,
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, DecimalColumn::class);
@@ -171,8 +169,8 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         foreach (
             [
-                ColumnType::ENUM(),
-                ColumnType::SET(),
+                ColumnType::ENUM,
+                ColumnType::SET,
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, PresetValuesColumn::class);
@@ -180,8 +178,8 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         foreach (
             [
-                ColumnType::CHAR(),
-                ColumnType::STRING(),
+                ColumnType::CHAR,
+                ColumnType::STRING,
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, StringColumn::class);
@@ -189,23 +187,23 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         foreach (
             [
-                ColumnType::GEOGRAPHY(),
-                ColumnType::GEOMETRY(),
-                ColumnType::GEOMETRY_COLLECTION(),
-                ColumnType::LINE_STRING(),
-                ColumnType::MULTI_LINE_STRING(),
-                ColumnType::POINT(),
-                ColumnType::MULTI_POINT(),
-                ColumnType::MULTI_POLYGON(),
-                ColumnType::POLYGON(),
+                ColumnType::GEOGRAPHY,
+                ColumnType::GEOMETRY,
+                ColumnType::GEOMETRY_COLLECTION,
+                ColumnType::LINE_STRING,
+                ColumnType::MULTI_LINE_STRING,
+                ColumnType::POINT,
+                ColumnType::MULTI_POINT,
+                ColumnType::MULTI_POLYGON,
+                ColumnType::POLYGON,
             ] as $columnType
         ) {
             $this->columnTypeSingleton($columnType, SpatialColumn::class);
         }
 
-        $this->columnTypeSingleton(ColumnType::BOOLEAN(), BooleanColumn::class);
-        $this->columnTypeSingleton(ColumnType::DOUBLE(), DoubleColumn::class);
-        $this->columnTypeSingleton(ColumnType::FLOAT(), FloatColumn::class);
-        $this->columnTypeSingleton(ColumnType::REMEMBER_TOKEN(), OmitNameColumn::class);
+        $this->columnTypeSingleton(ColumnType::BOOLEAN, BooleanColumn::class);
+        $this->columnTypeSingleton(ColumnType::DOUBLE, DoubleColumn::class);
+        $this->columnTypeSingleton(ColumnType::FLOAT, FloatColumn::class);
+        $this->columnTypeSingleton(ColumnType::REMEMBER_TOKEN, OmitNameColumn::class);
     }
 }

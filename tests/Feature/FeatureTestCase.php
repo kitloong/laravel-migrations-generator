@@ -2,19 +2,20 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature;
 
-use Doctrine\DBAL\Schema\View;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use KitLoong\MigrationsGenerator\DBAL\Connection;
+use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 use KitLoong\MigrationsGenerator\Tests\TestCase;
 
 abstract class FeatureTestCase extends TestCase
 {
     use AssetNameQuote;
+
+    abstract protected function refreshDatabase(): void;
 
     /**
      * @inheritDoc
@@ -204,17 +205,7 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function getTableNames(): array
     {
-        return collect(app(Connection::class)->getDoctrineSchemaManager()->listTableNames())
-            ->map(function ($table) {
-                // The table name may contain quotes.
-                // Always trim quotes before set into list.
-                if ($this->isIdentifierQuoted($table)) {
-                    return $this->trimQuotes($table);
-                }
-
-                return $table;
-            })
-            ->toArray();
+        return Schema::getTableListing();
     }
 
     /**
@@ -224,10 +215,6 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function getViewNames(): array
     {
-        return collect(app(Connection::class)->getDoctrineSchemaManager()->listViews())
-            ->map(static fn (View $view) => $view->getName())
-            ->toArray();
+        return array_column(Schema::getViews(), 'name');
     }
-
-    abstract protected function refreshDatabase(): void;
 }

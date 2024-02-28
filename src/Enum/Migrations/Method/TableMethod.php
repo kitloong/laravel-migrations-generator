@@ -2,16 +2,12 @@
 
 namespace KitLoong\MigrationsGenerator\Enum\Migrations\Method;
 
-use MyCLabs\Enum\Enum;
-
 /**
  * Preserved table methods of the framework.
  *
  * @see https://laravel.com/docs/master/migrations#tables
- * @method static self COMMENT()
- * @extends \MyCLabs\Enum\Enum<string>
  */
-final class TableMethod extends Enum
+enum TableMethod: string implements MethodName
 {
-    private const COMMENT = 'comment';
+    case COMMENT = 'comment';
 }

@@ -2,28 +2,12 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
-use Illuminate\Support\Facades\DB;
-
 class TablePrefixTest extends PgSQLTestCase
 {
-    /**
-     * @inheritDoc
-     */
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('database.connections.pgsql.prefix', 'kit_');
-    }
-
     public function testTablePrefix(): void
     {
         $migrateTemplates = function (): void {
             $this->migrateGeneral();
-
-            DB::statement(
-                "ALTER TABLE kit_all_columns ADD COLUMN status my_status NOT NULL",
-            );
         };
 
         $generateMigrations = function (): void {
@@ -31,6 +15,16 @@ class TablePrefixTest extends PgSQLTestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('database.connections.pgsql.prefix', 'prefix_');
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations): void

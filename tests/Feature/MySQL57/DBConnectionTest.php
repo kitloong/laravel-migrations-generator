@@ -9,35 +9,6 @@ use PDO;
 
 class DBConnectionTest extends MySQL57TestCase
 {
-    /**
-     * @inheritDoc
-     */
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('database.default', 'mysql8');
-        $app['config']->set('database.connections.mysql8', [
-            'driver'         => 'mysql',
-            'url'            => null,
-            'host'           => env('MYSQL8_HOST'),
-            'port'           => env('MYSQL8_PORT'),
-            'database'       => env('MYSQL8_DATABASE'),
-            'username'       => env('MYSQL8_USERNAME'),
-            'password'       => env('MYSQL8_PASSWORD'),
-            'unix_socket'    => env('DB_SOCKET', ''),
-            'charset'        => 'utf8mb4',
-            'collation'      => 'utf8mb4_general_ci',
-            'prefix'         => '',
-            'prefix_indexes' => true,
-            'strict'         => true,
-            'engine'         => null,
-            'options'        => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ]);
-    }
-
     public function tearDown(): void
     {
         // Clean "migrations" table after test.
@@ -98,6 +69,35 @@ class DBConnectionTest extends MySQL57TestCase
         $totalMigrations = count(File::allFiles($this->getStorageMigrationsPath()));
 
         $this->assertSame($totalMigrations, DB::connection('mysql8')->table('migrations')->count());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('database.default', 'mysql8');
+        $app['config']->set('database.connections.mysql8', [
+            'driver'         => 'mysql',
+            'url'            => null,
+            'host'           => env('MYSQL8_HOST'),
+            'port'           => env('MYSQL8_PORT'),
+            'database'       => env('MYSQL8_DATABASE'),
+            'username'       => env('MYSQL8_USERNAME'),
+            'password'       => env('MYSQL8_PASSWORD'),
+            'unix_socket'    => env('DB_SOCKET', ''),
+            'charset'        => 'utf8mb4',
+            'collation'      => 'utf8mb4_general_ci',
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'strict'         => true,
+            'engine'         => null,
+            'options'        => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ]);
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations): void

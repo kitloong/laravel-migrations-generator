@@ -112,28 +112,6 @@ class SQLSrvRepository extends Repository
     }
 
     /**
-     * Returns the where clause to filter schema and table name in a query.
-     *
-     * @param  string  $table  The full qualified name of the table.
-     * @param  string  $schemaColumn  The name of the column to compare the schema to in the where clause.
-     * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
-     * @see https://github.com/doctrine/dbal/blob/3.1.x/src/Platforms/SQLServer2012Platform.php#L1064
-     */
-    private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
-    {
-        $schema = 'SCHEMA_NAME()';
-
-        if (strpos($table, '.') !== false) {
-            [$schema, $table] = explode('.', $table);
-            $schema           = $this->quoteStringLiteral($schema);
-        }
-
-        $table = $this->quoteStringLiteral($table);
-
-        return sprintf('(%s = %s AND %s = %s)', $tableColumn, $table, $schemaColumn, $schema);
-    }
-
-    /**
      * Get a list of stored procedures.
      *
      * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
@@ -209,5 +187,26 @@ class SQLSrvRepository extends Repository
         }
 
         return $types;
+    }
+
+    /**
+     * Returns the where clause to filter schema and table name in a query.
+     *
+     * @param  string  $table  The full qualified name of the table.
+     * @param  string  $schemaColumn  The name of the column to compare the schema to in the where clause.
+     * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
+     */
+    private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
+    {
+        $schema = 'SCHEMA_NAME()';
+
+        if (strpos($table, '.') !== false) {
+            [$schema, $table] = explode('.', $table);
+            $schema           = $this->quoteStringLiteral($schema);
+        }
+
+        $table = $this->quoteStringLiteral($table);
+
+        return sprintf('(%s = %s AND %s = %s)', $tableColumn, $table, $schemaColumn, $schema);
     }
 }

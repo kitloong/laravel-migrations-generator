@@ -52,7 +52,7 @@ class ColumnGenerator
     private function createMethodFromColumn(Table $table, Column $column): Method
     {
         /** @var \KitLoong\MigrationsGenerator\Migration\Generator\Columns\ColumnTypeGenerator $generator */
-        $generator = app(ColumnType::class . '\\' . $column->getType()->getKey());
+        $generator = app(ColumnType::class . '\\' . $column->getType()->name);
         return $generator->generate($table, $column);
     }
 }

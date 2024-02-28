@@ -23,7 +23,7 @@ class DecimalColumn implements ColumnTypeGenerator
         $method = new Method($column->getType(), $column->getName(), ...$precisions);
 
         if ($column->isUnsigned()) {
-            $method->chain(ColumnModifier::UNSIGNED());
+            $method->chain(ColumnModifier::UNSIGNED);
         }
 
         return $method;
@@ -37,6 +37,10 @@ class DecimalColumn implements ColumnTypeGenerator
      */
     private function getDecimalPrecisions(?int $precision, int $scale): array
     {
+        if ($precision === null) {
+            return [];
+        }
+
         if ($precision === self::DEFAULT_PRECISION && $scale === self::DEFAULT_SCALE) {
             return [];
         }

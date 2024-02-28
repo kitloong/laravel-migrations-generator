@@ -41,11 +41,6 @@ interface Column extends Model
     public function isUnsigned(): bool;
 
     /**
-     * Check if the column is fixed.
-     */
-    public function isFixed(): bool;
-
-    /**
      * Check if the column is not null.
      */
     public function isNotNull(): bool;

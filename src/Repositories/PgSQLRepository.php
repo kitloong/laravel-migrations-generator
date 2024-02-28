@@ -161,35 +161,6 @@ class PgSQLRepository extends Repository
     }
 
     /**
-     * Get a list of custom data types.
-     *
-     * @source https://stackoverflow.com/questions/3660787/how-to-list-custom-types-using-postgres-information-schema
-     * @return \Illuminate\Support\Collection<int, string>
-     */
-    public function getCustomDataTypes(): Collection
-    {
-        $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
-
-        $rows  = DB::select(
-            "SELECT n.nspname AS schema, t.typname AS type
-                    FROM pg_type t
-                        LEFT JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
-                    WHERE (t.typrelid = 0 OR (SELECT c.relkind = 'c' FROM pg_catalog.pg_class c WHERE c.oid = t.typrelid))
-                        AND NOT EXISTS(SELECT 1 FROM pg_catalog.pg_type el WHERE el.oid = t.typelem AND el.typarray = t.oid)
-                        AND n.nspname IN ('$searchPath');",
-        );
-        $types = new Collection();
-
-        if (count($rows) > 0) {
-            foreach ($rows as $row) {
-                $types->push($row->type);
-            }
-        }
-
-        return $types;
-    }
-
-    /**
      * Get a list of stored procedures.
      *
      * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>

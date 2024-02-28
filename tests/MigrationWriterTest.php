@@ -4,7 +4,10 @@ namespace KitLoong\MigrationsGenerator\Tests;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnModifier;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Property\TableProperty;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\SchemaBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
@@ -26,21 +29,21 @@ class MigrationWriterTest extends TestCase
                 ->andReturn('test');
         });
 
-        $up        = new SchemaBlueprint('users', SchemaBuilder::CREATE());
+        $up        = new SchemaBlueprint('users', SchemaBuilder::CREATE);
         $blueprint = new TableBlueprint();
-        $blueprint->setProperty('collation', 'utf-8');
-        $blueprint->setProperty('something', 1);
-        $blueprint->setProperty('something', true);
-        $blueprint->setProperty('something', false);
-        $blueprint->setProperty('something', null);
-        $blueprint->setProperty('something', [1, 2, 3, 'abc', null, true, false, ['a', 2, 'c']]);
+        $blueprint->setProperty(TableProperty::COLLATION, 'utf-8');
+        $blueprint->setProperty(TableProperty::CHARSET, 1);
+        $blueprint->setProperty(TableProperty::CHARSET, true);
+        $blueprint->setProperty(TableProperty::CHARSET, false);
+        $blueprint->setProperty(TableProperty::CHARSET, null);
+        $blueprint->setProperty(TableProperty::CHARSET, [1, 2, 3, 'abc', null, true, false, ['a', 2, 'c']]);
         $blueprint->setLineBreak();
-        $blueprint->setMethodByName('string', 'name', 100)
-            ->chain('comment', 'Hello')
-            ->chain('default', 'Test');
+        $blueprint->setMethodByName(ColumnType::STRING, 'name', 100)
+            ->chain(ColumnModifier::COMMENT, 'Hello')
+            ->chain(ColumnModifier::DEFAULT, 'Test');
         $up->setBlueprint($blueprint);
 
-        $down = new SchemaBlueprint('users', SchemaBuilder::DROP_IF_EXISTS());
+        $down = new SchemaBlueprint('users', SchemaBuilder::DROP_IF_EXISTS);
 
         $migration = app(MigrationWriter::class);
         $migration->writeTo(
@@ -49,7 +52,7 @@ class MigrationWriterTest extends TestCase
             'Tester',
             new Collection([$up]),
             new Collection([$down]),
-            MigrationFileType::TABLE(),
+            MigrationFileType::TABLE,
         );
 
         $this->assertFileExists(storage_path('migration.php'));

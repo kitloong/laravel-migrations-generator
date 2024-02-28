@@ -15,7 +15,7 @@ class StoredAsModifier implements Modifier
     public function chain(Method $method, Table $table, Column $column, mixed ...$args): Method
     {
         if ($column->getStoredDefinition() !== null) {
-            $method->chain(ColumnModifier::STORED_AS(), $column->getStoredDefinition());
+            $method->chain(ColumnModifier::STORED_AS, $column->getStoredDefinition());
         }
 
         return $method;
