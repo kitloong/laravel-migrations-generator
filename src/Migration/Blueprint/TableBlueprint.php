@@ -3,6 +3,8 @@
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
 use Illuminate\Support\Collection;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\MethodName;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Property\PropertyName;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\MergeTimestamps;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 use KitLoong\MigrationsGenerator\Migration\Enum\Space;
@@ -34,7 +36,7 @@ class TableBlueprint implements WritableBlueprint
     use Stringable;
 
     /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[]
+     * @var array<int, \KitLoong\MigrationsGenerator\Migration\Blueprint\Method|\KitLoong\MigrationsGenerator\Migration\Blueprint\Property|\KitLoong\MigrationsGenerator\Migration\Enum\Space>
      */
     private array $lines;
 
@@ -49,9 +51,9 @@ class TableBlueprint implements WritableBlueprint
     }
 
     /**
-     * @param  string  $name  Property name.
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Property\PropertyName  $name  Property name.
      */
-    public function setProperty(string $name, mixed $value): Property
+    public function setProperty(PropertyName $name, mixed $value): Property
     {
         $property      = new Property($name, $value);
         $this->lines[] = $property;
@@ -59,10 +61,10 @@ class TableBlueprint implements WritableBlueprint
     }
 
     /**
-     * @param  string  $name  Method name.
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\MethodName  $name  Method name.
      * @param  mixed  ...$values  Method arguments.
      */
-    public function setMethodByName(string $name, mixed ...$values): Method
+    public function setMethodByName(MethodName $name, mixed ...$values): Method
     {
         $method        = new Method($name, ...$values);
         $this->lines[] = $method;
@@ -77,16 +79,11 @@ class TableBlueprint implements WritableBlueprint
 
     public function setLineBreak(): void
     {
-        $this->lines[] = Space::LINE_BREAK();
-    }
-
-    public function removeLastLine(): Method|Property|string|null
-    {
-        return array_pop($this->lines);
+        $this->lines[] = Space::LINE_BREAK;
     }
 
     /**
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[]
+     * @return array<int, \KitLoong\MigrationsGenerator\Migration\Blueprint\Method|\KitLoong\MigrationsGenerator\Migration\Blueprint\Property|\KitLoong\MigrationsGenerator\Migration\Enum\Space>
      */
     public function getLines(): array
     {
@@ -147,7 +144,7 @@ class TableBlueprint implements WritableBlueprint
     private function propertyToString(Property $property): string
     {
         $v = $this->convertFromAnyTypeToString($property->getValue());
-        return '$table->' . $property->getName() . " = $v;";
+        return '$table->' . $property->getName()->value . " = $v;";
     }
 
     /**
@@ -178,6 +175,6 @@ class TableBlueprint implements WritableBlueprint
     private function flattenMethod(Method $method): string
     {
         $v = (new Collection($method->getValues()))->map(fn ($v) => $this->convertFromAnyTypeToString($v))->implode(', ');
-        return $method->getName() . "($v)";
+        return $method->getName()->value . "($v)";
     }
 }

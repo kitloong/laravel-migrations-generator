@@ -29,7 +29,7 @@ class CollationModifier implements Modifier
         $collation = $column->getCollation();
 
         if ($collation !== null && $collation !== $tableCollation) {
-            $method->chain(ColumnModifier::COLLATION(), $collation);
+            $method->chain(ColumnModifier::COLLATION, $collation);
         }
 
         return $method;

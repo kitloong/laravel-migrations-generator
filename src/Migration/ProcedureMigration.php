@@ -37,7 +37,7 @@ class ProcedureMigration
             $this->makeMigrationClassName($procedure->getName()),
             new Collection([$up]),
             new Collection([$down]),
-            MigrationFileType::PROCEDURE(),
+            MigrationFileType::PROCEDURE,
         );
 
         return $path;

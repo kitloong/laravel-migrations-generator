@@ -84,8 +84,8 @@ return new class extends TestMigration
             // https://github.com/laravel/framework/pull/49634
             if ($this->atLeastLaravel11()) {
                 if (
-                    DB::getDriverName() !== Driver::MYSQL()->getValue() ||
-                    version_compare(DB::getServerVersion(), '5.8', '>')
+                    DB::getDriverName() !== Driver::MYSQL->value ||
+                    version_compare(DB::getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), '5.8', '>')
                 ) {
                     $table->geography('geography');
                     $table->geography('geographyGeometryCollection', 'geometryCollection');
@@ -97,7 +97,7 @@ return new class extends TestMigration
                     $table->geography('geographyPolygon', 'polygon');
                     $table->geography('geography1', null, 3857);
 
-                    if (DB::getDriverName() !== Driver::PGSQL()->getValue()) {
+                    if (DB::getDriverName() !== Driver::PGSQL->value) {
                         $table->geography('geography2', 'geometryCollection', 3857);
                     }
 
@@ -113,7 +113,7 @@ return new class extends TestMigration
                 }
             }
 
-            if (!$this->atLeastLaravel11()) {
+            if (!$this->atLeastLaravel11() && DB::getDriverName() !== Driver::SQLITE->value) {
                 $table->geometryCollection('geometryCollection'); // @phpstan-ignore-line
                 $table->lineString('lineString');  // @phpstan-ignore-line
                 $table->multiLineString('multiLineString');  // @phpstan-ignore-line
@@ -161,7 +161,7 @@ return new class extends TestMigration
             $table->double('unsignedDouble')->unsigned();
             $table->float('unsignedFloat')->unsigned();
 
-            if (method_exists(Blueprint::class, 'unsignedDecimal')) {
+            if (!$this->atLeastLaravel11()) {
                 // https://github.com/laravel/framework/pull/48861
                 $table->double('double_82', 8, 2); // @phpstan-ignore-line
                 $table->double('double_83', 8, 3); // @phpstan-ignore-line
@@ -195,18 +195,18 @@ return new class extends TestMigration
             }
 
             switch (DB::getDriverName()) {
-                case Driver::MYSQL():
+                case Driver::MYSQL->value:
                     $table->set('set', ['strawberry', 'vanilla']);
                     break;
                 default:
             }
 
             switch (DB::getDriverName()) {
-                case Driver::MYSQL():
+                case Driver::MYSQL->value:
                     $table->string('virtual')->nullable()->virtualAs('CONCAT(string, " ", string_255)');
                     $table->string('stored')->nullable()->storedAs("CONCAT(string_255, ' ', string)");
                     break;
-                case Driver::PGSQL():
+                case Driver::PGSQL->value:
                     $table->string('stored')->nullable()->storedAs("string_255 || ' ' || string");
                     break;
                 default:
@@ -214,7 +214,7 @@ return new class extends TestMigration
         });
 
         switch (DB::getDriverName()) {
-            case Driver::PGSQL():
+            case Driver::PGSQL->value:
                 // Test timestamp default now()
                 DB::statement(
                     "ALTER TABLE ".DB::getTablePrefix()."all_columns ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL",
@@ -233,7 +233,7 @@ return new class extends TestMigration
                 );
                 break;
 
-            case Driver::SQLSRV():
+            case Driver::SQLSRV->value:
                 DB::statement(
                     "ALTER TABLE ".DB::getTablePrefix()."all_columns ADD accountnumber accountnumber NOT NULL DEFAULT '1008'",
                 );

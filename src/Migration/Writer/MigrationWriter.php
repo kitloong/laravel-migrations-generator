@@ -44,7 +44,7 @@ class MigrationWriter
                 $useDBFacade = true;
             }
 
-            $use = implode(Space::LINE_BREAK(), $this->getNamespaces($migrationFileType, $useDBFacade));
+            $use = implode(Space::LINE_BREAK->value, $this->getNamespaces($migrationFileType, $useDBFacade));
 
             // Create directory if it doesn't exist
             $directory = dirname($path);
@@ -68,8 +68,8 @@ class MigrationWriter
     private function getNamespaces(MigrationFileType $migrationFileType, bool $useDBFacade): array
     {
         if (
-            $migrationFileType->equals(MigrationFileType::VIEW())
-            || $migrationFileType->equals(MigrationFileType::PROCEDURE())
+            $migrationFileType === MigrationFileType::VIEW
+            || $migrationFileType === MigrationFileType::PROCEDURE
         ) {
             return [
                 'use Illuminate\Database\Migrations\Migration;',
@@ -99,6 +99,6 @@ class MigrationWriter
      */
     private function prettifyToString(Collection $blueprints): string
     {
-        return $blueprints->map(static fn (WritableBlueprint $blueprint) => $blueprint->toString())->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+        return $blueprints->map(static fn (WritableBlueprint $blueprint) => $blueprint->toString())->implode(Space::LINE_BREAK->value . Space::TAB->value . Space::TAB->value); // Add tab to prettify
     }
 }

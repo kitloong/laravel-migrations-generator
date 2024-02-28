@@ -66,7 +66,7 @@ class PgSQLTable extends DatabaseTable
             ->keyBy(static fn (IndexDefinition $indexDefinition) => $indexDefinition->getIndexName());
 
         $this->indexes = $this->indexes->map(static function (Index $index) use ($fulltextIndexes, $tableName) {
-            if (!$index->getType()->equals(IndexType::FULLTEXT())) {
+            if (!($index->getType() === IndexType::FULLTEXT)) {
                 return $index;
             }
 
@@ -84,8 +84,8 @@ class PgSQLTable extends DatabaseTable
                     'name'    => $index->getName(),
                     'columns' => $columns,
                     'type'    => 'gin',
-                    'unique'  => $index->getType()->equals(IndexType::UNIQUE()),
-                    'primary' => $index->getType()->equals(IndexType::PRIMARY()),
+                    'unique'  => false,
+                    'primary' => false,
                 ],
             );
         });

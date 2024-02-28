@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\DBBuilder;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\MethodStringHelper;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Support\Stringable;
 
@@ -37,7 +38,7 @@ class DBStatementBlueprint implements WritableBlueprint
      */
     public function toString(): string
     {
-        $method = $this->connection('DB', 'statement');
+        $method = $this->connection('DB', DBBuilder::STATEMENT);
         $query  = $this->escapeDoubleQuote($this->sql);
         return "$method(\"$query\");";
     }

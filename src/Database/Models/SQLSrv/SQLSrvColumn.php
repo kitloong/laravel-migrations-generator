@@ -36,30 +36,30 @@ class SQLSrvColumn extends DatabaseColumn
         $this->fixMoneyPrecision($column['type_name']);
 
         switch ($this->type) {
-            case ColumnType::DATE():
-            case ColumnType::DATETIME():
-            case ColumnType::DATETIME_TZ():
-            case ColumnType::TIME():
-            case ColumnType::TIME_TZ():
-            case ColumnType::TIMESTAMP():
-            case ColumnType::TIMESTAMP_TZ():
-            case ColumnType::SOFT_DELETES():
-            case ColumnType::SOFT_DELETES_TZ():
+            case ColumnType::DATE:
+            case ColumnType::DATETIME:
+            case ColumnType::DATETIME_TZ:
+            case ColumnType::TIME:
+            case ColumnType::TIME_TZ:
+            case ColumnType::TIMESTAMP:
+            case ColumnType::TIMESTAMP_TZ:
+            case ColumnType::SOFT_DELETES:
+            case ColumnType::SOFT_DELETES_TZ:
                 $this->length = $this->getDateTimeLength();
                 break;
 
-            case ColumnType::CHAR():
-            case ColumnType::STRING():
-            case ColumnType::TEXT():
+            case ColumnType::CHAR:
+            case ColumnType::STRING:
+            case ColumnType::TEXT:
                 $this->presetValues = $this->getEnumPresetValues();
 
                 if (count($this->presetValues) > 0) {
-                    $this->type = ColumnType::ENUM();
+                    $this->type = ColumnType::ENUM;
                     break;
                 }
 
                 if ($this->isText($column['type'])) {
-                    $this->type   = ColumnType::TEXT();
+                    $this->type   = ColumnType::TEXT;
                     $this->length = null;
                 }
 
@@ -91,7 +91,7 @@ class SQLSrvColumn extends DatabaseColumn
         }
 
         switch ($this->type) {
-            case ColumnType::DATETIME():
+            case ColumnType::DATETIME:
                 if (
                     $columnDef->getScale() === self::DATETIME_EMPTY_SCALE
                     && $columnDef->getLength() === self::DATETIME_EMPTY_LENGTH
@@ -101,7 +101,7 @@ class SQLSrvColumn extends DatabaseColumn
 
                 return $columnDef->getScale();
 
-            case ColumnType::DATETIME_TZ():
+            case ColumnType::DATETIME_TZ:
                 if (
                     $columnDef->getScale() === self::DATETIME_TZ_EMPTY_SCALE
                     && $columnDef->getLength() === self::DATETIME_TZ_EMPTY_LENGTH

@@ -261,11 +261,11 @@ abstract class DatabaseColumn implements Column
     {
         if (
             !in_array($this->type, [
-                ColumnType::BIG_INTEGER(),
-                ColumnType::INTEGER(),
-                ColumnType::MEDIUM_INTEGER(),
-                ColumnType::SMALL_INTEGER(),
-                ColumnType::TINY_INTEGER(),
+                ColumnType::BIG_INTEGER,
+                ColumnType::INTEGER,
+                ColumnType::MEDIUM_INTEGER,
+                ColumnType::SMALL_INTEGER,
+                ColumnType::TINY_INTEGER,
             ])
         ) {
             return;
@@ -279,12 +279,12 @@ abstract class DatabaseColumn implements Column
             return;
         }
 
-        if ($this->type->equals(ColumnType::INTEGER())) {
-            $this->type = ColumnType::INCREMENTS();
+        if ($this->type === ColumnType::INTEGER) {
+            $this->type = ColumnType::INCREMENTS;
             return;
         }
 
-        $this->type = ColumnType::fromValue(str_replace('Integer', 'Increments', $this->type));
+        $this->type = ColumnType::from(str_replace('Integer', 'Increments', $this->type->value));
     }
 
     /**
@@ -318,15 +318,15 @@ abstract class DatabaseColumn implements Column
     protected function parseLength(string $fullDefinitionType): ?int
     {
         switch ($this->type) {
-            case ColumnType::CHAR():
-            case ColumnType::STRING():
-            case ColumnType::DATE():
-            case ColumnType::DATETIME():
-            case ColumnType::DATETIME_TZ():
-            case ColumnType::TIME():
-            case ColumnType::TIME_TZ():
-            case ColumnType::TIMESTAMP():
-            case ColumnType::TIMESTAMP_TZ():
+            case ColumnType::CHAR:
+            case ColumnType::STRING:
+            case ColumnType::DATE:
+            case ColumnType::DATETIME:
+            case ColumnType::DATETIME_TZ:
+            case ColumnType::TIME:
+            case ColumnType::TIME_TZ:
+            case ColumnType::TIMESTAMP:
+            case ColumnType::TIMESTAMP_TZ:
                 if (preg_match('/\((\d*)\)/', $fullDefinitionType, $matches) === 1) {
                     return (int) $matches[1];
                 }
@@ -343,9 +343,9 @@ abstract class DatabaseColumn implements Column
     protected function parsePrecisionAndScale(string $fullDefinitionType): array
     {
         switch ($this->type) {
-            case ColumnType::DECIMAL():
-            case ColumnType::DOUBLE():
-            case ColumnType::FLOAT():
+            case ColumnType::DECIMAL:
+            case ColumnType::DOUBLE:
+            case ColumnType::FLOAT:
                 if (preg_match('/\((\d+)(?:,\s*(\d+))?\)?/', $fullDefinitionType, $matches) === 1) {
                     return [(int) $matches[1], isset($matches[2]) ? (int) $matches[2] : 0];
                 }
@@ -359,17 +359,17 @@ abstract class DatabaseColumn implements Column
      */
     private function setTypeToSoftDeletes(): void
     {
-        if ($this->name !== ColumnName::DELETED_AT()->getValue()) {
+        if ($this->name !== ColumnName::DELETED_AT->value) {
             return;
         }
 
         switch ($this->type) {
-            case ColumnType::TIMESTAMP():
-                $this->type = ColumnType::SOFT_DELETES();
+            case ColumnType::TIMESTAMP:
+                $this->type = ColumnType::SOFT_DELETES;
                 return;
 
-            case ColumnType::TIMESTAMP_TZ():
-                $this->type = ColumnType::SOFT_DELETES_TZ();
+            case ColumnType::TIMESTAMP_TZ:
+                $this->type = ColumnType::SOFT_DELETES_TZ;
                 return;
         }
     }
@@ -380,12 +380,12 @@ abstract class DatabaseColumn implements Column
     private function setTypeToRememberToken(): void
     {
         if (
-            ColumnName::REMEMBER_TOKEN()->getValue() !== $this->name
+            ColumnName::REMEMBER_TOKEN->value !== $this->name
             || $this->length !== self::REMEMBER_TOKEN_LENGTH
         ) {
             return;
         }
 
-        $this->type = ColumnType::REMEMBER_TOKEN();
+        $this->type = ColumnType::REMEMBER_TOKEN;
     }
 }

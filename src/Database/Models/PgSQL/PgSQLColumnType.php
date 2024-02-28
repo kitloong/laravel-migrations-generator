@@ -8,7 +8,7 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 class PgSQLColumnType extends DatabaseColumnType
 {
     /**
-     * @var array<string, string>
+     * @var array<string, \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType>
      */
     protected static array $map = [
         '_text'            => ColumnType::TEXT,

@@ -17,7 +17,7 @@ class SQLSrvIndex extends DatabaseIndex
         parent::__construct($table, $index);
 
         switch ($this->type) {
-            case IndexType::PRIMARY():
+            case IndexType::PRIMARY:
                 $this->resetPrimaryNameToEmptyIfIsDefaultName();
                 break;
 
