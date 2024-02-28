@@ -63,7 +63,7 @@ class TableMigration
             $this->makeMigrationClassName($table->getName()),
             $upList,
             new Collection([$down]),
-            MigrationFileType::TABLE(),
+            MigrationFileType::TABLE,
         );
 
         return $path;
@@ -93,7 +93,7 @@ class TableMigration
      */
     private function up(Table $table): SchemaBlueprint
     {
-        $up = $this->getSchemaBlueprint($table, SchemaBuilder::CREATE());
+        $up = $this->getSchemaBlueprint($table, SchemaBuilder::CREATE);
 
         $blueprint = new TableBlueprint();
 
@@ -103,7 +103,7 @@ class TableMigration
         }
 
         if ($this->hasTableComment() && $table->getComment() !== null && $table->getComment() !== '') {
-            $blueprint->setMethod(new Method(TableMethod::COMMENT(), $table->getComment()));
+            $blueprint->setMethod(new Method(TableMethod::COMMENT, $table->getComment()));
         }
 
         $chainableIndexes    = $this->indexGenerator->getChainableIndexes($table->getName(), $table->getIndexes());
@@ -153,7 +153,7 @@ class TableMigration
      */
     private function down(Table $table): SchemaBlueprint
     {
-        return $this->getSchemaBlueprint($table, SchemaBuilder::DROP_IF_EXISTS());
+        return $this->getSchemaBlueprint($table, SchemaBuilder::DROP_IF_EXISTS);
     }
 
     /**
@@ -190,7 +190,7 @@ class TableMigration
      */
     private function shouldSetCharset(): bool
     {
-        if (DB::getDriverName() !== Driver::MYSQL()->getValue()) {
+        if (DB::getDriverName() !== Driver::MYSQL->value) {
             return false;
         }
 
@@ -200,7 +200,7 @@ class TableMigration
     private function setTableCharset(TableBlueprint $blueprint, Table $table): TableBlueprint
     {
         $blueprint->setProperty(
-            TableProperty::COLLATION(),
+            TableProperty::COLLATION,
             $collation = $table->getCollation(),
         );
 
@@ -209,7 +209,7 @@ class TableMigration
         }
 
         $charset = Str::before($collation, '_');
-        $blueprint->setProperty(TableProperty::CHARSET(), $charset);
+        $blueprint->setProperty(TableProperty::CHARSET, $charset);
 
         return $blueprint;
     }

@@ -24,13 +24,13 @@ return new class extends TestMigration
             $table->collation = 'utf8mb4_general_ci';
 
             switch (DB::getDriverName()) {
-                case Driver::PGSQL():
+                case Driver::PGSQL->value:
                     $collation = 'en_US.utf8';
                     break;
-                case Driver::SQLSRV():
+                case Driver::SQLSRV->value:
                     $collation = 'Latin1_General_100_CI_AI_SC_UTF8';
                     break;
-                case Driver::MYSQL():
+                case Driver::MYSQL->value:
                     $collation = 'utf8_unicode_ci';
                     break;
                 default:
@@ -42,8 +42,8 @@ return new class extends TestMigration
 
             // sqlsrv does not support collation with enum
             switch (DB::getDriverName()) {
-                case Driver::MYSQL():
-                case Driver::PGSQL():
+                case Driver::MYSQL->value:
+                case Driver::PGSQL->value:
                     $table->enum('enum', ['easy', 'hard']);
                     $table->enum('enum_charset', ['easy', 'hard'])->charset('utf8');
                     $table->enum('enum_collation', ['easy', 'hard'])->collation($collation);
@@ -61,7 +61,7 @@ return new class extends TestMigration
             $table->text('text_charset')->charset('utf8');
             $table->text('text_collation')->collation($collation);
 
-            if (DB::getDriverName() === Driver::MYSQL()->getValue()) {
+            if (DB::getDriverName() === Driver::MYSQL->value) {
                 $table->set('set', ['strawberry', 'vanilla']);
                 $table->set('set_default', ['strawberry', 'vanilla'])->default('strawberry');
                 $table->set('set_charset', ['strawberry', 'vanilla'])->charset('utf8');

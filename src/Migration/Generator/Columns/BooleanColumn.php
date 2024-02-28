@@ -17,7 +17,7 @@ class BooleanColumn implements ColumnTypeGenerator
         $method = new Method($column->getType(), $column->getName());
 
         if ($column->isUnsigned()) {
-            $method->chain(ColumnModifier::UNSIGNED());
+            $method->chain(ColumnModifier::UNSIGNED);
         }
 
         return $method;

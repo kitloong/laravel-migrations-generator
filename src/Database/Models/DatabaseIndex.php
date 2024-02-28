@@ -74,23 +74,23 @@ abstract class DatabaseIndex implements Index
     private function getIndexType(array $index): IndexType
     {
         if ($index['primary'] === true) {
-            return IndexType::PRIMARY();
+            return IndexType::PRIMARY;
         }
 
         if ($index['unique'] === true) {
-            return IndexType::UNIQUE();
+            return IndexType::UNIQUE;
         }
 
         // pgsql uses gist
         if ($index['type'] === 'spatial' || $index['type'] === 'gist') {
-            return IndexType::SPATIAL_INDEX();
+            return IndexType::SPATIAL_INDEX;
         }
 
         // pgsql uses gin
         if ($index['type'] === 'fulltext' || $index['type'] === 'gin') {
-            return IndexType::FULLTEXT();
+            return IndexType::FULLTEXT;
         }
 
-        return IndexType::INDEX();
+        return IndexType::INDEX;
     }
 }

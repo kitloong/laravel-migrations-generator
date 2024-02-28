@@ -15,7 +15,7 @@ class PgSQLIndex extends DatabaseIndex
         parent::__construct($table, $index);
 
         switch ($this->type) {
-            case IndexType::PRIMARY():
+            case IndexType::PRIMARY:
                 // Reset name to empty to indicate use the database platform naming.
                 $this->name = '';
                 break;

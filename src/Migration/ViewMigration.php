@@ -40,7 +40,7 @@ class ViewMigration
             $this->makeMigrationClassName($view->getName()),
             new Collection([$up]),
             new Collection([$down]),
-            MigrationFileType::VIEW(),
+            MigrationFileType::VIEW,
         );
 
         return $path;

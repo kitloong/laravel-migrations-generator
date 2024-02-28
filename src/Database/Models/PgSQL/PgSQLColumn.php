@@ -28,28 +28,28 @@ class PgSQLColumn extends DatabaseColumn
         $this->setTypeToIncrements(false);
 
         switch ($this->type) {
-            case ColumnType::DATE():
-            case ColumnType::DATETIME():
-            case ColumnType::DATETIME_TZ():
-            case ColumnType::TIME():
-            case ColumnType::TIME_TZ():
-            case ColumnType::TIMESTAMP():
-            case ColumnType::TIMESTAMP_TZ():
-            case ColumnType::SOFT_DELETES():
-            case ColumnType::SOFT_DELETES_TZ():
+            case ColumnType::DATE:
+            case ColumnType::DATETIME:
+            case ColumnType::DATETIME_TZ:
+            case ColumnType::TIME:
+            case ColumnType::TIME_TZ:
+            case ColumnType::TIMESTAMP:
+            case ColumnType::TIMESTAMP_TZ:
+            case ColumnType::SOFT_DELETES:
+            case ColumnType::SOFT_DELETES_TZ:
                 $this->setRawDefault();
                 break;
 
-            case ColumnType::GEOGRAPHY():
-            case ColumnType::GEOMETRY():
+            case ColumnType::GEOGRAPHY:
+            case ColumnType::GEOMETRY:
                 $this->setRealSpatialColumn($column['type']);
                 break;
 
-            case ColumnType::STRING():
+            case ColumnType::STRING:
                 $this->presetValues = $this->getEnumPresetValues();
 
                 if (count($this->presetValues) > 0) {
-                    $this->type = ColumnType::ENUM();
+                    $this->type = ColumnType::ENUM;
                 }
 
                 break;
@@ -107,14 +107,14 @@ class PgSQLColumn extends DatabaseColumn
     private function getGeometryMap(): array
     {
         return [
-            'geometry'           => ColumnType::GEOMETRY(),
-            'geometrycollection' => ColumnType::GEOMETRY_COLLECTION(),
-            'linestring'         => ColumnType::LINE_STRING(),
-            'multilinestring'    => ColumnType::MULTI_LINE_STRING(),
-            'multipoint'         => ColumnType::MULTI_POINT(),
-            'multipolygon'       => ColumnType::MULTI_POLYGON(),
-            'point'              => ColumnType::POINT(),
-            'polygon'            => ColumnType::POLYGON(),
+            'geometry'           => ColumnType::GEOMETRY,
+            'geometrycollection' => ColumnType::GEOMETRY_COLLECTION,
+            'linestring'         => ColumnType::LINE_STRING,
+            'multilinestring'    => ColumnType::MULTI_LINE_STRING,
+            'multipoint'         => ColumnType::MULTI_POINT,
+            'multipolygon'       => ColumnType::MULTI_POLYGON,
+            'point'              => ColumnType::POINT,
+            'polygon'            => ColumnType::POLYGON,
         ];
     }
 

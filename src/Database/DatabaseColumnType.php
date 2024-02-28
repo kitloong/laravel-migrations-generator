@@ -12,11 +12,10 @@ abstract class DatabaseColumnType
     abstract public static function toColumnType(string $dbType): ColumnType;
 
     /**
-     * @param  array<string, string>  $map
+     * @param  array<string, \KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType>  $map
      */
     protected static function mapToColumnType(array $map, string $dbType): ColumnType
     {
-        $columnType = $map[strtolower($dbType)] ?? ColumnType::STRING();
-        return ColumnType::fromValue($columnType);
+        return $map[strtolower($dbType)] ?? ColumnType::STRING;
     }
 }

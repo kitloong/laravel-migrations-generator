@@ -44,7 +44,7 @@ class ForeignKeyMigration
             $this->makeMigrationClassName($table),
             new Collection([$up]),
             new Collection([$down]),
-            MigrationFileType::FOREIGN_KEY(),
+            MigrationFileType::FOREIGN_KEY,
         );
 
         return $path;
@@ -136,7 +136,7 @@ class ForeignKeyMigration
     {
         return new SchemaBlueprint(
             $table,
-            SchemaBuilder::TABLE(),
+            SchemaBuilder::TABLE,
         );
     }
 }

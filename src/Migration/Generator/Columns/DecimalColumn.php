@@ -23,7 +23,7 @@ class DecimalColumn implements ColumnTypeGenerator
         $method = new Method($column->getType(), $column->getName(), ...$precisions);
 
         if ($column->isUnsigned()) {
-            $method->chain(ColumnModifier::UNSIGNED());
+            $method->chain(ColumnModifier::UNSIGNED);
         }
 
         return $method;

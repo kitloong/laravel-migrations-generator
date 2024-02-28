@@ -25,13 +25,13 @@ class IndexNameHelper
         }
 
         if (
-            $index->getType()->equals(IndexType::PRIMARY())
+            $index->getType() === IndexType::PRIMARY
             && $index->getName() === ''
         ) {
             return true;
         }
 
-        $indexName = strtolower($table . '_' . implode('_', $index->getColumns()) . '_' . $index->getType());
+        $indexName = strtolower($table . '_' . implode('_', $index->getColumns()) . '_' . $index->getType()->value);
         $indexName = (string) str_replace(['-', '.'], '_', $indexName);
         return $indexName === $index->getName();
     }

@@ -17,14 +17,14 @@ class NullableModifier implements Modifier
     {
         if ($column->isNotNull()) {
             if ($this->shouldAddNotNullModifier($column->getType())) {
-                $method->chain(ColumnModifier::NULLABLE(), false);
+                $method->chain(ColumnModifier::NULLABLE, false);
             }
 
             return $method;
         }
 
         if ($this->shouldAddNullableModifier($column->getType())) {
-            $method->chain(ColumnModifier::NULLABLE());
+            $method->chain(ColumnModifier::NULLABLE);
         }
 
         return $method;
@@ -39,10 +39,10 @@ class NullableModifier implements Modifier
         return !in_array(
             $columnType,
             [
-                ColumnType::SOFT_DELETES(),
-                ColumnType::SOFT_DELETES_TZ(),
-                ColumnType::REMEMBER_TOKEN(),
-                ColumnType::TIMESTAMPS(),
+                ColumnType::SOFT_DELETES,
+                ColumnType::SOFT_DELETES_TZ,
+                ColumnType::REMEMBER_TOKEN,
+                ColumnType::TIMESTAMPS,
             ],
         );
     }
@@ -56,9 +56,9 @@ class NullableModifier implements Modifier
         return in_array(
             $columnType,
             [
-                ColumnType::SOFT_DELETES(),
-                ColumnType::SOFT_DELETES_TZ(),
-                ColumnType::REMEMBER_TOKEN(),
+                ColumnType::SOFT_DELETES,
+                ColumnType::SOFT_DELETES_TZ,
+                ColumnType::REMEMBER_TOKEN,
             ],
         );
     }

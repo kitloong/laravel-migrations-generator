@@ -27,12 +27,12 @@ class SquashWriter
     {
         $upTempPath  = $this->migrationNameHelper->makeUpTempPath();
         $prettySpace = $this->getSpaceIfFileExists($upTempPath);
-        $upString    = $upBlueprints->map(static fn (WritableBlueprint $up) => $up->toString())->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+        $upString    = $upBlueprints->map(static fn (WritableBlueprint $up) => $up->toString())->implode(Space::LINE_BREAK->value . Space::TAB->value . Space::TAB->value); // Add tab to prettify
         File::append($upTempPath, $prettySpace . $upString);
 
         $downTempPath = $this->migrationNameHelper->makeDownTempPath();
         $prettySpace  = $this->getSpaceIfFileExists($downTempPath);
-        $downString   = $downBlueprints->map(static fn (WritableBlueprint $down) => $down->toString())->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+        $downString   = $downBlueprints->map(static fn (WritableBlueprint $down) => $down->toString())->implode(Space::LINE_BREAK->value . Space::TAB->value . Space::TAB->value); // Add tab to prettify
         File::prepend($downTempPath, $downString . $prettySpace);
     }
 
@@ -53,7 +53,7 @@ class SquashWriter
      */
     public function squashMigrations(string $path, string $stubPath, string $className): void
     {
-        $use = implode(Space::LINE_BREAK(), [
+        $use = implode(Space::LINE_BREAK->value, [
             'use Illuminate\Database\Migrations\Migration;',
             'use Illuminate\Database\Schema\Blueprint;',
             'use Illuminate\Support\Facades\DB;',
@@ -88,6 +88,6 @@ class SquashWriter
             return '';
         }
 
-        return Space::LINE_BREAK() . Space::LINE_BREAK() . Space::TAB() . Space::TAB();
+        return Space::LINE_BREAK->value . Space::LINE_BREAK->value . Space::TAB->value . Space::TAB->value;
     }
 }

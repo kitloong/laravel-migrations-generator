@@ -29,10 +29,10 @@ trait AssetNameQuote
     public function quoteIdentifier(string $value): string
     {
         switch (DB::getDriverName()) {
-            case Driver::SQLSRV():
+            case Driver::SQLSRV->value:
                 return $value === '*' ? $value : '[' . str_replace(']', ']]', $value) . ']';
 
-            case Driver::MYSQL():
+            case Driver::MYSQL->value:
                 return $value === '*' ? $value : '`' . str_replace('`', '``', $value) . '`';
 
             default:

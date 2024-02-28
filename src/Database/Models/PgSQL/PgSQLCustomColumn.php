@@ -27,7 +27,7 @@ class PgSQLCustomColumn extends DatabaseCustomColumn
             'autoIncrement' => $column['auto_increment'],
             'collation'     => $column['collation'],
             'comment'       => $column['comment'],
-            'default'       => $this->parseDefault($column['default'], ColumnType::STRING()), // Assume is string
+            'default'       => $this->parseDefault($column['default'], ColumnType::STRING), // Assume is string
             'nullable'      => $column['nullable'],
             //            'after' => "id",
         ]);

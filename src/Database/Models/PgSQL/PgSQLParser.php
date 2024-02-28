@@ -23,7 +23,7 @@ trait PgSQLParser
             $default = $matches[1];
         }
 
-        if ($columnType->equals(ColumnType::STRING()) || $columnType->equals(ColumnType::TEXT())) {
+        if ($columnType === ColumnType::STRING || $columnType === ColumnType::TEXT) {
             $default = str_replace("''", "'", $default);
         }
 

@@ -58,38 +58,38 @@ class MySQLColumn extends DatabaseColumn
         $this->setTypeToUnsigned();
 
         switch ($this->type) {
-            case ColumnType::UNSIGNED_TINY_INTEGER():
-            case ColumnType::TINY_INTEGER():
+            case ColumnType::UNSIGNED_TINY_INTEGER:
+            case ColumnType::TINY_INTEGER:
                 if ($this->isBoolean()) {
-                    $this->type = ColumnType::BOOLEAN();
+                    $this->type = ColumnType::BOOLEAN;
                 }
 
                 break;
 
-            case ColumnType::ENUM():
+            case ColumnType::ENUM:
                 $this->presetValues = $this->getEnumPresetValues($column['type']);
                 break;
 
-            case ColumnType::SET():
+            case ColumnType::SET:
                 $this->presetValues = $this->getSetPresetValues($column['type']);
                 break;
 
-            case ColumnType::SOFT_DELETES():
-            case ColumnType::SOFT_DELETES_TZ():
-            case ColumnType::TIMESTAMP():
-            case ColumnType::TIMESTAMP_TZ():
+            case ColumnType::SOFT_DELETES:
+            case ColumnType::SOFT_DELETES_TZ:
+            case ColumnType::TIMESTAMP:
+            case ColumnType::TIMESTAMP_TZ:
                 $this->onUpdateCurrentTimestamp = $this->hasOnUpdateCurrentTimestamp();
                 break;
 
-            case ColumnType::GEOGRAPHY():
-            case ColumnType::GEOMETRY():
-            case ColumnType::GEOMETRY_COLLECTION():
-            case ColumnType::LINE_STRING():
-            case ColumnType::MULTI_LINE_STRING():
-            case ColumnType::POINT():
-            case ColumnType::MULTI_POINT():
-            case ColumnType::POLYGON():
-            case ColumnType::MULTI_POLYGON():
+            case ColumnType::GEOGRAPHY:
+            case ColumnType::GEOMETRY:
+            case ColumnType::GEOMETRY_COLLECTION:
+            case ColumnType::LINE_STRING:
+            case ColumnType::MULTI_LINE_STRING:
+            case ColumnType::POINT:
+            case ColumnType::MULTI_POINT:
+            case ColumnType::POLYGON:
+            case ColumnType::MULTI_POLYGON:
                 $this->setRealSpatialColumn();
                 break;
 
@@ -105,9 +105,9 @@ class MySQLColumn extends DatabaseColumn
 
         // Extra logic for MariaDB
         switch ($this->type) {
-            case ColumnType::LONG_TEXT():
+            case ColumnType::LONG_TEXT:
                 if ($this->isJson()) {
-                    $this->type = ColumnType::JSON();
+                    $this->type = ColumnType::JSON;
                 }
 
                 break;
@@ -255,38 +255,38 @@ class MySQLColumn extends DatabaseColumn
         }
 
         switch ($this->type) {
-            case ColumnType::GEOMETRY_COLLECTION():
+            case ColumnType::GEOMETRY_COLLECTION:
                 $this->spatialSubType = 'geometryCollection';
                 break;
 
-            case ColumnType::LINE_STRING():
+            case ColumnType::LINE_STRING:
                 $this->spatialSubType = 'lineString';
                 break;
 
-            case ColumnType::MULTI_LINE_STRING():
+            case ColumnType::MULTI_LINE_STRING:
                 $this->spatialSubType = 'multiLineString';
                 break;
 
-            case ColumnType::POINT():
+            case ColumnType::POINT:
                 $this->spatialSubType = 'point';
                 break;
 
-            case ColumnType::MULTI_POINT():
+            case ColumnType::MULTI_POINT:
                 $this->spatialSubType = 'multiPoint';
                 break;
 
-            case ColumnType::POLYGON():
+            case ColumnType::POLYGON:
                 $this->spatialSubType = 'polygon';
                 break;
 
-            case ColumnType::MULTI_POLYGON():
+            case ColumnType::MULTI_POLYGON:
                 $this->spatialSubType = 'multiPolygon';
                 break;
 
             default:
         }
 
-        $this->type = ColumnType::GEOMETRY();
+        $this->type = ColumnType::GEOMETRY;
 
         $this->spatialSrID = $this->mysqlRepository->getSrID($this->tableName, $this->name);
 
@@ -294,7 +294,7 @@ class MySQLColumn extends DatabaseColumn
             return;
         }
 
-        $this->type = ColumnType::GEOGRAPHY();
+        $this->type = ColumnType::GEOGRAPHY;
     }
 
     /**
@@ -304,18 +304,18 @@ class MySQLColumn extends DatabaseColumn
     {
         if (
             !in_array($this->type, [
-                ColumnType::BIG_INTEGER(),
-                ColumnType::INTEGER(),
-                ColumnType::MEDIUM_INTEGER(),
-                ColumnType::SMALL_INTEGER(),
-                ColumnType::TINY_INTEGER(),
+                ColumnType::BIG_INTEGER,
+                ColumnType::INTEGER,
+                ColumnType::MEDIUM_INTEGER,
+                ColumnType::SMALL_INTEGER,
+                ColumnType::TINY_INTEGER,
             ])
             || !$this->unsigned
         ) {
             return;
         }
 
-        $this->type = ColumnType::fromValue('unsigned' . ucfirst($this->type));
+        $this->type = ColumnType::from('unsigned' . ucfirst($this->type->value));
     }
 
     /**
