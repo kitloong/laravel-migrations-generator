@@ -3,15 +3,12 @@
 namespace KitLoong\MigrationsGenerator\Database\Models;
 
 use KitLoong\MigrationsGenerator\Schema\Models\CustomColumn;
-use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
 /**
  * @phpstan-import-type SchemaColumn from \KitLoong\MigrationsGenerator\Database\DatabaseSchema
  */
 abstract class DatabaseCustomColumn implements CustomColumn
 {
-    use CheckLaravelVersion;
-
     protected string $name;
 
     protected string $tableName;

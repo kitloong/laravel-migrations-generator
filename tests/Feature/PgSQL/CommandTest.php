@@ -80,10 +80,6 @@ class CommandTest extends PgSQLTestCase
      */
     public function testWithSearchPath(): void
     {
-        if (!$this->atLeastLaravel9()) {
-            $this->markTestSkipped();
-        }
-
         // Unset `schema`
         Config::set('database.connections.pgsql.schema');
         $this->assertNull(Config::get('database.connections.pgsql.schema'));
