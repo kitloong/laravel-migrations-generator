@@ -4,9 +4,9 @@ namespace KitLoong\MigrationsGenerator\Database\Models;
 
 use Illuminate\Support\Collection;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
-use KitLoong\MigrationsGenerator\Schema\Models\CustomColumn;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
+use KitLoong\MigrationsGenerator\Schema\Models\UDTColumn;
 
 /**
  * @phpstan-import-type SchemaColumn from \KitLoong\MigrationsGenerator\Database\DatabaseSchema
@@ -23,9 +23,9 @@ abstract class DatabaseTable implements Table
     protected Collection $columns;
 
     /**
-     * @var \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\CustomColumn>
+     * @var \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\UDTColumn>
      */
-    protected Collection $customColumns;
+    protected Collection $udtColumns;
 
     protected string $name;
 
@@ -44,11 +44,11 @@ abstract class DatabaseTable implements Table
     abstract protected function makeColumn(string $table, array $column): Column;
 
     /**
-     * Make a CustomColumn instance.
+     * Make a UDTColumn instance.
      *
      * @param  SchemaColumn  $column
      */
-    abstract protected function makeCustomColumn(string $table, array $column): CustomColumn;
+    abstract protected function makeUDTColumn(string $table, array $column): UDTColumn;
 
     /**
      * Make an Index instance.
@@ -79,9 +79,9 @@ abstract class DatabaseTable implements Table
             return $columns;
         }, new Collection())->values();
 
-        $this->customColumns = $columns->reduce(function (Collection $columns, array $column) use ($userDefinedTypes) {
+        $this->udtColumns = $columns->reduce(function (Collection $columns, array $column) use ($userDefinedTypes) {
             if ($userDefinedTypes->contains($column['type_name'])) {
-                $columns->push($this->makeCustomColumn($this->name, $column));
+                $columns->push($this->makeUDTColumn($this->name, $column));
             }
 
             return $columns;
@@ -117,9 +117,9 @@ abstract class DatabaseTable implements Table
     /**
      * @inheritDoc
      */
-    public function getCustomColumns(): Collection
+    public function getUdtColumns(): Collection
     {
-        return $this->customColumns;
+        return $this->udtColumns;
     }
 
     /**

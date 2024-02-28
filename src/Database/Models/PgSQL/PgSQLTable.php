@@ -8,8 +8,8 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 use KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
-use KitLoong\MigrationsGenerator\Schema\Models\CustomColumn;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
+use KitLoong\MigrationsGenerator\Schema\Models\UDTColumn;
 
 class PgSQLTable extends DatabaseTable
 {
@@ -40,9 +40,9 @@ class PgSQLTable extends DatabaseTable
     /**
      * @inheritDoc
      */
-    protected function makeCustomColumn(string $table, array $column): CustomColumn
+    protected function makeUDTColumn(string $table, array $column): UDTColumn
     {
-        return new PgSQLCustomColumn($table, $column);
+        return new PgSQLUDTColumn($table, $column);
     }
 
     /**

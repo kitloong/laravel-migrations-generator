@@ -83,7 +83,7 @@ class SQLSrvSchema extends DatabaseSchema
     private function getUserDefinedTypes(): Collection
     {
         if (!$this->ranGetUserDefinedTypes) {
-            $this->userDefinedTypes       = $this->sqlSrvRepository->getCustomDataTypes();
+            $this->userDefinedTypes       = $this->sqlSrvRepository->getUserDefinedTypes();
             $this->ranGetUserDefinedTypes = true;
         }
 

@@ -5,10 +5,10 @@ namespace KitLoong\MigrationsGenerator\Database\Models\SQLSrv;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use KitLoong\MigrationsGenerator\Database\Models\DatabaseCustomColumn;
+use KitLoong\MigrationsGenerator\Database\Models\DatabaseUDTColumn;
 use KitLoong\MigrationsGenerator\Support\TableName;
 
-class SQLSrvCustomColumn extends DatabaseCustomColumn
+class SQLSrvUDTColumn extends DatabaseUDTColumn
 {
     use SQLSrvParser;
 

@@ -49,7 +49,7 @@ class TableMigration
         $upList = new Collection();
         $upList->push($this->up($table));
 
-        if ($table->getCustomColumns()->isNotEmpty()) {
+        if ($table->getUdtColumns()->isNotEmpty()) {
             foreach ($this->upAdditionalStatements($table) as $statement) {
                 $upList->push($statement);
             }
@@ -77,7 +77,7 @@ class TableMigration
         $upList = new Collection();
         $upList->push($this->up($table));
 
-        if ($table->getCustomColumns()->isNotEmpty()) {
+        if ($table->getUdtColumns()->isNotEmpty()) {
             foreach ($this->upAdditionalStatements($table) as $statement) {
                 $upList->push($statement);
             }
@@ -139,7 +139,7 @@ class TableMigration
     {
         $statements = [];
 
-        foreach ($table->getCustomColumns() as $column) {
+        foreach ($table->getUdtColumns() as $column) {
             foreach ($column->getSqls() as $sql) {
                 $statements[] = new DBStatementBlueprint($sql);
             }

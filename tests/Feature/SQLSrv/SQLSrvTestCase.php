@@ -38,7 +38,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         // Drop first.
         DB::statement("DROP TYPE IF EXISTS accountnumber");
 
-        // Create for custom column type test.
+        // Create for user defined type column test.
         DB::statement("CREATE TYPE accountnumber FROM [nvarchar](15) NULL");
     }
 
