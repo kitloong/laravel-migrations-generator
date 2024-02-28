@@ -113,7 +113,7 @@ return new class extends TestMigration
                 }
             }
 
-            if (!$this->atLeastLaravel11()) {
+            if (!$this->atLeastLaravel11() && DB::getDriverName() !== Driver::SQLITE->value) {
                 $table->geometryCollection('geometryCollection'); // @phpstan-ignore-line
                 $table->lineString('lineString');  // @phpstan-ignore-line
                 $table->multiLineString('multiLineString');  // @phpstan-ignore-line
