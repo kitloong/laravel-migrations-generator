@@ -37,7 +37,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
     {
         parent::setUp();
 
-        // Create for custom column type test.
+        // Create for user defined type column test.
         DB::statement("CREATE TYPE my_status AS enum ('PENDING', 'ACTIVE', 'SUSPENDED')");
     }
 

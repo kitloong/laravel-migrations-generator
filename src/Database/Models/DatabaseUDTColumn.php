@@ -2,12 +2,12 @@
 
 namespace KitLoong\MigrationsGenerator\Database\Models;
 
-use KitLoong\MigrationsGenerator\Schema\Models\CustomColumn;
+use KitLoong\MigrationsGenerator\Schema\Models\UDTColumn;
 
 /**
  * @phpstan-import-type SchemaColumn from \KitLoong\MigrationsGenerator\Database\DatabaseSchema
  */
-abstract class DatabaseCustomColumn implements CustomColumn
+abstract class DatabaseUDTColumn implements UDTColumn
 {
     protected string $name;
 

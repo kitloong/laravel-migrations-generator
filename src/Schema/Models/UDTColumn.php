@@ -3,9 +3,9 @@
 namespace KitLoong\MigrationsGenerator\Schema\Models;
 
 /**
- * Table column. Column type which is not supported by the framework.
+ * Table column. User-defined type column which is not supported by the framework.
  */
-interface CustomColumn extends Model
+interface UDTColumn extends Model
 {
     /**
      * Get the column name.

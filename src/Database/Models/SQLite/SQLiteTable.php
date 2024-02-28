@@ -4,8 +4,8 @@ namespace KitLoong\MigrationsGenerator\Database\Models\SQLite;
 
 use KitLoong\MigrationsGenerator\Database\Models\DatabaseTable;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
-use KitLoong\MigrationsGenerator\Schema\Models\CustomColumn;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
+use KitLoong\MigrationsGenerator\Schema\Models\UDTColumn;
 
 class SQLiteTable extends DatabaseTable
 {
@@ -20,9 +20,9 @@ class SQLiteTable extends DatabaseTable
     /**
      * @inheritDoc
      */
-    protected function makeCustomColumn(string $table, array $column): CustomColumn
+    protected function makeUDTColumn(string $table, array $column): UDTColumn
     {
-        return new SQLiteCustomColumn($table, $column);
+        return new SQLiteUDTColumn($table, $column);
     }
 
     /**

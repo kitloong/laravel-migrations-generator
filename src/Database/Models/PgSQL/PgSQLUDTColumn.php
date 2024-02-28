@@ -5,11 +5,11 @@ namespace KitLoong\MigrationsGenerator\Database\Models\PgSQL;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use KitLoong\MigrationsGenerator\Database\Models\DatabaseCustomColumn;
+use KitLoong\MigrationsGenerator\Database\Models\DatabaseUDTColumn;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Support\TableName;
 
-class PgSQLCustomColumn extends DatabaseCustomColumn
+class PgSQLUDTColumn extends DatabaseUDTColumn
 {
     use PgSQLParser;
 

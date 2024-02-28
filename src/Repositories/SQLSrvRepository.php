@@ -171,11 +171,11 @@ class SQLSrvRepository extends Repository
     }
 
     /**
-     * Get a list of custom data types.
+     * Get a list of user-defined types.
      *
      * @return \Illuminate\Support\Collection<int, string>
      */
-    public function getCustomDataTypes(): Collection
+    public function getUserDefinedTypes(): Collection
     {
         $rows  = DB::select("SELECT * FROM sys.types WHERE is_user_defined = 1");
         $types = new Collection();
