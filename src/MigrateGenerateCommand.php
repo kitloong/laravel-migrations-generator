@@ -111,7 +111,7 @@ class MigrateGenerateCommand extends Command
 
             $this->info("\nFinished!\n");
 
-            if (DB::getDriverName() === Driver::SQLITE()->getValue()) {
+            if (DB::getDriverName() === Driver::SQLITE->value) {
                 $this->warn('SQLite only supports foreign keys upon creation of the table and not when tables are altered.');
                 $this->warn('See https://www.sqlite.org/omitted.html');
                 $this->warn('*_add_foreign_keys_* migrations were generated, however will get omitted if migrate to SQLite type database.');
@@ -634,16 +634,16 @@ class MigrateGenerateCommand extends Command
         }
 
         switch ($driver) {
-            case Driver::MYSQL():
+            case Driver::MYSQL->value:
                 return $this->schema = app(MySQLSchema::class);
 
-            case Driver::PGSQL():
+            case Driver::PGSQL->value:
                 return $this->schema = app(PgSQLSchema::class);
 
-            case Driver::SQLITE():
+            case Driver::SQLITE->value:
                 return $this->schema = app(SQLiteSchema::class);
 
-            case Driver::SQLSRV():
+            case Driver::SQLSRV->value:
                 return $this->schema = app(SQLSrvSchema::class);
 
             default:

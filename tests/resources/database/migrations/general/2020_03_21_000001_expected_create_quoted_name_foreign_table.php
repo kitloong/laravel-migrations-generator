@@ -25,7 +25,7 @@ return new class extends TestMigration
 
             // SQLite does not support alter add foreign key.
             // https://www.sqlite.org/omitted.html
-            if (DB::getDriverName() !== Driver::SQLITE()->getValue()) {
+            if (DB::getDriverName() !== Driver::SQLITE->value) {
                 $table->foreign('quoted-name-id')->references('id')->on('quoted-name');
             }
         });

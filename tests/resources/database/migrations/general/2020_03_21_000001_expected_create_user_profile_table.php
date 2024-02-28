@@ -33,7 +33,7 @@ return new class extends TestMigration
 
             // SQLite does not support alter add foreign key.
             // https://www.sqlite.org/omitted.html
-            if (DB::getDriverName() !== Driver::SQLITE()->getValue()) {
+            if (DB::getDriverName() !== Driver::SQLITE->value) {
                 $table->foreign('user_id')->references('id')->on('users');
                 $table->foreign('user_id_fk_custom', 'users_foreign_custom')->references('id')->on('users');
                 $table->foreign('user_id_fk_constraint', 'users_foreign_constraint')->references('id')->on(

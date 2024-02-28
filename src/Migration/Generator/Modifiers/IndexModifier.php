@@ -30,7 +30,7 @@ class IndexModifier implements Modifier
         $index = $chainableIndexes->get($column->getName());
 
         // "increment" will add primary key by default. No need explicitly declare "primary" index here.
-        if ($column->isAutoincrement() && $index->getType()->equals(IndexType::PRIMARY())) {
+        if ($column->isAutoincrement() && $index->getType() === IndexType::PRIMARY) {
             return $method;
         }
 
@@ -51,8 +51,8 @@ class IndexModifier implements Modifier
      */
     private function adjustIndexType(IndexType $indexType): IndexType
     {
-        if ($indexType->equals(IndexType::FULLTEXT())) {
-            return IndexType::FULLTEXT_CHAIN();
+        if ($indexType === IndexType::FULLTEXT) {
+            return IndexType::FULLTEXT_CHAIN;
         }
 
         return $indexType;

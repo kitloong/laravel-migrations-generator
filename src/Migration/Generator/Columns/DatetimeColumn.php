@@ -19,7 +19,7 @@ class DatetimeColumn implements ColumnTypeGenerator
         $method = $this->makeMethod($column);
 
         if ($column->isOnUpdateCurrentTimestamp()) {
-            $method->chain(ColumnModifier::USE_CURRENT_ON_UPDATE());
+            $method->chain(ColumnModifier::USE_CURRENT_ON_UPDATE);
         }
 
         return $method;

@@ -22,8 +22,8 @@ class SpatialColumn implements ColumnTypeGenerator
     public function generate(Table $table, Column $column): Method
     {
         if (!$this->hasGeography()) {
-            if ($column->getType()->equals(ColumnType::GEOGRAPHY())) {
-                return new Method(ColumnType::GEOMETRY(), $column->getName());
+            if ($column->getType() === ColumnType::GEOGRAPHY) {
+                return new Method(ColumnType::GEOMETRY, $column->getName());
             }
 
             return new Method($column->getType(), $column->getName());
@@ -59,7 +59,7 @@ class SpatialColumn implements ColumnTypeGenerator
         }
 
         switch ($column->getType()) {
-            case ColumnType::GEOMETRY():
+            case ColumnType::GEOMETRY:
                 if ($column->getSpatialSrID() !== self::GEOMETRY_DEFAULT_SRID) {
                     return $column->getSpatialSrID();
                 }

@@ -28,25 +28,25 @@ class SQLiteColumn extends DatabaseColumn
         $this->setTypeToIncrements(false);
 
         switch ($this->type) {
-            case ColumnType::INTEGER():
+            case ColumnType::INTEGER:
                 if ($this->isBoolean($column['type'])) {
-                    $this->type = ColumnType::BOOLEAN();
+                    $this->type = ColumnType::BOOLEAN;
                 }
 
                 break;
 
-            case ColumnType::STRING():
+            case ColumnType::STRING:
                 $this->presetValues = $this->getEnumPresetValues();
 
                 if (count($this->presetValues) > 0) {
-                    $this->type = ColumnType::ENUM();
+                    $this->type = ColumnType::ENUM;
                 }
 
                 break;
 
-            case ColumnType::DATETIME():
+            case ColumnType::DATETIME:
                 if ($this->default === 'CURRENT_TIMESTAMP') {
-                    $this->type = ColumnType::TIMESTAMP();
+                    $this->type = ColumnType::TIMESTAMP;
                 }
 
                 break;

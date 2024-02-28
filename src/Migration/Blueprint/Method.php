@@ -2,6 +2,8 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\MethodName;
+
 class Method
 {
     /**
@@ -17,16 +19,16 @@ class Method
     /**
      * Method constructor.
      *
-     * @param  string  $name  Method name.
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\MethodName  $name  Method name.
      * @param  mixed  ...$values  Method arguments.
      */
-    public function __construct(private string $name, mixed ...$values)
+    public function __construct(private MethodName $name, mixed ...$values)
     {
         $this->values = $values;
         $this->chains = [];
     }
 
-    public function getName(): string
+    public function getName(): MethodName
     {
         return $this->name;
     }
@@ -42,11 +44,11 @@ class Method
     /**
      * Chain method.
      *
-     * @param  string  $name  Method name.
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\MethodName  $name  Method name.
      * @param  mixed  ...$values  Method arguments.
      * @return $this
      */
-    public function chain(string $name, mixed ...$values): self
+    public function chain(MethodName $name, mixed ...$values): self
     {
         $this->chains[] = new self($name, ...$values);
         return $this;
@@ -55,9 +57,9 @@ class Method
     /**
      * Checks if chain name exists.
      *
-     * @param  string  $name  Method name.
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\MethodName  $name  Method name.
      */
-    public function hasChain(string $name): bool
+    public function hasChain(MethodName $name): bool
     {
         foreach ($this->chains as $chain) {
             if ($chain->getName() === $name) {

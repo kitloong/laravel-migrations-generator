@@ -18,7 +18,7 @@ return new class extends TestMigration
     public function up()
     {
         switch (DB::getDriverName()) {
-            case Driver::MYSQL():
+            case Driver::MYSQL->value:
                 DB::unprepared(
                     "CREATE PROCEDURE findNameWithHyphen()
                     BEGIN
@@ -26,7 +26,7 @@ return new class extends TestMigration
                     END"
                 );
                 break;
-            case Driver::PGSQL():
+            case Driver::PGSQL->value:
                 DB::unprepared(
                     "CREATE PROCEDURE findNameWithHyphen()
                     language plpgsql
@@ -36,7 +36,7 @@ return new class extends TestMigration
                     END;$$"
                 );
                 break;
-            case Driver::SQLSRV():
+            case Driver::SQLSRV->value:
                 DB::unprepared(
                     "CREATE PROCEDURE findNameWithHyphen
                     AS
