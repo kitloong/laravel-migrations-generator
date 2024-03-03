@@ -23,12 +23,9 @@ use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
 use KitLoong\MigrationsGenerator\Schema\Schema;
 use KitLoong\MigrationsGenerator\Schema\SQLiteSchema;
 use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 class MigrateGenerateCommand extends Command
 {
-    use CheckMigrationMethod;
-
     /**
      * The name and signature of the console command.
      */
@@ -170,11 +167,7 @@ class MigrateGenerateCommand extends Command
      */
     protected function setStubPath(Setting $setting): void
     {
-        $defaultStub = Config::get('migrations-generator.migration_anonymous_template_path');
-
-        if (!$this->hasAnonymousMigration()) {
-            $defaultStub = Config::get('migrations-generator.migration_template_path');
-        }
+        $defaultStub = Config::get('migrations-generator.migration_template_path');
 
         $setting->setStubPath(
             $this->option('template-path') ?? $defaultStub,

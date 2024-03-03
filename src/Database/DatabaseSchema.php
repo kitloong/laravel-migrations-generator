@@ -5,7 +5,6 @@ namespace KitLoong\MigrationsGenerator\Database;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema as SchemaFacade;
 use KitLoong\MigrationsGenerator\Schema\Schema;
-use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 use KitLoong\MigrationsGenerator\Support\TableName;
 
 /**
@@ -55,8 +54,6 @@ use KitLoong\MigrationsGenerator\Support\TableName;
  */
 abstract class DatabaseSchema implements Schema
 {
-    use AssetNameQuote;
-
     use TableName;
 
     /**

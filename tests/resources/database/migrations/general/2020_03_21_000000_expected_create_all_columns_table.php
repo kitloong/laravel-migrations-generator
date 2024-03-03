@@ -9,13 +9,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
 return new class extends TestMigration
 {
     use CheckLaravelVersion;
-    use CheckMigrationMethod;
 
     /**
      * Run the migrations.
@@ -25,9 +23,7 @@ return new class extends TestMigration
     public function up()
     {
         Schema::create('all_columns', function (Blueprint $table) {
-            if ($this->hasTableComment()) {
-                $table->comment('A table comment.');
-            }
+            $table->comment('A table comment.');
 
             $table->bigInteger('bigInteger');
             $table->bigInteger('bigInteger_default')->default(1080);
@@ -190,9 +186,7 @@ return new class extends TestMigration
 
             $table->tinyText('tinyText');
 
-            if ($this->hasULID()) {
-                $table->ulid('ulid');
-            }
+            $table->ulid('ulid');
 
             switch (DB::getDriverName()) {
                 case Driver::MYSQL->value:

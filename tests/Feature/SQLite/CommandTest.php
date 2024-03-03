@@ -4,12 +4,9 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\SQLite;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 class CommandTest extends SQLiteTestCase
 {
-    use CheckMigrationMethod;
-
     public function testRun(): void
     {
         $migrateTemplates = function (): void {

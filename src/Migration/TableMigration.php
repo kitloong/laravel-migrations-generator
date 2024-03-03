@@ -20,13 +20,11 @@ use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 use KitLoong\MigrationsGenerator\Support\TableName;
 
 class TableMigration
 {
-    use CheckMigrationMethod;
     use TableName;
 
     public function __construct(
@@ -102,7 +100,7 @@ class TableMigration
             $blueprint->setLineBreak();
         }
 
-        if ($this->hasTableComment() && $table->getComment() !== null && $table->getComment() !== '') {
+        if ($table->getComment() !== null && $table->getComment() !== '') {
             $blueprint->setMethod(new Method(TableMethod::COMMENT, $table->getComment()));
         }
 

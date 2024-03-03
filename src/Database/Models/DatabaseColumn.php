@@ -330,6 +330,10 @@ abstract class DatabaseColumn implements Column
                 if (preg_match('/\((\d*)\)/', $fullDefinitionType, $matches) === 1) {
                     return (int) $matches[1];
                 }
+
+                break;
+
+            default:
         }
 
         return null;
@@ -349,6 +353,10 @@ abstract class DatabaseColumn implements Column
                 if (preg_match('/\((\d+)(?:,\s*(\d+))?\)?/', $fullDefinitionType, $matches) === 1) {
                     return [(int) $matches[1], isset($matches[2]) ? (int) $matches[2] : 0];
                 }
+
+                break;
+
+            default:
         }
 
         return [null, 0];
@@ -371,6 +379,8 @@ abstract class DatabaseColumn implements Column
             case ColumnType::TIMESTAMP_TZ:
                 $this->type = ColumnType::SOFT_DELETES_TZ;
                 return;
+
+            default:
         }
     }
 
