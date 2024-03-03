@@ -10,8 +10,6 @@ interface Modifier
 {
     /**
      * Chain column modifier.
-     *
-     * @param  mixed  ...$args
      */
-    public function chain(Method $method, Table $table, Column $column, ...$args): Method;
+    public function chain(Method $method, Table $table, Column $column, mixed ...$args): Method;
 }

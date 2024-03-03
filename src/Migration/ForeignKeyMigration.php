@@ -18,43 +18,13 @@ class ForeignKeyMigration
 {
     use TableName;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\ForeignKeyGenerator
-     */
-    private $foreignKeyGenerator;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Support\MigrationNameHelper
-     */
-    private $migrationNameHelper;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter
-     */
-    private $migrationWriter;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Setting
-     */
-    private $setting;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter
-     */
-    private $squashWriter;
-
     public function __construct(
-        ForeignKeyGenerator $foreignKeyGenerator,
-        MigrationNameHelper $migrationNameHelper,
-        MigrationWriter $migrationWriter,
-        Setting $setting,
-        SquashWriter $squashWriter
+        private ForeignKeyGenerator $foreignKeyGenerator,
+        private MigrationNameHelper $migrationNameHelper,
+        private MigrationWriter $migrationWriter,
+        private Setting $setting,
+        private SquashWriter $squashWriter,
     ) {
-        $this->foreignKeyGenerator = $foreignKeyGenerator;
-        $this->migrationNameHelper = $migrationNameHelper;
-        $this->migrationWriter     = $migrationWriter;
-        $this->setting             = $setting;
-        $this->squashWriter        = $squashWriter;
     }
 
     /**
@@ -74,7 +44,7 @@ class ForeignKeyMigration
             $this->makeMigrationClassName($table),
             new Collection([$up]),
             new Collection([$down]),
-            MigrationFileType::FOREIGN_KEY()
+            MigrationFileType::FOREIGN_KEY,
         );
 
         return $path;
@@ -143,7 +113,7 @@ class ForeignKeyMigration
         $withoutPrefix = $this->stripTablePrefix($table);
         return $this->migrationNameHelper->makeClassName(
             $this->setting->getFkFilename(),
-            $withoutPrefix
+            $withoutPrefix,
         );
     }
 
@@ -158,7 +128,7 @@ class ForeignKeyMigration
         return $this->migrationNameHelper->makeFilename(
             $this->setting->getFkFilename(),
             $this->setting->getDateForMigrationFilename(),
-            $withoutPrefix
+            $withoutPrefix,
         );
     }
 
@@ -166,7 +136,7 @@ class ForeignKeyMigration
     {
         return new SchemaBlueprint(
             $table,
-            SchemaBuilder::TABLE()
+            SchemaBuilder::TABLE,
         );
     }
 }

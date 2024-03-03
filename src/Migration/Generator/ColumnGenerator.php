@@ -18,64 +18,16 @@ use KitLoong\MigrationsGenerator\Schema\Models\Table;
 
 class ColumnGenerator
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\CharsetModifier
-     */
-    private $charsetModifier;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\CollationModifier
-     */
-    private $collationModifier;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\CommentModifier
-     */
-    private $commentModifier;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\DefaultModifier
-     */
-    private $defaultModifier;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\IndexModifier
-     */
-    private $indexModifier;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\NullableModifier
-     */
-    private $nullableModifier;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\StoredAsModifier
-     */
-    private $storedAsModifier;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Generator\Modifiers\VirtualAsModifier
-     */
-    private $virtualAsModifier;
-
     public function __construct(
-        CharsetModifier $charsetModifier,
-        CollationModifier $collationModifier,
-        CommentModifier $commentModifier,
-        DefaultModifier $defaultModifier,
-        IndexModifier $indexModifier,
-        NullableModifier $nullableModifier,
-        StoredAsModifier $storedAsModifier,
-        VirtualAsModifier $virtualAsModifier
+        private CharsetModifier $charsetModifier,
+        private CollationModifier $collationModifier,
+        private CommentModifier $commentModifier,
+        private DefaultModifier $defaultModifier,
+        private IndexModifier $indexModifier,
+        private NullableModifier $nullableModifier,
+        private StoredAsModifier $storedAsModifier,
+        private VirtualAsModifier $virtualAsModifier,
     ) {
-        $this->charsetModifier   = $charsetModifier;
-        $this->collationModifier = $collationModifier;
-        $this->commentModifier   = $commentModifier;
-        $this->defaultModifier   = $defaultModifier;
-        $this->indexModifier     = $indexModifier;
-        $this->nullableModifier  = $nullableModifier;
-        $this->storedAsModifier  = $storedAsModifier;
-        $this->virtualAsModifier = $virtualAsModifier;
     }
 
     /**
@@ -100,7 +52,7 @@ class ColumnGenerator
     private function createMethodFromColumn(Table $table, Column $column): Method
     {
         /** @var \KitLoong\MigrationsGenerator\Migration\Generator\Columns\ColumnTypeGenerator $generator */
-        $generator = app(ColumnType::class . '\\' . $column->getType()->getKey());
+        $generator = app(ColumnType::class . '\\' . $column->getType()->name);
         return $generator->generate($table, $column);
     }
 }

@@ -2,34 +2,23 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Blueprint;
 
+use KitLoong\MigrationsGenerator\Enum\Migrations\Property\PropertyName;
+
 class Property
 {
-    /** @var string */
-    private $name;
-
-    /** @var mixed */
-    private $value;
-
     /**
      * Property constructor.
-     *
-     * @param  mixed  $value
      */
-    public function __construct(string $name, $value)
+    public function __construct(private PropertyName $name, private mixed $value)
     {
-        $this->name  = $name;
-        $this->value = $value;
     }
 
-    public function getName(): string
+    public function getName(): PropertyName
     {
         return $this->name;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }

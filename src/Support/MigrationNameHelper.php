@@ -9,12 +9,8 @@ class MigrationNameHelper
 {
     use TableName;
 
-    /** @var \KitLoong\MigrationsGenerator\Setting */
-    private $setting;
-
-    public function __construct(Setting $setting)
+    public function __construct(private Setting $setting)
     {
-        $this->setting = $setting;
     }
 
     /**

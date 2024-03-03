@@ -39,18 +39,10 @@ class SchemaBlueprint implements WritableBlueprint
 
     /**
      * The table name without prefix. {@see \Illuminate\Support\Facades\DB::getTablePrefix()}
-     *
-     * @var string
      */
-    private $table;
+    private string $table;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder
-     */
-    private $schemaBuilder;
-
-    /** @var \KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint|null */
-    private $blueprint;
+    private ?TableBlueprint $blueprint = null;
 
     /**
      * SchemaBlueprint constructor.
@@ -58,11 +50,10 @@ class SchemaBlueprint implements WritableBlueprint
      * @param  string  $table  Table name.
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder  $schemaBuilder  SchemaBuilder name.
      */
-    public function __construct(string $table, SchemaBuilder $schemaBuilder)
+    public function __construct(string $table, private SchemaBuilder $schemaBuilder)
     {
-        $this->table         = $this->stripTablePrefix($table);
-        $this->schemaBuilder = $schemaBuilder;
-        $this->blueprint     = null;
+        $this->table     = $this->stripTablePrefix($table);
+        $this->blueprint = null;
     }
 
     public function setBlueprint(TableBlueprint $blueprint): void
@@ -86,7 +77,7 @@ class SchemaBlueprint implements WritableBlueprint
     {
         $schema = $this->connection('Schema', $this->schemaBuilder);
 
-        if ($this->schemaBuilder->equals(SchemaBuilder::DROP_IF_EXISTS())) {
+        if ($this->schemaBuilder === SchemaBuilder::DROP_IF_EXISTS) {
             return $this->getDropLines($schema);
         }
 
@@ -96,7 +87,7 @@ class SchemaBlueprint implements WritableBlueprint
             return $tableLines;
         }
 
-        $schemaHasTable = $this->connection('Schema', SchemaBuilder::HAS_TABLE());
+        $schemaHasTable = $this->connection('Schema', SchemaBuilder::HAS_TABLE);
 
         $lines = [];
 
@@ -104,7 +95,7 @@ class SchemaBlueprint implements WritableBlueprint
 
         foreach ($tableLines as $tableLine) {
             // Add another tabulation to indent(prettify) blueprint definition.
-            $lines[] = Space::TAB() . $tableLine;
+            $lines[] = Space::TAB->value . $tableLine;
         }
 
         $lines[] = "}";
@@ -141,7 +132,7 @@ class SchemaBlueprint implements WritableBlueprint
         }
 
         // Add 1 tabulation to indent(prettify) blueprint definition.
-        $lines[] = Space::TAB() . $this->blueprint->toString();
+        $lines[] = Space::TAB->value . $this->blueprint->toString();
         $lines[] = "});";
 
         return $lines;
@@ -154,7 +145,7 @@ class SchemaBlueprint implements WritableBlueprint
      */
     private function getIfCondition(string $schemaHasTable, string $tableWithoutPrefix): string
     {
-        if ($this->schemaBuilder->equals(SchemaBuilder::TABLE())) {
+        if ($this->schemaBuilder === SchemaBuilder::TABLE) {
             return "if ($schemaHasTable('$tableWithoutPrefix')) {";
         }
 

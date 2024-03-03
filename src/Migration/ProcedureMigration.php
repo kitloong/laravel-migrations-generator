@@ -13,36 +13,12 @@ use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class ProcedureMigration
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Support\MigrationNameHelper
-     */
-    private $migrationNameHelper;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter
-     */
-    private $migrationWriter;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Setting
-     */
-    private $setting;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter
-     */
-    private $squashWriter;
-
     public function __construct(
-        MigrationNameHelper $migrationNameHelper,
-        MigrationWriter $migrationWriter,
-        Setting $setting,
-        SquashWriter $squashWriter
+        private MigrationNameHelper $migrationNameHelper,
+        private MigrationWriter $migrationWriter,
+        private Setting $setting,
+        private SquashWriter $squashWriter,
     ) {
-        $this->migrationNameHelper = $migrationNameHelper;
-        $this->migrationWriter     = $migrationWriter;
-        $this->setting             = $setting;
-        $this->squashWriter        = $squashWriter;
     }
 
     /**
@@ -61,7 +37,7 @@ class ProcedureMigration
             $this->makeMigrationClassName($procedure->getName()),
             new Collection([$up]),
             new Collection([$down]),
-            MigrationFileType::PROCEDURE()
+            MigrationFileType::PROCEDURE,
         );
 
         return $path;
@@ -103,7 +79,7 @@ class ProcedureMigration
     {
         return $this->migrationNameHelper->makeClassName(
             $this->setting->getProcedureFilename(),
-            $procedure
+            $procedure,
         );
     }
 
@@ -117,7 +93,7 @@ class ProcedureMigration
         return $this->migrationNameHelper->makeFilename(
             $this->setting->getProcedureFilename(),
             $this->setting->getDateForMigrationFilename(),
-            $procedure
+            $procedure,
         );
     }
 }

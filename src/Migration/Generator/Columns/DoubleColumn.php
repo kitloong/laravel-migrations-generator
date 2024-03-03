@@ -6,9 +6,12 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnModifier;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
 class DoubleColumn implements ColumnTypeGenerator
 {
+    use CheckLaravelVersion;
+
     private const EMPTY_PRECISION = 0;
     private const EMPTY_SCALE     = 0;
 
@@ -22,7 +25,7 @@ class DoubleColumn implements ColumnTypeGenerator
         $method = new Method($column->getType(), $column->getName(), ...$precisions);
 
         if ($column->isUnsigned()) {
-            $method->chain(ColumnModifier::UNSIGNED());
+            $method->chain(ColumnModifier::UNSIGNED);
         }
 
         return $method;
@@ -36,6 +39,10 @@ class DoubleColumn implements ColumnTypeGenerator
      */
     private function getPrecisions(Column $column): array
     {
+        if ($this->atLeastLaravel11()) {
+            return [];
+        }
+
         if (
             $column->getPrecision() === self::EMPTY_PRECISION
             && $column->getScale() === self::EMPTY_SCALE

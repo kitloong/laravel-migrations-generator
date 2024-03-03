@@ -12,10 +12,10 @@ class CommentModifier implements Modifier
     /**
      * @inheritDoc
      */
-    public function chain(Method $method, Table $table, Column $column, ...$args): Method
+    public function chain(Method $method, Table $table, Column $column, mixed ...$args): Method
     {
         if ($column->getComment() !== null) {
-            $method->chain(ColumnModifier::COMMENT(), $column->getComment());
+            $method->chain(ColumnModifier::COMMENT, $column->getComment());
         }
 
         return $method;

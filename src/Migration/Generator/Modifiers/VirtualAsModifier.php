@@ -12,10 +12,10 @@ class VirtualAsModifier implements Modifier
     /**
      * @inheritDoc
      */
-    public function chain(Method $method, Table $table, Column $column, ...$args): Method
+    public function chain(Method $method, Table $table, Column $column, mixed ...$args): Method
     {
         if ($column->getVirtualDefinition() !== null) {
-            $method->chain(ColumnModifier::VIRTUAL_AS(), $column->getVirtualDefinition());
+            $method->chain(ColumnModifier::VIRTUAL_AS, $column->getVirtualDefinition());
         }
 
         return $method;

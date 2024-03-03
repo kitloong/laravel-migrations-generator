@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Generator\Columns;
 
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnModifier;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
@@ -18,7 +19,14 @@ class DecimalColumn implements ColumnTypeGenerator
     public function generate(Table $table, Column $column): Method
     {
         $precisions = $this->getDecimalPrecisions($column->getPrecision(), $column->getScale());
-        return new Method($column->getType(), $column->getName(), ...$precisions);
+
+        $method = new Method($column->getType(), $column->getName(), ...$precisions);
+
+        if ($column->isUnsigned()) {
+            $method->chain(ColumnModifier::UNSIGNED);
+        }
+
+        return $method;
     }
 
     /**
@@ -27,8 +35,12 @@ class DecimalColumn implements ColumnTypeGenerator
      *
      * @return int[] "[]|[precision]|[precision, scale]"
      */
-    private function getDecimalPrecisions(int $precision, int $scale): array
+    private function getDecimalPrecisions(?int $precision, int $scale): array
     {
+        if ($precision === null) {
+            return [];
+        }
+
         if ($precision === self::DEFAULT_PRECISION && $scale === self::DEFAULT_SCALE) {
             return [];
         }

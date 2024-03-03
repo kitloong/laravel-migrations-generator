@@ -16,36 +16,12 @@ class ViewMigration
 {
     use TableName;
 
-    /**
-     * @var \KitLoong\MigrationsGenerator\Support\MigrationNameHelper
-     */
-    private $migrationNameHelper;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter
-     */
-    private $migrationWriter;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Setting
-     */
-    private $setting;
-
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter
-     */
-    private $squashWriter;
-
     public function __construct(
-        MigrationNameHelper $migrationNameHelper,
-        MigrationWriter $migrationWriter,
-        Setting $setting,
-        SquashWriter $squashWriter
+        private MigrationNameHelper $migrationNameHelper,
+        private MigrationWriter $migrationWriter,
+        private Setting $setting,
+        private SquashWriter $squashWriter,
     ) {
-        $this->migrationNameHelper = $migrationNameHelper;
-        $this->migrationWriter     = $migrationWriter;
-        $this->setting             = $setting;
-        $this->squashWriter        = $squashWriter;
     }
 
     /**
@@ -64,7 +40,7 @@ class ViewMigration
             $this->makeMigrationClassName($view->getName()),
             new Collection([$up]),
             new Collection([$down]),
-            MigrationFileType::VIEW()
+            MigrationFileType::VIEW,
         );
 
         return $path;
@@ -107,7 +83,7 @@ class ViewMigration
         $withoutPrefix = $this->stripTablePrefix($view);
         return $this->migrationNameHelper->makeClassName(
             $this->setting->getViewFilename(),
-            $withoutPrefix
+            $withoutPrefix,
         );
     }
 
@@ -122,7 +98,7 @@ class ViewMigration
         return $this->migrationNameHelper->makeFilename(
             $this->setting->getViewFilename(),
             $this->setting->getDateForMigrationFilename(),
-            $withoutPrefix
+            $withoutPrefix,
         );
     }
 }

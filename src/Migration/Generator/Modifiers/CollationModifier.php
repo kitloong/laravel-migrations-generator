@@ -10,20 +10,14 @@ use KitLoong\MigrationsGenerator\Setting;
 
 class CollationModifier implements Modifier
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Setting
-     */
-    private $setting;
-
-    public function __construct(Setting $setting)
+    public function __construct(private Setting $setting)
     {
-        $this->setting = $setting;
     }
 
     /**
      * @inheritDoc
      */
-    public function chain(Method $method, Table $table, Column $column, ...$args): Method
+    public function chain(Method $method, Table $table, Column $column, mixed ...$args): Method
     {
         if (!$this->setting->isUseDBCollation()) {
             return $method;
@@ -35,7 +29,7 @@ class CollationModifier implements Modifier
         $collation = $column->getCollation();
 
         if ($collation !== null && $collation !== $tableCollation) {
-            $method->chain(ColumnModifier::COLLATION(), $collation);
+            $method->chain(ColumnModifier::COLLATION, $collation);
         }
 
         return $method;

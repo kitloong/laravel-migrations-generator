@@ -6,12 +6,9 @@ use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnModifier;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 class DatetimeColumn implements ColumnTypeGenerator
 {
-    use CheckMigrationMethod;
-
     private const DEFAULT_PRECISION = 0;
 
     /**
@@ -21,8 +18,8 @@ class DatetimeColumn implements ColumnTypeGenerator
     {
         $method = $this->makeMethod($column);
 
-        if ($column->isOnUpdateCurrentTimestamp() && $this->hasUseCurrentOnUpdate()) {
-            $method->chain(ColumnModifier::USE_CURRENT_ON_UPDATE());
+        if ($column->isOnUpdateCurrentTimestamp()) {
+            $method->chain(ColumnModifier::USE_CURRENT_ON_UPDATE);
         }
 
         return $method;

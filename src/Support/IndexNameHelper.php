@@ -8,14 +8,8 @@ use KitLoong\MigrationsGenerator\Setting;
 
 class IndexNameHelper
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Setting
-     */
-    private $setting;
-
-    public function __construct(Setting $setting)
+    public function __construct(private Setting $setting)
     {
-        $this->setting = $setting;
     }
 
     /**
@@ -31,13 +25,13 @@ class IndexNameHelper
         }
 
         if (
-            $index->getType()->equals(IndexType::PRIMARY())
+            $index->getType() === IndexType::PRIMARY
             && $index->getName() === ''
         ) {
             return true;
         }
 
-        $indexName = strtolower($table . '_' . implode('_', $index->getColumns()) . '_' . $index->getType());
+        $indexName = strtolower($table . '_' . implode('_', $index->getColumns()) . '_' . $index->getType()->value);
         $indexName = (string) str_replace(['-', '.'], '_', $indexName);
         return $indexName === $index->getName();
     }

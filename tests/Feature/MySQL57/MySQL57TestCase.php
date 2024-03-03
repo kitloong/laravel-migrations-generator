@@ -40,7 +40,7 @@ abstract class MySQL57TestCase extends FeatureTestCase
 
     protected function dumpSchemaAs(string $destination): void
     {
-        $password = (!empty(config('database.connections.mysql57.password')) ?
+        $password = (config('database.connections.mysql57.password') !== '' ?
             '-p\'' . config('database.connections.mysql57.password') . '\'' :
             '');
 
@@ -57,7 +57,7 @@ abstract class MySQL57TestCase extends FeatureTestCase
             config('database.connections.mysql57.port'),
             config('database.connections.mysql57.username'),
             config('database.connections.mysql57.database'),
-            $destination
+            $destination,
         );
         exec($command);
     }
