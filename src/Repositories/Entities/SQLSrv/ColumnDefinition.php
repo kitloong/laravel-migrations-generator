@@ -7,42 +7,30 @@ use stdClass;
 
 class ColumnDefinition
 {
-    /** @var string */
-    private $name;
+    private string $name;
 
-    /** @var string */
-    private $type;
+    private string $type;
 
-    /** @var int */
-    private $length;
+    private int $length;
 
-    /** @var bool */
-    private $notnull;
+    private bool $notnull;
 
-    /** @var string|null */
-    private $default;
+    private ?string $default = null;
 
-    /** @var int */
-    private $scale;
+    private int $scale;
 
-    /** @var int */
-    private $precision;
+    private int $precision;
 
-    /** @var bool */
-    private $autoincrement;
+    private bool $autoincrement;
 
-    /** @var string|null */
-    private $collation;
+    private ?string $collation = null;
 
-    /** @var string|null */
-    private $comment;
+    private ?string $comment = null;
 
     public function __construct(stdClass $column)
     {
         // Convert column property to case-insensitive
-        $lowerKey = (new Collection((array) $column))->mapWithKeys(function ($item, $key) {
-            return [strtolower($key) => $item];
-        });
+        $lowerKey = (new Collection((array) $column))->mapWithKeys(static fn ($item, $key) => [strtolower($key) => $item]);
 
         $this->name          = $lowerKey['name'];
         $this->type          = $lowerKey['type'];

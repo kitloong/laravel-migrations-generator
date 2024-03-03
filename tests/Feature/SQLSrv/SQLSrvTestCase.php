@@ -5,13 +5,10 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\SQLSrv;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
-use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
 abstract class SQLSrvTestCase extends FeatureTestCase
 {
-    use CheckLaravelVersion;
-
     /**
      * @inheritDoc
      */
@@ -41,23 +38,23 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         // Drop first.
         DB::statement("DROP TYPE IF EXISTS accountnumber");
 
-        // Create for custom column type test.
+        // Create for user defined type column test.
         DB::statement("CREATE TYPE accountnumber FROM [nvarchar](15) NULL");
     }
 
     protected function dumpSchemaAs(string $destination): void
     {
-        $tables = DB::getDoctrineSchemaManager()->listTableNames();
+        $tables = Schema::getTableListing();
         $sqls   = [];
 
         foreach ($tables as $table) {
             $sqls[] = "EXEC sp_help '" . $table . "';";
         }
 
-        $views = DB::getDoctrineSchemaManager()->listViews();
+        $views = array_column(Schema::getViews(), 'name');
 
         foreach ($views as $view) {
-            $sqls[] = "EXEC sp_helptext '" . $view->getName() . "';";
+            $sqls[] = "EXEC sp_helptext '" . $view . "';";
         }
 
         $procedures = $this->getAllProcedures();
@@ -74,7 +71,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
             config('database.connections.sqlsrv.password'),
             config('database.connections.sqlsrv.database'),
             implode('', $sqls),
-            $this->getStorageSqlPath('temp.sql')
+            $this->getStorageSqlPath('temp.sql'),
         );
         exec($command);
 
@@ -83,27 +80,9 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
     protected function refreshDatabase(): void
     {
-        $this->dropAllViews();
+        Schema::dropAllViews();
         Schema::dropAllTables();
         $this->dropAllProcedures();
-    }
-
-    protected function dropAllViews(): void
-    {
-        // `dropAllViews` available in Laravel >= 6.x
-        if ($this->atLeastLaravel6()) {
-            Schema::dropAllViews();
-            return;
-        }
-
-        // See https://github.com/laravel/framework/blob/6.x/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L360
-        DB::statement(
-            "DECLARE @sql NVARCHAR(MAX) = N'';
-            SELECT @sql += 'DROP VIEW ' + QUOTENAME(OBJECT_SCHEMA_NAME(object_id)) + '.' + QUOTENAME(name) + ';'
-            FROM sys.views;
-
-            EXEC sp_executesql @sql;"
-        );
     }
 
     protected function dropAllProcedures(): void
@@ -126,7 +105,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
                 INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
             WHERE type = 'P'
                 AND definition IS NOT NULL
-            ORDER BY name"
+            ORDER BY name",
         );
     }
 

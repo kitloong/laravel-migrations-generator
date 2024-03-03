@@ -23,10 +23,10 @@ class MariaDBRepository extends Repository
                 "SELECT * FROM information_schema.CHECK_CONSTRAINTS
                 WHERE TABLE_NAME = '$table'
                     AND CONSTRAINT_SCHEMA = '" . DB::getDatabaseName() . "'
-                    AND CHECK_CLAUSE LIKE '%json_valid(`$column`)%'"
+                    AND CHECK_CLAUSE LIKE '%json_valid(`$column`)%'",
             );
             return $column === null ? null : new CheckConstraint($column);
-        } catch (QueryException $exception) {
+        } catch (QueryException) {
             return null;
         }
     }

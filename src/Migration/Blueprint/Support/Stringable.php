@@ -21,12 +21,12 @@ trait Stringable
 
         foreach ($lines as $i => $line) {
             // Skip tab if the line is first line or line break.
-            if ($i === 0 || $line === Space::LINE_BREAK()->getValue()) {
+            if ($i === 0 || $line === Space::LINE_BREAK->value) {
                 $content .= $line;
                 continue;
             }
 
-            $content .= Space::LINE_BREAK() . str_repeat(Space::TAB(), $numberOfPrefixTab) . $line;
+            $content .= Space::LINE_BREAK->value . str_repeat(Space::TAB->value, $numberOfPrefixTab) . $line;
         }
 
         return $content;
@@ -34,10 +34,8 @@ trait Stringable
 
     /**
      * Convert $value to printable string.
-     *
-     * @param  mixed  $value
      */
-    public function convertFromAnyTypeToString($value): string
+    public function convertFromAnyTypeToString(mixed $value): string
     {
         switch (gettype($value)) {
             case 'string':
@@ -60,6 +58,10 @@ trait Stringable
                 // Wrap with DB::raw();
                 if ($value instanceof Expression) {
                     return 'DB::raw("' . $this->escapeDoubleQuote((string) DB::getQueryGrammar()->getValue($value)) . '")';
+                }
+
+                if ($value instanceof Space) {
+                    return $value->value;
                 }
 
                 return (string) $value;
@@ -90,8 +92,6 @@ trait Stringable
      */
     public function mapArrayItemsToString(array $list): array
     {
-        return (new Collection($list))->map(function ($v) {
-            return $this->convertFromAnyTypeToString($v);
-        })->toArray();
+        return (new Collection($list))->map(fn ($v) => $this->convertFromAnyTypeToString($v))->toArray();
     }
 }

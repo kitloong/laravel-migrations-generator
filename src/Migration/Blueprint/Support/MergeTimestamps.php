@@ -30,7 +30,7 @@ trait MergeTimestamps
                 continue;
             }
 
-            if (!$this->checkTimestamps(ColumnName::CREATED_AT(), $line, $tz)) {
+            if (!$this->checkTimestamps(ColumnName::CREATED_AT, $line, $tz)) {
                 continue;
             }
 
@@ -46,7 +46,7 @@ trait MergeTimestamps
             return $lines;
         }
 
-        if (!$this->checkTimestamps(ColumnName::UPDATED_AT(), $updatedAt, $tz)) {
+        if (!$this->checkTimestamps(ColumnName::UPDATED_AT, $updatedAt, $tz)) {
             return $lines;
         }
 
@@ -76,7 +76,7 @@ trait MergeTimestamps
             return false;
         }
 
-        if ($method->getValues()[0] !== $columnName->getValue()) {
+        if ($method->getValues()[0] !== $columnName->value) {
             return false;
         }
 
@@ -84,8 +84,8 @@ trait MergeTimestamps
             return false;
         }
 
-        return $method->getChains()[0]->getName() === ColumnModifier::NULLABLE()->getValue()
-            && empty($method->getChains()[0]->getValues());
+        return $method->getChains()[0]->getName() === ColumnModifier::NULLABLE
+            && count($method->getChains()[0]->getValues()) === 0;
     }
 
     /**
@@ -95,11 +95,11 @@ trait MergeTimestamps
      */
     private function isPossibleTimestampsColumn(Method $method, bool $tz): bool
     {
-        if (Driver::SQLSRV()->getValue() === DB::getDriverName()) {
-            return $method->getName() === $this->sqlSrvTimestampsColumnType($tz)->getValue();
+        if (Driver::SQLSRV->value === DB::getDriverName()) {
+            return $method->getName() === $this->sqlSrvTimestampsColumnType($tz);
         }
 
-        return $method->getName() === $this->timestampsColumnType($tz)->getValue();
+        return $method->getName() === $this->timestampsColumnType($tz);
     }
 
     /**
@@ -112,10 +112,10 @@ trait MergeTimestamps
     private function sqlSrvTimestampsColumnType(bool $tz): ColumnType
     {
         if ($tz) {
-            return ColumnType::DATETIME_TZ();
+            return ColumnType::DATETIME_TZ;
         }
 
-        return ColumnType::DATETIME();
+        return ColumnType::DATETIME;
     }
 
     /**
@@ -127,10 +127,10 @@ trait MergeTimestamps
     private function timestampsColumnType(bool $tz): ColumnType
     {
         if ($tz) {
-            return ColumnType::TIMESTAMP_TZ();
+            return ColumnType::TIMESTAMP_TZ;
         }
 
-        return ColumnType::TIMESTAMP();
+        return ColumnType::TIMESTAMP;
     }
 
     /**
@@ -138,7 +138,7 @@ trait MergeTimestamps
      *
      * @param  bool  $tz  Is timezone.
      */
-    private function timestamps(bool $tz): string
+    private function timestamps(bool $tz): ColumnType
     {
         if ($tz) {
             return ColumnType::TIMESTAMPS_TZ;

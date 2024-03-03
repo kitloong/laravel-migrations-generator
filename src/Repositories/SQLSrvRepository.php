@@ -34,7 +34,7 @@ class SQLSrvRepository extends Repository
                     JOIN sys.index_columns AS idxcol ON idx.object_id = idxcol.object_id AND idx.index_id = idxcol.index_id
                     JOIN sys.columns AS col ON idxcol.object_id = col.object_id AND idxcol.column_id = col.column_id
                 WHERE " . $this->getTableWhereClause($table, 'scm.name', 'tbl.name') . "
-                    AND idx.type = " . self::SPATIAL_INDEX_ID
+                    AND idx.type = " . self::SPATIAL_INDEX_ID,
         );
         $definitions = new Collection();
 
@@ -82,7 +82,7 @@ class SQLSrvRepository extends Repository
                             AND prop.name = 'MS_Description'
                 WHERE obj.type = 'U'
                     AND " . $this->getTableWhereClause($table, 'scm.name', 'obj.name') . "
-                    AND col.name = " . $this->quoteStringLiteral($column)
+                    AND col.name = " . $this->quoteStringLiteral($column),
         );
         return $result === null ? null : new ColumnDefinition($result);
     }
@@ -106,31 +106,9 @@ class SQLSrvRepository extends Repository
                         '$name'
                     )
                     AND definition IS NOT NULL
-                ORDER BY name"
+                ORDER BY name",
         );
         return $view === null ? null : new ViewDefinition($view->name, $view->definition);
-    }
-
-    /**
-     * Returns the where clause to filter schema and table name in a query.
-     *
-     * @param  string  $table  The full qualified name of the table.
-     * @param  string  $schemaColumn  The name of the column to compare the schema to in the where clause.
-     * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
-     * @see https://github.com/doctrine/dbal/blob/3.1.x/src/Platforms/SQLServer2012Platform.php#L1064
-     */
-    private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
-    {
-        $schema = 'SCHEMA_NAME()';
-
-        if (strpos($table, '.') !== false) {
-            [$schema, $table] = explode('.', $table);
-            $schema           = $this->quoteStringLiteral($schema);
-        }
-
-        $table = $this->quoteStringLiteral($table);
-
-        return sprintf('(%s = %s AND %s = %s)', $tableColumn, $table, $schemaColumn, $schema);
     }
 
     /**
@@ -147,7 +125,7 @@ class SQLSrvRepository extends Repository
                 INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
             WHERE type = 'P'
                 AND definition IS NOT NULL
-            ORDER BY name"
+            ORDER BY name",
         );
 
         foreach ($procedures as $procedure) {
@@ -176,7 +154,7 @@ class SQLSrvRepository extends Repository
                     AND con.parent_object_id = col.object_id
                 WHERE t.name = '$table'
                     AND col.name = '$column'
-                    AND con.definition IS NOT NULL"
+                    AND con.definition IS NOT NULL",
         );
 
         if ($result === null) {
@@ -193,11 +171,11 @@ class SQLSrvRepository extends Repository
     }
 
     /**
-     * Get a list of custom data types.
+     * Get a list of user-defined types.
      *
      * @return \Illuminate\Support\Collection<int, string>
      */
-    public function getCustomDataTypes(): Collection
+    public function getUserDefinedTypes(): Collection
     {
         $rows  = DB::select("SELECT * FROM sys.types WHERE is_user_defined = 1");
         $types = new Collection();
@@ -209,5 +187,26 @@ class SQLSrvRepository extends Repository
         }
 
         return $types;
+    }
+
+    /**
+     * Returns the where clause to filter schema and table name in a query.
+     *
+     * @param  string  $table  The full qualified name of the table.
+     * @param  string  $schemaColumn  The name of the column to compare the schema to in the where clause.
+     * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
+     */
+    private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
+    {
+        $schema = 'SCHEMA_NAME()';
+
+        if (strpos($table, '.') !== false) {
+            [$schema, $table] = explode('.', $table);
+            $schema           = $this->quoteStringLiteral($schema);
+        }
+
+        $table = $this->quoteStringLiteral($table);
+
+        return sprintf('(%s = %s AND %s = %s)', $tableColumn, $table, $schemaColumn, $schema);
     }
 }

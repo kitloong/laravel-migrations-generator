@@ -2,18 +2,17 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature;
 
-use Doctrine\DBAL\Schema\View;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
+use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\TestCase;
 
 abstract class FeatureTestCase extends TestCase
 {
-    use AssetNameQuote;
+    abstract protected function refreshDatabase(): void;
 
     /**
      * @inheritDoc
@@ -24,7 +23,7 @@ abstract class FeatureTestCase extends TestCase
 
         try {
             $this->loadDotenv();
-        } catch (InvalidPathException $exception) {
+        } catch (InvalidPathException) {
             $this->markTestSkipped('Skipped feature tests.');
         }
     }
@@ -91,71 +90,36 @@ abstract class FeatureTestCase extends TestCase
         return storage_path('sql') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
-    protected function migrateGeneral(string $connection): void
+    protected function migrateGeneral(): void
     {
-        $this->migrateFromTemplate($connection, base_path('tests/resources/database/migrations/general'));
+        $this->migrateFromTemplate(base_path('tests/resources/database/migrations/general'));
     }
 
-    protected function migrateCollation(string $connection): void
+    protected function migrateCollation(): void
     {
-        $this->migrateFromTemplate($connection, base_path('tests/resources/database/migrations/collation'));
+        $this->migrateFromTemplate(base_path('tests/resources/database/migrations/collation'));
     }
 
-    protected function migrateVendors(string $connection): void
+    protected function migrateVendors(): void
     {
-        $this->migrateFromVendorsTemplate($connection, base_path('tests/resources/database/migrations/vendors'));
+        $this->migrateFromVendorsTemplate(base_path('tests/resources/database/migrations/vendors'));
     }
 
-    protected function migrateFromTemplate(string $connection, string $templatePath): void
+    protected function migrateFromTemplate(string $templatePath): void
     {
         File::copyDirectory($templatePath, $this->getStorageFromPath());
-
-        foreach (File::files($this->getStorageFromPath()) as $file) {
-            $content = str_replace([
-                '[db]',
-                '_DB_',
-            ], [
-                $connection,
-                ucfirst("$connection"),
-            ], $file->getContents());
-
-            File::put($this->getStorageFromPath($file->getBasename()), $content);
-            File::move(
-                $this->getStorageFromPath($file->getBasename()),
-                $this->getStorageFromPath(str_replace('_db_', "_{$connection}_", $file->getBasename()))
-            );
-        }
-
-        $this->runMigrationsFrom($connection, $this->getStorageFromPath());
+        $this->runMigrationsFrom($this->getStorageFromPath());
     }
 
-    protected function migrateFromVendorsTemplate(string $connection, string $templatePath): void
+    protected function migrateFromVendorsTemplate(string $templatePath): void
     {
         File::copyDirectory($templatePath, $this->getStorageFromVendorsPath());
-
-        foreach (File::files($this->getStorageFromVendorsPath()) as $file) {
-            $content = str_replace([
-                '[db]',
-                '_DB_',
-            ], [
-                $connection,
-                ucfirst("$connection"),
-            ], $file->getContents());
-
-            File::put($this->getStorageFromVendorsPath($file->getBasename()), $content);
-            File::move(
-                $this->getStorageFromVendorsPath($file->getBasename()),
-                $this->getStorageFromVendorsPath(str_replace('_db_', "_{$connection}_", $file->getBasename()))
-            );
-        }
-
-        $this->runMigrationsFrom($connection, $this->getStorageFromVendorsPath());
+        $this->runMigrationsFrom($this->getStorageFromVendorsPath());
     }
 
-    protected function runMigrationsFrom(string $connection, string $path): void
+    protected function runMigrationsFrom(string $path): void
     {
         $this->artisan('migrate', [
-            '--database' => $connection,
             '--realpath' => true,
             '--path'     => $path,
         ]);
@@ -191,20 +155,20 @@ abstract class FeatureTestCase extends TestCase
             'migrate:generate',
             array_merge([
                 '--path' => $this->getStorageMigrationsPath(),
-            ], $options)
+            ], $options),
         );
         $command->expectsQuestion('Do you want to log these migrations in the migrations table?', true);
 
         if ($expectConnectionQuestion) {
             $command->expectsQuestion(
                 'Log into current connection: ' . $options['--connection'] . '? [Y = ' . $options['--connection'] . ', n = ' . config('database.default') . ' (default connection)]',
-                true
+                true,
             );
         }
 
         $command->expectsQuestion(
             'Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the "first" migration. [Default: 0]',
-            '0'
+            '0',
         );
     }
 
@@ -238,17 +202,7 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function getTableNames(): array
     {
-        return collect(DB::getDoctrineSchemaManager()->listTableNames())
-            ->map(function ($table) {
-                // The table name may contain quotes.
-                // Always trim quotes before set into list.
-                if ($this->isIdentifierQuoted($table)) {
-                    return $this->trimQuotes($table);
-                }
-
-                return $table;
-            })
-            ->toArray();
+        return Schema::getTableListing();
     }
 
     /**
@@ -258,12 +212,6 @@ abstract class FeatureTestCase extends TestCase
      */
     protected function getViewNames(): array
     {
-        return collect(DB::getDoctrineSchemaManager()->listViews())
-            ->map(function (View $view) {
-                return $view->getName();
-            })
-            ->toArray();
+        return array_column(Schema::getViews(), 'name');
     }
-
-    abstract protected function refreshDatabase(): void;
 }

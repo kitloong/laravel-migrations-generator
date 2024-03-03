@@ -3,12 +3,9 @@
 namespace KitLoong\MigrationsGenerator\Tests;
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 
 abstract class TestMigration extends Migration
 {
-    protected function quoteIdentifier(string $string): string
-    {
-        return DB::getDoctrineConnection()->quoteIdentifier($string);
-    }
+    use AssetNameQuote;
 }

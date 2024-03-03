@@ -12,14 +12,8 @@ use KitLoong\MigrationsGenerator\Migration\Enum\Space;
 
 class MigrationWriter
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Migration\Writer\MigrationStub
-     */
-    private $migrationStub;
-
-    public function __construct(MigrationStub $migrationStub)
+    public function __construct(private MigrationStub $migrationStub)
     {
-        $this->migrationStub = $migrationStub;
     }
 
     /**
@@ -36,7 +30,7 @@ class MigrationWriter
         string $className,
         Collection $up,
         Collection $down,
-        MigrationFileType $migrationFileType
+        MigrationFileType $migrationFileType,
     ): void {
         try {
             $stub = $this->migrationStub->getStub($stubPath);
@@ -50,7 +44,7 @@ class MigrationWriter
                 $useDBFacade = true;
             }
 
-            $use = implode(Space::LINE_BREAK(), $this->getNamespaces($migrationFileType, $useDBFacade));
+            $use = implode(Space::LINE_BREAK->value, $this->getNamespaces($migrationFileType, $useDBFacade));
 
             // Create directory if it doesn't exist
             $directory = dirname($path);
@@ -61,9 +55,9 @@ class MigrationWriter
 
             File::put(
                 $path,
-                $this->migrationStub->populateStub($stub, $use, $className, $upString, $downString)
+                $this->migrationStub->populateStub($stub, $use, $className, $upString, $downString),
             );
-        } catch (FileNotFoundException $e) {
+        } catch (FileNotFoundException) {
             // Do nothing.
         }
     }
@@ -74,8 +68,8 @@ class MigrationWriter
     private function getNamespaces(MigrationFileType $migrationFileType, bool $useDBFacade): array
     {
         if (
-            $migrationFileType->equals(MigrationFileType::VIEW())
-            || $migrationFileType->equals(MigrationFileType::PROCEDURE())
+            $migrationFileType === MigrationFileType::VIEW
+            || $migrationFileType === MigrationFileType::PROCEDURE
         ) {
             return [
                 'use Illuminate\Database\Migrations\Migration;',
@@ -105,8 +99,6 @@ class MigrationWriter
      */
     private function prettifyToString(Collection $blueprints): string
     {
-        return $blueprints->map(function (WritableBlueprint $blueprint) {
-            return $blueprint->toString();
-        })->implode(Space::LINE_BREAK() . Space::TAB() . Space::TAB()); // Add tab to prettify
+        return $blueprints->map(static fn (WritableBlueprint $blueprint) => $blueprint->toString())->implode(Space::LINE_BREAK->value . Space::TAB->value . Space::TAB->value); // Add tab to prettify
     }
 }

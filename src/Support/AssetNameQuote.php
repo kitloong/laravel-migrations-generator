@@ -2,12 +2,13 @@
 
 namespace KitLoong\MigrationsGenerator\Support;
 
+use Illuminate\Support\Facades\DB;
+use KitLoong\MigrationsGenerator\Enum\Driver;
+
 trait AssetNameQuote
 {
     /**
      * Checks if this identifier is quoted.
-     *
-     * @see \Doctrine\DBAL\Schema\AbstractAsset::isIdentifierQuoted()
      */
     public function isIdentifierQuoted(string $identifier): bool
     {
@@ -16,11 +17,30 @@ trait AssetNameQuote
 
     /**
      * Trim quotes from the identifier.
-     *
-     * @see \Doctrine\DBAL\Schema\AbstractAsset::trimQuotes()
      */
     public function trimQuotes(string $identifier): string
     {
         return str_replace(['`', '"', '[', ']'], '', $identifier);
+    }
+
+    /**
+     * Wrap a single string in keyword identifiers.
+     */
+    public function quoteIdentifier(string $value): string
+    {
+        switch (DB::getDriverName()) {
+            case Driver::SQLSRV->value:
+                return $value === '*' ? $value : '[' . str_replace(']', ']]', $value) . ']';
+
+            case Driver::MYSQL->value:
+                return $value === '*' ? $value : '`' . str_replace('`', '``', $value) . '`';
+
+            default:
+                if ($value !== '*') {
+                    return '"' . str_replace('"', '""', $value) . '"';
+                }
+
+                return $value;
+        }
     }
 }

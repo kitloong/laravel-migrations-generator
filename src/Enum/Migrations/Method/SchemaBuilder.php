@@ -2,24 +2,16 @@
 
 namespace KitLoong\MigrationsGenerator\Enum\Migrations\Method;
 
-use MyCLabs\Enum\Enum;
-
 /**
  * Preserved method names for migration files by the framework.
  *
  * @see https://laravel.com/docs/master/migrations#tables
- * @method static self CONNECTION()
- * @method static self CREATE()
- * @method static self DROP_IF_EXISTS()
- * @method static self HAS_TABLE()
- * @method static self TABLE()
- * @extends \MyCLabs\Enum\Enum<string>
  */
-final class SchemaBuilder extends Enum
+enum SchemaBuilder: string implements MethodName
 {
-    private const CONNECTION     = 'connection';
-    private const CREATE         = 'create';
-    private const DROP_IF_EXISTS = 'dropIfExists';
-    private const HAS_TABLE      = 'hasTable';
-    private const TABLE          = 'table';
+    case CONNECTION     = 'connection';
+    case CREATE         = 'create';
+    case DROP_IF_EXISTS = 'dropIfExists';
+    case HAS_TABLE      = 'hasTable';
+    case TABLE          = 'table';
 }

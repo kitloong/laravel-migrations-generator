@@ -73,10 +73,8 @@ class Migrator extends DefaultMigrator
 
     /**
      * Resolve migration instance with backward compatibility.
-     *
-     * @return object
      */
-    protected function resolveMigration(string $path)
+    protected function resolveMigration(string $path): object
     {
         if (method_exists(DefaultMigrator::class, 'resolvePath')) {
             return $this->resolvePath($path);
@@ -84,7 +82,7 @@ class Migrator extends DefaultMigrator
 
         // @codeCoverageIgnoreStart
         return $this->resolve(
-            $this->getMigrationName($path)
+            $this->getMigrationName($path),
         );
         // @codeCoverageIgnoreEnd
     }

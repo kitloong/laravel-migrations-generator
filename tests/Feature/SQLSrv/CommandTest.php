@@ -6,39 +6,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class CommandTest extends SQLSrvTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // Method `typeDateTime` is using different implementation since v5.8
-        // It is hard to create unified UT across Laravel <= v5.7 and >= v5.8
-        // To simplify, dropping UT check for version <= 5.7.
-        // https://github.com/laravel/framework/blob/5.7/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L523
-        // https://github.com/laravel/framework/blob/5.8/src/Illuminate/Database/Schema/Grammars/SqlServerGrammar.php#L538
-        if ($this->atLeastLaravel5Dot8()) {
-            return;
-        }
-
-        $this->markTestSkipped();
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('sqlsrv');
-
-            DB::statement(
-                "ALTER TABLE all_columns_sqlsrv ADD accountnumber accountnumber NOT NULL"
-            );
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -51,11 +24,11 @@ class CommandTest extends SQLSrvTestCase
     public function testUnsupportedColumns(): void
     {
         DB::statement(
-            "CREATE TABLE custom_sqlsrv (
+            "CREATE TABLE custom (
                 money money,
                 smallmoney smallmoney,
                 [name.dot] varchar(255)
-            )"
+            )",
         );
 
         $this->generateMigrations();
@@ -65,23 +38,23 @@ class CommandTest extends SQLSrvTestCase
 
         $this->assertStringContainsString(
             '$table->decimal(\'money\', 19, 4)->nullable();',
-            $migration->getContents()
+            $migration->getContents(),
         );
 
         $this->assertStringContainsString(
             '$table->decimal(\'smallmoney\', 10, 4)->nullable();',
-            $migration->getContents()
+            $migration->getContents(),
         );
 
         $this->assertStringContainsString(
             '$table->string(\'name.dot\')->nullable()',
-            $migration->getContents()
+            $migration->getContents(),
         );
     }
 
     public function testDown(): void
     {
-        $this->migrateGeneral('sqlsrv');
+        $this->migrateGeneral();
 
         $this->truncateMigrationsTable();
 
@@ -97,13 +70,10 @@ class CommandTest extends SQLSrvTestCase
         $this->assertSame(0, DB::table('migrations')->count());
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     public function testCollation(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateCollation('sqlsrv');
+            $this->migrateCollation();
         };
 
         $generateMigrations = function (): void {
@@ -115,10 +85,10 @@ class CommandTest extends SQLSrvTestCase
 
     public function testGenerateXml(): void
     {
-        $this->migrateGeneral('sqlsrv');
+        $this->migrateGeneral();
 
         // Test xml column
-        DB::statement("alter table all_columns_sqlsrv add xml xml");
+        DB::statement("alter table all_columns add xml xml");
 
         $this->truncateMigrationsTable();
 
@@ -129,9 +99,9 @@ class CommandTest extends SQLSrvTestCase
 
     public function testSkipVendor(): void
     {
-        $this->migrateGeneral('sqlsrv');
+        $this->migrateGeneral();
 
-        $this->migrateVendors('sqlsrv');
+        $this->migrateVendors();
 
         // Load migrations from vendors path to mock vendors migration.
         // Loaded migrations should not be generated.
@@ -140,19 +110,17 @@ class CommandTest extends SQLSrvTestCase
         $tables = $this->getTableNames();
 
         $vendors = [
-            'personal_access_tokens_sqlsrv',
-            'telescope_entries_sqlsrv',
-            'telescope_entries_tags_sqlsrv',
-            'telescope_monitoring_sqlsrv',
+            'personal_access_tokens',
+            'telescope_entries',
+            'telescope_entries_tags',
+            'telescope_monitoring',
         ];
 
         foreach ($vendors as $vendor) {
             $this->assertContains($vendor, $tables);
         }
 
-        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
-            return !in_array($table, $vendors);
-        })
+        $tablesWithoutVendors = (new Collection($tables))->filter(static fn ($table) => !in_array($table, $vendors))
             ->values()
             ->all();
 
@@ -162,16 +130,13 @@ class CommandTest extends SQLSrvTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $generatedTables = $this->getTableNames();
 
         $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
     private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
@@ -185,14 +150,14 @@ class CommandTest extends SQLSrvTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('sqlsrv', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

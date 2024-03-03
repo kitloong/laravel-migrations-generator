@@ -11,14 +11,8 @@ use KitLoong\MigrationsGenerator\Support\IndexNameHelper;
 
 class IndexGenerator
 {
-    /**
-     * @var \KitLoong\MigrationsGenerator\Support\IndexNameHelper
-     */
-    private $indexNameHelper;
-
-    public function __construct(IndexNameHelper $indexNameHelper)
+    public function __construct(private IndexNameHelper $indexNameHelper)
     {
-        $this->indexNameHelper = $indexNameHelper;
     }
 
     public function generate(Table $table, Index $index): Method
@@ -61,7 +55,7 @@ class IndexGenerator
             // Check if index is using framework default naming.
             // The older version "spatialIndex" modifier does not accept index name as argument.
             if (
-                $index->getType()->equals(IndexType::SPATIAL_INDEX())
+                $index->getType() === IndexType::SPATIAL_INDEX
                 && !$this->indexNameHelper->shouldSkipName($name, $index)
             ) {
                 return $carry;
@@ -69,7 +63,7 @@ class IndexGenerator
 
             // If name is not empty, primary name should be set explicitly.
             if (
-                $index->getType()->equals(IndexType::PRIMARY())
+                $index->getType() === IndexType::PRIMARY
                 && $index->getName() !== ''
             ) {
                 return $carry;
@@ -99,13 +93,9 @@ class IndexGenerator
      */
     public function getNotChainableIndexes(Collection $indexes, Collection $chainableIndexes): Collection
     {
-        $chainableNames = $chainableIndexes->map(function (Index $index) {
-            return $index->getName();
-        });
+        $chainableNames = $chainableIndexes->map(static fn (Index $index) => $index->getName());
 
-        return $indexes->filter(function (Index $index) use ($chainableNames) {
-            return !$chainableNames->contains($index->getName());
-        });
+        return $indexes->filter(static fn (Index $index) => !$chainableNames->contains($index->getName()));
     }
 
     /**

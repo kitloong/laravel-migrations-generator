@@ -7,12 +7,48 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 use PDO;
 
 class StackedCommandTest extends MySQL57TestCase
 {
-    use CheckLaravelVersion;
+    public function testRunAsCall(): void
+    {
+        Schema::create('migration_table', static function (Blueprint $table): void {
+            $table->increments('id');
+        });
+
+        Schema::connection('migration2')->create('migration2_table', static function (Blueprint $table): void {
+            $table->increments('id');
+        });
+
+        $this->assertTrue(Schema::hasTable('migration_table'));
+        $this->assertTrue(Schema::connection('migration2')->hasTable('migration2_table'));
+
+        $this->generateMigrations();
+
+        // Setting should reset.
+        $this->assertEquals(app(Setting::class), new Setting());
+
+        $this->generateMigrations(['--connection' => 'migration2']);
+
+        $files = File::files($this->getStorageMigrationsPath());
+        $this->assertCount(2, $files);
+
+        foreach ($files as $file) {
+            if (Str::contains($file->getBasename(), 'create_migration_table')) {
+                $this->assertStringContainsString(
+                    'migration_table',
+                    $file->getContents(),
+                );
+                continue;
+            }
+
+            $this->assertStringContainsString(
+                'migration2_table',
+                $file->getContents(),
+            );
+        }
+    }
 
     /**
      * @inheritDoc
@@ -46,11 +82,6 @@ class StackedCommandTest extends MySQL57TestCase
     {
         parent::setUp();
 
-        // `Schema::createDatabase` available since Laravel 8.
-        if (!$this->atLeastLaravel8()) {
-            $this->markTestSkipped();
-        }
-
         Schema::createDatabase('migration2');
     }
 
@@ -59,44 +90,5 @@ class StackedCommandTest extends MySQL57TestCase
         Schema::dropDatabaseIfExists('migration2');
 
         parent::tearDown();
-    }
-
-    public function testRunAsCall(): void
-    {
-        Schema::create('migration_table', function (Blueprint $table): void {
-            $table->increments('id');
-        });
-
-        Schema::connection('migration2')->create('migration2_table', function (Blueprint $table): void {
-            $table->increments('id');
-        });
-
-        $this->assertTrue(Schema::hasTable('migration_table'));
-        $this->assertTrue(Schema::connection('migration2')->hasTable('migration2_table'));
-
-        $this->generateMigrations();
-
-        // Setting should reset.
-        $this->assertEquals(app(Setting::class), new Setting());
-
-        $this->generateMigrations(['--connection' => 'migration2']);
-
-        $files = File::files($this->getStorageMigrationsPath());
-        $this->assertCount(2, $files);
-
-        foreach ($files as $file) {
-            if (Str::contains($file->getBasename(), 'create_migration_table')) {
-                $this->assertStringContainsString(
-                    'migration_table',
-                    $file->getContents()
-                );
-                continue;
-            }
-
-            $this->assertStringContainsString(
-                'migration2_table',
-                $file->getContents()
-            );
-        }
     }
 }

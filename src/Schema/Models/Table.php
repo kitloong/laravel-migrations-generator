@@ -24,11 +24,11 @@ interface Table extends Model
     public function getColumns(): Collection;
 
     /**
-     * Get a list of custom columns.
+     * Get a list of user-defined type columns.
      *
-     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\CustomColumn>
+     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Schema\Models\UDTColumn>
      */
-    public function getCustomColumns(): Collection;
+    public function getUdtColumns(): Collection;
 
     /**
      * Get a list of indexes.

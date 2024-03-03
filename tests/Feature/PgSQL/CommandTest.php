@@ -4,14 +4,8 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class CommandTest extends PgSQLTestCase
 {
     use CheckLaravelVersion;
@@ -19,49 +13,20 @@ class CommandTest extends PgSQLTestCase
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
-
-            // Test timestamp default now()
-            DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL"
-            );
-
-            DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
-            );
-
-            DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL"
-            );
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
             $this->generateMigrations();
         };
 
-        $beforeVerify = function (): void {
-            $this->assertLineExistsThenReplace(
-                $this->getStorageSqlPath('actual.sql'),
-                'timestamp_defaultnow timestamp(0) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL'
-            );
-
-            $this->assertLineExistsThenReplace(
-                $this->getStorageSqlPath('expected.sql'),
-                'timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL'
-            );
-        };
-
-        $this->verify($migrateTemplates, $generateMigrations, $beforeVerify);
+        $this->verify($migrateTemplates, $generateMigrations);
     }
 
     public function testSquashUp(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
-
-            DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
-            );
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -74,7 +39,7 @@ class CommandTest extends PgSQLTestCase
     public function testCollation(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateCollation('pgsql');
+            $this->migrateCollation();
         };
 
         $generateMigrations = function (): void {
@@ -86,26 +51,26 @@ class CommandTest extends PgSQLTestCase
 
     public function testIgnore(): void
     {
-        $this->migrateGeneral('pgsql');
+        $this->migrateGeneral();
 
         $this->truncateMigrationsTable();
 
         $this->generateMigrations([
             '--ignore' => implode(',', [
-                'name-with-hyphen-pgsql',
-                'name-with-hyphen-pgsql_view',
+                'name-with-hyphen',
+                'name-with-hyphen_view',
             ]),
         ]);
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $tables = $this->getTableNames();
         $views  = $this->getViewNames();
 
-        $this->assertNotContains('name-with-hyphen-pgsql', $tables);
-        $this->assertNotContains('public."name-with-hyphen-pgsql_view"', $views);
+        $this->assertNotContains('name-with-hyphen', $tables);
+        $this->assertNotContains('public."name-with-hyphen_view"', $views);
     }
 
     /**
@@ -113,12 +78,8 @@ class CommandTest extends PgSQLTestCase
      *
      * @see https://laravel.com/docs/9.x/upgrade#postgres-schema-configuration
      */
-    public function testRunWithSearchPath(): void
+    public function testWithSearchPath(): void
     {
-        if (!$this->atLeastLaravel9()) {
-            $this->markTestSkipped();
-        }
-
         // Unset `schema`
         Config::set('database.connections.pgsql.schema');
         $this->assertNull(Config::get('database.connections.pgsql.schema'));
@@ -127,7 +88,7 @@ class CommandTest extends PgSQLTestCase
         Config::set('database.connections.pgsql.search_path', 'public');
 
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -140,11 +101,7 @@ class CommandTest extends PgSQLTestCase
     public function testWithHasTable(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
-
-            DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
-            );
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -157,11 +114,7 @@ class CommandTest extends PgSQLTestCase
     public function testWithHasTableSquash(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
-
-            DB::statement(
-                "ALTER TABLE all_columns_pgsql ADD COLUMN status my_status NOT NULL"
-            );
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -173,9 +126,9 @@ class CommandTest extends PgSQLTestCase
 
     public function testSkipVendor(): void
     {
-        $this->migrateGeneral('pgsql');
+        $this->migrateGeneral();
 
-        $this->migrateVendors('pgsql');
+        $this->migrateVendors();
 
         // Load migrations from vendors path to mock vendors migration.
         // Loaded migrations should not be generated.
@@ -184,19 +137,17 @@ class CommandTest extends PgSQLTestCase
         $tables = $this->getTableNames();
 
         $vendors = [
-            'personal_access_tokens_pgsql',
-            'telescope_entries_pgsql',
-            'telescope_entries_tags_pgsql',
-            'telescope_monitoring_pgsql',
+            'personal_access_tokens',
+            'telescope_entries',
+            'telescope_entries_tags',
+            'telescope_monitoring',
         ];
 
         foreach ($vendors as $vendor) {
             $this->assertContains($vendor, $tables);
         }
 
-        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
-            return !in_array($table, $vendors);
-        })
+        $tablesWithoutVendors = (new Collection($tables))->filter(static fn ($table) => !in_array($table, $vendors))
             ->values()
             ->all();
 
@@ -206,7 +157,7 @@ class CommandTest extends PgSQLTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $generatedTables = $this->getTableNames();
 
@@ -216,7 +167,7 @@ class CommandTest extends PgSQLTestCase
         $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
-    private function verify(callable $migrateTemplates, callable $generateMigrations, ?callable $beforeVerify = null): void
+    private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();
 
@@ -229,35 +180,14 @@ class CommandTest extends PgSQLTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
-        $beforeVerify === null ?: $beforeVerify();
-
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
-        );
-    }
-
-    private function assertLineExistsThenReplace(string $file, string $line): void
-    {
-        $this->assertTrue(
-            str_contains(
-                File::get($file),
-                $line
-            )
-        );
-
-        File::put(
-            $file,
-            str_replace(
-                $line,
-                'replaced',
-                File::get($file)
-            )
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

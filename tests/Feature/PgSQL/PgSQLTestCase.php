@@ -2,8 +2,9 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
 abstract class PgSQLTestCase extends FeatureTestCase
@@ -36,7 +37,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
     {
         parent::setUp();
 
-        // Create for custom column type test.
+        // Create for user defined type column test.
         DB::statement("CREATE TYPE my_status AS enum ('PENDING', 'ACTIVE', 'SUSPENDED')");
     }
 
@@ -56,7 +57,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
             config('database.connections.pgsql.port'),
             config('database.connections.pgsql.username'),
             config('database.connections.pgsql.database'),
-            $destination
+            $destination,
         );
         exec($command);
     }
@@ -69,21 +70,23 @@ abstract class PgSQLTestCase extends FeatureTestCase
 
     protected function dropAllTablesAndViews(): void
     {
-        $tables = DB::getDoctrineSchemaManager()->listTableNames();
+        (new Collection(Schema::getTables()))
+            ->each(static function (array $table): void {
+                if ($table['name'] === 'spatial_ref_sys') {
+                    return;
+                }
 
-        foreach ($tables as $table) {
-            if (Str::startsWith($table, 'tiger.')) {
-                continue;
-            }
+                // Schema name defined in the framework configuration.
+                $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
 
-            if (Str::startsWith($table, 'topology.')) {
-                continue;
-            }
+                if ($table['schema'] !== $searchPath) {
+                    return;
+                }
 
-            // CASCADE, automatically drop objects that depend on the table.
-            // This statement will drop views which depend on the table.
-            DB::statement("DROP TABLE IF EXISTS $table cascade");
-        }
+                // CASCADE, automatically drop objects that depend on the table.
+                // This statement will drop views which depend on the table.
+                DB::statement("DROP TABLE IF EXISTS \"" . $table['name'] . "\" cascade");
+            });
     }
 
     protected function dropAllProcedures(): void
@@ -95,7 +98,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
             FROM pg_catalog.pg_proc
                 JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
             WHERE prokind = 'p'
-                AND pg_namespace.nspname = '" . $searchPath . "'"
+                AND pg_namespace.nspname = '" . $searchPath . "'",
         );
 
         foreach ($procedures as $procedure) {

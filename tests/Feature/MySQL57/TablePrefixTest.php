@@ -4,20 +4,10 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL57;
 
 class TablePrefixTest extends MySQL57TestCase
 {
-    /**
-     * @inheritDoc
-     */
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('database.connections.mysql57.prefix', 'kit_');
-    }
-
     public function testTablePrefix(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('mysql57');
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -25,6 +15,16 @@ class TablePrefixTest extends MySQL57TestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('database.connections.mysql57.prefix', 'prefix_');
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations): void
@@ -40,14 +40,14 @@ class TablePrefixTest extends MySQL57TestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('mysql57', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

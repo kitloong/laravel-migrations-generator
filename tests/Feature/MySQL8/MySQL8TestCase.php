@@ -40,7 +40,7 @@ abstract class MySQL8TestCase extends FeatureTestCase
 
     protected function dumpSchemaAs(string $destination): void
     {
-        $password = (!empty(config('database.connections.mysql8.password')) ?
+        $password = (config('database.connections.mysql8.password') !== '' ?
             '-p\'' . config('database.connections.mysql8.password') . '\'' :
             '');
 
@@ -56,7 +56,7 @@ abstract class MySQL8TestCase extends FeatureTestCase
             config('database.connections.mysql8.port'),
             config('database.connections.mysql8.username'),
             config('database.connections.mysql8.database'),
-            $destination
+            $destination,
         );
         exec($command);
     }

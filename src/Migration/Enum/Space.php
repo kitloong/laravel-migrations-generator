@@ -2,15 +2,8 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Enum;
 
-use MyCLabs\Enum\Enum;
-
-/**
- * @method static self LINE_BREAK()
- * @method static self TAB()
- * @extends \MyCLabs\Enum\Enum<string>
- */
-final class Space extends Enum
+enum Space: string
 {
-    private const LINE_BREAK = PHP_EOL;
-    private const TAB        = '    '; // 4 spaces tab
+    case LINE_BREAK = "\n";
+    case TAB        = '    '; // 4 spaces tab
 }

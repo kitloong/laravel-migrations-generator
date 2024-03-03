@@ -5,16 +5,12 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\MySQL8;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-/**
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- */
 class CommandTest extends MySQL8TestCase
 {
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('mysql8');
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -26,7 +22,7 @@ class CommandTest extends MySQL8TestCase
 
     public function testDown(): void
     {
-        $this->migrateGeneral('mysql8');
+        $this->migrateGeneral();
 
         $this->truncateMigrationsTable();
 
@@ -45,7 +41,7 @@ class CommandTest extends MySQL8TestCase
     public function testCollation(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateCollation('mysql8');
+            $this->migrateCollation();
         };
 
         $generateMigrations = function (): void {
@@ -57,9 +53,9 @@ class CommandTest extends MySQL8TestCase
 
     public function testSkipVendor(): void
     {
-        $this->migrateGeneral('mysql8');
+        $this->migrateGeneral();
 
-        $this->migrateVendors('mysql8');
+        $this->migrateVendors();
 
         // Load migrations from vendors path to mock vendors migration.
         // Loaded migrations should not be generated.
@@ -68,19 +64,17 @@ class CommandTest extends MySQL8TestCase
         $tables = $this->getTableNames();
 
         $vendors = [
-            'personal_access_tokens_mysql8',
-            'telescope_entries_mysql8',
-            'telescope_entries_tags_mysql8',
-            'telescope_monitoring_mysql8',
+            'personal_access_tokens',
+            'telescope_entries',
+            'telescope_entries_tags',
+            'telescope_monitoring',
         ];
 
         foreach ($vendors as $vendor) {
             $this->assertContains($vendor, $tables);
         }
 
-        $tablesWithoutVendors = (new Collection($tables))->filter(function ($table) use ($vendors) {
-            return !in_array($table, $vendors);
-        })
+        $tablesWithoutVendors = (new Collection($tables))->filter(static fn ($table) => !in_array($table, $vendors))
             ->values()
             ->all();
 
@@ -90,7 +84,7 @@ class CommandTest extends MySQL8TestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('mysql8', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $generatedTables = $this->getTableNames();
 
@@ -110,14 +104,14 @@ class CommandTest extends MySQL8TestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('mysql8', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

@@ -2,28 +2,12 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
-use Illuminate\Support\Facades\DB;
-
 class TablePrefixTest extends PgSQLTestCase
 {
-    /**
-     * @inheritDoc
-     */
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app['config']->set('database.connections.pgsql.prefix', 'kit_');
-    }
-
     public function testTablePrefix(): void
     {
         $migrateTemplates = function (): void {
-            $this->migrateGeneral('pgsql');
-
-            DB::statement(
-                "ALTER TABLE kit_all_columns_pgsql ADD COLUMN status my_status NOT NULL"
-            );
+            $this->migrateGeneral();
         };
 
         $generateMigrations = function (): void {
@@ -31,6 +15,16 @@ class TablePrefixTest extends PgSQLTestCase
         };
 
         $this->verify($migrateTemplates, $generateMigrations);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getEnvironmentSetUp($app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('database.connections.pgsql.prefix', 'prefix_');
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations): void
@@ -46,14 +40,14 @@ class TablePrefixTest extends PgSQLTestCase
 
         $this->refreshDatabase();
 
-        $this->runMigrationsFrom('pgsql', $this->getStorageMigrationsPath());
+        $this->runMigrationsFrom($this->getStorageMigrationsPath());
 
         $this->truncateMigrationsTable();
         $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
 
         $this->assertFileEqualsIgnoringOrder(
             $this->getStorageSqlPath('expected.sql'),
-            $this->getStorageSqlPath('actual.sql')
+            $this->getStorageSqlPath('actual.sql'),
         );
     }
 }

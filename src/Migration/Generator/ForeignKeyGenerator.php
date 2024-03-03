@@ -19,15 +19,15 @@ class ForeignKeyGenerator
     {
         $method = $this->makeMethod($foreignKey);
 
-        $method->chain(Foreign::REFERENCES(), $foreignKey->getForeignColumns())
-            ->chain(Foreign::ON(), $this->stripTablePrefix($foreignKey->getForeignTableName()));
+        $method->chain(Foreign::REFERENCES, $foreignKey->getForeignColumns())
+            ->chain(Foreign::ON, $this->stripTablePrefix($foreignKey->getForeignTableName()));
 
         if ($foreignKey->getOnUpdate() !== null) {
-            $method->chain(Foreign::ON_UPDATE(), $foreignKey->getOnUpdate());
+            $method->chain(Foreign::ON_UPDATE, $foreignKey->getOnUpdate());
         }
 
         if ($foreignKey->getOnDelete() !== null) {
-            $method->chain(Foreign::ON_DELETE(), $foreignKey->getOnDelete());
+            $method->chain(Foreign::ON_DELETE, $foreignKey->getOnDelete());
         }
 
         return $method;
@@ -39,10 +39,22 @@ class ForeignKeyGenerator
     public function generateDrop(ForeignKey $foreignKey): Method
     {
         if ($this->shouldSkipName($foreignKey)) {
-            return new Method(Foreign::DROP_FOREIGN(), $this->makeLaravelForeignKeyName($foreignKey));
+            return new Method(Foreign::DROP_FOREIGN, $this->makeLaravelForeignKeyName($foreignKey));
         }
 
-        return new Method(Foreign::DROP_FOREIGN(), $foreignKey->getName());
+        return new Method(Foreign::DROP_FOREIGN, $foreignKey->getName());
+    }
+
+    /**
+     * Create a new Method with foreignKey and columns.
+     */
+    public function makeMethod(ForeignKey $foreignKey): Method
+    {
+        if ($this->shouldSkipName($foreignKey)) {
+            return new Method(Foreign::FOREIGN, $foreignKey->getLocalColumns());
+        }
+
+        return new Method(Foreign::FOREIGN, $foreignKey->getLocalColumns(), $foreignKey->getName());
     }
 
     /**
@@ -63,17 +75,8 @@ class ForeignKeyGenerator
     private function makeLaravelForeignKeyName(ForeignKey $foreignKey): string
     {
         $name = strtolower(
-            $foreignKey->getTableName() . '_' . implode('_', $foreignKey->getLocalColumns()) . '_foreign'
+            $foreignKey->getTableName() . '_' . implode('_', $foreignKey->getLocalColumns()) . '_foreign',
         );
         return str_replace(['-', '.'], '_', $name);
-    }
-
-    public function makeMethod(ForeignKey $foreignKey): Method
-    {
-        if ($this->shouldSkipName($foreignKey)) {
-            return new Method(Foreign::FOREIGN(), $foreignKey->getLocalColumns());
-        }
-
-        return new Method(Foreign::FOREIGN(), $foreignKey->getLocalColumns(), $foreignKey->getName());
     }
 }

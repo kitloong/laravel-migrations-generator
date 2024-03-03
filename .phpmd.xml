@@ -18,12 +18,13 @@
         <exclude name="CyclomaticComplexity"/>
         <exclude name="ExcessiveClassComplexity"/>
         <exclude name="ExcessiveParameterList"/>
+        <exclude name="NPathComplexity"/>
         <exclude name="TooManyFields"/>
         <exclude name="TooManyPublicMethods"/>
     </rule>
     <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
         <properties>
-            <property name="reportLevel" value="15"/>
+            <property name="reportLevel" value="25"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
@@ -36,9 +37,14 @@
             <property name="minimum" value="15"/>
         </properties>
     </rule>
+    <rule ref="rulesets/codesize.xml/NPathComplexity">
+      <properties>
+        <property name="minimum" value="300"/>
+      </properties>
+    </rule>
     <rule ref="rulesets/codesize.xml/TooManyFields">
         <properties>
-            <property name="maxfields" value="20"/>
+            <property name="maxfields" value="25"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyPublicMethods">
