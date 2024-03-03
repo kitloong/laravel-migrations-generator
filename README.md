@@ -1,8 +1,8 @@
 # Laravel Migrations Generator
 
-![Style check CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/check.yml/badge.svg?branch=6.x)
-![Tests CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/tests.yml/badge.svg?branch=6.x)
-[![codecov](https://codecov.io/gh/kitloong/laravel-migrations-generator/branch/6.x/graph/badge.svg?token=U6ZRDPY6QZ)](https://codecov.io/gh/kitloong/laravel-migrations-generator)
+![Style check CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/lint.yml/badge.svg?branch=7.x)
+![Tests CI](https://github.com/kitloong/laravel-migrations-generator/actions/workflows/tests.yml/badge.svg?branch=7.x)
+[![codecov](https://codecov.io/gh/kitloong/laravel-migrations-generator/branch/7.x/graph/badge.svg?token=U6ZRDPY6QZ)](https://codecov.io/gh/kitloong/laravel-migrations-generator)
 [![Latest Stable Version](https://poser.pugx.org/kitloong/laravel-migrations-generator/v/stable.png)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 [![Total Downloads](http://poser.pugx.org/kitloong/laravel-migrations-generator/downloads)](https://packagist.org/packages/kitloong/laravel-migrations-generator)
 [![License](https://poser.pugx.org/kitloong/laravel-migrations-generator/license.png)](LICENSE)
