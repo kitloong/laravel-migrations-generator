@@ -28,7 +28,8 @@
         "friendsofphp/php-cs-fixer": "^3.1",
         "larastan/larastan": "^1.0|^2.0",
         "slevomat/coding-standard": "^8.0",
-        "phpmd/phpmd": "^2.10"
+        "phpmd/phpmd": "^2.10",
+        "barryvdh/laravel-ide-helper": "^2.0|^3.0"
     },
     "autoload": {
         "psr-4": {

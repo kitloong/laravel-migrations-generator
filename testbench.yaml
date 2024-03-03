@@ -1,3 +1,3 @@
 providers:
-  #  - Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider
+  - Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider
   - KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider
