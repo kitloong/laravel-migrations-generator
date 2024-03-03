@@ -8,13 +8,10 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
-use KitLoong\MigrationsGenerator\Support\AssetNameQuote;
 use KitLoong\MigrationsGenerator\Tests\TestCase;
 
 abstract class FeatureTestCase extends TestCase
 {
-    use AssetNameQuote;
-
     abstract protected function refreshDatabase(): void;
 
     /**

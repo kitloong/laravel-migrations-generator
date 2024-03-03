@@ -3,12 +3,9 @@
 namespace KitLoong\MigrationsGenerator\Tests\Feature\MariaDB;
 
 use Illuminate\Support\Facades\DB;
-use KitLoong\MigrationsGenerator\Support\CheckMigrationMethod;
 
 class CommandTest extends MariaDBTestCase
 {
-    use CheckMigrationMethod;
-
     public function testRun(): void
     {
         $migrateTemplates = function (): void {
