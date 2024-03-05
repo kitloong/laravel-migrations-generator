@@ -18,38 +18,38 @@
         </include>
     </source>
     <php>
-        <env name="MYSQL57_HOST" value="mysql57"/>
+        <env name="MYSQL57_HOST" value="127.0.0.1"/>
         <env name="MYSQL57_PORT" value="3306"/>
         <env name="MYSQL57_DATABASE" value="migration"/>
-        <env name="MYSQL57_USERNAME" value=""/>
+        <env name="MYSQL57_USERNAME" value="root"/>
         <env name="MYSQL57_PASSWORD" value=""/>
 
-        <env name="MYSQL8_HOST" value="mysql8"/>
-        <env name="MYSQL8_PORT" value="3306"/>
+        <env name="MYSQL8_HOST" value="127.0.0.1"/>
+        <env name="MYSQL8_PORT" value="33062"/>
         <env name="MYSQL8_DATABASE" value="migration"/>
-        <env name="MYSQL8_USERNAME" value=""/>
+        <env name="MYSQL8_USERNAME" value="root"/>
         <env name="MYSQL8_PASSWORD" value=""/>
 
-        <env name="POSTGRES_HOST" value="postgis"/>
+        <env name="POSTGRES_HOST" value="127.0.0.1"/>
         <env name="POSTGRES_PORT" value="5432"/>
         <env name="POSTGRES_DATABASE" value="migration"/>
-        <env name="POSTGRES_USERNAME" value=""/>
-        <env name="POSTGRES_PASSWORD" value=""/>
+        <env name="POSTGRES_USERNAME" value="root"/>
+        <env name="POSTGRES_PASSWORD" value="!QAZ2wsx"/>
 
-        <env name="SQLSRV_HOST" value="sqlsrv"/>
+        <env name="SQLSRV_HOST" value="127.0.0.1"/>
         <env name="SQLSRV_PORT" value="1433"/>
         <env name="SQLSRV_DATABASE" value="migration"/>
-        <env name="SQLSRV_USERNAME" value=""/>
-        <env name="SQLSRV_PASSWORD" value=""/>
+        <env name="SQLSRV_USERNAME" value="sa"/>
+        <env name="SQLSRV_PASSWORD" value="!QAZ2wsx"/>
 
-        <env name="MARIADB_HOST" value="mariadb"/>
-        <env name="MARIADB_PORT" value="3306"/>
+        <env name="MARIADB_HOST" value="127.0.0.1"/>
+        <env name="MARIADB_PORT" value="3307"/>
         <env name="MARIADB_DATABASE" value="migration"/>
-        <env name="MARIADB_USERNAME" value=""/>
+        <env name="MARIADB_USERNAME" value="root"/>
         <env name="MARIADB_PASSWORD" value=""/>
 
         <env name="SQLITE_DATABASE" value="./database/migration.sqlite"/>
 
-        <env name="MYSQLDUMP_HAS_OPTION_SKIP_COLUMN_STATISTICS" value="false"/>
+        <env name="MYSQLDUMP_HAS_OPTION_SKIP_COLUMN_STATISTICS" value="true"/>
     </php>
 </phpunit>

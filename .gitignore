@@ -5,7 +5,6 @@
 /migrations
 /storage
 /vendor
-.env
 .php-cs-fixer.cache
 .php_cs.cache
 .phpstorm.meta.php

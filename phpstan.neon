@@ -11,8 +11,6 @@ parameters:
     level: 6
 
     ignoreErrors:
-        - '#Class Dotenv\\Dotenv constructor invoked with 1 parameter, 4 required.#'
-        - '#Parameter \#1 \$store of class Dotenv\\Dotenv constructor expects Dotenv\\Store\\StoreInterface, string given.#'
         - '#Method KitLoong\\MigrationsGenerator\\Database\\(.*)Schema::getViews\(\) should return Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Schema\\Models\\View> but returns Illuminate\\Support\\Collection<(int|\(int\|string\)), KitLoong\\MigrationsGenerator\\Database\\Models\\(.*)\\(.*)View>.#'
         - '#Method KitLoong\\MigrationsGenerator\\Database\\(.*)Schema::getProcedures\(\) should return Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Schema\\Models\\Procedure> but returns Illuminate\\Support\\Collection<(int|\(int\|string\)), KitLoong\\MigrationsGenerator\\Database\\Models\\(.*)\\(.*)Procedure>.#'
         - '#Method KitLoong\\MigrationsGenerator\\Database\\(.*)Schema::getForeignKeys\(\) should return Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Schema\\Models\\ForeignKey> but returns Illuminate\\Support\\Collection<(int|\(int\|string\)), KitLoong\\MigrationsGenerator\\Database\\Models\\(.*)\\(.*)ForeignKey>.#'
