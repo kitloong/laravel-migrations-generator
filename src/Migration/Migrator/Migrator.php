@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migrator as DefaultMigrator;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use KitLoong\MigrationsGenerator\Support\Regex;
+use Illuminate\Support\Str;
 
 class Migrator extends DefaultMigrator
 {
@@ -41,7 +41,7 @@ class Migrator extends DefaultMigrator
                     $queries = $this->getMigrationQueries($file->getPathname());
 
                     foreach ($queries as $q) {
-                        $matched = Regex::match('/^create table ["|`](.*?)["|`]/', $q['query']);
+                        $matched = Str::match('/^create table ["|`](.*?)["|`]/', $q['query']);
 
                         if ($matched === '') {
                             continue;
@@ -76,14 +76,6 @@ class Migrator extends DefaultMigrator
      */
     protected function resolveMigration(string $path): object
     {
-        if (method_exists(DefaultMigrator::class, 'resolvePath')) {
-            return $this->resolvePath($path);
-        }
-
-        // @codeCoverageIgnoreStart
-        return $this->resolve(
-            $this->getMigrationName($path),
-        );
-        // @codeCoverageIgnoreEnd
+        return $this->resolvePath($path);
     }
 }
