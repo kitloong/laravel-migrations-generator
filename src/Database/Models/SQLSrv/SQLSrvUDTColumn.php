@@ -26,7 +26,6 @@ class SQLSrvUDTColumn extends DatabaseUDTColumn
             'autoIncrement' => $column['auto_increment'],
             'default'       => $this->parseDefault($column['default']),
             'nullable'      => $column['nullable'],
-            //            'after' => "id",
         ]);
 
         $sqls    = $blueprint->toSql(Schema::getConnection(), Schema::getConnection()->getSchemaGrammar());

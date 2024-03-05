@@ -25,11 +25,10 @@ If applicable, add screenshots to help explain your problem.
 
 **Details (please complete the following information):**
  - DB: [e.g. MySQL]
- - DB Version: [e.g. 5.7.37]
+ - DB Version: [e.g. 8.0.30]
  - Laravel Version: 
  - PHP Version: 
- - Migrations Generator Version: 
- - Doctrine DBAL Version [`composer info doctrine/dbal | grep versions`]:
+ - Migrations Generator Version:
 
 **Additional context**
 Add any other context about the problem here.

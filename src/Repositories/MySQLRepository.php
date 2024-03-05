@@ -74,7 +74,7 @@ class MySQLRepository extends Repository
     public function getProcedures(): Collection
     {
         $list       = new Collection();
-        $procedures = DB::select("SHOW PROCEDURE STATUS WHERE Db='" . DB::getDatabaseName() . "'");
+        $procedures = DB::select("SHOW PROCEDURE STATUS WHERE Db = '" . DB::getDatabaseName() . "'");
 
         foreach ($procedures as $procedure) {
             // Change all keys to lowercase.
@@ -83,6 +83,12 @@ class MySQLRepository extends Repository
 
             // Change all keys to lowercase.
             $createProcArr = array_change_key_case((array) $createProc);
+
+            // https://mariadb.com/kb/en/show-create-procedure/
+            if ($createProcArr['create procedure'] === null || $createProcArr['create procedure'] === '') {
+                continue;
+            }
+
             $list->push(new ProcedureDefinition($procedureArr['name'], $createProcArr['create procedure']));
         }
 

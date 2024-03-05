@@ -4,10 +4,10 @@ namespace KitLoong\MigrationsGenerator;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
-use KitLoong\MigrationsGenerator\Database\MySQLSchema as DBALMySQLSchema;
-use KitLoong\MigrationsGenerator\Database\PgSQLSchema as DBALPgSQLSchema;
-use KitLoong\MigrationsGenerator\Database\SQLiteSchema as DBALSQLiteSchema;
-use KitLoong\MigrationsGenerator\Database\SQLSrvSchema as DBALSQLSrvSchema;
+use KitLoong\MigrationsGenerator\Database\MySQLSchema as DatabaseMySQLSchema;
+use KitLoong\MigrationsGenerator\Database\PgSQLSchema as DatabasePgSQLSchema;
+use KitLoong\MigrationsGenerator\Database\SQLiteSchema as DatabaseSQLiteSchema;
+use KitLoong\MigrationsGenerator\Database\SQLSrvSchema as DatabaseSQLSrvSchema;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\BooleanColumn;
 use KitLoong\MigrationsGenerator\Migration\Generator\Columns\DatetimeColumn;
@@ -58,10 +58,10 @@ class MigrationsGeneratorServiceProvider extends ServiceProvider
 
         foreach (
             [
-                MySQLSchema::class  => DBALMySQLSchema::class,
-                PgSQLSchema::class  => DBALPgSQLSchema::class,
-                SQLiteSchema::class => DBALSQLiteSchema::class,
-                SQLSrvSchema::class => DBALSQLSrvSchema::class,
+                MySQLSchema::class  => DatabaseMySQLSchema::class,
+                PgSQLSchema::class  => DatabasePgSQLSchema::class,
+                SQLiteSchema::class => DatabaseSQLiteSchema::class,
+                SQLSrvSchema::class => DatabaseSQLSrvSchema::class,
             ] as $abstract => $concrete
         ) {
             $this->app->bind($abstract, $concrete);

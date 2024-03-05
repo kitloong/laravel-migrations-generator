@@ -62,20 +62,4 @@ class Regex
 
         return null;
     }
-
-    /**
-     * Get the string matching the given pattern.
-     *
-     * @see \Illuminate\Support\Str::match() Available since Laravel v8
-     */
-    public static function match(string $pattern, string $subject): string
-    {
-        preg_match($pattern, $subject, $matches);
-
-        if (!$matches) {
-            return '';
-        }
-
-        return $matches[1] ?? $matches[0];
-    }
 }
