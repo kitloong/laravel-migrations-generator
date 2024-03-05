@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Database\Models\PgSQL;
 
+use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Database\Models\DatabaseColumn;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
@@ -78,6 +79,15 @@ class PgSQLColumn extends DatabaseColumn
         }
 
         return parent::escapeDefault($default);
+    }
+
+    protected function setTypeToIncrements(bool $supportUnsigned): void
+    {
+        parent::setTypeToIncrements($supportUnsigned);
+
+        if (Str::startsWith($this->default, 'nextval(') && Str::endsWith($this->default, '::regclass)')) {
+            $this->default = null;
+        }
     }
 
     /**
