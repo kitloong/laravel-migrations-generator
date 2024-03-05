@@ -91,6 +91,10 @@ class PgSQLRepository extends Repository
         );
 
         foreach ($procedures as $procedure) {
+            if ($procedure->definition === null || $procedure->definition === '') {
+                continue;
+            }
+
             $definition = str_replace('$procedure', '$', $procedure->definition);
             $list->push(new ProcedureDefinition($procedure->proname, $definition));
         }

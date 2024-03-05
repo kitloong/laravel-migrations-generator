@@ -68,6 +68,10 @@ class SQLSrvRepository extends Repository
         );
 
         foreach ($procedures as $procedure) {
+            if ($procedure->definition === null || $procedure->definition === '') {
+                continue;
+            }
+
             $list->push(new ProcedureDefinition($procedure->name, $procedure->definition));
         }
 
