@@ -2,7 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature;
 
-use Dotenv\Dotenv;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -12,20 +11,6 @@ use KitLoong\MigrationsGenerator\Tests\TestCase;
 abstract class FeatureTestCase extends TestCase
 {
     abstract protected function refreshDatabase(): void;
-
-//    /**
-//     * @inheritDoc
-//     */
-//    protected function getEnvironmentSetUp($app): void
-//    {
-//        parent::getEnvironmentSetUp($app);
-//
-//        try {
-//            $this->loadDotenv();
-//        } catch (InvalidPathException) {
-//            $this->markTestSkipped('Skipped feature tests.');
-//        }
-//    }
 
     protected function setUp(): void
     {
@@ -39,26 +24,6 @@ abstract class FeatureTestCase extends TestCase
         $this->refreshDatabase();
 
         parent::tearDown();
-    }
-
-    protected function loadDotenv(): void
-    {
-        if (method_exists(Dotenv::class, 'createImmutable')) {
-            $dotenv = Dotenv::createImmutable(base_path());
-            $dotenv->load();
-            return;
-        }
-
-        if (method_exists(Dotenv::class, 'create')) {
-            /** @noinspection PhpParamsInspection */
-            $dotenv = Dotenv::create(base_path());
-            $dotenv->load();
-            return;
-        }
-
-        /** @noinspection PhpParamsInspection */
-        $dotenv = new Dotenv(base_path());
-        $dotenv->load();
     }
 
     protected function prepareStoragePath(): void
