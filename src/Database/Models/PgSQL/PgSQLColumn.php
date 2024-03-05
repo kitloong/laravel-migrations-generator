@@ -85,9 +85,11 @@ class PgSQLColumn extends DatabaseColumn
     {
         parent::setTypeToIncrements($supportUnsigned);
 
-        if (Str::startsWith($this->default, 'nextval(') && Str::endsWith($this->default, '::regclass)')) {
-            $this->default = null;
+        if (!Str::startsWith($this->default, 'nextval(') || !Str::endsWith($this->default, '::regclass)')) {
+            return;
         }
+
+        $this->default = null;
     }
 
     /**
