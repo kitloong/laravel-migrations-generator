@@ -16,8 +16,5 @@
     <include>
       <directory suffix=".php">src</directory>
     </include>
-    <exclude>
-      <directory>src/DBAL/Types</directory>
-    </exclude>
     </source>
 </phpunit>
