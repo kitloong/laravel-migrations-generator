@@ -116,7 +116,7 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
           composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
-      - name: Setup .env
+      - name: Setup environment
         run: |
           mkdir ./database
           composer run action-env-setup

@@ -3,7 +3,6 @@
 namespace KitLoong\MigrationsGenerator\Tests\Feature;
 
 use Dotenv\Dotenv;
-use Dotenv\Exception\InvalidPathException;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -14,19 +13,19 @@ abstract class FeatureTestCase extends TestCase
 {
     abstract protected function refreshDatabase(): void;
 
-    /**
-     * @inheritDoc
-     */
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        try {
-            $this->loadDotenv();
-        } catch (InvalidPathException) {
-            $this->markTestSkipped('Skipped feature tests.');
-        }
-    }
+//    /**
+//     * @inheritDoc
+//     */
+//    protected function getEnvironmentSetUp($app): void
+//    {
+//        parent::getEnvironmentSetUp($app);
+//
+//        try {
+//            $this->loadDotenv();
+//        } catch (InvalidPathException) {
+//            $this->markTestSkipped('Skipped feature tests.');
+//        }
+//    }
 
     protected function setUp(): void
     {
