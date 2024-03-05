@@ -74,7 +74,7 @@ class MySQLRepository extends Repository
     public function getProcedures(): Collection
     {
         $list       = new Collection();
-        $procedures = DB::select("SHOW PROCEDURE STATUS WHERE Db='" . DB::getDatabaseName() . "'");
+        $procedures = DB::select("SHOW PROCEDURE STATUS WHERE Db = '" . DB::getDatabaseName() . "'");
 
         foreach ($procedures as $procedure) {
             // Change all keys to lowercase.
