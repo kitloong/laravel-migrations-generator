@@ -29,7 +29,6 @@ class PgSQLUDTColumn extends DatabaseUDTColumn
             'comment'       => $column['comment'],
             'default'       => $this->parseDefault($column['default'], ColumnType::STRING), // Assume is string
             'nullable'      => $column['nullable'],
-            //            'after' => "id",
         ]);
 
         $sqls    = $blueprint->toSql(Schema::getConnection(), Schema::getConnection()->getSchemaGrammar());
