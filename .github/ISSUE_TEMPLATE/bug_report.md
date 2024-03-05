@@ -28,8 +28,7 @@ If applicable, add screenshots to help explain your problem.
  - DB Version: [e.g. 5.7.37]
  - Laravel Version: 
  - PHP Version: 
- - Migrations Generator Version: 
- - Doctrine DBAL Version [`composer info doctrine/dbal | grep versions`]:
+ - Migrations Generator Version:
 
 **Additional context**
 Add any other context about the problem here.
