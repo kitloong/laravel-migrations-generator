@@ -42,6 +42,10 @@ class ForeignKeyGenerator
             return new Method(Foreign::DROP_FOREIGN, $this->makeLaravelForeignKeyName($foreignKey));
         }
 
+        if ($foreignKey->getName() === null) {
+            return new Method(Foreign::DROP_FOREIGN);
+        }
+
         return new Method(Foreign::DROP_FOREIGN, $foreignKey->getName());
     }
 
@@ -51,6 +55,10 @@ class ForeignKeyGenerator
     public function makeMethod(ForeignKey $foreignKey): Method
     {
         if ($this->shouldSkipName($foreignKey)) {
+            return new Method(Foreign::FOREIGN, $foreignKey->getLocalColumns());
+        }
+
+        if ($foreignKey->getName() === null) {
             return new Method(Foreign::FOREIGN, $foreignKey->getLocalColumns());
         }
 

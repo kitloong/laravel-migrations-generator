@@ -9,7 +9,7 @@ use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
  */
 abstract class DatabaseForeignKey implements ForeignKey
 {
-    protected string $name;
+    protected ?string $name;
 
     protected string $tableName;
 
@@ -46,7 +46,7 @@ abstract class DatabaseForeignKey implements ForeignKey
     /**
      * @inheritDoc
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
