@@ -59,6 +59,11 @@ abstract class FeatureTestCase extends TestCase
         $this->migrateFromTemplate(base_path('tests/resources/database/migrations/general'));
     }
 
+    protected function migrateForeign(): void
+    {
+        $this->migrateFromTemplate(base_path('tests/resources/database/migrations/foreign'));
+    }
+
     protected function migrateCollation(): void
     {
         $this->migrateFromTemplate(base_path('tests/resources/database/migrations/collation'));

@@ -17,6 +17,6 @@ parameters:
         - '#(.*)expects Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Migration\\Blueprint\\WritableBlueprint>, Illuminate\\Support\\Collection<int, KitLoong\\MigrationsGenerator\\Migration\\Blueprint\\(.*)Blueprint> given.#'
 
     excludePaths:
-        - ./*/*/FileToBeExcluded.php
+        - ./tests/resources/**
 
     checkMissingIterableValueType: true

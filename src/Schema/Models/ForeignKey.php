@@ -7,7 +7,7 @@ interface ForeignKey extends Model
     /**
      * Get the foreign key name.
      */
-    public function getName(): string;
+    public function getName(): ?string;
 
     /**
      * Get the table name.

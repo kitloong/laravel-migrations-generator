@@ -43,7 +43,7 @@ use KitLoong\MigrationsGenerator\Support\TableName;
  * }
  *
  * @phpstan-type SchemaForeignKey array{
- *     name: string,
+ *     name: ?string,
  *     columns: string[],
  *     foreign_schema: ?string,
  *     foreign_table: string,
