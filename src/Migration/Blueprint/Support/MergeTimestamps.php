@@ -14,9 +14,9 @@ trait MergeTimestamps
     /**
      * Merges created_at and updated_at into timestamps or timestampsTz.
      *
-     * @param  \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[]  $lines  TableBlueprint lines.
+     * @param  array<int, \KitLoong\MigrationsGenerator\Migration\Blueprint\Method|\KitLoong\MigrationsGenerator\Migration\Blueprint\Property|\KitLoong\MigrationsGenerator\Migration\Enum\Space>  $lines  TableBlueprint lines.
      * @param  bool  $tz  Is timezone.
-     * @return \KitLoong\MigrationsGenerator\Migration\Blueprint\Property[]|\KitLoong\MigrationsGenerator\Migration\Blueprint\Method[]|string[]  TableBlueprint lines after merged.
+     * @return array<int, \KitLoong\MigrationsGenerator\Migration\Blueprint\Method|\KitLoong\MigrationsGenerator\Migration\Blueprint\Property|\KitLoong\MigrationsGenerator\Migration\Enum\Space>  TableBlueprint lines after merged.
      */
     public function merge(array $lines, bool $tz): array
     {
