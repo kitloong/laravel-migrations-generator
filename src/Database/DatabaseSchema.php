@@ -78,6 +78,7 @@ abstract class DatabaseSchema implements Schema
     {
         if ($this->tables === []) {
             foreach (SchemaFacade::getTables() as $table) {
+                /** @var SchemaTable $table */
                 $this->tables[$table['name']] = $table;
             }
         }

@@ -126,6 +126,11 @@ abstract class FeatureTestCase extends TestCase
                 '--path' => $this->getStorageMigrationsPath(),
             ], $options),
         );
+
+        if (is_int($command)) {
+            return;
+        }
+
         $command->expectsQuestion('Do you want to log these migrations in the migrations table?', true);
 
         if ($expectConnectionQuestion) {

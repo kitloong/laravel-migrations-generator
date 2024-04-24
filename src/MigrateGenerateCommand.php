@@ -277,7 +277,7 @@ class MigrateGenerateCommand extends Command
             return;
         }
 
-        $this->repository->setSource(DB::getName());
+        $this->repository->setSource(DB::getName() ?? '');
 
         if ($defaultConnection !== DB::getName()) {
             if (

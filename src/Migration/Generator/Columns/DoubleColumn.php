@@ -35,7 +35,7 @@ class DoubleColumn implements ColumnTypeGenerator
      * Get precision and scale.
      * Return empty if both precision and scale are 0.
      *
-     * @return int[] "[]|[precision, scale]"
+     * @return array<int, int|null> "[]|[precision, scale]"
      */
     private function getPrecisions(Column $column): array
     {
