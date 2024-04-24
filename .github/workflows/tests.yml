@@ -129,3 +129,4 @@ jobs:
         with:
           name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
           files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
