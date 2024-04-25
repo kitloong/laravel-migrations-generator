@@ -17,10 +17,10 @@ class ViewMigration
     use TableName;
 
     public function __construct(
-        private MigrationNameHelper $migrationNameHelper,
-        private MigrationWriter $migrationWriter,
-        private Setting $setting,
-        private SquashWriter $squashWriter,
+        private readonly MigrationNameHelper $migrationNameHelper,
+        private readonly MigrationWriter $migrationWriter,
+        private readonly Setting $setting,
+        private readonly SquashWriter $squashWriter,
     ) {
     }
 

@@ -12,7 +12,7 @@ use KitLoong\MigrationsGenerator\Migration\Enum\Space;
 
 class MigrationWriter
 {
-    public function __construct(private MigrationStub $migrationStub)
+    public function __construct(private readonly MigrationStub $migrationStub)
     {
     }
 

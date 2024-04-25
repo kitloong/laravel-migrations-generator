@@ -11,7 +11,7 @@ use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class SquashWriter
 {
-    public function __construct(private MigrationNameHelper $migrationNameHelper, private MigrationStub $migrationStub)
+    public function __construct(private readonly MigrationNameHelper $migrationNameHelper, private readonly MigrationStub $migrationStub)
     {
     }
 

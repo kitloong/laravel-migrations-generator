@@ -115,18 +115,11 @@ class TableBlueprint implements WritableBlueprint
         $lines = [];
 
         foreach ($this->lines as $line) {
-            switch (true) {
-                case $line instanceof Property:
-                    $lines[] = $this->propertyToString($line);
-                    break;
-
-                case $line instanceof Method:
-                    $lines[] = $this->methodToString($line);
-                    break;
-
-                default:
-                    $lines[] = $this->convertFromAnyTypeToString($line);
-            }
+            $lines[] = match (true) {
+                $line instanceof Property => $this->propertyToString($line),
+                $line instanceof Method => $this->methodToString($line),
+                default => $this->convertFromAnyTypeToString($line),
+            };
         }
 
         return $this->flattenLines($lines, $this->numberOfPrefixTab);

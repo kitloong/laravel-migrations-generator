@@ -4,8 +4,11 @@ namespace KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL;
 
 class IndexDefinition
 {
-    public function __construct(private string $tableName, private string $indexName, private string $indexDef)
-    {
+    public function __construct(
+        private readonly string $tableName,
+        private readonly string $indexName,
+        private readonly string $indexDef,
+    ) {
     }
 
     public function getTableName(): string

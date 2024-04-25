@@ -50,7 +50,7 @@ class SchemaBlueprint implements WritableBlueprint
      * @param  string  $table  Table name.
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder  $schemaBuilder  SchemaBuilder name.
      */
-    public function __construct(string $table, private SchemaBuilder $schemaBuilder)
+    public function __construct(string $table, private readonly SchemaBuilder $schemaBuilder)
     {
         $this->table = $this->stripTablePrefix($table);
     }

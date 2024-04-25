@@ -19,14 +19,14 @@ use KitLoong\MigrationsGenerator\Schema\Models\Table;
 class ColumnGenerator
 {
     public function __construct(
-        private CharsetModifier $charsetModifier,
-        private CollationModifier $collationModifier,
-        private CommentModifier $commentModifier,
-        private DefaultModifier $defaultModifier,
-        private IndexModifier $indexModifier,
-        private NullableModifier $nullableModifier,
-        private StoredAsModifier $storedAsModifier,
-        private VirtualAsModifier $virtualAsModifier,
+        private readonly CharsetModifier $charsetModifier,
+        private readonly CollationModifier $collationModifier,
+        private readonly CommentModifier $commentModifier,
+        private readonly DefaultModifier $defaultModifier,
+        private readonly IndexModifier $indexModifier,
+        private readonly NullableModifier $nullableModifier,
+        private readonly StoredAsModifier $storedAsModifier,
+        private readonly VirtualAsModifier $virtualAsModifier,
     ) {
     }
 

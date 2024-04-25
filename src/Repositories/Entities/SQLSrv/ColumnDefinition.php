@@ -15,7 +15,7 @@ class ColumnDefinition
 
     private bool $notnull;
 
-    private ?string $default = null;
+    private ?string $default;
 
     private int $scale;
 
@@ -23,9 +23,9 @@ class ColumnDefinition
 
     private bool $autoincrement;
 
-    private ?string $collation = null;
+    private ?string $collation;
 
-    private ?string $comment = null;
+    private ?string $comment;
 
     public function __construct(stdClass $column)
     {
