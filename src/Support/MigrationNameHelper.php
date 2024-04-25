@@ -9,7 +9,7 @@ class MigrationNameHelper
 {
     use TableName;
 
-    public function __construct(private Setting $setting)
+    public function __construct(private readonly Setting $setting)
     {
     }
 

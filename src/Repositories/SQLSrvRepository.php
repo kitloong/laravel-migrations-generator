@@ -143,7 +143,7 @@ class SQLSrvRepository extends Repository
     {
         $schema = 'SCHEMA_NAME()';
 
-        if (strpos($table, '.') !== false) {
+        if (str_contains($table, '.')) {
             [$schema, $table] = explode('.', $table);
             $schema           = $this->quoteStringLiteral($schema);
         }

@@ -10,7 +10,7 @@ use KitLoong\MigrationsGenerator\Support\IndexNameHelper;
 
 class IndexModifier implements Modifier
 {
-    public function __construct(private IndexNameHelper $indexNameHelper)
+    public function __construct(private readonly IndexNameHelper $indexNameHelper)
     {
     }
 

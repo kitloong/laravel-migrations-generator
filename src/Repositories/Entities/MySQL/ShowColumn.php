@@ -23,7 +23,7 @@ class ShowColumn
 
     private string $key;
 
-    private ?string $default = null;
+    private ?string $default;
 
     private string $extra;
 

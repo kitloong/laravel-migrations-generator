@@ -9,8 +9,11 @@ use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
 
 class Squash
 {
-    public function __construct(private SquashWriter $squashWriter, private MigrationNameHelper $migrationNameHelper, private Setting $setting)
-    {
+    public function __construct(
+        private readonly SquashWriter $squashWriter,
+        private readonly MigrationNameHelper $migrationNameHelper,
+        private readonly Setting $setting,
+    ) {
     }
 
     /**

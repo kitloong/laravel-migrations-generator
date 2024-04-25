@@ -10,7 +10,7 @@ use KitLoong\MigrationsGenerator\Setting;
 
 class CollationModifier implements Modifier
 {
-    public function __construct(private Setting $setting)
+    public function __construct(private readonly Setting $setting)
     {
     }
 

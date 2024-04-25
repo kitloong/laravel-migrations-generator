@@ -9,7 +9,7 @@ class Property
     /**
      * Property constructor.
      */
-    public function __construct(private PropertyName $name, private mixed $value)
+    public function __construct(private readonly PropertyName $name, private readonly mixed $value)
     {
     }
 

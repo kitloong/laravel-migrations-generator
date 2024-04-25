@@ -36,7 +36,6 @@ class CheckConstraint
         $this->constraintSchema  = $lowerKey['constraint_schema'];
         $this->tableName         = $lowerKey['table_name'];
         $this->constraintName    = $lowerKey['constraint_name'];
-        $this->level             = null;
 
         if (isset($lowerKey['level'])) {
             $this->level = $lowerKey['level'];

@@ -19,11 +19,11 @@ class ForeignKeyMigration
     use TableName;
 
     public function __construct(
-        private ForeignKeyGenerator $foreignKeyGenerator,
-        private MigrationNameHelper $migrationNameHelper,
-        private MigrationWriter $migrationWriter,
-        private Setting $setting,
-        private SquashWriter $squashWriter,
+        private readonly ForeignKeyGenerator $foreignKeyGenerator,
+        private readonly MigrationNameHelper $migrationNameHelper,
+        private readonly MigrationWriter $migrationWriter,
+        private readonly Setting $setting,
+        private readonly SquashWriter $squashWriter,
     ) {
     }
 
