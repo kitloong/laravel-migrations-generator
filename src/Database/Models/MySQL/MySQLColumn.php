@@ -58,13 +58,14 @@ class MySQLColumn extends DatabaseColumn
         $this->setTypeToUnsigned();
 
         switch ($this->type) {
-            case ColumnType::UNSIGNED_TINY_INTEGER:
-            case ColumnType::TINY_INTEGER:
-                if ($this->isBoolean()) {
-                    $this->type = ColumnType::BOOLEAN;
-                }
+            //Do not break types
+            // case ColumnType::UNSIGNED_TINY_INTEGER:
+            // case ColumnType::TINY_INTEGER:
+            //     if ($this->isBoolean()) {
+            //         $this->type = ColumnType::BOOLEAN;
+            //     }
 
-                break;
+            //     break;
 
             case ColumnType::ENUM:
                 $this->presetValues = $this->getEnumPresetValues($column['type']);
