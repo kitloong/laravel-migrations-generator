@@ -59,6 +59,7 @@ abstract class DatabaseColumn implements Column
 
     protected ?int $spatialSrID = null;
 
+    private ?ColumnType $userDefine = null;
     /**
      * Get ColumnType by type name.
      */
@@ -71,7 +72,7 @@ abstract class DatabaseColumn implements Column
     {
         $this->tableName                 = $table;
         $this->name                      = $column['name'];
-        $this->type                      = $this->getColumnType($column['type_name']);
+        $this->type                      = $this->userCast($column['type'], $column['type_name']);
         $this->length                    = $this->parseLength($column['type']);
         [$this->precision, $this->scale] = $this->parsePrecisionAndScale($column['type']);
         $this->comment                   = $this->escapeComment($column['comment']);
@@ -91,6 +92,12 @@ abstract class DatabaseColumn implements Column
         $this->setTypeToRememberToken();
     }
 
+    private function userCast(string $typeName):Column
+    {
+        $this->getColumnType($typeName);
+        $this instanceof
+        $this->getColumnType($column['type_name']);
+    }
     /**
      * @inheritDoc
      */
@@ -112,7 +119,7 @@ abstract class DatabaseColumn implements Column
      */
     public function getType(): ColumnType
     {
-        return $this->type;
+        return $this->userDefine ?? $this->type;
     }
 
     /**
@@ -397,5 +404,27 @@ abstract class DatabaseColumn implements Column
         }
 
         $this->type = ColumnType::REMEMBER_TOKEN;
+    }
+
+        /**
+     * user define allow to execute
+     * @param  string  $typeName
+     * @return ColumnType
+     * @date 2024/5/30 上午10:14
+     * @author xiangzi
+     */
+    private function userCast(string $type, string $typeName): ColumnType
+    {
+        $allow = Config::get('migrations-generator.cast.allow');
+
+        if (array_key_exists($type, $allow)) {
+            $result = $allow[$type]($this->tableName, $this->name);
+
+            if (false !== $result) {
+                $this->userDefine = $columnType;
+            }
+        }
+
+        return $this->getColumnType($typeName);
     }
 }
