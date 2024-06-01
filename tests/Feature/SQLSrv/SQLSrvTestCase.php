@@ -122,10 +122,10 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
         if ($fromResource && $destinationResource) {
             while (($line = fgets($fromResource)) !== false) {
-                $replaced = preg_replace('/^(.*)(user table)(.*)$/', '$1$2', $line);
-                $replaced = preg_replace('/^(.*)(PK__.*__\w{16})(.*)$/', '$1PK__replaced__xxxxxxxxxxxxxxxx$3', $replaced);
-                $replaced = preg_replace('/^(.*)(DF__.*__\w{8})(.*)$/', '$1DF__replacedreplaced__xxxxxxxx$3', $replaced);
-                $replaced = preg_replace('/^(.*)(CK__.*__\w{8})(.*)$/', '$1CK__replacedreplaced__xxxxxxxx$3', $replaced);
+                $replaced = (string) preg_replace('/^(.*)(user table)(.*)$/', '$1$2', $line);
+                $replaced = (string) preg_replace('/^(.*)(PK__.*__\w{16})(.*)$/', '$1PK__replaced__xxxxxxxxxxxxxxxx$3', $replaced);
+                $replaced = (string) preg_replace('/^(.*)(DF__.*__\w{8})(.*)$/', '$1DF__replacedreplaced__xxxxxxxx$3', $replaced);
+                $replaced = (string) preg_replace('/^(.*)(CK__.*__\w{8})(.*)$/', '$1CK__replacedreplaced__xxxxxxxx$3', $replaced);
                 fwrite($destinationResource, $replaced);
             }
 

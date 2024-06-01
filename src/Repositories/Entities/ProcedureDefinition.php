@@ -4,7 +4,7 @@ namespace KitLoong\MigrationsGenerator\Repositories\Entities;
 
 class ProcedureDefinition
 {
-    public function __construct(private string $name, private string $definition)
+    public function __construct(private readonly string $name, private readonly string $definition)
     {
     }
 

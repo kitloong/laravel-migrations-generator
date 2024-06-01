@@ -7,8 +7,9 @@ namespace KitLoong\MigrationsGenerator\Enum;
  */
 enum Driver: string
 {
-    case MYSQL  = 'mysql';
-    case PGSQL  = 'pgsql';
-    case SQLITE = 'sqlite';
-    case SQLSRV = 'sqlsrv';
+    case MARIADB = 'mariadb';
+    case MYSQL   = 'mysql';
+    case PGSQL   = 'pgsql';
+    case SQLITE  = 'sqlite';
+    case SQLSRV  = 'sqlsrv';
 }

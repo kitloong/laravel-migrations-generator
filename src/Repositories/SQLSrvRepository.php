@@ -7,46 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 use KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ColumnDefinition;
-use KitLoong\MigrationsGenerator\Repositories\Entities\SQLSrv\ViewDefinition;
 
 class SQLSrvRepository extends Repository
 {
-    /**
-     * Spatial index ID
-     *
-     * @see https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-indexes-transact-sql?view=sql-server-ver15
-     */
-    public const SPATIAL_INDEX_ID = 4;
-
-    /**
-     * Get a list of spatial indexes.
-     *
-     * @param  string  $table  Table name.
-     * @return \Illuminate\Support\Collection<int, string>
-     */
-    public function getSpatialIndexNames(string $table): Collection
-    {
-        $columns     = DB::select(
-            "SELECT idx.name AS indexname
-                FROM sys.tables AS tbl
-                    JOIN sys.schemas AS scm ON tbl.schema_id = scm.schema_id
-                    JOIN sys.indexes AS idx ON tbl.object_id = idx.object_id
-                    JOIN sys.index_columns AS idxcol ON idx.object_id = idxcol.object_id AND idx.index_id = idxcol.index_id
-                    JOIN sys.columns AS col ON idxcol.object_id = col.object_id AND idxcol.column_id = col.column_id
-                WHERE " . $this->getTableWhereClause($table, 'scm.name', 'tbl.name') . "
-                    AND idx.type = " . self::SPATIAL_INDEX_ID,
-        );
-        $definitions = new Collection();
-
-        if (count($columns) > 0) {
-            foreach ($columns as $column) {
-                $definitions->push($column->indexname);
-            }
-        }
-
-        return $definitions;
-    }
-
     /**
      * Get column definition by table and column name.
      *
@@ -88,30 +51,6 @@ class SQLSrvRepository extends Repository
     }
 
     /**
-     * Get single view name with definition.
-     *
-     * @param  string  $name  View name.
-     */
-    public function getView(string $name): ?ViewDefinition
-    {
-        // The definition is NULL if encrypted
-        // Filter NULL value to always return view definition.
-        // https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-sql-modules-transact-sql?view=sql-server-ver15
-        $view = DB::selectOne(
-            "SELECT name, definition
-                FROM sys.sysobjects
-                    INNER JOIN sys.sql_modules ON (sys.sysobjects.id = sys.sql_modules.object_id)
-                WHERE type = 'V'
-                    AND object_id = object_id(
-                        '$name'
-                    )
-                    AND definition IS NOT NULL
-                ORDER BY name",
-        );
-        return $view === null ? null : new ViewDefinition($view->name, $view->definition);
-    }
-
-    /**
      * Get a list of stored procedures.
      *
      * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition>
@@ -129,6 +68,10 @@ class SQLSrvRepository extends Repository
         );
 
         foreach ($procedures as $procedure) {
+            if ($procedure->definition === null || $procedure->definition === '') {
+                continue;
+            }
+
             $list->push(new ProcedureDefinition($procedure->name, $procedure->definition));
         }
 
@@ -200,7 +143,7 @@ class SQLSrvRepository extends Repository
     {
         $schema = 'SCHEMA_NAME()';
 
-        if (strpos($table, '.') !== false) {
+        if (str_contains($table, '.')) {
             [$schema, $table] = explode('.', $table);
             $schema           = $this->quoteStringLiteral($schema);
         }

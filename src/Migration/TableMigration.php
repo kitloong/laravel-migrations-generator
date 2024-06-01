@@ -28,12 +28,12 @@ class TableMigration
     use TableName;
 
     public function __construct(
-        private ColumnGenerator $columnGenerator,
-        private MigrationNameHelper $migrationNameHelper,
-        private IndexGenerator $indexGenerator,
-        private MigrationWriter $migrationWriter,
-        private Setting $setting,
-        private SquashWriter $squashWriter,
+        private readonly ColumnGenerator $columnGenerator,
+        private readonly MigrationNameHelper $migrationNameHelper,
+        private readonly IndexGenerator $indexGenerator,
+        private readonly MigrationWriter $migrationWriter,
+        private readonly Setting $setting,
+        private readonly SquashWriter $squashWriter,
     ) {
     }
 
@@ -188,7 +188,7 @@ class TableMigration
      */
     private function shouldSetCharset(): bool
     {
-        if (DB::getDriverName() !== Driver::MYSQL->value) {
+        if (!in_array(DB::getDriverName(), [Driver::MARIADB->value, Driver::MYSQL->value])) {
             return false;
         }
 

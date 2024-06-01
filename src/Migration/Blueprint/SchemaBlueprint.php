@@ -50,10 +50,9 @@ class SchemaBlueprint implements WritableBlueprint
      * @param  string  $table  Table name.
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\SchemaBuilder  $schemaBuilder  SchemaBuilder name.
      */
-    public function __construct(string $table, private SchemaBuilder $schemaBuilder)
+    public function __construct(string $table, private readonly SchemaBuilder $schemaBuilder)
     {
-        $this->table     = $this->stripTablePrefix($table);
-        $this->blueprint = null;
+        $this->table = $this->stripTablePrefix($table);
     }
 
     public function setBlueprint(TableBlueprint $blueprint): void
@@ -124,6 +123,10 @@ class SchemaBlueprint implements WritableBlueprint
      */
     private function getTableLines(string $schema): array
     {
+        if ($this->blueprint === null) {
+            return [];
+        }
+
         $lines   = [];
         $lines[] = "$schema('$this->table', function (Blueprint \$table) {";
 

@@ -32,6 +32,7 @@ trait AssetNameQuote
             case Driver::SQLSRV->value:
                 return $value === '*' ? $value : '[' . str_replace(']', ']]', $value) . ']';
 
+            case Driver::MARIADB->value:
             case Driver::MYSQL->value:
                 return $value === '*' ? $value : '`' . str_replace('`', '``', $value) . '`';
 

@@ -91,6 +91,17 @@ class CommandTest extends SQLiteTestCase
         $this->assertSame($tablesWithoutVendors, $generatedTables);
     }
 
+    /**
+     * SQLite does not support alter add foreign key.
+     * https://www.sqlite.org/omitted.html
+     * This test just make sure migration file can be generated without error.
+     */
+    public function testForeignKeyCanBeGenerated(): void
+    {
+        $this->migrateForeign();
+        $this->expectNotToPerformAssertions();
+    }
+
     private function verify(callable $migrateTemplates, callable $generateMigrations): void
     {
         $migrateTemplates();

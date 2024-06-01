@@ -11,7 +11,7 @@ use KitLoong\MigrationsGenerator\Support\IndexNameHelper;
 
 class IndexGenerator
 {
-    public function __construct(private IndexNameHelper $indexNameHelper)
+    public function __construct(private readonly IndexNameHelper $indexNameHelper)
     {
     }
 

@@ -90,12 +90,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Alter MySQL 8 root plugin
-        run: |
-          mysql --version
-          mysql --host 127.0.0.1 --port ${{ job.services.mysql8.ports['3306'] }} -u root -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY ''"
+        uses: actions/checkout@v4
 
       - name: SQL Server Create Database
         run: |
@@ -116,7 +111,7 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
           composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
-      - name: Setup .env
+      - name: Setup environment
         run: |
           mkdir ./database
           composer run action-env-setup
@@ -125,7 +120,8 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload to codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
           files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}

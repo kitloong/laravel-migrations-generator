@@ -43,7 +43,7 @@ use KitLoong\MigrationsGenerator\Support\TableName;
  * }
  *
  * @phpstan-type SchemaForeignKey array{
- *     name: string,
+ *     name: ?string,
  *     columns: string[],
  *     foreign_schema: ?string,
  *     foreign_table: string,
@@ -78,6 +78,7 @@ abstract class DatabaseSchema implements Schema
     {
         if ($this->tables === []) {
             foreach (SchemaFacade::getTables() as $table) {
+                /** @var SchemaTable $table */
                 $this->tables[$table['name']] = $table;
             }
         }

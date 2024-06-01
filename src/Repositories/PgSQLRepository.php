@@ -10,62 +10,6 @@ use KitLoong\MigrationsGenerator\Repositories\Entities\ProcedureDefinition;
 class PgSQLRepository extends Repository
 {
     /**
-     * Get column type by table and column name.
-     *
-     * @param  string  $table  Table name.
-     * @param  string  $column  Column name.
-     */
-    public function getTypeByColumnName(string $table, string $column): ?string
-    {
-        $result = DB::selectOne(
-            "SELECT pg_catalog.format_type(a.atttypid, a.atttypmod) AS datatype
-                FROM
-                    pg_catalog.pg_attribute a
-                WHERE
-                    a.attnum > 0
-                    AND NOT a.attisdropped
-                    AND a.attrelid = (
-                        SELECT c.oid
-                        FROM pg_catalog.pg_class c
-                            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-                        WHERE c.relname ~ '^($table)$'
-                            AND pg_catalog.pg_table_is_visible(c.oid)
-                    )
-                    AND a.attname='$column'",
-        );
-        return $result?->datatype;
-    }
-
-    /**
-     * Get column default value by table and column name.
-     *
-     * @param  string  $table  Table name.
-     * @param  string  $column  Column name.
-     */
-    public function getDefaultByColumnName(string $table, string $column): ?string
-    {
-        $result = DB::selectOne(
-            "SELECT pg_get_expr(d.adbin, d.adrelid) AS default_value
-                FROM
-                    pg_catalog.pg_attribute a
-                LEFT JOIN
-                    pg_catalog.pg_attrdef d ON (a.attrelid, a.attnum) = (d.adrelid, d.adnum)
-                WHERE
-                    a.attnum > 0
-                    AND NOT a.attisdropped
-                    AND a.attrelid = (
-                        SELECT c.oid
-                        FROM pg_catalog.pg_class c
-                            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-                        WHERE c.relname ~ '^($table)$'
-                            AND pg_catalog.pg_table_is_visible(c.oid)
-                    )
-                    AND a.attname='$column'",
-        );
-        return $result?->default_value;
-    }
-
-    /**
      * Get constraint by table and column name.
      *
      * @param  string  $table  Table name.
@@ -91,39 +35,6 @@ class PgSQLRepository extends Repository
                     AND ccu.column_name='$column'",
         );
         return $result?->definition;
-    }
-
-    /**
-     * Get a list of spatial indexes.
-     *
-     * @param  string  $table  Table name.
-     * @return \Illuminate\Support\Collection<int, \KitLoong\MigrationsGenerator\Repositories\Entities\PgSQL\IndexDefinition>
-     */
-    public function getSpatialIndexes(string $table): Collection
-    {
-        $columns     = DB::select(
-            "SELECT tablename,
-                       indexname,
-                       indexdef
-                FROM pg_indexes
-                WHERE tablename = '$table'
-                    AND indexdef LIKE '% USING gist %'",
-        );
-        $definitions = new Collection();
-
-        if (count($columns) > 0) {
-            foreach ($columns as $column) {
-                $definitions->push(
-                    new IndexDefinition(
-                        $column->tablename,
-                        $column->indexname,
-                        $column->indexdef,
-                    ),
-                );
-            }
-        }
-
-        return $definitions;
     }
 
     /**
@@ -180,6 +91,10 @@ class PgSQLRepository extends Repository
         );
 
         foreach ($procedures as $procedure) {
+            if ($procedure->definition === null || $procedure->definition === '') {
+                continue;
+            }
+
             $definition = str_replace('$procedure', '$', $procedure->definition);
             $list->push(new ProcedureDefinition($procedure->proname, $definition));
         }

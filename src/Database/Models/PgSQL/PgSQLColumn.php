@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Database\Models\PgSQL;
 
+use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Database\Models\DatabaseColumn;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
@@ -73,11 +74,30 @@ class PgSQLColumn extends DatabaseColumn
      */
     protected function escapeDefault(?string $default): ?string
     {
+        if ($default === null) {
+            return null;
+        }
+
         if (preg_match('/\((.?)\)\)/', $default)) {
             return $default;
         }
 
         return parent::escapeDefault($default);
+    }
+
+    protected function setTypeToIncrements(bool $supportUnsigned): void
+    {
+        parent::setTypeToIncrements($supportUnsigned);
+
+        if ($this->default === null) {
+            return;
+        }
+
+        if (!Str::startsWith($this->default, 'nextval(') || !Str::endsWith($this->default, '::regclass)')) {
+            return;
+        }
+
+        $this->default = null;
     }
 
     /**
@@ -86,6 +106,10 @@ class PgSQLColumn extends DatabaseColumn
      */
     private function setRawDefault(): void
     {
+        if ($this->default === null) {
+            return;
+        }
+
         if ($this->default === 'now()') {
             $this->rawDefault = true;
             return;
@@ -125,6 +149,10 @@ class PgSQLColumn extends DatabaseColumn
     {
         $dataType = strtolower($fullDefinitionType);
         $dataType = preg_replace('/\s+/', '', $dataType);
+
+        if ($dataType === null) {
+            return;
+        }
 
         if ($dataType === 'geography' || $dataType === 'geometry') {
             return;

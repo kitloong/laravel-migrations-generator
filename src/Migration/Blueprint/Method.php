@@ -22,7 +22,7 @@ class Method
      * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\MethodName  $name  Method name.
      * @param  mixed  ...$values  Method arguments.
      */
-    public function __construct(private MethodName $name, mixed ...$values)
+    public function __construct(private readonly MethodName $name, mixed ...$values)
     {
         $this->values = $values;
         $this->chains = [];

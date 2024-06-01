@@ -74,7 +74,7 @@ class PgSQLTable extends DatabaseTable
                 return $index;
             }
 
-            preg_match_all('/to_tsvector\((.*), \((.*)\)::text/U', $fulltextIndexes->get($index->getName())->getIndexDef(), $matches);
+            preg_match_all('/to_tsvector\((.*), \((.*)\)::text/U', $fulltextIndexes->get($index->getName())?->getIndexDef() ?? '', $matches);
 
             $columns = $matches[2];
 

@@ -5,7 +5,6 @@ namespace KitLoong\MigrationsGenerator\Database\Models\SQLSrv;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Database\Models\DatabaseIndex;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
-use KitLoong\MigrationsGenerator\Support\Regex;
 
 class SQLSrvIndex extends DatabaseIndex
 {
@@ -36,7 +35,7 @@ class SQLSrvIndex extends DatabaseIndex
 
         // Can be improved by generate exact 16 characters of sequence number instead of `\w{16}`
         // if the rules of sequence number generation is known.
-        if ($this->name !== Regex::match('/' . $prefix . '\w{16}/', $this->name)) {
+        if ($this->name !== Str::match('/' . $prefix . '\w{16}/', $this->name)) {
             return;
         }
 

@@ -277,7 +277,7 @@ class MigrateGenerateCommand extends Command
             return;
         }
 
-        $this->repository->setSource(DB::getName());
+        $this->repository->setSource(DB::getName() ?? '');
 
         if ($defaultConnection !== DB::getName()) {
             if (
@@ -626,21 +626,12 @@ class MigrateGenerateCommand extends Command
             throw new Exception('Failed to find database driver.');
         }
 
-        switch ($driver) {
-            case Driver::MYSQL->value:
-                return $this->schema = app(MySQLSchema::class);
-
-            case Driver::PGSQL->value:
-                return $this->schema = app(PgSQLSchema::class);
-
-            case Driver::SQLITE->value:
-                return $this->schema = app(SQLiteSchema::class);
-
-            case Driver::SQLSRV->value:
-                return $this->schema = app(SQLSrvSchema::class);
-
-            default:
-                throw new Exception('The database driver in use is not supported.');
-        }
+        return match ($driver) {
+            Driver::MARIADB->value, Driver::MYSQL->value => $this->schema = app(MySQLSchema::class),
+            Driver::PGSQL->value => $this->schema                         = app(PgSQLSchema::class),
+            Driver::SQLITE->value => $this->schema                        = app(SQLiteSchema::class),
+            Driver::SQLSRV->value => $this->schema                        = app(SQLSrvSchema::class),
+            default => throw new Exception('The database driver in use is not supported.'),
+        };
     }
 }

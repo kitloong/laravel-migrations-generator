@@ -52,7 +52,7 @@
     "prefer-stable": true,
     "scripts": {
         "action-env-setup": [
-            "@php -r \"file_exists('.env') || copy('.env.action', '.env');\""
+            "@php -r \"file_exists('phpunit.xml') || copy('phpunit-action.xml', 'phpunit.xml');\""
         ],
         "phpcs": [
             "phpcs"

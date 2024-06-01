@@ -47,6 +47,9 @@ class MySQLColumnType extends DatabaseColumnType
         'varchar'            => ColumnType::STRING,
         'year'               => ColumnType::YEAR,
 
+        // For MariaDB
+        'uuid'               => ColumnType::UUID,
+
         // Removed from Laravel v11
         'geomcollection'     => ColumnType::GEOMETRY_COLLECTION,
         'linestring'         => ColumnType::LINE_STRING,

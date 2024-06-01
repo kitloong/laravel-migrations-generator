@@ -29,7 +29,7 @@ class DBUnpreparedBlueprint implements WritableBlueprint
      *
      * @param  string  $sql  The SQL statement.
      */
-    public function __construct(private string $sql)
+    public function __construct(private readonly string $sql)
     {
     }
 
