@@ -18,6 +18,7 @@ return new class extends TestMigration
     public function up()
     {
         switch (DB::getDriverName()) {
+            case Driver::MARIADB->value:
             case Driver::MYSQL->value:
                 DB::unprepared(
                     "CREATE PROCEDURE findNameWithHyphen()

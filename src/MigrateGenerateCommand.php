@@ -627,10 +627,10 @@ class MigrateGenerateCommand extends Command
         }
 
         return match ($driver) {
-            Driver::MYSQL->value => $this->schema  = app(MySQLSchema::class),
-            Driver::PGSQL->value => $this->schema  = app(PgSQLSchema::class),
-            Driver::SQLITE->value => $this->schema = app(SQLiteSchema::class),
-            Driver::SQLSRV->value => $this->schema = app(SQLSrvSchema::class),
+            Driver::MARIADB->value, Driver::MYSQL->value => $this->schema = app(MySQLSchema::class),
+            Driver::PGSQL->value => $this->schema                         = app(PgSQLSchema::class),
+            Driver::SQLITE->value => $this->schema                        = app(SQLiteSchema::class),
+            Driver::SQLSRV->value => $this->schema                        = app(SQLSrvSchema::class),
             default => throw new Exception('The database driver in use is not supported.'),
         };
     }

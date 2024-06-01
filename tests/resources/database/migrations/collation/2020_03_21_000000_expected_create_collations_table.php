@@ -30,6 +30,7 @@ return new class extends TestMigration
                 case Driver::SQLSRV->value:
                     $collation = 'Latin1_General_100_CI_AI_SC_UTF8';
                     break;
+                case Driver::MARIADB->value:
                 case Driver::MYSQL->value:
                     $collation = 'utf8_unicode_ci';
                     break;
@@ -61,7 +62,7 @@ return new class extends TestMigration
             $table->text('text_charset')->charset('utf8');
             $table->text('text_collation')->collation($collation);
 
-            if (DB::getDriverName() === Driver::MYSQL->value) {
+            if (in_array(DB::getDriverName(), [Driver::MARIADB->value, Driver::MYSQL->value])) {
                 $table->set('set', ['strawberry', 'vanilla']);
                 $table->set('set_default', ['strawberry', 'vanilla'])->default('strawberry');
                 $table->set('set_charset', ['strawberry', 'vanilla'])->charset('utf8');

@@ -55,7 +55,7 @@ return new class extends TestMigration
                 }
             }
 
-            if (in_array(DB::getDriverName(), [Driver::MYSQL->value, Driver::PGSQL->value])) {
+            if (in_array(DB::getDriverName(), [Driver::MARIADB->value, Driver::MYSQL->value, Driver::PGSQL->value])) {
                 $table->string('fulltext')->fulltext();
                 $table->string('fulltext_custom')->fulltext('fulltext_custom');
                 $table->fullText(['col_multi1', 'col_multi2']);
