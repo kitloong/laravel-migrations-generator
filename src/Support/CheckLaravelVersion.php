@@ -8,10 +8,6 @@ trait CheckLaravelVersion
 {
     public function atLeastLaravel11(): bool
     {
-        if (App::version() === '11.x-dev') {
-            return true;
-        }
-
         return $this->atLeastLaravelVersion('11.0');
     }
 

@@ -188,7 +188,7 @@ class TableMigration
      */
     private function shouldSetCharset(): bool
     {
-        if (DB::getDriverName() !== Driver::MYSQL->value) {
+        if (!in_array(DB::getDriverName(), [Driver::MARIADB->value, Driver::MYSQL->value])) {
             return false;
         }
 
