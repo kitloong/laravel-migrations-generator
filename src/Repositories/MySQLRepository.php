@@ -110,6 +110,8 @@ class MySQLRepository extends Repository
             );
         } catch (QueryException $exception) {
             if (
+                // `SRS_ID` available since MySQL 8.0.3.
+                // https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-3.html
                 Str::contains(
                     $exception->getMessage(),
                     "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'SRS_ID'",
