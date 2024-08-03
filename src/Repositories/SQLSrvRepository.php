@@ -135,18 +135,13 @@ class SQLSrvRepository extends Repository
     /**
      * Returns the where clause to filter schema and table name in a query.
      *
-     * @param  string  $table  The full qualified name of the table.
+     * @param  string  $table  The name of the table.
      * @param  string  $schemaColumn  The name of the column to compare the schema to in the where clause.
      * @param  string  $tableColumn  The name of the column to compare the table to in the where clause.
      */
     private function getTableWhereClause(string $table, string $schemaColumn, string $tableColumn): string
     {
         $schema = 'SCHEMA_NAME()';
-
-        if (str_contains($table, '.')) {
-            [$schema, $table] = explode('.', $table);
-            $schema           = $this->quoteStringLiteral($schema);
-        }
 
         $table = $this->quoteStringLiteral($table);
 
