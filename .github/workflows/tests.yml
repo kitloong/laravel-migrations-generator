@@ -59,8 +59,8 @@ jobs:
           ACCEPT_EULA: "Y"
         ports:
           - 1433:1433
-        options: >-
-          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P '!QAZ2wsx'"
+#        options: >-
+#          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P '!QAZ2wsx'"
 
       mariadb:
         image: mariadb:10
