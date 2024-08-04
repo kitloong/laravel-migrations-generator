@@ -28,7 +28,7 @@
   <rule ref="SlevomatCodingStandard.Arrays.SingleLineArrayWhitespace"/>
   <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
   <rule ref="SlevomatCodingStandard.Attributes.AttributeAndTargetSpacing"/>
-  <rule ref="SlevomatCodingStandard.Attributes.AttributesOrder"/>
+  <!--<rule ref="SlevomatCodingStandard.Attributes.AttributesOrder"/>-->
   <rule ref="SlevomatCodingStandard.Attributes.DisallowAttributesJoining"/>
   <rule ref="SlevomatCodingStandard.Attributes.DisallowMultipleAttributesPerLine"/>
   <rule ref="SlevomatCodingStandard.Attributes.RequireAttributeAfterDocComment"/>
