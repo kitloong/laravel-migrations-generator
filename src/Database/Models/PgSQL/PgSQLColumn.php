@@ -154,6 +154,12 @@ class PgSQLColumn extends DatabaseColumn
             return;
         }
 
+        $dotPosition = Str::position($dataType, '.');
+
+        if ($dotPosition !== false) {
+            $dataType = Str::substr($dataType, $dotPosition + 1);
+        }
+
         if ($dataType === 'geography' || $dataType === 'geometry') {
             return;
         }
