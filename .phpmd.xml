@@ -20,6 +20,7 @@
         <exclude name="ExcessiveParameterList"/>
         <exclude name="NPathComplexity"/>
         <exclude name="TooManyFields"/>
+        <exclude name="TooManyMethods"/>
         <exclude name="TooManyPublicMethods"/>
     </rule>
     <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
@@ -45,6 +46,11 @@
     <rule ref="rulesets/codesize.xml/TooManyFields">
         <properties>
             <property name="maxfields" value="25"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/TooManyMethods">
+        <properties>
+            <property name="ignorepattern" value="(^(set|get|is|has|with|test))i"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyPublicMethods">

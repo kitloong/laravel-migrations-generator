@@ -425,6 +425,30 @@ class CommandTest extends MySQL57TestCase
         );
     }
 
+    public function testSkipLogWithSquash(): void
+    {
+        $this->migrateGeneral();
+        $this->truncateMigrationsTable();
+        $this->dumpSchemaAs($this->getStorageSqlPath('expected.sql'));
+
+        $this->artisan(
+            'migrate:generate',
+            [
+                '--path'     => $this->getStorageMigrationsPath(),
+                '--skip-log' => true,
+                '--squash'   => true,
+            ],
+        );
+
+        $this->assertSame(0, DB::table('migrations')->count());
+        $this->dumpSchemaAs($this->getStorageSqlPath('actual.sql'));
+
+        $this->assertFileEqualsIgnoringOrder(
+            $this->getStorageSqlPath('expected.sql'),
+            $this->getStorageSqlPath('actual.sql'),
+        );
+    }
+
     public function testLogWithBatch0(): void
     {
         $this->migrateGeneral();

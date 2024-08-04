@@ -1,9 +1,5 @@
 <?php
 
-/** @noinspection PhpIllegalPsrClassPathInspection */
-
-/** @noinspection PhpUnused */
-
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Tests\TestMigration;
 
