@@ -24,12 +24,19 @@ class StackedCommandTest extends MySQL57TestCase
         $this->assertTrue(Schema::hasTable('migration_table'));
         $this->assertTrue(Schema::connection('migration2')->hasTable('migration2_table'));
 
-        $this->generateMigrations();
+        $this->generateMigrations([
+            '--table-filename' => 'create_migration_tables.php',
+            '--squash'         => true,
+        ]);
 
         // Setting should reset.
         $this->assertEquals(app(Setting::class), new Setting());
 
-        $this->generateMigrations(['--connection' => 'migration2']);
+        $this->generateMigrations([
+            '--connection'     => 'migration2',
+            '--table-filename' => 'create_migration2_tables.php',
+            '--squash'         => true,
+            ]);
 
         $files = File::files($this->getStorageMigrationsPath());
         $this->assertCount(2, $files);

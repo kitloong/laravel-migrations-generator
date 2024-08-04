@@ -64,25 +64,33 @@ class MigrateGenerateCommand extends Command
     protected bool $shouldLog = false;
 
     protected int $nextBatchNumber = 0;
-
-    public function __construct(
-        protected MigrationRepositoryInterface $repository,
-        protected Squash $squash,
-        protected ForeignKeyMigration $foreignKeyMigration,
-        protected ProcedureMigration $procedureMigration,
-        protected TableMigration $tableMigration,
-        protected ViewMigration $viewMigration,
-    ) {
-        parent::__construct();
-    }
+    protected MigrationRepositoryInterface $repository;
+    protected Squash $squash;
+    protected ForeignKeyMigration $foreignKeyMigration;
+    protected ProcedureMigration $procedureMigration;
+    protected ViewMigration $viewMigration;
+    protected TableMigration $tableMigration;
 
     /**
      * Execute the console command.
      *
      * @throws \Exception
      */
-    public function handle(): void
-    {
+    public function handle(
+        MigrationRepositoryInterface $repository,
+        Squash $squash,
+        ForeignKeyMigration $foreignKeyMigration,
+        ProcedureMigration $procedureMigration,
+        TableMigration $tableMigration,
+        ViewMigration $viewMigration,
+    ): void {
+        $this->tableMigration      = $tableMigration;
+        $this->viewMigration       = $viewMigration;
+        $this->procedureMigration  = $procedureMigration;
+        $this->foreignKeyMigration = $foreignKeyMigration;
+        $this->squash              = $squash;
+        $this->repository          = $repository;
+
         $previousConnection = DB::getDefaultConnection();
 
         try {
