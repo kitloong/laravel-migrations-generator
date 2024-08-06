@@ -2,16 +2,21 @@
 
 namespace KitLoong\MigrationsGenerator\Database\Models\SQLSrv;
 
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Database\Models\DatabaseIndex;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
+use KitLoong\MigrationsGenerator\Support\TableName;
 
 class SQLSrvIndex extends DatabaseIndex
 {
+    use TableName;
+
     /**
      * @inheritDoc
      */
-    public function __construct(string $table, array $index)
+    public function __construct(string $table, array $index, bool $hasUDTColumn)
     {
         parent::__construct($table, $index);
 
@@ -22,6 +27,17 @@ class SQLSrvIndex extends DatabaseIndex
 
             default:
         }
+
+        if (!$hasUDTColumn) {
+            return;
+        }
+
+        $blueprint = new Blueprint($this->stripTablePrefix($table));
+
+        // Generate the alter index statement.
+        $blueprint->{$this->type->value}($this->columns, $this->name);
+
+        $this->udtColumnSqls = $blueprint->toSql(Schema::getConnection(), Schema::getConnection()->getSchemaGrammar());
     }
 
     /**
