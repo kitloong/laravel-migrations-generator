@@ -55,7 +55,7 @@ abstract class DatabaseTable implements Table
      *
      * @param  SchemaIndex  $index
      */
-    abstract protected function makeIndex(string $table, array $index): Index;
+    abstract protected function makeIndex(string $table, array $index, bool $hasUDTColumn): Index;
 
     /**
      * Create a new instance.
@@ -87,7 +87,14 @@ abstract class DatabaseTable implements Table
             return $columns;
         }, new Collection())->values();
 
-        $this->indexes = $indexes->map(fn (array $index) => $this->makeIndex($this->name, $index))->values();
+        $this->indexes = $indexes->map(function (array $index) {
+            $hasUdtColumn = $this->udtColumns
+                ->map(static fn ($column) => $column->getName())
+                ->intersect($index['columns'])
+                ->isNotEmpty();
+
+            return $this->makeIndex($this->name, $index, $hasUdtColumn);
+        })->values();
     }
 
     /**

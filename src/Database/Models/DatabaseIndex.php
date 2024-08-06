@@ -22,16 +22,22 @@ abstract class DatabaseIndex implements Index
     protected IndexType $type;
 
     /**
+     * @var string[]
+     */
+    protected array $udtColumnSqls;
+
+    /**
      * Create an index instance.
      *
      * @param  SchemaIndex  $index
      */
     public function __construct(string $table, array $index)
     {
-        $this->tableName = $table;
-        $this->name      = $index['name'];
-        $this->columns   = $index['columns'];
-        $this->type      = $this->getIndexType($index);
+        $this->tableName     = $table;
+        $this->name          = $index['name'];
+        $this->columns       = $index['columns'];
+        $this->type          = $this->getIndexType($index);
+        $this->udtColumnSqls = [];
     }
 
     /**
@@ -64,6 +70,22 @@ abstract class DatabaseIndex implements Index
     public function getType(): IndexType
     {
         return $this->type;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUDTColumnSqls(): array
+    {
+        return $this->udtColumnSqls;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasUDTColumn(): bool
+    {
+        return count($this->udtColumnSqls) > 0;
     }
 
     /**

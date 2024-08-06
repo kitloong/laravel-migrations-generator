@@ -222,6 +222,11 @@ return new class extends TestMigration
                     "COMMENT ON column ".DB::getTablePrefix()."all_columns.status IS 'comment a'",
                 );
 
+                // Test having index on user defined type column.
+                DB::statement(
+                    "CREATE INDEX idx_status ON ".DB::getTablePrefix()."all_columns (status)",
+                );
+
                 DB::statement(
                     "ALTER TABLE ".DB::getTablePrefix()."all_columns ADD COLUMN timestamp_default_timezone_now timestamp(0) without time zone DEFAULT timezone('Europe/Rome'::text, now()) NOT NULL",
                 );
@@ -231,6 +236,11 @@ return new class extends TestMigration
                 // Test user defined type column.
                 DB::statement(
                     "ALTER TABLE ".DB::getTablePrefix()."all_columns ADD accountnumber accountnumber NOT NULL DEFAULT '1008'",
+                );
+
+                // Test having index on user defined type column.
+                DB::statement(
+                    "CREATE INDEX idx_accountnumber ON " . DB::getTablePrefix() . "all_columns (accountnumber)",
                 );
                 break;
         }

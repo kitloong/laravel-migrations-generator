@@ -48,9 +48,9 @@ class PgSQLTable extends DatabaseTable
     /**
      * @inheritDoc
      */
-    protected function makeIndex(string $table, array $index): Index
+    protected function makeIndex(string $table, array $index, bool $hasUDTColumn): Index
     {
-        return new PgSQLIndex($table, $index);
+        return new PgSQLIndex($table, $index, $hasUDTColumn);
     }
 
     /**
@@ -87,6 +87,7 @@ class PgSQLTable extends DatabaseTable
                     'unique'  => false,
                     'primary' => false,
                 ],
+                false,
             );
         });
     }
