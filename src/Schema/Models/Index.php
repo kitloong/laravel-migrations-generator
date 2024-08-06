@@ -28,4 +28,18 @@ interface Index extends Model
      * Get the index type.
      */
     public function getType(): IndexType;
+
+    /**
+     * Get the raw add index SQL queries.
+     * This method is used when the index has a user-defined type column.
+     * If the index does not have a user-defined type column, this method will return an empty array.
+     *
+     * @return string[]
+     */
+    public function getUDTColumnSqls(): array;
+
+    /**
+     * Indicates if this index column(s) is a user-defined type.
+     */
+    public function hasUDTColumn(): bool;
 }

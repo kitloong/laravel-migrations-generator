@@ -22,13 +22,17 @@ class SQLSrvUDTColumn extends DatabaseUDTColumn
         parent::__construct($table, $column);
 
         $blueprint = new Blueprint($this->stripTablePrefix($table));
+
+        // Generate the add column statement with string column type.
         $blueprint->addColumn('string', $column['name'], [
             'autoIncrement' => $column['auto_increment'],
             'default'       => $this->parseDefault($column['default']),
             'nullable'      => $column['nullable'],
         ]);
 
-        $sqls    = $blueprint->toSql(Schema::getConnection(), Schema::getConnection()->getSchemaGrammar());
+        $sqls = $blueprint->toSql(Schema::getConnection(), Schema::getConnection()->getSchemaGrammar());
+
+        // Replace the string column type with the user-defined type.
         $sqls[0] = Str::replaceFirst(' nvarchar() ', ' ' . $column['type'] . ' ', $sqls[0]);
 
         $this->sqls = $sqls;

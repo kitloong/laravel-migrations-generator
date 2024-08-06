@@ -18,6 +18,7 @@ use KitLoong\MigrationsGenerator\Migration\Generator\ColumnGenerator;
 use KitLoong\MigrationsGenerator\Migration\Generator\IndexGenerator;
 use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Migration\Writer\SquashWriter;
+use KitLoong\MigrationsGenerator\Schema\Models\Index;
 use KitLoong\MigrationsGenerator\Schema\Models\Table;
 use KitLoong\MigrationsGenerator\Setting;
 use KitLoong\MigrationsGenerator\Support\MigrationNameHelper;
@@ -104,8 +105,10 @@ class TableMigration
             $blueprint->setMethod(new Method(TableMethod::COMMENT, $table->getComment()));
         }
 
-        $chainableIndexes    = $this->indexGenerator->getChainableIndexes($table->getName(), $table->getIndexes());
-        $notChainableIndexes = $this->indexGenerator->getNotChainableIndexes($table->getIndexes(), $chainableIndexes);
+        $indexes = $table->getIndexes()->filter(static fn (Index $index) => !$index->hasUdtColumn());
+
+        $chainableIndexes    = $this->indexGenerator->getChainableIndexes($table->getName(), $indexes);
+        $notChainableIndexes = $this->indexGenerator->getNotChainableIndexes($indexes, $chainableIndexes);
 
         foreach ($table->getColumns() as $column) {
             $method = $this->columnGenerator->generate($table, $column, $chainableIndexes);
@@ -139,6 +142,14 @@ class TableMigration
 
         foreach ($table->getUdtColumns() as $column) {
             foreach ($column->getSqls() as $sql) {
+                $statements[] = new DBStatementBlueprint($sql);
+            }
+        }
+
+        $indexes = $table->getIndexes()->filter(static fn (Index $index) => $index->hasUdtColumn());
+
+        foreach ($indexes as $index) {
+            foreach ($index->getUDTColumnSqls() as $sql) {
                 $statements[] = new DBStatementBlueprint($sql);
             }
         }

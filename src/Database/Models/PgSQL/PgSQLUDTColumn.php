@@ -23,6 +23,8 @@ class PgSQLUDTColumn extends DatabaseUDTColumn
         parent::__construct($table, $column);
 
         $blueprint = new Blueprint($this->stripTablePrefix($table));
+
+        // Generate the add column statement with string column type.
         $blueprint->addColumn('string', $column['name'], [
             'autoIncrement' => $column['auto_increment'],
             'collation'     => $column['collation'],
@@ -31,7 +33,9 @@ class PgSQLUDTColumn extends DatabaseUDTColumn
             'nullable'      => $column['nullable'],
         ]);
 
-        $sqls    = $blueprint->toSql(Schema::getConnection(), Schema::getConnection()->getSchemaGrammar());
+        $sqls = $blueprint->toSql(Schema::getConnection(), Schema::getConnection()->getSchemaGrammar());
+
+        // Replace the string column type with the user-defined type.
         $sqls[0] = Str::replaceFirst(' varchar ', ' ' . $column['type'] . ' ', $sqls[0]);
 
         $this->sqls = $sqls;
