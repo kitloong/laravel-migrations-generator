@@ -212,10 +212,12 @@ return new class extends TestMigration
                     "ALTER TABLE ".DB::getTablePrefix()."all_columns ADD COLUMN timestamp_defaultnow timestamp(0) without time zone DEFAULT now() NOT NULL",
                 );
 
+                // Test user defined type column.
                 DB::statement(
                     "ALTER TABLE ".DB::getTablePrefix()."all_columns ADD COLUMN status my_status NOT NULL DEFAULT 'PENDING'",
                 );
 
+                // Add a comment so the alter statement will return 2 statements.
                 DB::statement(
                     "COMMENT ON column ".DB::getTablePrefix()."all_columns.status IS 'comment a'",
                 );
@@ -226,6 +228,7 @@ return new class extends TestMigration
                 break;
 
             case Driver::SQLSRV->value:
+                // Test user defined type column.
                 DB::statement(
                     "ALTER TABLE ".DB::getTablePrefix()."all_columns ADD accountnumber accountnumber NOT NULL DEFAULT '1008'",
                 );

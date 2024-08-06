@@ -61,8 +61,8 @@ abstract class DatabaseTable implements Table
      * Create a new instance.
      *
      * @param  SchemaTable  $table
-     * @param  \Illuminate\Support\Collection<int, SchemaColumn>  $columns  Key is quoted name.
-     * @param  \Illuminate\Support\Collection<int, SchemaIndex>  $indexes  Key is name.
+     * @param  \Illuminate\Support\Collection<int, SchemaColumn>  $columns
+     * @param  \Illuminate\Support\Collection<int, SchemaIndex>  $indexes
      * @param  \Illuminate\Support\Collection<int, string>  $userDefinedTypes
      */
     public function __construct(array $table, Collection $columns, Collection $indexes, Collection $userDefinedTypes)
