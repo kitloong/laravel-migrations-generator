@@ -82,21 +82,29 @@ class PgSQLRepository extends Repository
 
         $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
 
-        $procedures = DB::select(
+        $proceduresList[] = DB::select(
             "SELECT proname, pg_get_functiondef(pg_proc.oid) AS definition
             FROM pg_catalog.pg_proc
                 JOIN pg_namespace ON pg_catalog.pg_proc.pronamespace = pg_namespace.oid
             WHERE prokind = 'p'
-                AND pg_namespace.nspname = '$searchPath'",
+                AND pg_namespace.nspname = '$searchPath'"
         );
 
-        foreach ($procedures as $procedure) {
-            if ($procedure->definition === null || $procedure->definition === '') {
-                continue;
-            }
+        $proceduresList[] = DB::select(
+            "SELECT proname, pg_get_functiondef(pg_proc.oid) AS definition
+            FROM pg_proc
+            WHERE pronamespace = '$searchPath'::regnamespace"
+        );
 
-            $definition = str_replace('$procedure', '$', $procedure->definition);
-            $list->push(new ProcedureDefinition($procedure->proname, $definition));
+        foreach ($proceduresList as $procedures) {
+            foreach ($procedures as $procedure) {
+                if ($procedure->definition === null || $procedure->definition === '') {
+                    continue;
+                }
+
+                $definition = str_replace('$procedure', '$', str_replace('$function', '\$function', $procedure->definition));
+                $list->push(new ProcedureDefinition($procedure->proname, $definition));
+            }
         }
 
         return $list;
