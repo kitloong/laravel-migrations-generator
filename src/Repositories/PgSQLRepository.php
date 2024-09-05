@@ -95,7 +95,7 @@ class PgSQLRepository extends Repository
                 continue;
             }
 
-            $definition = str_replace(['$procedure', '$function'], ['$', '\$function'], $procedure->definition);
+            $definition = str_replace('$procedure', '$', $procedure->definition);
             $list->push(new ProcedureDefinition($procedure->proname, $definition));
         }
 
