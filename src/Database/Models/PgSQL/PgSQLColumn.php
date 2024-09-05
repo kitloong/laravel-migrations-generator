@@ -168,7 +168,7 @@ class PgSQLColumn extends DatabaseColumn
             return;
         }
 
-        $spatialSubType = $matches[2];
+        $spatialSubType = $matches[2] ?? null;
         $spatialSrID    = isset($matches[3]) ? (int) $matches[3] : null;
 
         if (!$this->atLeastLaravel11()) {
