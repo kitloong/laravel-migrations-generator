@@ -58,10 +58,6 @@ class ForeignKeyGenerator
             return new Method(Foreign::FOREIGN, $foreignKey->getLocalColumns());
         }
 
-        if ($foreignKey->getName() === null) {
-            return new Method(Foreign::FOREIGN, $foreignKey->getLocalColumns());
-        }
-
         return new Method(Foreign::FOREIGN, $foreignKey->getLocalColumns(), $foreignKey->getName());
     }
 

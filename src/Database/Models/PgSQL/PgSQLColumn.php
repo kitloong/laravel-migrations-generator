@@ -164,7 +164,7 @@ class PgSQLColumn extends DatabaseColumn
             return;
         }
 
-        if (!preg_match('/(\w+)(?:\((\w+)(?:,\s*(\w+))?\))?/', $dataType, $matches)) {
+        if (!preg_match('/(\w+)(?:\((\w+)(?:,\s*(\w+))?\))?/', $dataType, $matches) || !isset($matches[2])) {
             return;
         }
 
