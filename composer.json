@@ -1,5 +1,5 @@
 {
-    "name": "dpohribniak-plexteq/laravel-migrations-generator",
+    "name": "kitloong/laravel-migrations-generator",
     "description": "Generates Laravel Migrations from an existing database",
     "keywords": [
         "laravel",
