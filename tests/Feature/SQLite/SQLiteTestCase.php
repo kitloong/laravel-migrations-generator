@@ -14,7 +14,7 @@ abstract class SQLiteTestCase extends FeatureTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        touch(env('SQLITE_DATABASE'));
+        touch((string) env('SQLITE_DATABASE'));
 
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
