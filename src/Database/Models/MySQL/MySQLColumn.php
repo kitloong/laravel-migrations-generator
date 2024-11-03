@@ -76,6 +76,8 @@ class MySQLColumn extends DatabaseColumn
 
             case ColumnType::SOFT_DELETES:
             case ColumnType::SOFT_DELETES_TZ:
+            case ColumnType::DATETIME:
+            case ColumnType::DATETIME_TZ:
             case ColumnType::TIMESTAMP:
             case ColumnType::TIMESTAMP_TZ:
                 $this->onUpdateCurrentTimestamp = $this->hasOnUpdateCurrentTimestamp();

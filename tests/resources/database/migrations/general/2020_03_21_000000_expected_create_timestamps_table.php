@@ -82,6 +82,21 @@ return new class extends TestMigration
             $table->timestampTz('created_at')->nullable();
             $table->timestampTz('update_at')->nullable()->useCurrent()->useCurrentOnUpdate();
         });
+
+        Schema::create('use_current_on_update', function (Blueprint $table) {
+            $table->increments('id');
+            $table->dateTime('datetime_useCurrentOnUpdate_nullable_useCurrent')->useCurrentOnUpdate()->nullable()->useCurrent();
+            $table->dateTime('datetime_useCurrentOnUpdate_useCurrent')->useCurrentOnUpdate()->useCurrent();
+            $table->dateTime('datetime_nullable')->useCurrentOnUpdate()->nullable();
+            $table->dateTime('datetime_useCurrent')->useCurrent();
+            $table->dateTime('datetime_useCurrentOnUpdate')->useCurrentOnUpdate();
+            $table->timestamp('timestamp_useCurrentOnUpdate_nullable_useCurrent')->useCurrentOnUpdate()->nullable()->useCurrent();
+            $table->timestamp('timestamp_useCurrentOnUpdate_useCurrent')->useCurrentOnUpdate()->useCurrent();
+            $table->timestamp('timestamp_nullable')->useCurrentOnUpdate()->nullable();
+            $table->timestamp('timestamp_useCurrent')->useCurrent();
+            $table->timestamp('timestamp_useCurrentOnUpdate')->useCurrentOnUpdate()->default('2024-10-08 00:00:00');
+
+        });
     }
 
     /**
