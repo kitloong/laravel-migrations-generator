@@ -95,7 +95,7 @@ interface Column extends Model
 
     /**
      * Check if the column uses "on update CURRENT_TIMESTAMP".
-     * This is usually used for MySQL `timestamp` and `timestampTz`.
+     * This is usually used for MySQL `timestamp` and `datetime`.
      */
     public function isOnUpdateCurrentTimestamp(): bool;
 
