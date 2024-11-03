@@ -85,10 +85,15 @@ return new class extends TestMigration
 
         Schema::create('use_current_on_update', function (Blueprint $table) {
             $table->increments('id');
+
+            $table->dateTime('datetime_precision_useCurrent', 2)->nullable()->useCurrent()->useCurrentOnUpdate();
+            $table->dateTime('timestamp_precision_useCurrent', 2)->nullable()->useCurrent()->useCurrentOnUpdate();
+
             $table->dateTime('datetime_useCurrentOnUpdate_nullable_useCurrent')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->dateTime('datetime_useCurrentOnUpdate_useCurrent')->useCurrentOnUpdate()->useCurrent();
             $table->dateTime('datetime_nullable')->useCurrentOnUpdate()->nullable();
             $table->dateTime('datetime_useCurrent')->useCurrent();
+
             $table->timestamp('timestamp_useCurrentOnUpdate_nullable_useCurrent')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->timestamp('timestamp_useCurrentOnUpdate_useCurrent')->useCurrentOnUpdate()->useCurrent();
             $table->timestamp('timestamp_nullable')->useCurrentOnUpdate()->nullable();

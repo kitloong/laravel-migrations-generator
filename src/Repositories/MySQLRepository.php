@@ -36,7 +36,7 @@ class MySQLRepository extends Repository
         $result = DB::selectOne(
             "SHOW COLUMNS FROM `$table`
                 WHERE Field = '$column'
-                    AND Type IN ('timestamp', 'datetime')
+                    AND (Type LIKE 'timestamp%' OR Type LIKE 'datetime%')
                     AND Extra LIKE '%on update CURRENT_TIMESTAMP%'",
         );
         return !($result === null);
