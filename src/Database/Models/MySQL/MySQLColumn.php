@@ -76,9 +76,13 @@ class MySQLColumn extends DatabaseColumn
 
             case ColumnType::SOFT_DELETES:
             case ColumnType::SOFT_DELETES_TZ:
+            case ColumnType::DATETIME:
+            case ColumnType::DATETIME_TZ:
             case ColumnType::TIMESTAMP:
             case ColumnType::TIMESTAMP_TZ:
                 $this->onUpdateCurrentTimestamp = $this->hasOnUpdateCurrentTimestamp();
+                $this->flattenCurrentTimestamp();
+
                 break;
 
             case ColumnType::GEOGRAPHY:
@@ -343,11 +347,27 @@ class MySQLColumn extends DatabaseColumn
             return strtr($matches[1], self::MARIADB_ESCAPE_SEQUENCES);
         }
 
+        if (Str::startsWith($columnDefault, 'current_timestamp')) {
+            return 'CURRENT_TIMESTAMP';
+        }
+
         return match ($columnDefault) {
-            'current_timestamp()' => 'CURRENT_TIMESTAMP',
             'curdate()' => 'CURRENT_DATE',
             'curtime()' => 'CURRENT_TIME',
             default => $columnDefault,
         };
+    }
+
+    private function flattenCurrentTimestamp(): void
+    {
+        if ($this->default === null) {
+            return;
+        }
+
+        if (!Str::startsWith($this->default, 'CURRENT_TIMESTAMP')) {
+            return;
+        }
+
+        $this->default = 'CURRENT_TIMESTAMP';
     }
 }
