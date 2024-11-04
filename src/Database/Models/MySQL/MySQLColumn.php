@@ -360,7 +360,7 @@ class MySQLColumn extends DatabaseColumn
 
     /**
      * Set the default value to `CURRENT_TIMESTAMP` if the value is `CURRENT_TIMESTAMP(2)`, `CURRENT_TIMESTAMP(3)`, ... `CURRENT_TIMESTAMP(n)`.
-     * This function is needed so that 
+     * This function is needed so that
      * column type `datetime(2) DEFAULT CURRENT_TIMESTAMP(2)` would be generated as
      * `dateTime('datetime', 2)->useCurrent()`.
      */
