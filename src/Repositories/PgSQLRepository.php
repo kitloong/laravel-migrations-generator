@@ -17,6 +17,8 @@ class PgSQLRepository extends Repository
      */
     public function getCheckConstraintDefinition(string $table, string $column): ?string
     {
+        $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
+
         $result = DB::selectOne(
             "SELECT pgc.conname AS constraint_name,
                        pgc.contype,
@@ -31,6 +33,7 @@ class PgSQLRepository extends Repository
                           ON pgc.conname = ccu.constraint_name
                           AND nsp.nspname = ccu.constraint_schema
                 WHERE contype ='c'
+                    AND nsp.nspname = '$searchPath'
                     AND ccu.table_name='$table'
                     AND ccu.column_name='$column'",
         );
