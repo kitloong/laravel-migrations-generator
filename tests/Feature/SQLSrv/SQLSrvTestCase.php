@@ -28,6 +28,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
             'charset'        => 'utf8',
             'prefix'         => '',
             'prefix_indexes' => true,
+            'trust_server_certificate' => true,
         ]);
     }
 
@@ -64,7 +65,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         }
 
         $command = sprintf(
-            'sqlcmd -S tcp:%s,%s -U %s -P \'%s\' -d %s -Q "%s" -o "%s" -C',
+            'sqlcmd -S tcp:%s,%s -U %s -P \'%s\' -d %s -Q "%s" -o "%s"',
             config('database.connections.sqlsrv.host'),
             config('database.connections.sqlsrv.port'),
             config('database.connections.sqlsrv.username'),
