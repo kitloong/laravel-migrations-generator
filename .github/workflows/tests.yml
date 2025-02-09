@@ -92,10 +92,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install sqlcmd
+        uses: potatoqualitee/mssqlsuite@v1.8
+        with:
+          install: sqlengine, sqlclient, sqlpackage
+          version: 2019
+
       - name: SQL Server Create Database
         run: |
           # Create DB
-          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'CREATE DATABASE migration' -b
+          sqlcmd -S 127.0.0.1 -U sa -P '!QAZ2wsx' -Q 'CREATE DATABASE migration' -C -b
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
