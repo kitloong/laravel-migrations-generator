@@ -95,8 +95,8 @@ jobs:
       - name: Install sqlcmd
         uses: potatoqualitee/mssqlsuite@v1.8
         with:
-          install: sqlclient, sqlengine, sqlpackage
-
+          install: sqlengine, sqlclient, sqlpackage, localdb, fulltext
+          version: 2019
 
       - name: SQL Server Create Database
         run: |
