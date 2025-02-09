@@ -101,7 +101,7 @@ class IndexGenerator
     /**
      * Get column names with length.
      *
-     * @return array<string|\Illuminate\Database\Query\Expression>
+     * @return array<string>
      */
     private function getColumns(Index $index): array
     {

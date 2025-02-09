@@ -44,7 +44,7 @@ class PgSQLSchema extends DatabaseSchema
 
                 return $table['schema'] === $searchPath;
             })
-            ->pluck('name')
+            ->map(static fn (array $table): string => $table['name'])
             ->values();
     }
 
