@@ -64,7 +64,7 @@ abstract class SQLSrvTestCase extends FeatureTestCase
         }
 
         $command = sprintf(
-            'sqlcmd -S tcp:%s,%s -U %s -P \'%s\' -d %s -Q "%s" -o "%s"',
+            'sqlcmd -S tcp:%s,%s -U %s -P \'%s\' -d %s -Q "%s" -o "%s" -C',
             config('database.connections.sqlsrv.host'),
             config('database.connections.sqlsrv.port'),
             config('database.connections.sqlsrv.username'),
