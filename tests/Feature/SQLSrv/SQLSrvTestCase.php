@@ -18,16 +18,16 @@ abstract class SQLSrvTestCase extends FeatureTestCase
 
         $app['config']->set('database.default', 'sqlsrv');
         $app['config']->set('database.connections.sqlsrv', [
-            'driver'         => 'sqlsrv',
-            'url'            => env('DATABASE_URL'),
-            'host'           => env('SQLSRV_HOST'),
-            'port'           => env('SQLSRV_PORT'),
-            'database'       => env('SQLSRV_DATABASE'),
-            'username'       => env('SQLSRV_USERNAME'),
-            'password'       => env('SQLSRV_PASSWORD'),
-            'charset'        => 'utf8',
-            'prefix'         => '',
-            'prefix_indexes' => true,
+            'driver'                   => 'sqlsrv',
+            'url'                      => env('DATABASE_URL'),
+            'host'                     => env('SQLSRV_HOST'),
+            'port'                     => env('SQLSRV_PORT'),
+            'database'                 => env('SQLSRV_DATABASE'),
+            'username'                 => env('SQLSRV_USERNAME'),
+            'password'                 => env('SQLSRV_PASSWORD'),
+            'charset'                  => 'utf8',
+            'prefix'                   => '',
+            'prefix_indexes'           => true,
             'trust_server_certificate' => true,
         ]);
     }
