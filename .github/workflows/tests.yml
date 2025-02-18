@@ -1,4 +1,4 @@
-name: "Run tests"
+name: Run tests
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
 
     services:
@@ -19,12 +18,7 @@ jobs:
           MYSQL_DATABASE: migration
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       mysql8:
         image: mysql:8
         env:
@@ -32,59 +26,44 @@ jobs:
           MYSQL_DATABASE: migration
         ports:
           - 33062:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       postgres:
         image: postgis/postgis:13-3.3
         env:
           POSTGRES_DB: migration
           POSTGRES_USER: root
-          POSTGRES_PASSWORD: "!QAZ2wsx"
+          POSTGRES_PASSWORD: !QAZ2wsx
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       sqlsrv:
         image: mcr.microsoft.com/mssql/server:2019-latest
         env:
-          SA_PASSWORD: "!QAZ2wsx"
-          ACCEPT_EULA: "Y"
+          SA_PASSWORD: !QAZ2wsx
+          ACCEPT_EULA: Y
         ports:
           - 1433:1433
-#        options: >-
-#          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P '!QAZ2wsx'"
-
       mariadb:
         image: mariadb:10
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_DATABASE: "migration"
+          MYSQL_DATABASE: migration
         ports:
           - 3307:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     strategy:
       matrix:
-        php: [ 8.2, 8.3, 8.4 ]
-        laravel: [ 11.* ]
-        sqlsrv_extension: [ pdo_sqlsrv ]
+        php: [8.2, 8.3, 8.4]
+        laravel: ['11.*', '12.*']
+        sqlsrv_extension: [pdo_sqlsrv]
         include:
           - php: 8.1
             laravel: 10.43.*
           - php: 8.1
             laravel: 10.*
+          - php: '8.2'
+            laravel: 12.*
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
