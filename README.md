@@ -9,6 +9,8 @@
 
 Generate Laravel Migrations from an existing database, including indexes and foreign keys!
 
+## Documentation
+
 Checkout the [documentation](https://kitloong.github.io/laravel-migrations-generator/usage/) for more details.
 
 ## Supported Database
