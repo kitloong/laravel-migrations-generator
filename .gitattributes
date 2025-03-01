@@ -10,6 +10,7 @@
 /.gitignore          export-ignore
 /.phpmd.xml          export-ignore
 /check_migrations.sh export-ignore
+/mkdocs.yml          export-ignore
 /phpcs.xml           export-ignore
 /phpstan.neon        export-ignore
 /phpunit.xml.dist    export-ignore
