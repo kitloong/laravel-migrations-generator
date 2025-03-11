@@ -133,6 +133,16 @@ Run `php artisan help migrate:generate` for a list of options.
 
 Thanks to Bernhard Breytenbach for his great work. This package is based on https://github.com/Xethron/migrations-generator.
 
+## Our Amazing Sponsor 🎉
+
+A huge thank you to our sponsor for supporting this project!
+
+<a href="https://vemto.app/" target="_blank">
+    <img alt="Vemto" width="200" src="https://vemto.app/images/logo2.png" />
+</a>
+
+Want to support this project? [Become a sponsor](https://github.com/sponsors/kitloong) today!
+
 ## Contributors
 
 [![Contributors](https://contrib.rocks/image?repo=kitloong/laravel-migrations-generator)](https://github.com/kitloong/laravel-migrations-generator/graphs/contributors)
