@@ -1,0 +1,35 @@
+services:
+
+  build:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+      target: build
+      args:
+        PHP_BUILD_VERSION: $PHP_BUILD_VERSION
+        BUILD_ROOT_PATH: $BUILD_ROOT_PATH
+        PHP_TEST_VERSION: $PHP_TEST_VERSION
+        XDEBUG_VERSION: $XDEBUG_VERSION
+        NODE_VERSION: $NODE_VERSION
+    container_name: "${PROJECT_NAME}_build"
+    working_dir: ${BUILD_ROOT_PATH}
+    volumes:
+      -  ${BASE_PATH}:${BUILD_ROOT_PATH}
+
+  test:
+    extra_hosts:
+      - "host.docker.internal:${HOST_IP_ADDRESS}"
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+      target: test
+      args:
+        BUILD_ROOT_PATH: $BUILD_ROOT_PATH
+        PHP_BUILD_VERSION: $PHP_BUILD_VERSION
+        PHP_TEST_VERSION: $PHP_TEST_VERSION
+        XDEBUG_VERSION: $XDEBUG_VERSION
+        NODE_VERSION: $NODE_VERSION
+    container_name: "${PROJECT_NAME}_test"
+    working_dir: ${BUILD_ROOT_PATH}
+    volumes:
+      -  ${BASE_PATH}:${BUILD_ROOT_PATH}

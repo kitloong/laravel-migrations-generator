@@ -1,6 +1,5 @@
 /.idea
 /build
-/docker
 /report
 /migrations
 /storage
@@ -13,7 +12,10 @@
 .phpunit.result.cache
 _ide_helper.php
 check_migrations.sh
-docker-compose.yml
 composer.lock
 coverage.xml
 phpunit.xml
+.env
+*.log
+*.dbml
+*.sql
