@@ -171,6 +171,11 @@ class PgSQLColumn extends DatabaseColumn
             return [];
         }
 
+        // Check if the constraint uses regex operators - if so, it's not an enum
+        if ($this->isRegexConstraint($definition)) {
+            return [];
+        }
+
         $presetValues = Regex::getTextBetweenAll($definition, "'", "'::");
 
         if ($presetValues === null) {
@@ -178,5 +183,29 @@ class PgSQLColumn extends DatabaseColumn
         }
 
         return $presetValues;
+    }
+
+    /**
+     * Check if a constraint definition uses regex operators.
+     * PostgreSQL regex operators: ~ (match), ~* (case-insensitive match), 
+     * !~ (not match), !~* (case-insensitive not match)
+     */
+    private function isRegexConstraint(string $definition): bool
+    {
+        // Look for regex operators outside of quotes
+        $patterns = [
+            '/\s+~\s+/',     // match operator
+            '/\s+~\*\s+/',   // case-insensitive match operator  
+            '/\s+!~\s+/',    // not match operator
+            '/\s+!~\*\s+/',  // case-insensitive not match operator
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $definition)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
