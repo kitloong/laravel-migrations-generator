@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Database\Models;
 
+use Illuminate\Support\Facades\App;
 use KitLoong\MigrationsGenerator\Enum\Migrations\ColumnName;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Schema\Models\Column;
@@ -293,7 +294,11 @@ abstract class DatabaseColumn implements Column
             return null;
         }
 
-        $default = str_replace("'", "''", $default);
+        // For Laravel versions lower than 12.20.0, escape single quotes
+        if (version_compare(App::version(), '12.20.0', '<')) {
+            $default = str_replace("'", "''", $default);
+        }
+
         return addcslashes($default, '\\');
     }
 
