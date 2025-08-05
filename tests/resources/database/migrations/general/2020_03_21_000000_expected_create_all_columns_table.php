@@ -56,6 +56,7 @@ return new class extends TestMigration
             $table->double('double_default')->default(10.8);
             $table->enum('enum', ['easy', 'hard']);
             $table->enum('enum_default', ['easy', 'hard'])->default('easy');
+            $table->enum('enum_special', ['IN', 'ANY', 'OR', 'BETWEEN', 'value::character']);
             $table->float('float');
             $table->float('float_default')->default(10.8);
             $table->integer('integer');
