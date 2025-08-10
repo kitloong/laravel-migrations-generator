@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use KitLoong\MigrationsGenerator\Database\Models\DatabaseColumn;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\ColumnType;
 use KitLoong\MigrationsGenerator\Repositories\PgSQLRepository;
-use KitLoong\MigrationsGenerator\Support\Regex;
 
 class PgSQLColumn extends DatabaseColumn
 {
@@ -163,20 +162,56 @@ class PgSQLColumn extends DatabaseColumn
     {
         $definition = $this->repository->getCheckConstraintDefinition($this->tableName, $this->name);
 
-        if ($definition === null) {
+        if ($definition === null || $definition === '') {
             return [];
         }
 
-        if ($definition === '') {
-            return [];
+        $enumValues = $this->parseEnumValuesFromConstraint($definition);
+
+        if (count($enumValues) > 0) {
+            return array_values(array_unique($enumValues));
         }
 
-        $presetValues = Regex::getTextBetweenAll($definition, "'", "'::");
+        return [];
+    }
 
-        if ($presetValues === null) {
-            return [];
+    /**
+     * This method handles various PostgreSQL check constraint patterns:
+     *
+     * 1. ANY ARRAY: CHECK ((status)::text = ANY ((ARRAY['active'::character varying, 'inactive'::character varying])::text[]))
+     * 2. OR conditions: CHECK (((status)::text = 'active'::text) OR ((status)::text = 'inactive'::text))
+     * 3. IN clause: CHECK (status IN ('active', 'inactive', 'pending'))
+     *
+     * @return string[]
+     */
+    private function parseEnumValuesFromConstraint(string $definition): array
+    {
+        // Pattern 1: ANY with ARRAY pattern (most common in PostgreSQL)
+        // Example: CHECK ((status)::text = ANY ((ARRAY['active'::character varying, 'inactive'::character varying])::text[]))
+        if (preg_match('/ARRAY\[(.*?)\]/i', $definition, $matches)) {
+            $arrayContent = $matches[1];
+
+            if (preg_match_all('/\'([^\']+)\'/i', $arrayContent, $valueMatches)) {
+                return $valueMatches[1];
+            }
         }
 
-        return $presetValues;
+        // Pattern 2: Multiple OR conditions
+        // Example: CHECK (((status)::text = 'active'::text) OR ((status)::text = 'inactive'::text))
+        if (preg_match_all('/\(\(' . preg_quote($this->name, '/') . '\)[^=]*=\s*\'([^\']+)\'/i', $definition, $matches)) {
+            return array_unique($matches[1]);
+        }
+
+        // Pattern 3: Simple IN clause
+        // Example: CHECK (status IN ('active', 'inactive', 'pending'))
+        if (preg_match('/' . preg_quote($this->name, '/') . '\s+IN\s*\(\s*(.*?)\s*\)/i', $definition, $matches)) {
+            $inContent = $matches[1];
+
+            if (preg_match_all('/\'([^\']+)\'/i', $inContent, $valueMatches)) {
+                return $valueMatches[1];
+            }
+        }
+
+        return [];
     }
 }
