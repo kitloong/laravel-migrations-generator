@@ -12,9 +12,9 @@ abstract class MySQL57TestCase extends FeatureTestCase
     /**
      * @inheritDoc
      */
-    protected function getEnvironmentSetUp($app): void
+    protected function defineEnvironment($app): void
     {
-        parent::getEnvironmentSetUp($app);
+        parent::defineEnvironment($app);
 
         $app['config']->set('database.default', 'mysql57');
         $app['config']->set('database.connections.mysql57', [
@@ -64,8 +64,11 @@ abstract class MySQL57TestCase extends FeatureTestCase
 
     protected function refreshDatabase(): void
     {
+        $prefix = DB::getTablePrefix();
+        DB::setTablePrefix('');
         Schema::dropAllViews();
         Schema::dropAllTables();
+        DB::setTablePrefix($prefix);
         $this->dropAllProcedures();
     }
 

@@ -17,6 +17,8 @@ class PgSQLRepository extends Repository
      */
     public function getCheckConstraintDefinition(string $table, string $column): ?string
     {
+        $searchPath = DB::connection()->getConfig('search_path') ?: DB::connection()->getConfig('schema');
+
         $result = DB::selectOne(
             "SELECT pgc.conname AS constraint_name,
                        pgc.contype,
@@ -31,6 +33,7 @@ class PgSQLRepository extends Repository
                           ON pgc.conname = ccu.constraint_name
                           AND nsp.nspname = ccu.constraint_schema
                 WHERE contype ='c'
+                    AND nsp.nspname = '$searchPath'
                     AND ccu.table_name='$table'
                     AND ccu.column_name='$column'",
         );
@@ -100,30 +103,5 @@ class PgSQLRepository extends Repository
         }
 
         return $list;
-    }
-
-    /**
-     * Get the stored column definition by table and column name.
-     *
-     * @param  string  $table  Table name.
-     * @param  string  $column  Column name.
-     * @return string|null  The stored column definition. NULL if not found.
-     */
-    public function getStoredDefinition(string $table, string $column): ?string
-    {
-        $definition = DB::selectOne(
-            "SELECT generation_expression
-                FROM information_schema.columns
-                WHERE table_name = '$table'
-                    AND column_name = '$column'
-                    AND is_generated = 'ALWAYS'",
-        );
-
-        if ($definition === null) {
-            return null;
-        }
-
-        $definitionArr = array_change_key_case((array) $definition);
-        return $definitionArr['generation_expression'] !== '' ? $definitionArr['generation_expression'] : null;
     }
 }

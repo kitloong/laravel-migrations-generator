@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Tests\Feature\SQLite;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Tests\Feature\FeatureTestCase;
 
@@ -10,9 +11,9 @@ abstract class SQLiteTestCase extends FeatureTestCase
     /**
      * @inheritDoc
      */
-    protected function getEnvironmentSetUp($app): void
+    protected function defineEnvironment($app): void
     {
-        parent::getEnvironmentSetUp($app);
+        parent::defineEnvironment($app);
 
         touch((string) env('SQLITE_DATABASE'));
 
@@ -38,7 +39,10 @@ abstract class SQLiteTestCase extends FeatureTestCase
 
     protected function refreshDatabase(): void
     {
+        $prefix = DB::getTablePrefix();
+        DB::setTablePrefix('');
         Schema::dropAllViews();
         Schema::dropAllTables();
+        DB::setTablePrefix($prefix);
     }
 }

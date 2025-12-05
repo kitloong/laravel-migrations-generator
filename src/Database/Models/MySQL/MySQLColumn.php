@@ -87,14 +87,7 @@ class MySQLColumn extends DatabaseColumn
 
             case ColumnType::GEOGRAPHY:
             case ColumnType::GEOMETRY:
-            case ColumnType::GEOMETRY_COLLECTION:
-            case ColumnType::LINE_STRING:
-            case ColumnType::MULTI_LINE_STRING:
-            case ColumnType::POINT:
-            case ColumnType::MULTI_POINT:
-            case ColumnType::POLYGON:
-            case ColumnType::MULTI_POLYGON:
-                $this->setRealSpatialColumn();
+                $this->setRealSpatialColumn($column['type_name']);
                 break;
 
             default:
@@ -222,15 +215,13 @@ class MySQLColumn extends DatabaseColumn
      */
     private function setVirtualDefinition(): void
     {
-        $virtualDefinition = $this->mysqlRepository->getVirtualDefinition($this->tableName, $this->name);
-
-        if ($virtualDefinition === null) {
+        if ($this->virtualDefinition === null) {
             return;
         }
 
         // The definition of MySQL8 returned `concat(string,_utf8mb4\' \',string_255)`.
         // Replace `\'` to `'` here to avoid double escape.
-        $this->virtualDefinition = str_replace("\'", "'", $virtualDefinition);
+        $this->virtualDefinition = str_replace("\'", "'", $this->virtualDefinition);
     }
 
     /**
@@ -238,52 +229,47 @@ class MySQLColumn extends DatabaseColumn
      */
     private function setStoredDefinition(): void
     {
-        $storedDefinition = $this->mysqlRepository->getStoredDefinition($this->tableName, $this->name);
-
-        if ($storedDefinition === null) {
+        if ($this->storedDefinition === null) {
             return;
         }
 
         // The definition of MySQL8 returned `concat(string,_utf8mb4\' \',string_255)`.
         // Replace `\'` to `'` here to avoid double escape.
-        $this->storedDefinition = str_replace("\'", "'", $storedDefinition);
+        $this->storedDefinition = str_replace("\'", "'", $this->storedDefinition);
     }
 
     /**
      * Set to geometry or geography.
      */
-    private function setRealSpatialColumn(): void
+    private function setRealSpatialColumn(string $typeName): void
     {
-        if (!$this->atLeastLaravel11()) {
-            return;
-        }
-
-        switch ($this->type) {
-            case ColumnType::GEOMETRY_COLLECTION:
+        switch ($typeName) {
+            case 'geometrycollection':
+            case 'geomcollection':
                 $this->spatialSubType = 'geometryCollection';
                 break;
 
-            case ColumnType::LINE_STRING:
+            case 'linestring':
                 $this->spatialSubType = 'lineString';
                 break;
 
-            case ColumnType::MULTI_LINE_STRING:
+            case 'multilinestring':
                 $this->spatialSubType = 'multiLineString';
                 break;
 
-            case ColumnType::POINT:
+            case 'point':
                 $this->spatialSubType = 'point';
                 break;
 
-            case ColumnType::MULTI_POINT:
+            case 'multipoint':
                 $this->spatialSubType = 'multiPoint';
                 break;
 
-            case ColumnType::POLYGON:
+            case 'polygon':
                 $this->spatialSubType = 'polygon';
                 break;
 
-            case ColumnType::MULTI_POLYGON:
+            case 'multipolygon':
                 $this->spatialSubType = 'multiPolygon';
                 break;
 

@@ -18,14 +18,14 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: 8.2
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached
           tools: composer:v2
           coverage: none
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:^11.0" --no-interaction --no-update
+          composer require "laravel/framework:^12.0" --no-interaction --no-update
           composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: phpcs

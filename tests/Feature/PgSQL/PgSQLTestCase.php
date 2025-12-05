@@ -12,9 +12,9 @@ abstract class PgSQLTestCase extends FeatureTestCase
     /**
      * @inheritDoc
      */
-    protected function getEnvironmentSetUp($app): void
+    protected function defineEnvironment($app): void
     {
-        parent::getEnvironmentSetUp($app);
+        parent::defineEnvironment($app);
 
         $app['config']->set('database.default', 'pgsql');
         $app['config']->set('database.connections.pgsql', [
@@ -51,7 +51,7 @@ abstract class PgSQLTestCase extends FeatureTestCase
     protected function dumpSchemaAs(string $destination): void
     {
         $command = sprintf(
-            'PGPASSWORD="%s" pg_dump -h %s -p %s -U %s %s -f %s --schema-only',
+            'PGPASSWORD="%s" pg_dump -h %s -p %s -U %s %s -f %s --schema-only --restrict-key=public',
             config('database.connections.pgsql.password'),
             config('database.connections.pgsql.host'),
             config('database.connections.pgsql.port'),
