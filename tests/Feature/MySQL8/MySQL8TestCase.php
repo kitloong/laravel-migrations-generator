@@ -51,7 +51,7 @@ abstract class MySQL8TestCase extends FeatureTestCase
         }
 
         $command = sprintf(
-            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' > %s',
+            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --skip-ssl --no-data ' . $skipColumnStatistics . ' > %s',
             config('database.connections.mysql8.host'),
             config('database.connections.mysql8.port'),
             config('database.connections.mysql8.username'),
