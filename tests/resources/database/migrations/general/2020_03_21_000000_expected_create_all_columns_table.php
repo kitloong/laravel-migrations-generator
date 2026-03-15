@@ -56,6 +56,7 @@ return new class extends TestMigration
             $table->double('double_default')->default(10.8);
             $table->enum('enum', ['easy', 'hard']);
             $table->enum('enum_default', ['easy', 'hard'])->default('easy');
+            $table->enum('enum_special', ['IN', 'ANY', 'OR', 'BETWEEN', 'value::character']);
             $table->float('float');
             $table->float('float_default')->default(10.8);
             $table->integer('integer');
@@ -80,7 +81,7 @@ return new class extends TestMigration
 
             if (
                 !in_array(DB::getDriverName(), [Driver::MARIADB->value, Driver::MYSQL->value]) ||
-                version_compare(DB::getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), '5.7', 'eq')
+                version_compare(DB::getPdo()->getAttribute(PDO::ATTR_SERVER_VERSION), '5.8', '>')
             ) {
                 $table->geography('geography');
                 $table->geography('geographyGeometryCollection', 'geometryCollection');

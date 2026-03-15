@@ -9,7 +9,9 @@
 
 Generate Laravel Migrations from an existing database, including indexes and foreign keys!
 
-This package is a modified version of https://github.com/Xethron/migrations-generator that has been updated to support Laravel 5.6 and beyond, along with additional features.
+## Documentation
+
+Checkout the [documentation](https://kitloong.github.io/laravel-migrations-generator/usage/) for more details.
 
 ## Supported Database
 
@@ -80,7 +82,7 @@ You can also ignore tables with:
 php artisan migrate:generate --ignore="table3,table4,table5"
 ```
 
-Laravel Migrations Generator will first generate all the tables, columns and indexes, and afterwards setup all the foreign key constraints.
+Laravel Migrations Generator will first generate all the tables, columns and indexes, and afterward setup all the foreign key constraints.
 
 So make sure you include all the tables listed in the foreign keys so that they are present when the foreign keys are created.
 
@@ -104,60 +106,42 @@ php artisan migrate:generate --squash
 
 Run `php artisan help migrate:generate` for a list of options.
 
-| Options                              | Description                                                                                                                                                   |
-|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| -c, --connection[=CONNECTION]        | The database connection to use                                                                                                                                |
-| -t, --tables[=TABLES]                | A list of tables or views you wish to generate migrations for separated by a comma: users,posts,comments                                                      |
-| -i, --ignore[=IGNORE]                | A list of tables or views you wish to ignore, separated by a comma: users,posts,comments                                                                      |
-| -p, --path[=PATH]                    | Where should the file be created?                                                                                                                             |
-| -tp, --template-path[=TEMPLATE-PATH] | The location of the template for this generator                                                                                                               |
-| --date[=DATE]                        | Migrations will be created with specified date. Views and foreign keys will be created with + 1 second. Date should be in format supported by `Carbon::parse` |
-| --table-filename[=TABLE-FILENAME]    | Define table migration filename, default pattern: `[datetime]\_create_[name]_table.php`                                                                       |
-| --view-filename[=VIEW-FILENAME]      | Define view migration filename, default pattern: `[datetime]\_create_[name]_view.php`                                                                         |
-| --proc-filename[=PROC-FILENAME]      | Define stored procedure filename, default pattern: `[datetime]\_create_[name]_proc.php`                                                                       |
-| --fk-filename[=FK-FILENAME]          | Define foreign key migration filename, default pattern: `[datetime]\_add_foreign_keys_to_[name]_table.php`                                                    |
-| --log-with-batch[=LOG-WITH-BATCH]    | Log migrations with given batch number. We recommend using batch number 0 so that it becomes the first migration                                              |
-| --default-index-names                | Don\'t use DB index names for migrations                                                                                                                      |
-| --default-fk-names                   | Don\'t use DB foreign key names for migrations                                                                                                                |
-| --use-db-collation                   | Generate migrations with existing DB collation                                                                                                                |
-| --skip-log                           | Don\'t log into migrations table                                                                                                                              |
-| --skip-vendor                        | Don\'t generate vendor migrations                                                                                                                             |
-| --skip-views                         | Don\'t generate views                                                                                                                                         |
-| --skip-proc                          | Don\'t generate stored procedures                                                                                                                             |
-| --squash                             | Generate all migrations into a single file                                                                                                                    |
-| --with-has-table                     | Check for the existence of a table using `hasTable`                                                                                                           |
-
-## SQLite Alter Foreign Key
-
-The generator first generates all tables and then adds foreign keys to existing tables.
-
-However, SQLite only supports foreign keys upon creation of the table and not when tables are altered.
-*_add_foreign_keys_* migrations will still be generated, however will get omitted if migrate to SQLite type database.
-
-## User-Defined Type Columns
-
-The generator will recognize user-defined type from the schema, and then generate migration as
-
-```php
-public function up()
-{
-    Schema::create('table', function (Blueprint $table) {
-        ...
-    });
-    DB::statement("ALTER TABLE table ADD column custom_type NOT NULL");
-}
-```
-
-Note that the new `column` is always added at the end of the created `table` which means the ordering of the column generated in migration will differ from what we have from the schema.
-
-Supported database with user-defined types:
-
-- [x] PostgreSQL
-- [x] SQL Server
+| Options                                                                                                                | Description                                                                                                                                                   |
+|------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [-c, --connection[=CONNECTION]](https://kitloong.github.io/laravel-migrations-generator/options/connection/)           | The database connection to use                                                                                                                                |
+| [-t, --tables[=TABLES]](https://kitloong.github.io/laravel-migrations-generator/options/tables/)                       | A list of tables or views you wish to generate migrations for separated by a comma: users,posts,comments                                                      |
+| [-i, --ignore[=IGNORE]](https://kitloong.github.io/laravel-migrations-generator/options/ignore/)                       | A list of tables or views you wish to ignore, separated by a comma: users,posts,comments                                                                      |
+| [-p, --path[=PATH]](https://kitloong.github.io/laravel-migrations-generator/options/path/)                             | Where should the file be created?                                                                                                                             |
+| [-tp, --template-path[=TEMPLATE-PATH]](https://kitloong.github.io/laravel-migrations-generator/options/template-path/) | The location of the template for this generator                                                                                                               |
+| [--date[=DATE]](https://kitloong.github.io/laravel-migrations-generator/options/date/)                                 | Migrations will be created with specified date. Views and foreign keys will be created with + 1 second. Date should be in format supported by `Carbon::parse` |
+| [--table-filename[=TABLE-FILENAME]](https://kitloong.github.io/laravel-migrations-generator/options/table-filename/)   | Define table migration filename, default pattern: `[datetime]\_create_[name]_table.php`                                                                       |
+| [--view-filename[=VIEW-FILENAME]](https://kitloong.github.io/laravel-migrations-generator/options/table-filename/)     | Define view migration filename, default pattern: `[datetime]\_create_[name]_view.php`                                                                         |
+| [--proc-filename[=PROC-FILENAME]](https://kitloong.github.io/laravel-migrations-generator/options/table-filename/)     | Define stored procedure filename, default pattern: `[datetime]\_create_[name]_proc.php`                                                                       |
+| [--fk-filename[=FK-FILENAME]](https://kitloong.github.io/laravel-migrations-generator/options/table-filename/)         | Define foreign key migration filename, default pattern: `[datetime]\_add_foreign_keys_to_[name]_table.php`                                                    |
+| [--log-with-batch[=LOG-WITH-BATCH]](https://kitloong.github.io/laravel-migrations-generator/options/log-with-batch/)   | Log migrations with given batch number. We recommend using batch number 0 so that it becomes the first migration                                              |
+| [--default-index-names](https://kitloong.github.io/laravel-migrations-generator/options/default-index-names/)          | Don\'t use DB index names for migrations                                                                                                                      |
+| [--default-fk-names](https://kitloong.github.io/laravel-migrations-generator/options/default-fk-names/)                | Don\'t use DB foreign key names for migrations                                                                                                                |
+| [--use-db-collation](https://kitloong.github.io/laravel-migrations-generator/options/use-db-collation/)                | Generate migrations with existing DB collation                                                                                                                |
+| [--skip-log](https://kitloong.github.io/laravel-migrations-generator/options/skip-log/)                                | Don\'t log into migrations table                                                                                                                              |
+| [--skip-vendor](https://kitloong.github.io/laravel-migrations-generator/options/skip-vendor/)                          | Don\'t generate vendor migrations                                                                                                                             |
+| [--skip-views](https://kitloong.github.io/laravel-migrations-generator/options/skip-views/)                            | Don\'t generate views                                                                                                                                         |
+| [--skip-proc](https://kitloong.github.io/laravel-migrations-generator/options/skip-proc/)                              | Don\'t generate stored procedures                                                                                                                             |
+| [--squash](https://kitloong.github.io/laravel-migrations-generator/options/squash/)                                    | Generate all migrations into a single file                                                                                                                    |
+| [--with-has-table](https://kitloong.github.io/laravel-migrations-generator/options/with-has-table/)                    | Check for the existence of a table using `hasTable`                                                                                                           |
 
 ## Thank You
 
 Thanks to Bernhard Breytenbach for his great work. This package is based on https://github.com/Xethron/migrations-generator.
+
+## Our Amazing Sponsor 🎉
+
+A huge thank you to our sponsor for supporting this project!
+
+<a href="https://vemto.app/" target="_blank">
+    <img alt="Vemto" width="200" src="https://vemto.app/images/logo2.png" />
+</a>
+
+Want to support this project? [Become a sponsor](https://github.com/sponsors/kitloong) today!
 
 ## Contributors
 

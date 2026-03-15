@@ -12,9 +12,9 @@ abstract class MariaDBTestCase extends FeatureTestCase
     /**
      * @inheritDoc
      */
-    protected function getEnvironmentSetUp($app): void
+    protected function defineEnvironment($app): void
     {
-        parent::getEnvironmentSetUp($app);
+        parent::defineEnvironment($app);
 
         $app['config']->set('database.default', 'mariadb');
         $app['config']->set('database.connections.mariadb', [
@@ -50,8 +50,14 @@ abstract class MariaDBTestCase extends FeatureTestCase
             $skipColumnStatistics = '--skip-column-statistics';
         }
 
+        $skipSsl = '';
+
+        if (env('MYSQLDUMP_HAS_OPTION_SKIP_SSL')) {
+            $skipSsl = '--skip-ssl';
+        }
+
         $command = sprintf(
-            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' > %s',
+            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' ' . $skipSsl . ' > %s',
             config('database.connections.mariadb.host'),
             config('database.connections.mariadb.port'),
             config('database.connections.mariadb.username'),

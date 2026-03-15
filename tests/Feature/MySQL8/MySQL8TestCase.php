@@ -12,9 +12,9 @@ abstract class MySQL8TestCase extends FeatureTestCase
     /**
      * @inheritDoc
      */
-    protected function getEnvironmentSetUp($app): void
+    protected function defineEnvironment($app): void
     {
-        parent::getEnvironmentSetUp($app);
+        parent::defineEnvironment($app);
 
         $app['config']->set('database.default', 'mysql8');
         $app['config']->set('database.connections.mysql8', [
@@ -50,8 +50,14 @@ abstract class MySQL8TestCase extends FeatureTestCase
             $skipColumnStatistics = '--skip-column-statistics';
         }
 
+        $skipSsl = '';
+
+        if (env('MYSQLDUMP_HAS_OPTION_SKIP_SSL')) {
+            $skipSsl = '--skip-ssl';
+        }
+
         $command = sprintf(
-            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' > %s',
+            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data ' . $skipColumnStatistics . ' ' . $skipSsl . '> %s',
             config('database.connections.mysql8.host'),
             config('database.connections.mysql8.port'),
             config('database.connections.mysql8.username'),

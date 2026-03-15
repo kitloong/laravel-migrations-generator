@@ -12,9 +12,9 @@ abstract class MySQL57TestCase extends FeatureTestCase
     /**
      * @inheritDoc
      */
-    protected function getEnvironmentSetUp($app): void
+    protected function defineEnvironment($app): void
     {
-        parent::getEnvironmentSetUp($app);
+        parent::defineEnvironment($app);
 
         $app['config']->set('database.default', 'mysql57');
         $app['config']->set('database.connections.mysql57', [
@@ -50,9 +50,15 @@ abstract class MySQL57TestCase extends FeatureTestCase
             $skipColumnStatistics = '--skip-column-statistics';
         }
 
+        $skipSsl = '';
+
+        if (env('MYSQLDUMP_HAS_OPTION_SKIP_SSL')) {
+            $skipSsl = '--skip-ssl';
+        }
+
         $command = sprintf(
             // Disable column-statistics to dump MySQL 5.7
-            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data --routines ' . $skipColumnStatistics . ' > %s',
+            'mysqldump -h %s -P %s -u %s ' . $password . ' %s --compact --no-data --routines ' . $skipColumnStatistics . ' ' . $skipSsl . ' > %s',
             config('database.connections.mysql57.host'),
             config('database.connections.mysql57.port'),
             config('database.connections.mysql57.username'),
