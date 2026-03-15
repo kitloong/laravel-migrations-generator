@@ -51,5 +51,6 @@
         <env name="SQLITE_DATABASE" value="./database/migration.sqlite"/>
 
         <env name="MYSQLDUMP_HAS_OPTION_SKIP_COLUMN_STATISTICS" value="false"/>
+        <env name="MYSQLDUMP_HAS_OPTION_SKIP_SSL" value="true"/>
     </php>
 </phpunit>
