@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Kit Loong" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Usage - Laravel Migrations Generator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Usage";
+        var mkdocs_page_input_path = "usage.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q55TH3KLPX"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', "G-Q55TH3KLPX");
+      </script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Laravel Migrations Generator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Getting Started</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Usage</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Options</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/connection/">Connection</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/date/">Date</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/default-fk-names/">Default Foreign Key Names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/default-index-names/">Default Index Names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/ignore/">Ignore</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/log-with-batch/">Log With Batch</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/path/">Path</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/skip-log/">Skip Log</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/skip-proc/">Skip Procedures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/skip-vendor/">Skip Vendor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/skip-views/">Skip Views</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/squash/">Squash Migrations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/table-filename/">Table Filename</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/tables/">Tables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/template-path/">Template Path</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/use-db-collation/">Use Database Collation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../options/with-has-table/">With Has Table</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../sqlite/">SQLite Alter Foreign Key</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../udt-columns/">User-Defined Type Columns</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Laravel Migrations Generator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/kitloong/laravel-migrations-generator/tree/7.x/docs/usage.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="usage">Usage</h1>
+<p>To create migrations for all the tables, run:</p>
+<pre><code class="language-bash">php artisan migrate:generate
+</code></pre>
+<p>It will first ask if you want to log the migrations in the migrations table.</p>
+<pre><code class="language-bash">Using connection: mysql
+
+Generating migrations for: comments,users
+
+ Do you want to log these migrations in the migrations table? (yes/no) [yes]:
+</code></pre>
+<p>If you choose <code>yes</code>, it will prompt another question to confirm the batch number:</p>
+<pre><code class="language-bash"> Next Batch Number is: 1. We recommend using Batch Number 0 so that it becomes the &quot;first&quot; migration. [Default: 0] [0]:
+</code></pre>
+<p>Enter your desired batch number or press <code>Enter</code> to use the default value.</p>
+<p>The tables from your schema:</p>
+<pre><code class="language-sql">CREATE TABLE `users` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) COMMENT 'comment',
+    `email` VARCHAR(255) UNIQUE,
+    `email_verified_at` TIMESTAMP NULL,
+    `password` VARCHAR(255),
+    `remember_token` VARCHAR(100),
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL
+);
+
+CREATE TABLE `comments` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT UNSIGNED,
+    `title` VARCHAR(255),
+    `comment` VARCHAR(255) UNIQUE,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+    INDEX `comments_user_id_index` (`user_id`),
+    CONSTRAINT `comments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);
+</code></pre>
+<p>Will generate the following migration files.</p>
+<p>Please note that the migration file for adding foreign keys is always generated last. This is because the tables referenced by the foreign keys need to exist before the foreign keys can be created.</p>
+<ul>
+<li><code>2000_10_08_145641_create_comments_table.php</code></li>
+</ul>
+<pre><code class="language-php">&lt;?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table-&gt;bigIncrements('id');
+            $table-&gt;string('name')-&gt;comment('comment');
+            $table-&gt;string('email')-&gt;unique();
+            $table-&gt;timestamp('email_verified_at')-&gt;nullable();
+            $table-&gt;string('password');
+            $table-&gt;rememberToken();
+            $table-&gt;timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('users');
+    }
+};
+</code></pre>
+<ul>
+<li><code>2000_10_08_145641_create_users_table.php</code></li>
+</ul>
+<pre><code class="language-php">&lt;?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('comments', function (Blueprint $table) {
+            $table-&gt;bigIncrements('id');
+            $table-&gt;unsignedBigInteger('user_id')-&gt;index();
+            $table-&gt;string('title');
+            $table-&gt;string('comment')-&gt;unique();
+            $table-&gt;timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('comments');
+    }
+};
+</code></pre>
+<ul>
+<li><code>2000_10_08_145644_add_foreign_keys_to_comments_table.php</code></li>
+</ul>
+<pre><code class="language-php">&lt;?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('comments', function (Blueprint $table) {
+            $table-&gt;foreign(['user_id'])-&gt;references(['id'])-&gt;on('users')-&gt;onUpdate('restrict')-&gt;onDelete('restrict');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('comments', function (Blueprint $table) {
+            $table-&gt;dropForeign('comments_user_id_foreign');
+        });
+    }
+};
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../options/connection/" class="btn btn-neutral float-right" title="Connection">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/kitloong/laravel-migrations-generator" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../options/connection/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

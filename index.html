@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Generate Laravel Migrations from an existing database, including indexes and foreign keys!" /><meta name="author" content="Kit Loong" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Laravel Migrations Generator</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Getting Started";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q55TH3KLPX"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', "G-Q55TH3KLPX");
+      </script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> Laravel Migrations Generator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Getting Started</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#supported-database">Supported Database</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#install">Install</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#version-compatibility">Version Compatibility</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#laravel-setup">Laravel Setup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#lumen-setup">Lumen Setup</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#enable-facade">Enable Facade</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#register-provider">Register Provider</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="usage/">Usage</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Options</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="options/connection/">Connection</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/date/">Date</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/default-fk-names/">Default Foreign Key Names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/default-index-names/">Default Index Names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/ignore/">Ignore</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/log-with-batch/">Log With Batch</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/path/">Path</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/skip-log/">Skip Log</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/skip-proc/">Skip Procedures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/skip-vendor/">Skip Vendor</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/skip-views/">Skip Views</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/squash/">Squash Migrations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/table-filename/">Table Filename</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/tables/">Tables</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/template-path/">Template Path</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/use-db-collation/">Use Database Collation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="options/with-has-table/">With Has Table</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="sqlite/">SQLite Alter Foreign Key</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="udt-columns/">User-Defined Type Columns</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">Laravel Migrations Generator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/kitloong/laravel-migrations-generator/tree/7.x/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="getting-started">Getting Started</h1>
+<p>Generate Laravel Migrations from an existing database, including indexes and foreign keys!</p>
+<h2 id="supported-database">Supported Database</h2>
+<p>Laravel Migrations Generator supports all five Laravel first-party support databases:</p>
+<ul>
+<li>MariaDB</li>
+<li>MySQL</li>
+<li>PostgreSQL</li>
+<li>SQL Server</li>
+<li>SQLite</li>
+</ul>
+<h2 id="install">Install</h2>
+<p>The recommended way to install this is through composer:</p>
+<pre><code class="language-bash">composer require --dev kitloong/laravel-migrations-generator
+</code></pre>
+<h2 id="version-compatibility">Version Compatibility</h2>
+<table>
+<thead>
+<tr>
+<th>Laravel</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12.x</td>
+<td>7.x</td>
+</tr>
+<tr>
+<td>11.x</td>
+<td>7.x</td>
+</tr>
+<tr>
+<td>&gt;= 10.43.x</td>
+<td>7.x</td>
+</tr>
+<tr>
+<td>10.x | &lt;= 10.42.x</td>
+<td>6.x</td>
+</tr>
+<tr>
+<td>9.x</td>
+<td>6.x</td>
+</tr>
+<tr>
+<td>8.x</td>
+<td>6.x</td>
+</tr>
+<tr>
+<td>7.x</td>
+<td>6.x</td>
+</tr>
+<tr>
+<td>6.x</td>
+<td>6.x</td>
+</tr>
+<tr>
+<td>5.8.x</td>
+<td>6.x</td>
+</tr>
+<tr>
+<td>5.7.x</td>
+<td>6.x</td>
+</tr>
+<tr>
+<td>5.6.x</td>
+<td>6.x</td>
+</tr>
+<tr>
+<td>&lt;= 5.5.x</td>
+<td>https://github.com/Xethron/migrations-generator</td>
+</tr>
+</tbody>
+</table>
+<h3 id="laravel-setup">Laravel Setup</h3>
+<p>Laravel will automatically register service provider for you.</p>
+<h3 id="lumen-setup">Lumen Setup</h3>
+<p>Auto-discovery is not available in Lumen, you need some modification on <code>bootstrap/app.php</code>.</p>
+<h4 id="enable-facade">Enable Facade</h4>
+<p>Uncomment the following line.</p>
+<pre><code class="language-php">$app-&gt;withFacades();
+</code></pre>
+<h4 id="register-provider">Register Provider</h4>
+<p>Add following line into the <code>Register Service Providers</code> section.</p>
+<pre><code class="language-php">$app-&gt;register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="usage/" class="btn btn-neutral float-right" title="Usage">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/kitloong/laravel-migrations-generator" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+      <span><a href="usage/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-03-15 14:08:10.685271+00:00
+-->
