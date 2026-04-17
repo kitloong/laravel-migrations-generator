@@ -343,6 +343,43 @@ class CommandTest extends MySQL57TestCase
         $this->assertNotContains('create_getNameWithHyphen_proc', $migrations);
     }
 
+    public function testSkipForeignKeys(): void
+    {
+        $this->migrateGeneral();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations(['--skip-foreign-keys' => true]);
+
+        $migrations   = [];
+        $prefixLength = 18;
+
+        foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
+            $migrations[] = substr($migration->getFilenameWithoutExtension(), $prefixLength);
+        }
+
+        $this->assertContains('create_user_profile_table', $migrations);
+        $this->assertNotContains('add_foreign_keys_to_user_profile_table', $migrations);
+    }
+
+    public function testSkipForeignKeysSquash(): void
+    {
+        $this->migrateGeneral();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations(['--skip-foreign-keys' => true, '--squash' => true]);
+
+        $squashed = '';
+
+        foreach (File::files($this->getStorageMigrationsPath()) as $migration) {
+            $squashed .= $migration->getContents();
+        }
+
+        $this->assertStringContainsString('user_profile', $squashed);
+        $this->assertStringNotContainsString('->foreign(', $squashed);
+    }
+
     public function testWithHasTable(): void
     {
         $migrateTemplates = function (): void {
