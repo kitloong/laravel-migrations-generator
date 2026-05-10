@@ -14,6 +14,7 @@ nav:
     - options/ignore.md
     - options/log-with-batch.md
     - options/path.md
+    - options/skip-foreign-keys.md
     - options/skip-log.md
     - options/skip-proc.md
     - options/skip-vendor.md

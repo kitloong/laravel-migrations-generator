@@ -49,6 +49,7 @@ class MigrateGenerateCommand extends Command
                             {--skip-vendor : Don\'t generate vendor migrations}
                             {--skip-views : Don\'t generate views}
                             {--skip-proc : Don\'t generate stored procedures}
+                            {--skip-foreign-keys : Don\'t generate foreign keys}
                             {--squash : Generate all migrations into a single file}
                             {--with-has-table : Check for the existence of a table using `hasTable`}';
 
@@ -114,7 +115,7 @@ class MigrateGenerateCommand extends Command
 
             $this->info("\nFinished!\n");
 
-            if (DB::getDriverName() === Driver::SQLITE->value) {
+            if (DB::getDriverName() === Driver::SQLITE->value && !$this->option('skip-foreign-keys')) {
                 $this->warn('SQLite only supports foreign keys upon creation of the table and not when tables are altered.');
                 $this->warn('See https://www.sqlite.org/omitted.html');
                 $this->warn('*_add_foreign_keys_* migrations were generated, however will get omitted if migrate to SQLite type database.');
@@ -401,6 +402,10 @@ class MigrateGenerateCommand extends Command
             $this->generateProcedures();
         }
 
+        if ($this->option('skip-foreign-keys')) {
+            return;
+        }
+
         $setting->getDate()->addSecond();
         $this->info("\nSetting up Foreign Key migrations.");
         $this->generateForeignKeys($tables);
@@ -430,8 +435,10 @@ class MigrateGenerateCommand extends Command
             $this->generateProceduresToTemp();
         }
 
-        $this->info("\nSetting up Foreign Key migrations.");
-        $this->generateForeignKeysToTemp($tables);
+        if (!$this->option('skip-foreign-keys')) {
+            $this->info("\nSetting up Foreign Key migrations.");
+            $this->generateForeignKeysToTemp($tables);
+        }
 
         $migrationFilepath = $this->squash->squashMigrations();
 
