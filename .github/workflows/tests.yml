@@ -93,6 +93,7 @@ jobs:
         uses: potatoqualitee/mssqlsuite@v1.12
         with:
           install: sqlengine, sqlclient, sqlpackage
+          sa-password: "!QAZ2wsx"
           version: 2019
 
       - name: SQL Server Create Database
