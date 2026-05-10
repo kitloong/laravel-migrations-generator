@@ -90,7 +90,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Install sqlcmd
-        uses: potatoqualitee/mssqlsuite@v1
+        uses: potatoqualitee/mssqlsuite@v1.12
         with:
           install: sqlengine, sqlclient, sqlpackage
           version: 2019
