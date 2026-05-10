@@ -13,8 +13,6 @@ use KitLoong\MigrationsGenerator\Migration\Blueprint\TableBlueprint;
 use KitLoong\MigrationsGenerator\Migration\Enum\MigrationFileType;
 use KitLoong\MigrationsGenerator\Migration\Writer\MigrationWriter;
 use KitLoong\MigrationsGenerator\Setting;
-use KitLoong\MigrationsGenerator\Support\TableName;
-use Mockery\MockInterface;
 
 class MigrationWriterTest extends TestCase
 {
@@ -23,11 +21,6 @@ class MigrationWriterTest extends TestCase
         $setting = app(Setting::class);
         $setting->setDefaultConnection(DB::getDefaultConnection());
         $setting->setWithHasTable(false);
-
-        $this->mock(TableName::class, static function (MockInterface $mock): void {
-            $mock->shouldReceive('stripPrefix')
-                ->andReturn('test');
-        });
 
         $up        = new SchemaBlueprint('users', SchemaBuilder::CREATE);
         $blueprint = new TableBlueprint();

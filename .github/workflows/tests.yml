@@ -87,12 +87,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install sqlcmd
-        uses: potatoqualitee/mssqlsuite@v1.8
+        uses: potatoqualitee/mssqlsuite@v1.12
         with:
           install: sqlengine, sqlclient, sqlpackage
+          sa-password: "!QAZ2wsx"
           version: 2019
 
       - name: SQL Server Create Database
@@ -123,7 +124,7 @@ jobs:
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Upload to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v6
         with:
           name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
           files: coverage.xml

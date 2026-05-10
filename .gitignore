@@ -1,4 +1,5 @@
 /.idea
+/.vscode
 /build
 /docker
 /report
@@ -7,6 +8,7 @@
 /vendor
 /venv
 /site
+.DS_Store
 .php-cs-fixer.cache
 .php_cs.cache
 .phpstorm.meta.php
