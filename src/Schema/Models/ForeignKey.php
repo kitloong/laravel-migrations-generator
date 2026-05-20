@@ -21,6 +21,8 @@ interface ForeignKey extends Model
      */
     public function getLocalColumns(): array;
 
+    public function getForeignSchema(): ?string;
+
     /**
      * Get the foreign key foreign column names.
      *

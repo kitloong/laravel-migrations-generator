@@ -2,6 +2,7 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Generator;
 
+use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\Foreign;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
@@ -20,7 +21,7 @@ class ForeignKeyGenerator
         $method = $this->makeMethod($foreignKey);
 
         $method->chain(Foreign::REFERENCES, $foreignKey->getForeignColumns())
-            ->chain(Foreign::ON, $this->stripTablePrefix($foreignKey->getForeignTableName()));
+            ->chain(Foreign::ON, $this->getOnTableName($foreignKey));
 
         if ($foreignKey->getOnUpdate() !== null) {
             $method->chain(Foreign::ON_UPDATE, $foreignKey->getOnUpdate());
@@ -82,5 +83,21 @@ class ForeignKeyGenerator
             $foreignKey->getTableName() . '_' . implode('_', $foreignKey->getLocalColumns()) . '_foreign',
         );
         return str_replace(['-', '.'], '_', $name);
+    }
+
+    /**
+     * Get the table name for the foreign key "on" clause.
+     * Adds the database name prefix if it is a cross-database foreign key.
+     */
+    private function getOnTableName(ForeignKey $foreignKey): string
+    {
+        $table = $this->stripTablePrefix($foreignKey->getForeignTableName());
+        $foreignSchema = $foreignKey->getForeignSchema();
+
+        if ($foreignSchema && $foreignSchema !== Schema::getConnection()->getDatabaseName()) {
+            return sprintf('%s.%s', $foreignSchema, $table);
+        }
+
+        return $table;
     }
 }

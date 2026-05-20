@@ -23,6 +23,7 @@ abstract class DatabaseForeignKey implements ForeignKey
      */
     protected array $foreignColumns;
 
+    protected ?string $foreignSchema = null;
     protected string $foreignTableName;
 
     protected ?string $onUpdate = null;
@@ -37,6 +38,7 @@ abstract class DatabaseForeignKey implements ForeignKey
         $this->tableName        = $table;
         $this->name             = $foreignKey['name'];
         $this->localColumns     = $foreignKey['columns'];
+        $this->foreignSchema    = $foreignKey['foreign_schema'];
         $this->foreignColumns   = $foreignKey['foreign_columns'];
         $this->foreignTableName = $foreignKey['foreign_table'];
         $this->onUpdate         = $foreignKey['on_update'];
@@ -73,6 +75,11 @@ abstract class DatabaseForeignKey implements ForeignKey
     public function getForeignColumns(): array
     {
         return $this->foreignColumns;
+    }
+
+    public function getForeignSchema(): ?string
+    {
+        return $this->foreignSchema;
     }
 
     /**
