@@ -9,6 +9,7 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema as SchemaFacade;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Migration\ForeignKeyMigration;
 use KitLoong\MigrationsGenerator\Migration\Migrator\Migrator;
@@ -23,9 +24,12 @@ use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
 use KitLoong\MigrationsGenerator\Schema\Schema;
 use KitLoong\MigrationsGenerator\Schema\SQLiteSchema;
 use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
+use KitLoong\MigrationsGenerator\Support\CheckLaravelVersion;
 
 class MigrateGenerateCommand extends Command
 {
+    use CheckLaravelVersion;
+
     /**
      * @inheritDoc
      */
@@ -141,6 +145,13 @@ class MigrateGenerateCommand extends Command
         $setting->setIgnoreForeignKeyNames((bool) $this->option('default-fk-names'));
         $setting->setSquash((bool) $this->option('squash'));
         $setting->setWithHasTable((bool) $this->option('with-has-table'));
+
+        $targetConnection = $this->option('connection') ?: $connection;
+        $setting->setCurrentSchema(
+            $this->atLeastLaravel12()
+                ? SchemaFacade::connection($targetConnection)->getCurrentSchemaName()
+                : null,
+        );
 
         $setting->setPath(
             $this->option('path') ?? Config::get('migrations-generator.migration_target_path'),

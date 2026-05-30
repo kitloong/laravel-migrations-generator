@@ -12,6 +12,7 @@ class Setting
      */
     private string $defaultConnection;
 
+    private ?string $currentSchema;
     private bool $useDBCollation;
 
     private bool $ignoreIndexNames;
@@ -169,5 +170,15 @@ class Setting
     public function setWithHasTable(bool $withHasTable): void
     {
         $this->withHasTable = $withHasTable;
+    }
+
+    public function setCurrentSchema(?string $currentSchema): void
+    {
+        $this->currentSchema = $currentSchema;
+    }
+
+    public function getCurrentSchema(): ?string
+    {
+        return $this->currentSchema;
     }
 }

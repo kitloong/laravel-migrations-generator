@@ -2,7 +2,6 @@
 
 namespace KitLoong\MigrationsGenerator\Migration\Generator;
 
-use Illuminate\Support\Facades\Schema;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\Foreign;
 use KitLoong\MigrationsGenerator\Migration\Blueprint\Method;
 use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
@@ -87,14 +86,15 @@ class ForeignKeyGenerator
 
     /**
      * Get the table name for the foreign key "on" clause.
-     * Adds the database name prefix if it is a cross-database foreign key.
+     * Adds the schema name prefix if it is a cross-schema foreign key.
      */
     private function getOnTableName(ForeignKey $foreignKey): string
     {
-        $table = $this->stripTablePrefix($foreignKey->getForeignTableName());
+        $table         = $this->stripTablePrefix($foreignKey->getForeignTableName());
+        $localSchema   = app(Setting::class)->getCurrentSchema();
         $foreignSchema = $foreignKey->getForeignSchema();
 
-        if ($foreignSchema && $foreignSchema !== Schema::getConnection()->getDatabaseName()) {
+        if ($foreignSchema && $localSchema && $foreignSchema !== $localSchema) {
             return sprintf('%s.%s', $foreignSchema, $table);
         }
 
