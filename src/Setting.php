@@ -3,6 +3,7 @@
 namespace KitLoong\MigrationsGenerator;
 
 use Carbon\Carbon;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 
 class Setting
 {
@@ -17,6 +18,11 @@ class Setting
     private bool $ignoreIndexNames;
 
     private bool $ignoreForeignKeyNames;
+
+    /**
+     * @var \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType[]
+     */
+    private array $skippedIndexTypes = [];
 
     private bool $squash;
 
@@ -74,6 +80,19 @@ class Setting
     public function setIgnoreForeignKeyNames(bool $ignoreForeignKeyNames): void
     {
         $this->ignoreForeignKeyNames = $ignoreForeignKeyNames;
+    }
+
+    /**
+     * @param  \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType[]  $skippedIndexTypes
+     */
+    public function setSkippedIndexTypes(array $skippedIndexTypes): void
+    {
+        $this->skippedIndexTypes = $skippedIndexTypes;
+    }
+
+    public function shouldSkipIndex(IndexType $indexType): bool
+    {
+        return in_array($indexType, $this->skippedIndexTypes, true);
     }
 
     public function getPath(): string

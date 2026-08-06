@@ -15,4 +15,18 @@ enum IndexType: string implements MethodName
     case PRIMARY        = 'primary';
     case SPATIAL_INDEX  = 'spatialIndex';
     case UNIQUE         = 'unique';
+
+    /**
+     * Get an index type from a case-insensitive method name.
+     */
+    public static function tryFromString(string $value): ?self
+    {
+        foreach (self::cases() as $indexType) {
+            if (strtolower($indexType->value) === trim(strtolower($value))) {
+                return $indexType;
+            }
+        }
+
+        return null;
+    }
 }

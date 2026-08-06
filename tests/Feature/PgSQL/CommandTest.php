@@ -4,6 +4,7 @@ namespace KitLoong\MigrationsGenerator\Tests\Feature\PgSQL;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 
 class CommandTest extends PgSQLTestCase
 {
@@ -162,6 +163,22 @@ class CommandTest extends PgSQLTestCase
         sort($generatedTables);
 
         $this->assertSame($tablesWithoutVendors, $generatedTables);
+    }
+
+    public function testSkipIndexes(): void
+    {
+        $this->migrateGeneral();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations([
+            '--tables'       => 'all_columns',
+            '--skip-indexes' => true,
+        ]);
+
+        $migration = File::files($this->getStorageMigrationsPath())[0]->getContents();
+
+        $this->assertStringNotContainsString('create index', $migration);
     }
 
     private function verify(callable $migrateTemplates, callable $generateMigrations): void
