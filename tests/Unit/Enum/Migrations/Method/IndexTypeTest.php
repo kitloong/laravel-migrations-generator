@@ -40,6 +40,14 @@ class IndexTypeTest extends TestCase
         );
     }
 
+    public function testParseSkipIndexesIgnoresEmptyTypes(): void
+    {
+        $this->assertSame(
+            [IndexType::INDEX, IndexType::UNIQUE],
+            IndexType::parseSkipIndexes(['index,,unique']),
+        );
+    }
+
     public function testParseSkipIndexesWithInvalidType(): void
     {
         $this->expectException(InvalidArgumentException::class);
