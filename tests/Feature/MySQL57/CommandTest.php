@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey;
 use KitLoong\MigrationsGenerator\Schema\Models\Index;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
@@ -360,6 +361,66 @@ class CommandTest extends MySQL57TestCase
 
         $this->assertContains('create_user_profile_table', $migrations);
         $this->assertNotContains('add_foreign_keys_to_user_profile_table', $migrations);
+    }
+
+    public function testSkipIndexes(): void
+    {
+        $this->migrateGeneral();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations([
+            '--tables'       => 'test_index',
+            '--skip-indexes' => true,
+        ]);
+
+        $migration = File::files($this->getStorageMigrationsPath())[0]->getContents();
+
+        foreach (IndexType::cases() as $indexType) {
+            if ($indexType === IndexType::PRIMARY) {
+                continue;
+            }
+
+            $this->assertStringNotContainsString('->' . $indexType->value . '(', $migration);
+        }
+
+        $this->assertStringContainsString("->increments('id')", $migration);
+    }
+
+    public function testSkipSpecificIndexes(): void
+    {
+        $this->migrateGeneral();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations([
+            '--tables'       => 'test_index',
+            '--skip-indexes' => 'FULLTEXT,unique',
+        ]);
+
+        $migration = File::files($this->getStorageMigrationsPath())[0]->getContents();
+
+        $this->assertStringContainsString('->index(', $migration);
+        $this->assertStringNotContainsString('->unique(', $migration);
+        $this->assertStringNotContainsString('->fullText(', $migration);
+        $this->assertStringNotContainsString('->fulltext(', $migration);
+    }
+
+    public function testSkipPrimaryIndex(): void
+    {
+        $this->migrateGeneral();
+
+        $this->truncateMigrationsTable();
+
+        $this->generateMigrations([
+            '--tables'       => 'primary_id',
+            '--skip-indexes' => 'primary',
+        ]);
+
+        $migration = File::files($this->getStorageMigrationsPath())[0]->getContents();
+
+        $this->assertStringContainsString("->unsignedInteger('id')", $migration);
+        $this->assertStringNotContainsString('->primary(', $migration);
     }
 
     public function testSkipForeignKeysSquash(): void

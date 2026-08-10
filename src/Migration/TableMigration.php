@@ -105,7 +105,9 @@ class TableMigration
             $blueprint->setMethod(new Method(TableMethod::COMMENT, $table->getComment()));
         }
 
-        $indexes = $table->getIndexes()->filter(static fn (Index $index) => !$index->hasUdtColumn());
+        $indexes = $table->getIndexes()->filter(
+            fn (Index $index) => $this->shouldGenerateIndex($index, false),
+        );
 
         $chainableIndexes    = $this->indexGenerator->getChainableIndexes($table->getName(), $indexes);
         $notChainableIndexes = $this->indexGenerator->getNotChainableIndexes($indexes, $chainableIndexes);
@@ -146,7 +148,9 @@ class TableMigration
             }
         }
 
-        $indexes = $table->getIndexes()->filter(static fn (Index $index) => $index->hasUdtColumn());
+        $indexes = $table->getIndexes()->filter(
+            fn (Index $index) => $this->shouldGenerateIndex($index, true),
+        );
 
         foreach ($indexes as $index) {
             foreach ($index->getUDTColumnSqls() as $sql) {
@@ -155,6 +159,15 @@ class TableMigration
         }
 
         return $statements;
+    }
+
+    /**
+     * Determine whether an index should be generated in the current migration section.
+     */
+    private function shouldGenerateIndex(Index $index, bool $hasUdtColumn): bool
+    {
+        return $index->hasUdtColumn() === $hasUdtColumn
+            && !$this->setting->shouldSkipIndex($index->getType());
     }
 
     /**

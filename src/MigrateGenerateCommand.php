@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Driver;
+use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 use KitLoong\MigrationsGenerator\Migration\ForeignKeyMigration;
 use KitLoong\MigrationsGenerator\Migration\Migrator\Migrator;
 use KitLoong\MigrationsGenerator\Migration\ProcedureMigration;
@@ -49,6 +50,7 @@ class MigrateGenerateCommand extends Command
                             {--skip-vendor : Don\'t generate vendor migrations}
                             {--skip-views : Don\'t generate views}
                             {--skip-proc : Don\'t generate stored procedures}
+                            {--skip-indexes=* : Don\'t generate secondary indexes, or the specified index types}
                             {--skip-foreign-keys : Don\'t generate foreign keys}
                             {--squash : Generate all migrations into a single file}
                             {--with-has-table : Check for the existence of a table using `hasTable`}';
@@ -139,6 +141,9 @@ class MigrateGenerateCommand extends Command
         $setting->setUseDBCollation((bool) $this->option('use-db-collation'));
         $setting->setIgnoreIndexNames((bool) $this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames((bool) $this->option('default-fk-names'));
+        $setting->setSkippedIndexTypes(
+            IndexType::parseValues((array) $this->option('skip-indexes')),
+        );
         $setting->setSquash((bool) $this->option('squash'));
         $setting->setWithHasTable((bool) $this->option('with-has-table'));
 

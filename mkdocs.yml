@@ -16,6 +16,7 @@ nav:
     - options/path.md
     - options/skip-foreign-keys.md
     - options/skip-log.md
+    - options/skip-indexes.md
     - options/skip-proc.md
     - options/skip-vendor.md
     - options/skip-views.md
