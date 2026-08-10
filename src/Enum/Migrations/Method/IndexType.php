@@ -2,6 +2,8 @@
 
 namespace KitLoong\MigrationsGenerator\Enum\Migrations\Method;
 
+use InvalidArgumentException;
+
 /**
  * Predefined index types of the framework.
  *
@@ -28,5 +30,48 @@ enum IndexType: string implements MethodName
         }
 
         return null;
+    }
+
+    /**
+     * Get index types to skip from the `--skip-indexes` option values.
+     *
+     * A bare option skips all secondary indexes. A supplied list skips only
+     * the listed types.
+     *
+     * @param  array<int, bool|string|null>  $values
+     * @return self[]
+     */
+    public static function parseSkipIndexes(array $values): array
+    {
+        if ($values === []) {
+            return [];
+        }
+
+        if (in_array(null, $values, true) || in_array(true, $values, true)) {
+            return array_values(array_filter(
+                self::cases(),
+                static fn (self $indexType) => $indexType !== self::PRIMARY,
+            ));
+        }
+
+        $indexTypes = [];
+
+        foreach ($values as $value) {
+            foreach (explode(',', (string) $value) as $type) {
+                if (trim($type) === '') {
+                    continue;
+                }
+
+                $indexType = self::tryFromString($type);
+
+                if ($indexType === null) {
+                    throw new InvalidArgumentException('Unknown index type: ' . trim($type));
+                }
+
+                $indexTypes[$indexType->name] = $indexType;
+            }
+        }
+
+        return array_values($indexTypes);
     }
 }

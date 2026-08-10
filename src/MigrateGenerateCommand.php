@@ -9,7 +9,6 @@ use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType;
 use KitLoong\MigrationsGenerator\Migration\ForeignKeyMigration;
@@ -142,7 +141,9 @@ class MigrateGenerateCommand extends Command
         $setting->setUseDBCollation((bool) $this->option('use-db-collation'));
         $setting->setIgnoreIndexNames((bool) $this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames((bool) $this->option('default-fk-names'));
-        $setting->setSkippedIndexTypes($this->getSkippedIndexTypes());
+        $setting->setSkippedIndexTypes(
+            IndexType::parseSkipIndexes((array) $this->option('skip-indexes')),
+        );
         $setting->setSquash((bool) $this->option('squash'));
         $setting->setWithHasTable((bool) $this->option('with-has-table'));
 
@@ -650,53 +651,5 @@ class MigrateGenerateCommand extends Command
             Driver::SQLSRV->value => $this->schema                        = app(SQLSrvSchema::class),
             default => throw new Exception('The database driver in use is not supported.'),
         };
-    }
-
-    /**
-     * Get index types to skip from the `--skip-indexes` option.
-     *
-     * A bare option skips all secondary indexes. A supplied list skips only
-     * the listed types.
-     *
-     * @return \KitLoong\MigrationsGenerator\Enum\Migrations\Method\IndexType[]
-     */
-    private function getSkippedIndexTypes(): array
-    {
-        $values = (array) $this->option('skip-indexes');
-
-        if ($values === []) {
-            return [];
-        }
-
-        $isDefault = in_array(null, $values, true) || in_array(true, $values, true);
-
-        if ($isDefault) {
-            return array_values(array_filter(
-                IndexType::cases(),
-                static fn (IndexType $indexType) => $indexType !== IndexType::PRIMARY,
-            ));
-        }
-
-        $indexTypes = [];
-
-        foreach ($values as $value) {
-            foreach (explode(',', (string) $value) as $type) {
-                $type = trim($type);
-
-                if ($type === '') {
-                    continue;
-                }
-
-                $indexType = IndexType::tryFromString($type);
-
-                if ($indexType === null) {
-                    throw new InvalidArgumentException('Unknown index type: ' . $type);
-                }
-
-                $indexTypes[$indexType->name] = $indexType;
-            }
-        }
-
-        return array_values($indexTypes);
     }
 }
