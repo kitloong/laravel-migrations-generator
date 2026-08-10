@@ -18,7 +18,7 @@ class IndexTypeTest extends TestCase
         $this->assertNull(IndexType::tryFromString('invalid'));
     }
 
-    public function testParseSkipIndexesWithoutValue(): void
+    public function testGetSecondaryIndexes(): void
     {
         $this->assertEqualsCanonicalizing(
             [
@@ -28,30 +28,56 @@ class IndexTypeTest extends TestCase
                 IndexType::SPATIAL_INDEX,
                 IndexType::UNIQUE,
             ],
-            IndexType::parseSkipIndexes([null]),
+            IndexType::getSecondaryIndexes(),
         );
     }
 
-    public function testParseSkipIndexesWithSpecificTypes(): void
+    public function testParseValuesWithoutValue(): void
+    {
+        $this->assertEqualsCanonicalizing(
+            IndexType::getSecondaryIndexes(),
+            IndexType::parseValues([null]),
+        );
+
+        $this->assertEqualsCanonicalizing(
+            IndexType::getSecondaryIndexes(),
+            IndexType::parseValues([true]),
+        );
+    }
+
+    public function testParseValuesWithoutValues(): void
+    {
+        $this->assertSame([], IndexType::parseValues([]));
+    }
+
+    public function testParseValuesWithSpecificTypes(): void
     {
         $this->assertSame(
             [IndexType::FULLTEXT, IndexType::PRIMARY, IndexType::UNIQUE],
-            IndexType::parseSkipIndexes(['fulltext,primary,unique']),
+            IndexType::parseValues(['fulltext,primary,unique']),
         );
     }
 
-    public function testParseSkipIndexesIgnoresEmptyTypes(): void
+    public function testParseValuesWithMultipleOptionValues(): void
     {
         $this->assertSame(
             [IndexType::INDEX, IndexType::UNIQUE],
-            IndexType::parseSkipIndexes(['index,,unique']),
+            IndexType::parseValues(['index', 'unique']),
         );
     }
 
-    public function testParseSkipIndexesWithInvalidType(): void
+    public function testParseValuesIgnoresEmptyTypes(): void
+    {
+        $this->assertSame(
+            [IndexType::INDEX, IndexType::UNIQUE],
+            IndexType::parseValues(['index,,unique']),
+        );
+    }
+
+    public function testParseValuesThrowsExceptionForUnknownType(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        IndexType::parseSkipIndexes(['invalid']);
+        IndexType::parseValues(['invalid']);
     }
 }

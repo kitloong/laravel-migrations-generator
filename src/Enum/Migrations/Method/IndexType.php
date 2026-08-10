@@ -23,8 +23,10 @@ enum IndexType: string implements MethodName
      */
     public static function tryFromString(string $value): ?self
     {
+        $value = strtolower(trim($value));
+
         foreach (self::cases() as $indexType) {
-            if (strtolower($indexType->value) === trim(strtolower($value))) {
+            if (strtolower($indexType->value) === $value) {
                 return $indexType;
             }
         }
@@ -33,45 +35,54 @@ enum IndexType: string implements MethodName
     }
 
     /**
-     * Get index types to skip from the `--skip-indexes` option values.
-     *
-     * A bare option skips all secondary indexes. A supplied list skips only
-     * the listed types.
+     * @return self[]
+     */
+    public static function getSecondaryIndexes(): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            static fn (self $indexType) => $indexType !== self::PRIMARY,
+        ));
+    }
+
+    /**
+     * Parse `--skip-indexes` option values.
      *
      * @param  array<int, bool|string|null>  $values
      * @return self[]
      */
-    public static function parseSkipIndexes(array $values): array
+    public static function parseValues(array $values): array
     {
         if ($values === []) {
             return [];
         }
 
-        if (in_array(null, $values, true) || in_array(true, $values, true)) {
-            return array_values(array_filter(
-                self::cases(),
-                static fn (self $indexType) => $indexType !== self::PRIMARY,
-            ));
+        $skipAllSecondaryIndexes = in_array(null, $values, true)
+            || in_array(true, $values, true);
+
+        if ($skipAllSecondaryIndexes) {
+            return self::getSecondaryIndexes();
         }
 
-        $indexTypes = [];
+        $types = array_merge(...array_map(
+            static fn ($value) => explode(',', (string) $value),
+            $values,
+        ));
 
-        foreach ($values as $value) {
-            foreach (explode(',', (string) $value) as $type) {
-                if (trim($type) === '') {
-                    continue;
-                }
-
+        return array_map(
+            static function (string $type): self {
                 $indexType = self::tryFromString($type);
 
                 if ($indexType === null) {
                     throw new InvalidArgumentException('Unknown index type: ' . trim($type));
                 }
 
-                $indexTypes[$indexType->name] = $indexType;
-            }
-        }
-
-        return array_values($indexTypes);
+                return $indexType;
+            },
+            array_values(array_filter(
+                $types,
+                static fn (string $type) => trim($type) !== '',
+            )),
+        );
     }
 }

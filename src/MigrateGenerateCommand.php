@@ -142,7 +142,7 @@ class MigrateGenerateCommand extends Command
         $setting->setIgnoreIndexNames((bool) $this->option('default-index-names'));
         $setting->setIgnoreForeignKeyNames((bool) $this->option('default-fk-names'));
         $setting->setSkippedIndexTypes(
-            IndexType::parseSkipIndexes((array) $this->option('skip-indexes')),
+            IndexType::parseValues((array) $this->option('skip-indexes')),
         );
         $setting->setSquash((bool) $this->option('squash'));
         $setting->setWithHasTable((bool) $this->option('with-has-table'));
